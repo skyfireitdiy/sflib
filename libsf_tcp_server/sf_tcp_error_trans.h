@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QTcpSocket>
 
-class sftcp_server;
+class sf_tcp_server;
 
 class QTcpSocket;
 
@@ -12,7 +12,7 @@ class sf_tcp_error_trans : public QObject
 	Q_OBJECT
 
 public:
-	sf_tcp_error_trans(QTcpSocket * const p_sock, void (sftcp_server::*func)(QTcpSocket * const, QAbstractSocket::SocketError), sftcp_server *const p_server, QObject *parent = nullptr);
+	sf_tcp_error_trans(QTcpSocket * const p_sock, void (sf_tcp_server::*func)(QTcpSocket * const, QAbstractSocket::SocketError), sf_tcp_server *const p_server, QObject *parent = nullptr);
 	~sf_tcp_error_trans();
 
 	public slots:
@@ -20,6 +20,6 @@ public:
 
 private:
 	QTcpSocket *p_sock__{ nullptr };
-	void(sftcp_server::*call_back__)(QTcpSocket * const, QAbstractSocket::SocketError);
-	sftcp_server *p_server__;
+	void(sf_tcp_server::*call_back__)(QTcpSocket * const, QAbstractSocket::SocketError);
+	sf_tcp_server *p_server__;
 };
