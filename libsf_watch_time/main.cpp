@@ -31,4 +31,5 @@ int main()
 {
 	func1();
 	func2();
+	wc.watch();
 }

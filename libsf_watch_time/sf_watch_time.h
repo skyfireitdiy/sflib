@@ -33,15 +33,15 @@ namespace skyfire
 	public:
 
 		/**
-		 * @fn	sf_watch_time::~sf_watch_time()
+		 * @fn	void sf_watch_time::watch()
 		 *
-		 * @brief	Destructor. Output this result
+		 * @brief	Output this result.
 		 *
 		 * @author	Sky Fire
 		 * @date	2017/8/18
 		 */
 
-		~sf_watch_time()
+		void watch()
 		{
 			auto old = std::cout.flags();
 
@@ -49,9 +49,9 @@ namespace skyfire
 			std::cout << std::setw(30) << "Points" << std::setw(6) << "|" << std::setw(12) << "Thread" << std::setw(6) << "|" << std::setw(12) << "Time" << std::endl;
 			std::cout << "--------------------------------------------------------------------" << std::endl;
 
-			for(auto &p:data__)
+			for (auto &p : data__)
 			{
-				for(auto &q:p.second)
+				for (auto &q : p.second)
 				{
 					std::cout << std::setw(30) << p.first << std::setw(6) << "|" << std::setw(12) << q.first << std::setw(6) << "|" << std::setw(12) << convert_ms_to_readable__(q.second) << std::endl;
 				}
@@ -59,6 +59,7 @@ namespace skyfire
 			}
 			std::cout.flags(old);
 		}
+
 	private:
 		std::map<T, std::map<std::thread::id, long long>> data__;
 		std::string convert_ms_to_readable__(long long time)
