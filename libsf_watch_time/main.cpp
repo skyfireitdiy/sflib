@@ -1,21 +1,21 @@
 #include "sf_watch_time.h"
-#include <string>
 #include <windows.h>
 
-skyfire::sf_watch_time<std::string> wc;
+skyfire::sf_watch_time<int> wc;
+using pt = skyfire::check_point<int>;
 
 void func1()
 {
-	skyfire::check_point<> lck1(__FUNCTION__ " " + std::to_string(__LINE__), wc);
-	int sum = 0;
-	for (int i = 0; i < 1000; ++i)
+	pt p(1, wc);
+	auto sum = 0;
+	for (auto i = 0; i < 1000; ++i)
 	{
-		skyfire::check_point<> lck1(__FUNCTION__ " "+ std::to_string(__LINE__), wc);
+		pt p(2, wc);
 		sum += i;
 	}
-	for (int i = 0; i < 10000; ++i)
+	for (auto i = 0; i < 10000; ++i)
 	{
-		skyfire::check_point<> lck1(__FUNCTION__ " " + std::to_string(__LINE__), wc);
+		pt p(3, wc);
 		sum += i;
 	}
 }
@@ -23,7 +23,7 @@ void func1()
 
 void func2()
 {
-	skyfire::check_point<> lck1(__FUNCTION__ " " + std::to_string(__LINE__), wc);
+	pt p(4, wc);
 	Sleep(1000);
 }
 

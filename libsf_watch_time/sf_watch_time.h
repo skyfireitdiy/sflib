@@ -10,6 +10,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <sstream>
 
 namespace skyfire
 {
@@ -21,7 +22,7 @@ namespace skyfire
 	 *
 	 * @brief	A sf watch time.
 	 *
-	 * @author	Sky Fire
+	 * @author	SkyFire
 	 * @date	2017/8/18
 	 *
 	 * @tparam	T	Generic type parameter.
@@ -31,40 +32,52 @@ namespace skyfire
 	class sf_watch_time
 	{
 	public:
-
 		/**
 		 * @fn	void sf_watch_time::watch()
 		 *
 		 * @brief	Output this result.
 		 *
-		 * @author	Sky Fire
+		 * @author	SkyFire
 		 * @date	2017/8/18
 		 */
 
+	
 		void watch()
 		{
-			auto old = std::cout.flags();
+			std::cout << to_string() << std::flush;
+		}
 
-			std::cout << std::left;
-			std::cout << std::setw(30) << "Points" << std::setw(6) << "|" << std::setw(12) << "Thread" << std::setw(6) << "|" << std::setw(12) << "Time" << std::endl;
-			std::cout << "--------------------------------------------------------------------" << std::endl;
+	protected:
+		std::string to_string()
+		{
+			std::ostringstream so;
+			auto old = so.flags();
+
+			so << std::right;
+			so << std::setw(55) << "SkyFire Time Watch" << std::endl;;
+			so << "=========================================================================================" << std::endl;
+			so << std::left;
+			so << std::setw(30) << "Points" << std::setw(6) << "|" << std::setw(12) << "Thread" << std::setw(20) << "|" << "Time" << std::endl;
+			so << "=========================================================================================" << std::endl;
 
 			for (auto &p : data__)
 			{
 				for (auto &q : p.second)
 				{
-					std::cout << std::setw(30) << p.first << std::setw(6) << "|" << std::setw(12) << q.first << std::setw(6) << "|" << std::setw(12) << convert_ms_to_readable__(q.second) << std::endl;
+					so << std::setw(30) << p.first << std::setw(6) << "|" << std::setw(12) << q.first << std::setw(6) << "|" << convert_ms_to_readable__(q.second) << std::endl;
 				}
-				std::cout << "--------------------------------------------------------------------" << std::endl;
 			}
-			std::cout.flags(old);
+			so << "-----------------------------------------------------------------------------------------" << std::endl;
+			so.flags(old);
+			return so.str();
 		}
 
-	private:
 		std::map<T, std::map<std::thread::id, long long>> data__;
-		std::string convert_ms_to_readable__(long long time)
+		std::string convert_ms_to_readable__(long long time) const
 		{
-			std::string ret;
+			std::ostringstream so;
+			auto old = so.flags();
+			so << std::left;
 			const long long ns = 1; 
 			const long long us = 1000;
 			const auto ms = 1000 * us;
@@ -75,40 +88,70 @@ namespace skyfire
 
 			if(time>=d)
 			{
-				ret += std::to_string(time / d) + "d";
+				so<<std::to_string(time / d) + "d";
 				time %= d;
 			}
+			else
+			{
+				so << "";
+			}
+			so << std::setw(6);
 			if (time >= h)
 			{
-				ret += std::to_string(time / h) + "h";
+				so<< std::to_string(time / h) + "h";
 				time %= h;
 			}
+			else
+			{
+				so << "";
+			}
+			so << std::setw(6);
 			if (time >= m)
 			{
-				ret += std::to_string(time / m) + "m";
+				so<< std::to_string(time / m) + "m";
 				time %= m;
 			}
+			else
+			{
+				so << "";
+			}
+			so << std::setw(6);
 			if (time >= s)
 			{
-				ret += std::to_string(time / s) + "s";
+				so<< std::to_string(time / s) + "s";
 				time %= s;
 			}
+			else
+			{
+				so << "";
+			}
+			so << std::setw(6);
 			if (time >= ms)
 			{
-				ret += std::to_string(time / ms) + "ms";
+				so<< std::to_string(time / ms) + "ms";
 				time %= ms;
 			}
+			else
+			{
+				so << "";
+			}
+			so << std::setw(6);
 			if (time >= us)
 			{
-				ret += std::to_string(time / us) + "us";
+				so<< std::to_string(time / us) + "us";
 				time %= us;
 			}
+			else
+			{
+				so << "";
+			}
+			so << std::setw(6);
 			if (time >= ns)
 			{
-				ret += std::to_string(time / ns) + "ns";
+				so<< std::to_string(time / ns) + "ns";
 			}
-
-			return ret;
+			so.setf(old);
+			return so.str();
 		}
 
 		friend class check_point<T>;
