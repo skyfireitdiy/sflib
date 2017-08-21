@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_thread_pool", "libsf_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_tri_type", "libsf_tri_type\libsftri_type.vcxproj", "{D3E74FE4-AF0A-4DEF-A708-80B6E3E6DCB0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_twoway_map", "libsf_twoway_map\libsf_twoway_map.vcxproj", "{AF571130-BACB-49E7-9AF1-0A2881CD3F34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -69,6 +71,14 @@ Global
 		{D3E74FE4-AF0A-4DEF-A708-80B6E3E6DCB0}.Release|x64.Build.0 = Release|x64
 		{D3E74FE4-AF0A-4DEF-A708-80B6E3E6DCB0}.Release|x86.ActiveCfg = Release|Win32
 		{D3E74FE4-AF0A-4DEF-A708-80B6E3E6DCB0}.Release|x86.Build.0 = Release|Win32
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Debug|x64.ActiveCfg = Debug|x64
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Debug|x64.Build.0 = Debug|x64
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Debug|x86.ActiveCfg = Debug|Win32
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Debug|x86.Build.0 = Debug|Win32
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Release|x64.ActiveCfg = Release|x64
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Release|x64.Build.0 = Release|x64
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Release|x86.ActiveCfg = Release|Win32
+		{AF571130-BACB-49E7-9AF1-0A2881CD3F34}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

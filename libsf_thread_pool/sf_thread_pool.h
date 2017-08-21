@@ -143,8 +143,8 @@ namespace skyfire
 
 		std::mutex mu_task_deque__;
 		std::vector<std::shared_ptr<std::thread>> thread_vec__;
-		std::atomic_bool is_pause__{ false };
-		std::atomic_bool is_exit__{ false };
+		bool is_pause__{ false };
+		bool is_exit__{ false };
 		std::atomic_int busy_thread_num__{ 0 };
 		std::mutex mu_thread__cv__;
 		std::condition_variable thread_cv__;
