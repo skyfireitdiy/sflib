@@ -19,11 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D3E74FE4-AF0A-4DEF-A708-80B6E3E6DCB0}</ProjectGuid>
+    <ProjectGuid>{E968096F-A5E4-47DC-BFE3-4D984BA36F98}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>libsftri_type</RootNamespace>
+    <RootNamespace>libsf_watch_time</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>libsf_tri_type</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -147,7 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="sf_tri_type.h" />
+    <ClInclude Include="sf_watch_time.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

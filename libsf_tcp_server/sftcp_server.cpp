@@ -1,16 +1,16 @@
-#include "sftcp_server.h"
+#include "sf_tcp_server.h"
 #include "sf_tcp_error_trans.h"
 
-sftcp_server::sftcp_server(QObject *parent)
+sf_tcp_server::sf_tcp_server(QObject *parent)
 	: QObject(parent)
 {
 }
 
-sftcp_server::~sftcp_server()
+sf_tcp_server::~sf_tcp_server()
 {
 }
 
-void sftcp_server::init(int thread_count)
+void sf_tcp_server::init(int thread_count)
 {
 	if (is_init__)
 		return;
@@ -26,7 +26,7 @@ void sftcp_server::init(int thread_count)
 	}
 	send_thread_count__ = thread_count;
 	p_server__ = new QTcpServer(this);
-	connect(p_server__, &QTcpServer::acceptError, this, &sftcp_server::server_error);
+	connect(p_server__, &QTcpServer::acceptError, this, &sf_tcp_server::server_error);
 	create_thread__();
 	connect(p_server__, &QTcpServer::newConnection, [this]()
 	{
@@ -43,7 +43,7 @@ void sftcp_server::init(int thread_count)
 				disconnect_client(p_sock);
 				emit client_disconnect(p_sock);
 			});
-			auto p_err = new sf_tcp_error_trans(p_sock, &sftcp_server::sock_error, this, p_sock);
+			auto p_err = new sf_tcp_error_trans(p_sock, &sf_tcp_server::sock_error, this, p_sock);
 			connect(p_sock, SIGNAL(error(QAbstractSocket::SocketError)), p_err, SLOT(on_tcp_error__(QAbstractSocket::SocketError)));
 			sock_err_list__[p_sock] = p_err;
 			emit new_connection(p_sock);
@@ -52,7 +52,7 @@ void sftcp_server::init(int thread_count)
 	is_finished__ = false;
 }
 
-void sftcp_server::cleanup()
+void sf_tcp_server::cleanup()
 {
 	close__();
 	for (auto &p : sock_err_list__)
@@ -63,7 +63,7 @@ void sftcp_server::cleanup()
 	send_thread_count__ = default_thread_count__;
 }
 
-bool sftcp_server::listen(const QHostAddress& host, quint16 port)
+bool sf_tcp_server::listen(const QHostAddress& host, quint16 port)
 {
 	if (is_listenning__)
 		return false;
@@ -75,7 +75,7 @@ bool sftcp_server::listen(const QHostAddress& host, quint16 port)
 	return false;
 }
 
-void sftcp_server::disconnect_client(QTcpSocket* const p_sock)
+void sf_tcp_server::disconnect_client(QTcpSocket* const p_sock)
 {
 	{
 		std::lock_guard<std::mutex> lck(mu_deque__);
@@ -98,29 +98,29 @@ void sftcp_server::disconnect_client(QTcpSocket* const p_sock)
 	}
 }
 
-void sftcp_server::send_data(QTcpSocket* const p_sock, const QByteArray& data)
+void sf_tcp_server::send_data(QTcpSocket* const p_sock, const QByteArray& data)
 {
 	std::lock_guard<std::mutex> lck(mu_deque__);
 	send_task_deque__.push_back({ p_sock,data });
 	cv_send__.notify_all();
 }
 
-std::list<QTcpSocket*> sftcp_server::get_clients() const
+std::list<QTcpSocket*> sf_tcp_server::get_clients() const
 {
 	return sock_list__;
 }
 
-int sftcp_server::get_send_thread_count() const
+int sf_tcp_server::get_send_thread_count() const
 {
 	return send_thread_count__;
 }
 
-QTcpServer* sftcp_server::get_server() const
+QTcpServer* sf_tcp_server::get_server() const
 {
 	return p_server__;
 }
 
-void sftcp_server::close__()
+void sf_tcp_server::close__()
 {
 	terminate_thread__();
 	for (auto &p : sock_list__)
@@ -136,7 +136,7 @@ void sftcp_server::close__()
 	p_server__ = nullptr;
 }
 
-void sftcp_server::create_thread__()
+void sf_tcp_server::create_thread__()
 {
 	for (auto i = 0; i < 4; ++i)
 	{
@@ -171,7 +171,7 @@ void sftcp_server::create_thread__()
 	}
 }
 
-void sftcp_server::terminate_thread__()
+void sf_tcp_server::terminate_thread__()
 {
 	is_finished__ = true;
 	cv_send__.notify_all();

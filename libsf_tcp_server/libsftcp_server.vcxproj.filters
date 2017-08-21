@@ -36,20 +36,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="sftcp_server.h">
+    <CustomBuild Include="sf_tcp_error_trans.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="sf_tcp_error_trans.h">
+    <CustomBuild Include="sf_tcp_server.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GeneratedFiles\Debug\moc_sftcp_server.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_sftcp_server.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="sftcp_server.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -61,6 +55,12 @@
     </ClCompile>
     <ClCompile Include="sf_tcp_error_trans.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_sf_tcp_server.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_sf_tcp_server.cpp">
+      <Filter>Generated Files\Release</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
