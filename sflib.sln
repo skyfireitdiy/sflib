@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_debug", "libsf_debug\libsf_debug.vcxproj", "{2F783669-A686-4CE3-9AF0-4A850ED29B06}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_tri_type", "libsf_tri_type\libsftri_type.vcxproj", "{D3E74FE4-AF0A-4DEF-A708-80B6E3E6DCB0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_watch_time", "libsf_watch_time\libsf_watch_time.vcxproj", "{E968096F-A5E4-47DC-BFE3-4D984BA36F98}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_range", "libsf_range\libsf_range.vcxproj", "{6A37E3D3-DF79-4715-913A-612EEF8922D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,8 +81,19 @@ Global
 		{E968096F-A5E4-47DC-BFE3-4D984BA36F98}.Release|x64.Build.0 = Release|x64
 		{E968096F-A5E4-47DC-BFE3-4D984BA36F98}.Release|x86.ActiveCfg = Release|Win32
 		{E968096F-A5E4-47DC-BFE3-4D984BA36F98}.Release|x86.Build.0 = Release|Win32
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Debug|x64.ActiveCfg = Debug|x64
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Debug|x64.Build.0 = Debug|x64
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Debug|x86.ActiveCfg = Debug|Win32
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Debug|x86.Build.0 = Debug|Win32
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Release|x64.ActiveCfg = Release|x64
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Release|x64.Build.0 = Release|x64
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Release|x86.ActiveCfg = Release|Win32
+		{6A37E3D3-DF79-4715-913A-612EEF8922D0}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F41742A9-AFED-48B9-98C9-0217A8F92557}
 	EndGlobalSection
 EndGlobal
