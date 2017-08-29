@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <functional>
 #include <thread>
-#include "../libsfempty_class/sfempty_class.h"
+#include "../libsf_empty_class/sfempty_class.h"
 #ifdef QT_CORE_LIB
 #include <QDebug>
 #include <QSettings>
@@ -246,7 +246,7 @@ namespace skyfire
 			return;
 		{
 			std::lock_guard<std::mutex> lck(file_mutex__[curr_file__]);
-			fp__ << "[" << make_time_str__() << "]" << "[" << file << "][" << line << "][" << func << "]" << std::flush;
+			fp__ << "[" << make_time_str__() << "][" << std::this_thread::get_id() << file << "][" << line << "][" << func << "]" << std::flush;
 		}
 		logout__(dt...);
 	}
@@ -255,7 +255,7 @@ namespace skyfire
 	template <typename T>
 	void sf_debug<_Caller_Class, _Base_Class>::track(const std::string& file, int line, const std::string& func, const T& dt)
 	{
-		os__ << "[" << make_time_str__() << "]" << "[" << file << "][" << line << "][" << func << "]";
+		os__ << "[" << make_time_str__() << "][" << std::this_thread::get_id() << file << "][" << line << "][" << func << "]";
 		track__(dt);
 	}
 
@@ -263,7 +263,7 @@ namespace skyfire
 	template <typename ... T>
 	void sf_debug<_Caller_Class, _Base_Class>::track(const std::string& file, int line, const std::string& func, const T&... dt)
 	{
-		os__ << "[" << make_time_str__() << "]" << "[" << file << "][" << line << "][" << func << "]";
+		os__ << "[" << make_time_str__() << "][" << std::this_thread::get_id() << file << "][" << line << "][" << func << "]";
 		track__(dt...);
 	}
 
