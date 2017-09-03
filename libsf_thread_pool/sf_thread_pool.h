@@ -175,7 +175,7 @@ namespace skyfire
 
 
 	template <typename ... T>
-	sf_thread_pool<T...>::sf_thread_pool(size_t thread_count) :thread_count__(0)
+	sf_thread_pool<T...>::sf_thread_pool(size_t thread_count) :thread_count__(thread_count)
 	{
 		add_thread__(thread_count);
 	}
