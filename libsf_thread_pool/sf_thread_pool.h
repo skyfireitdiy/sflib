@@ -275,12 +275,14 @@ namespace skyfire
 			{
 				auto flag_empty = true;
 				std::tuple<std::function<void(T ...)>, T...> task;
-				std::lock_guard<std::mutex> lck(this__->mu_task_deque__);
-				if (!this__->task_deque__.empty())
 				{
-					flag_empty = false;
-					task = this__->task_deque__.front();
-					this__->task_deque__.pop_front();
+					std::lock_guard<std::mutex> lck(this__->mu_task_deque__);
+					if (!this__->task_deque__.empty())
+					{
+						flag_empty = false;
+						task = this__->task_deque__.front();
+						this__->task_deque__.pop_front();
+					}
 				}
 				if (!flag_empty)
 				{
