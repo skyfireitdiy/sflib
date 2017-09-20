@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_debug", "libsf_debug\libsf_debug.vcxproj", "{2F783669-A686-4CE3-9AF0-4A850ED29B06}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_empty_class", "libsf_empty_class\libsfempty_class.vcxproj", "{9927EE96-F95A-46B9-994F-BB2CD94D7CF6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_single_instance", "libsf_single_instance\libsfsingle_instance.vcxproj", "{63B2CADF-5538-45EE-9F15-ED92B82C000C}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_tcp_server", "libsf_tcp_server\libsftcp_server.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsf_thread_pool", "libsf_thread_pool\libsfthread_pool.vcxproj", "{DC6B0F87-43B4-44DE-B1FA-869A3B8AAEF4}"
 EndProject
@@ -51,12 +49,6 @@ Global
 		{63B2CADF-5538-45EE-9F15-ED92B82C000C}.Release|x64.Build.0 = Release|x64
 		{63B2CADF-5538-45EE-9F15-ED92B82C000C}.Release|x86.ActiveCfg = Release|Win32
 		{63B2CADF-5538-45EE-9F15-ED92B82C000C}.Release|x86.Build.0 = Release|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x64.ActiveCfg = Debug|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x86.ActiveCfg = Debug|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x86.Build.0 = Debug|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x64.ActiveCfg = Release|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x86.ActiveCfg = Release|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x86.Build.0 = Release|Win32
 		{DC6B0F87-43B4-44DE-B1FA-869A3B8AAEF4}.Debug|x64.ActiveCfg = Debug|x64
 		{DC6B0F87-43B4-44DE-B1FA-869A3B8AAEF4}.Debug|x64.Build.0 = Debug|x64
 		{DC6B0F87-43B4-44DE-B1FA-869A3B8AAEF4}.Debug|x86.ActiveCfg = Debug|Win32

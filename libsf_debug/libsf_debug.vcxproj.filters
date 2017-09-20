@@ -3,4 +3,7 @@
   <ItemGroup>
     <ClInclude Include="sf_debug.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
 </Project>
