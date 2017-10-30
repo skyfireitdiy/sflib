@@ -1,4 +1,4 @@
-#include "serialize.h"
+#include "sf_serialize.h"
 #include <iostream>
 
 
@@ -20,7 +20,7 @@ int main()
     string d{"hello world"};
     vector<string> e{"nihao","hahaha","the end"};
     tuple<string,double,myType> f{"113assd",6.87,myType{6,5.6,"yyyyyy"}};
-    auto t=serialize(a,b,c,d,e,f);
+    auto t=sf_serialize(a,b,c,d,e,f);
     int aa;
     double bb;
     float cc;
@@ -28,12 +28,12 @@ int main()
     vector<string> ee;
     tuple<string,double,myType> ff;
     size_t pos=0;
-    pos=deserialize(t,aa,pos);
-    pos=deserialize(t,bb,pos);
-    pos=deserialize(t,cc,pos);
-    pos=deserialize(t,dd,pos);
-    pos=deserialize(t,ee,pos);
-    pos=deserialize(t,ff,pos);
+    pos=sf_deserialize(t,aa,pos);
+    pos=sf_deserialize(t,bb,pos);
+    pos=sf_deserialize(t,cc,pos);
+    pos=sf_deserialize(t,dd,pos);
+    pos=sf_deserialize(t,ee,pos);
+    pos=sf_deserialize(t,ff,pos);
     cout<<aa<<endl;
     cout<<bb<<endl;
     cout<<cc<<endl;

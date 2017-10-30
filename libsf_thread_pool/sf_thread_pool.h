@@ -8,6 +8,9 @@
 #include <deque>
 #include <mutex>
 #include <vector>
+#include <memory>
+#include <thread>
+#include <condition_variable>
 
 namespace skyfire
 {

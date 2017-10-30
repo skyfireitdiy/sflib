@@ -1,5 +1,4 @@
 #include "sf_watch_time.h"
-#include <windows.h>
 
 skyfire::sf_watch_time<int> wc;
 using pt = skyfire::check_point<int>;
@@ -24,7 +23,7 @@ void func1()
 void func2()
 {
 	pt p(4, wc);
-	Sleep(1000);
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
 int main()

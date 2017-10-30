@@ -1,4 +1,4 @@
-#include "serialize.h"
+#include "sf_serialize.h"
 
 skyfire::byte_array skyfire::operator+(skyfire::byte_array b1,const skyfire::byte_array &b2)
 {

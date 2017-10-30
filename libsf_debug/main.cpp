@@ -6,12 +6,12 @@ sf_debug<> sflog;
 
 int main()
 {
-	//ÏÂÃæÁ½¾äË³Ğò²»ÄÜµßµ¹
-	//´ò¿ªÈÕÖ¾¿ª¹Ø
+	//ä¸‹é¢ä¸¤å¥é¡ºåºä¸èƒ½é¢ å€’
+	//æ‰“å¼€æ—¥å¿—å¼€å…³
 	sflog.set_out_to_file(true);
-	//ÉèÖÃÈÕÖ¾ÎÄ¼ş
+	//è®¾ç½®æ—¥å¿—æ–‡ä»¶
 	sflog.set_debug_file("runlog.txt");
-	sflog.sf_logout("hello", "ÕâÊÇ¶àÌõÑİÊ¾", 666, 5.6, 5.7f, 9L);
+	sflog.sf_logout("hello", "è¿™æ˜¯å¤šæ¡æ¼”ç¤º", 666, 5.6, 5.7f, 9L);
 	sflog.sf_logout(5);
-	sflog.sf_track("´òÓ¡ÔÚµ÷ÊÔÆ÷ÖĞ", 666);
+	sflog.sf_track("æ‰“å°åœ¨è°ƒè¯•å™¨ä¸­", 666);
 }

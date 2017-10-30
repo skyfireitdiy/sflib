@@ -232,7 +232,11 @@ namespace skyfire
 			auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 			tm tm_d;
 			tm *ptm = &tm_d;
+#ifdef _MSC_VER
 			localtime_s(ptm, &tt);
+#else
+			ptm=localtime(&tt);
+#endif
 #if 0
 			//sprint_f无法完成格式化，而sprintf可以，Why？
 			char tmp[60] = { 0 };
