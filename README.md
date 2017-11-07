@@ -444,3 +444,52 @@ the end
 yyyyyy
 ```
 
+## libsf_any
+
+可以赋任何值的any类
+
+代码示例：
+
+```cpp
+#include "sf_any.h"
+#include <iostream>
+#include <vector>
+#include <string>
+
+
+using namespace skyfire;
+using namespace std;
+
+
+struct A
+{
+    int a;
+    int b;
+};
+
+void func(int t,A u)
+{
+    cout<<t<<endl;
+    cout<<u.a<<endl;
+    cout<<u.b<<endl;
+}
+
+int main()
+{
+    vector<sf_any> arr;
+    arr.push_back(5);
+    arr.push_back(5.6);
+    arr.push_back(A{59,9});
+
+    func(arr[0],arr[2]);
+}
+```
+
+代码输出：
+
+```
+5
+59
+9
+```
+
