@@ -31,6 +31,8 @@ int main() {
     if(!server->listen(ip,port,acc_cb,std::bind(recv_cb, server, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),close_cb))
     {
         std::cout<<"listen error"<<std::endl;
+        system("pause");
+        return -1;
     }
     std::cout<<"listen ok"<<std::endl;
     system("pause");
