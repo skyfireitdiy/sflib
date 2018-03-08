@@ -26,7 +26,7 @@ class sf_empty_class
 {};
 
 //提供基类链，提供默认sf_empty_class作为模板参数，方便实例化
-template<typename _Caller_Class = sf_empty_class, typename _Base_Class = sf_empty_class>
+template<typename _Base_Class = sf_empty_class>
 class sf_debug :public _Base_Class
 {
 public:
