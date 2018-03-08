@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
+
+project(sflib VERSION 0.1.0 LANGUAGES CXX)
+
+add_subdirectory(libsf_any)
+add_subdirectory(libsf_debug)
+add_subdirectory(libsf_empty_class)
+add_subdirectory(libsf_finally)
+add_subdirectory(libsf_range)
+add_subdirectory(libsf_serialize)
+add_subdirectory(libsf_signal)
+add_subdirectory(libsf_single_instance)
+add_subdirectory(libsf_tcp)
+add_subdirectory(libsf_thread_pool)
+add_subdirectory(libsf_tri_type)
+add_subdirectory(libsf_watch_time)
