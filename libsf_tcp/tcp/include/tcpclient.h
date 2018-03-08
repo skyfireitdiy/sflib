@@ -1,11 +1,13 @@
-#ifndef TCP_TCPCLIENT_H
-#define TCP_TCPCLIENT_H
+#pragma once
 
 #include <winsock2.h>
 #include <string>
 #include <functional>
 #include <memory>
 #include "tcputils.h"
+
+namespace skyfire
+{
 
 class tcpclient : no_copy
 {
@@ -24,5 +26,4 @@ public:
     void close();
 };
 
-
-#endif //TCP_TCPCLIENT_H
+}

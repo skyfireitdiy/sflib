@@ -1,5 +1,4 @@
-#ifndef TCP_TCPSERVER_H
-#define TCP_TCPSERVER_H
+#pragma once
 
 #include <winsock2.h>
 #include <string>
@@ -9,6 +8,8 @@
 #include <map>
 #include "tcputils.h"
 
+namespace skyfire
+{
 class tcpserver : no_copy
 {
 private:
@@ -26,4 +27,5 @@ public:
     void close();
     bool send(SOCKET sock,int type, const bytearray_t& data);
 };
-#endif
+
+}

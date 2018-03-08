@@ -1,12 +1,10 @@
-//
-// Created by wangmaobin on 2018/3/7.
-//
-
-#ifndef TCP_TCPUTILS_H
-#define TCP_TCPUTILS_H
+#pragma once
 
 #include <vector>
 #include <cassert>
+
+namespace skyfire
+{
 
 constexpr size_t BUFFER_SIZE = 4096;
 using bytearray_t = std::vector<char>;
@@ -53,4 +51,5 @@ typename std::enable_if<std::is_pod<T>::value,T>::type take_pkg(const bytearray_
     return ret;
 }
 
-#endif //TCP_TCPUTILS_H
+}
+

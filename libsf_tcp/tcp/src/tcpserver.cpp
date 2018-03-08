@@ -1,6 +1,9 @@
 #include "../include/tcpserver.h"
 #include <thread>
 
+namespace skyfire
+{
+
 tcpserver::tcpserver()
 {
     WSADATA wsa_data{};
@@ -124,4 +127,6 @@ tcpserver::~tcpserver()
 std::shared_ptr<tcpserver> tcpserver::make_server()
 {
     return std::make_shared<tcpserver>();
+}
+
 }

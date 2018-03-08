@@ -1,6 +1,8 @@
 #include <iostream>
 #include "tcpclient.h"
 
+using namespace skyfire;
+
 void recv_cb(const pkg_header_t& header ,const bytearray_t& data)
 {
     std::cout<<"recv : "<< ba2str(data) << "  type : " << header.type << std::endl;

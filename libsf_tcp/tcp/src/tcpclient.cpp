@@ -6,6 +6,9 @@
 #include "../include/tcpclient.h"
 #include <thread>
 
+namespace skyfire
+{
+
 tcpclient::tcpclient()
 {
     WSADATA wsa_data{};
@@ -105,4 +108,6 @@ bool tcpclient::send(int type,const bytearray_t &data) {
 std::shared_ptr<tcpclient> tcpclient::make_client()
 {
     return std::make_shared<tcpclient>();
+}
+
 }

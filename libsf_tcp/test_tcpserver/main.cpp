@@ -2,6 +2,8 @@
 #include <memory>
 #include "tcpserver.h"
 
+using namespace skyfire;
+
 void acc_cb(SOCKET sock)
 {
     std::cout<<"new connection"<<std::endl;
