@@ -1,4 +1,3 @@
-
 #include "sf_eventloop.h"
 
 namespace skyfire

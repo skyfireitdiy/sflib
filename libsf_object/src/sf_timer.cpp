@@ -1,5 +1,4 @@
 #include "sf_timer.h"
-#include <chrono>
 
 namespace skyfire
 {
@@ -10,23 +9,26 @@ namespace skyfire
             return;
         }
         running__ = true;
-        while(true)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-            if(running__)
-            {
-                timeout();
-                if(once)
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
-        }
-        running__ = false;
+        std::thread([=]()
+                    {
+                        while (true)
+                        {
+                            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+                            if (running__)
+                            {
+                                timeout();
+                                if (once)
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        running__ = false;
+                    }).detach();
     }
 
     void sf_timer::stop()

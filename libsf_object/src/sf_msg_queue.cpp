@@ -41,4 +41,9 @@ namespace skyfire
     }
 
 
+    sf_msg_queue::sf_msg_queue()
+    {
+
+    }
+
 }

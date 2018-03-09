@@ -12,6 +12,10 @@ add_library(sf_object SHARED src/sf_object.cpp include/sf_object.h src/sf_msg_qu
 add_library(sf_object_static STATIC src/sf_object.cpp include/sf_object.h src/sf_msg_queue.cpp include/sf_msg_queue.h src/sf_eventloop.cpp include/sf_eventloop.h src/sf_timer.cpp include/sf_timer.h)
 
 install(FILES "${PROJECT_SOURCE_DIR}/include/sf_object.h" DESTINATION include)
+install(FILES "${PROJECT_SOURCE_DIR}/include/sf_eventloop.h" DESTINATION include)
+install(FILES "${PROJECT_SOURCE_DIR}/include/sf_msg_queue.h" DESTINATION include)
+install(FILES "${PROJECT_SOURCE_DIR}/include/sf_timer.h" DESTINATION include)
+
 
 install(TARGETS sf_object sf_object_static
         RUNTIME DESTINATION bin
