@@ -4,7 +4,7 @@
 
 #pragma once
 #include <mutex>
-#include "../libsf_empty_class/sfempty_class.h"
+#include "sf_empty_class.h"
 
 /// @namespace	skyfire
 ///
@@ -99,6 +99,9 @@ namespace skyfire
 /// @param	ClassName	Name of the class.
 
 #define SF_SINGLE_TON(ClassName)								\
+ClassName(const ClassName&) = delete;							\
+ClassName(ClassName&&) = delete;								\
+ClassName& operator=(const ClassName&) = delete;				\
 static ClassName* get_instance()								\
 {																\
 	static std::mutex init_mutex;								\
