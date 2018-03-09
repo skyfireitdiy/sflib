@@ -12,8 +12,8 @@
 #define SF_REG_SIGNAL(name,...)                                                             \
 public:                                                                                     \
 std::vector<std::pair<std::function<void(__VA_ARGS__)>, bool>> __##name##_func_vec__;       \
-template<typename...ARGS>                                                                   \
-void name(ARGS... args) {                                                                   \
+template<typename...__SF_OBJECT_ARGS__>                                                     \
+void name(__SF_OBJECT_ARGS__... args) {                                                     \
     for (auto &p : __##name##_func_vec__)                                                   \
     {                                                                                       \
         if (p.second)                                                                       \
