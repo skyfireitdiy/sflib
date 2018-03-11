@@ -502,14 +502,14 @@ server代码示例：
 ```cpp
 #include <iostream>
 #include <memory>
-#include "tcpserver.h"
+#include "sf_tcpserver.h"
 
 void acc_cb(SOCKET sock)
 {
     std::cout<<"new connection"<<std::endl;
 }
 
-void recv_cb(std::shared_ptr<tcpserver> server, SOCKET sock,const pkg_header_t& header, const bytearray_t& data)
+void recv_cb(std::shared_ptr<sf_tcpserver> server, SOCKET sock,const pkg_header_t& header, const bytearray_t& data)
 {
     auto str = ba2str(data);
     std::cout<<"recv : "<< str << "  type : " << header.type << std::endl;
@@ -525,7 +525,7 @@ void close_cb(SOCKET sock)
 int main() {
     std::string ip;
     unsigned short port;
-    auto server = tcpserver::make_server();
+    auto server = sf_tcpserver::make_server();
     std::cout<<"IP:"<<std::flush;
     std::cin>>ip;
     std::cout<<"port:"<<std::flush;
@@ -547,7 +547,7 @@ client代码示例：
 
 ```cpp
 #include <iostream>
-#include "tcpclient.h"
+#include "sf_tcpclient.h"
 
 void recv_cb(const pkg_header_t& header ,const bytearray_t& data)
 {
@@ -562,7 +562,7 @@ void close_cb()
 int main() {
     std::string ip;
     unsigned short port;
-    auto client = tcpclient::make_client();
+    auto client = sf_tcpclient::make_client();
     std::cout<<"server IP:"<<std::flush;
     std::cin>>ip;
     std::cout<<"server port:"<<std::flush;

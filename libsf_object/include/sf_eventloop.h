@@ -19,9 +19,60 @@ namespace skyfire
         std::condition_variable cond__;
     public:
         SF_SINGLE_TON(sf_eventloop);
-        void exec();
-        void wake();
-        void quit();
+        void exec(){
+            if(running__)
+            {
+                while(true)
+                {
+                    if(running__ == false)
+                    {
+                        return;
+                    }
+                    std::unique_lock<std::mutex> lck(mu_cond__);
+                    cond__.wait(lck);
+                }
+            }
+            running__ = true;
+            __p_msg_queue__->clear();
+            while(true)
+            {
+                if(running__ == false)
+                {
+                    break;
+                }
+                if(__p_msg_queue__->empty())
+                {
+                    std::unique_lock<std::mutex> lck(mu_cond__);
+                    cond__.wait(lck);
+                }
+                if(!__p_msg_queue__->empty())
+                {
+                    auto func = __p_msg_queue__->take();
+                    if(!func)
+                    {
+                        running__ = false;
+                        break;
+                    }
+                    else
+                    {
+                        func();
+                    }
+                }
+            }
+        }
+
+
+        void wake()
+        {
+            cond__.notify_all();
+        }
+
+
+        void quit()
+        {
+            running__ = false;
+            wake();
+        }
     };
 
 }
