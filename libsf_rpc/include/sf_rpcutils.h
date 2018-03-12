@@ -52,6 +52,7 @@ ret_type disname(__SF_RPC_ARGS__ ... args)                                      
     std::string id_str;                                                                                                         \
     size_t pos = sf_deserialize(__data__, id_str, 0);                                                                           \
     sf_deserialize(__data__, ret, pos);                                                                                         \
+    __back_finished__ = false;                                                                                                  \
     __read_cond__.notify_one();                                                                                                 \
     return ret;                                                                                                                 \
 }

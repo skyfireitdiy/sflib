@@ -44,7 +44,6 @@ namespace skyfire
             __back_cond__.notify_one();
             std::unique_lock<std::mutex> lck(__read_mu__);
             __read_cond__.wait(lck);
-            __back_finished__ = false;
         }
     public:
         sf_rpcclient()

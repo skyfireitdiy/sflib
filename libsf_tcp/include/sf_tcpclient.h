@@ -14,37 +14,7 @@ namespace skyfire
     class sf_tcpclient : public sf_nocopy<sf_object<>>, public std::enable_shared_from_this<sf_tcpclient>
     {
         SF_REG_SIGNAL(connected);
-        
-        
-        //SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &);
-
-        public:                                                                                     
-        std::mutex __mu_data_coming__;                                                                 
-        std::vector<std::tuple<std::function<void( const pkg_header_t &, const byte_array &)>, bool, int>> __data_coming_func_vec__;
-        template<typename...__SF_OBJECT_ARGS__>                                                     
-        void data_coming(__SF_OBJECT_ARGS__... args) {
-            std::lock_guard<std::mutex> lck(__mu_data_coming__);
-            std::cout<<"size:"<<__data_coming_func_vec__.size()<<std::endl;
-            for (auto &p : __data_coming_func_vec__)                                                   
-            {
-                std::cout<<"num:"<<0<<std::endl;
-                if (std::get<1>(p))                                                                 
-                {                                                                                   
-                    std::thread([=]() {                                                             
-                        std::get<0>(p)(args...);
-                    }).detach();                                                                    
-                }                                                                                   
-                else                                                                                
-                {                                                                                   
-                    std::thread([=](){                                                              
-                        __p_msg_queue__->add_msg(this, std::bind(std::get<0>(p),args...));          
-                        __p_eventloop__->wake();                                                    
-                    }).detach();                                                                    
-                }                                                                                   
-            }                                                                                       
-        }                                                                                           
-        
-        
+        SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &);
         SF_REG_SIGNAL(closed);
     private:
         bool inited__ = false;

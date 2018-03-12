@@ -8,8 +8,6 @@
 #include <tuple>
 #include <memory>
 
-#include <iostream>
-
 #ifdef SF_RPC_CLIENT
 #error You cannot include 'sf_rpcserver.h' and 'sf_rpcclient.h' at this same time
 #endif
@@ -43,7 +41,6 @@ namespace skyfire
         template <typename _Type>
         void __send_back(SOCKET sock, int id_code, const std::string& id_str, _Type data)
         {
-            std::cout<<"return id:"<<id_str<<" value:"<<data<<std::endl;
             __tcp_server__->send(sock, id_code, sf_serialize(id_str)+sf_serialize(data));
         }
 
@@ -53,7 +50,6 @@ namespace skyfire
             std::string id;
             byte_array param;
             size_t pos = sf_deserialize(data, id, 0);
-            std::cout<<"called:"<<id<<std::endl;
             __rpc_callback__(sock, header.type, id, byte_array(data.begin() + pos, data.end()));
         }
 

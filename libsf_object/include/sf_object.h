@@ -8,8 +8,6 @@
 #include "sf_msg_queue.h"
 #include "sf_eventloop.h"
 
-#include <iostream>
-
 #define SF_REG_SIGNAL(name,...)                                                             \
 public:                                                                                     \
 std::mutex __mu_##name##__;                                                                 \
@@ -63,7 +61,6 @@ namespace skyfire
                 bind_id = rand();
             }
             vec.push_back(std::make_tuple(func, mul_thread, bind_id));
-            std::cout<<"bind id:"<<bind_id<<std::endl;
             return bind_id;
         }
 
@@ -71,7 +68,6 @@ namespace skyfire
         void __sf_unbind_helper(std::mutex &mu,_VectorType &vec, int bind_id)
         {
             std::lock_guard<std::mutex> lck(mu);
-            std::cout<<"unbind id:"<<bind_id<<std::endl;
             std::remove_if(vec.begin(),vec.end(),[=](auto p){
                 return std::get<2>(p) == bind_id;
             });

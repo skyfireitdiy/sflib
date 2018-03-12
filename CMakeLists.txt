@@ -45,8 +45,8 @@ install(FILES ${headers} DESTINATION include)
 
 include_directories(test)
 
-add_executable(server_main test/server_main.cpp ${headers})
-add_executable(client_main test/client_main.cpp ${headers})
+add_executable(server_main test/server_main.cpp ${headers} test/rpc_declare.h)
+add_executable(client_main test/client_main.cpp ${headers} test/rpc_declare.h)
 
 
 target_link_libraries(server_main ws2_32)
