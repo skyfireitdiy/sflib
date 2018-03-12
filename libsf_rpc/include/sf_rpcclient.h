@@ -77,7 +77,7 @@ namespace skyfire
                 std::unique_lock<std::mutex> lck(__back_mu__);
                 __back_cond__.wait(lck);
             }
-            ret_type ret;
+            _Ret ret;
             std::string id_str;
             size_t pos = sf_deserialize(__data__, id_str, 0);
             sf_deserialize(__data__, ret, pos);
