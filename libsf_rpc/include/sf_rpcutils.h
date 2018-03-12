@@ -32,8 +32,8 @@
 template <typename ... __SF_RPC_ARGS__>                                                                                         \
 ret_type disname(__SF_RPC_ARGS__ ... args)                                                                                      \
 {                                                                                                                               \
-    std::lock_guard<std::mutex> lck(__call_mu__);                                                                               \
     static_assert(std::is_same<std::tuple<__VA_ARGS__>,std::tuple<__SF_RPC_ARGS__...>>::value);                                 \
+    std::lock_guard<std::mutex> lck(__call_mu__);                                                                               \
     std::tuple<__SF_RPC_ARGS__...> param{args...};                                                                              \
     int id_code = rand();                                                                                                       \
     pkg_header_t header;                                                                                                        \
