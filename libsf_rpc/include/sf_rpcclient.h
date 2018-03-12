@@ -14,28 +14,40 @@
 
 namespace skyfire
 {
+
+    struct rpc_struct
+    {
+        pkg_header_t header;
+        byte_array data;
+        std::mutex back_mu;
+        std::condition_variable back_cond;
+        std::atomic<bool> back_finished;
+        bool is_async;
+        std::function<void(const byte_array&)> async_callback;
+    };
+
     template <typename _BaseClass = sf_empty_class>
     class sf_rpcclient : public sf_nocopy<_BaseClass>
     {
     protected:
         std::shared_ptr<sf_tcpclient> __tcp_client__ = sf_tcpclient::make_client();
-        pkg_header_t __header__;
-        byte_array  __data__;
-        std::mutex __back_mu__;
-        std::mutex __call_mu__;
-        std::condition_variable __back_cond__;
-        std::atomic<bool> __back_finished__ {false};
-        std::mutex __read_mu__;
-        std::condition_variable __read_cond__;
+        std::map<int, std::shared_ptr<rpc_struct>> __rpc_data__;
 
         void __back_callback(const pkg_header_t& header_t, const byte_array& data_t)
         {
-            __header__ = header_t;
-            __data__ = data_t;
-            __back_finished__ = true;
-            __back_cond__.notify_one();
-            std::unique_lock<std::mutex> lck(__read_mu__);
-            __read_cond__.wait(lck);
+            int call_id = header_t.type;
+            if(__rpc_data__[call_id]->is_async)
+            {
+                __rpc_data__[call_id]->async_callback(data_t);
+                __rpc_data__.erase(call_id);
+            }
+            else
+            {
+                __rpc_data__[call_id]->header = header_t;
+                __rpc_data__[call_id]->data = data_t;
+                __rpc_data__[call_id]->back_finished = true;
+                __rpc_data__[call_id]->back_cond.notify_one();
+            }
         }
     public:
         sf_rpcclient()
@@ -60,30 +72,49 @@ namespace skyfire
         }
 
         template<typename _Ret, typename ... __SF_RPC_ARGS__>
-        _Ret call(const std::string& id, const __SF_RPC_ARGS__ &... args)
+        _Ret call(const std::string& func_id, const __SF_RPC_ARGS__ &... args)
         {
-            std::lock_guard<std::mutex> lck(__call_mu__);
             std::tuple<__SF_RPC_ARGS__...> param{args...};
-            int id_code = rand();
+            int call_id = rand();
             pkg_header_t header;
             byte_array data;
-            std::condition_variable cond_coming;
-            std::mutex mu_coming;
-            std::atomic<bool> finished{false};
-            std::mutex mu_finish;
-            __tcp_client__->send(id_code, sf_serialize(std::string(id)) + sf_serialize(param));
-            if (!__back_finished__)
+
+            __rpc_data__[call_id] = std::make_shared<rpc_struct>();
+            __rpc_data__[call_id]->is_async = false;
+            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
+            if (!__rpc_data__[call_id]->back_finished)
             {
-                std::unique_lock<std::mutex> lck(__back_mu__);
-                __back_cond__.wait(lck);
+                std::unique_lock<std::mutex> lck(__rpc_data__[call_id]->back_mu);
+                __rpc_data__[call_id]->back_cond.wait(lck);
             }
             _Ret ret;
             std::string id_str;
-            size_t pos = sf_deserialize(__data__, id_str, 0);
-            sf_deserialize(__data__, ret, pos);
-            __back_finished__ = false;
-            __read_cond__.notify_one();
+            size_t pos = sf_deserialize(__rpc_data__[call_id]->data, id_str, 0);
+            sf_deserialize(__rpc_data__[call_id]->data, ret, pos);
+            __rpc_data__.erase(call_id);
             return ret;
+        }
+
+        template<typename _Ret, typename ... __SF_RPC_ARGS__>
+        _Ret async_call(const std::string& func_id,
+                        std::function<void(_Ret)> rpc_callback,
+                        const __SF_RPC_ARGS__& ...args
+        )
+        {
+            std::tuple<__SF_RPC_ARGS__...> param{args...};
+            int call_id = rand();
+            pkg_header_t header;
+            byte_array data;
+            __rpc_data__[call_id] = std::make_shared<rpc_struct>();
+            __rpc_data__[call_id]->is_async = true;
+            __rpc_data__[call_id]->async_callback = [=](const byte_array& data){
+                _Ret ret;
+                std::string id_str;
+                size_t pos = sf_deserialize(data, id_str, 0);
+                sf_deserialize(data, ret, pos);
+                rpc_callback(ret);
+            };
+            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
         }
     };
 }
