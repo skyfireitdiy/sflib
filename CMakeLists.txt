@@ -20,6 +20,7 @@ include_directories(
         libsf_tri_type/include
         libsf_watch_time/include
         libsf_type/include
+        libsf_meta/include
 )
 
 file(GLOB headers
@@ -38,6 +39,7 @@ file(GLOB headers
         libsf_tri_type/include/*.h
         libsf_watch_time/include/*.h
         libsf_type/include/*.h
+        libsf_meta/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -45,8 +47,8 @@ install(FILES ${headers} DESTINATION include)
 
 include_directories(test)
 
-add_executable(server_main test/server_main.cpp ${headers} test/rpc_declare.h)
-add_executable(client_main test/client_main.cpp ${headers} test/rpc_declare.h)
+add_executable(server_main test/server_main.cpp ${headers})
+add_executable(client_main test/client_main.cpp ${headers})
 
 
 target_link_libraries(server_main ws2_32)

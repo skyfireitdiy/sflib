@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "sf_tcpclient.h"
 #include "sf_nocopy.h"
 #include "sf_serialize.h"
@@ -12,13 +11,6 @@
 #include <mutex>
 #include <condition_variable>
 
-#ifdef SF_RPC_SERVER
-#error You cannot include 'sf_rpcserver.h' and 'sf_rpcclient.h'
-#endif
-
-#define SF_RPC_CLIENT
-
-#include "sf_rpcutils.h"
 
 namespace skyfire
 {
@@ -66,7 +58,32 @@ namespace skyfire
         {
             __tcp_client__->close();
         }
+
+        template<typename _Ret, typename ... __SF_RPC_ARGS__>
+        _Ret call(const std::string& id, const __SF_RPC_ARGS__ &... args)
+        {
+            std::lock_guard<std::mutex> lck(__call_mu__);
+            std::tuple<__SF_RPC_ARGS__...> param{args...};
+            int id_code = rand();
+            pkg_header_t header;
+            byte_array data;
+            std::condition_variable cond_coming;
+            std::mutex mu_coming;
+            std::atomic<bool> finished{false};
+            std::mutex mu_finish;
+            __tcp_client__->send(id_code, sf_serialize(std::string(id)) + sf_serialize(param));
+            if (!__back_finished__)
+            {
+                std::unique_lock<std::mutex> lck(__back_mu__);
+                __back_cond__.wait(lck);
+            }
+            ret_type ret;
+            std::string id_str;
+            size_t pos = sf_deserialize(__data__, id_str, 0);
+            sf_deserialize(__data__, ret, pos);
+            __back_finished__ = false;
+            __read_cond__.notify_one();
+            return ret;
+        }
     };
 }
-
-#include "sf_rpcutils.h"
