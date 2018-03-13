@@ -27,7 +27,6 @@ void name(__SF_OBJECT_ARGS__... args) {                                         
         {                                                                                   \
             std::thread([=](){                                                              \
                 __p_msg_queue__->add_msg(this, std::bind(std::get<0>(p),args...));          \
-                __p_eventloop__->wake();                                                    \
             }).detach();                                                                    \
         }                                                                                   \
     }                                                                                       \
@@ -80,7 +79,6 @@ namespace skyfire
 
     protected:
         sf_msg_queue* __p_msg_queue__ = sf_msg_queue::get_instance();
-        sf_eventloop* __p_eventloop__ = sf_eventloop::get_instance();
     };
 
 }

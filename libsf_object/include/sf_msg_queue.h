@@ -6,6 +6,7 @@
 #include <map>
 #include <mutex>
 #include <algorithm>
+#include <condition_variable>
 
 namespace skyfire
 {
@@ -17,11 +18,15 @@ namespace skyfire
         sf_msg_queue(){}
         std::list<std::pair<void*,std::function<void()>>> func_data__;
         std::mutex mu_func_data_op__;
+
+        std::mutex wait_mu__;
+        std::condition_variable wait_cond__;
     public:
         void add_msg(void *id, std::function<void()> func)
         {
             std::lock_guard<std::mutex> lck(mu_func_data_op__);
             func_data__.push_back({id, func});
+            wait_cond__.notify_all();
         }
 
 
@@ -55,6 +60,17 @@ namespace skyfire
         bool empty()
         {
             return func_data__.empty();
+        }
+
+        void wait_msg()
+        {
+            std::unique_lock<std::mutex> lck(wait_mu__);
+            wait_cond__.wait(lck);
+        }
+
+        void add_empty_msg()
+        {
+            wait_cond__.notify_all();
         }
     };
 }

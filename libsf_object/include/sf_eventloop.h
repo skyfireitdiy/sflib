@@ -6,34 +6,21 @@
 
 #include "sf_single_instance.h"
 #include "sf_msg_queue.h"
+#include "sf_nocopy.h"
 
 namespace skyfire
 {
-    class sf_eventloop
+    class sf_eventloop : sf_nocopy<>
     {
     private:
-        sf_eventloop(){}
         sf_msg_queue* __p_msg_queue__ = sf_msg_queue::get_instance();
-        std::atomic<bool> running__ { false };
-        std::mutex mu_cond__;
-        std::condition_variable cond__;
+        std::atomic<int> running__ { 0 };
     public:
-        SF_SINGLE_TON(sf_eventloop);
+        sf_eventloop(){
+
+        }
         void exec(){
-            if(running__)
-            {
-                while(true)
-                {
-                    if(running__ == false)
-                    {
-                        return;
-                    }
-                    std::unique_lock<std::mutex> lck(mu_cond__);
-                    cond__.wait(lck);
-                }
-            }
             running__ = true;
-            __p_msg_queue__->clear();
             while(true)
             {
                 if(running__ == false)
@@ -42,8 +29,7 @@ namespace skyfire
                 }
                 if(__p_msg_queue__->empty())
                 {
-                    std::unique_lock<std::mutex> lck(mu_cond__);
-                    cond__.wait(lck);
+                    __p_msg_queue__->wait_msg();
                 }
                 if(!__p_msg_queue__->empty())
                 {
@@ -61,10 +47,14 @@ namespace skyfire
             }
         }
 
+        void clear()
+        {
+            __p_msg_queue__->clear();
+        }
 
         void wake()
         {
-            cond__.notify_all();
+            __p_msg_queue__->add_empty_msg();
         }
 
 
@@ -74,5 +64,6 @@ namespace skyfire
             wake();
         }
     };
+
 
 }

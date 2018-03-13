@@ -29,5 +29,6 @@ int main()
     server->reg_rpc_func("sort"s, sort_vec);
 
     server->listen("127.0.0.1",1234);
-    sf_eventloop::get_instance()->exec();
+    sf_eventloop eventloop;
+    eventloop.exec();
 }
