@@ -102,19 +102,19 @@ namespace skyfire
 	};
 
 	template<typename T>
-	sf_range_impl__<T> range(const T &end)
+	sf_range_impl__<T> sf_range(const T &end)
 	{
 		return { {},end,1 };
 	}
 
 	template<typename T>
-	sf_range_impl__<T> range(const T&begin, const T &end)
+	sf_range_impl__<T> sf_range(const T &begin, const T &end)
 	{
 		return { begin,end,1 };
 	}
 
 	template<typename T>
-	auto range(const T&begin, const T &end ,const T& step)
+	auto sf_range(const T &begin, const T &end, const T &step)
 	{
 		return sf_range_impl__<decltype(begin + step)>{begin, end, step};
 	}

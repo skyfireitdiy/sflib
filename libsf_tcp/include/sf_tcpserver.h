@@ -9,66 +9,114 @@
 #include "sf_tcputils.h"
 #include "sf_nocopy.h"
 #include "sf_object.h"
+#include "sf_type.h"
+#include "sf_range.h"
+#include "sf_serialize.h"
 
 #include <iostream>
 
+using namespace std;
+
 namespace skyfire
 {
-    class sf_tcpserver2 : public sf_nocopy<sf_object<>>, public std::enable_shared_from_this<sf_tcpserver>
+
+
+    static constexpr size_t __buffer_size__ = 8 * 1024;
+
+    struct per_io_operation_data_t
     {
-        SF_REG_SIGNAL(new_connection,SOCKET);
-        SF_REG_SIGNAL(data_coming,SOCKET,const pkg_header_t&,const byte_array&);
-        SF_REG_SIGNAL(closed,SOCKET);
+        OVERLAPPED overlapped{};
+        WSABUF wsa_buffer{};
+        byte_array buffer;
+        DWORD data_trans_count{};
+        bool is_send{};
+    };
+
+    struct per_handle_data_t
+    {
+        SOCKET socket;
+    };
+
+
+    class sf_tcpserver : public sf_nocopy<sf_object<>>, public std::enable_shared_from_this<sf_tcpserver>
+    {
+    SF_REG_SIGNAL(new_connection, SOCKET);
+    SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
+    SF_REG_SIGNAL(closed, SOCKET);
+
     private:
         bool inited__ = false;
-        SOCKET server_sock__ = INVALID_SOCKET;
+
+        SOCKET listen_sock__ = INVALID_SOCKET;
+        HANDLE completion_port__ = INVALID_HANDLE_VALUE;
+        std::map<SOCKET, byte_array> sock_data_buffer__;
 
     public:
+
+
+
         sf_tcpserver()
         {
+            DWORD ret;
             WSADATA wsa_data{};
+
             if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
             {
-                inited__ = false;
+                return;
+            }
+            completion_port__ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
+            if (completion_port__ == nullptr)
+            {
                 return;
             }
 
-            server_sock__ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-            if (server_sock__ == INVALID_SOCKET)
+            SYSTEM_INFO sys_info{};
+            GetSystemInfo(&sys_info);
+
+//            for (auto i : sf_range(sys_info.dwNumberOfProcessors * 2 + 1))
+//            {
+//                std::thread(std::bind(server_work_thread__, this, std::placeholders::_1), completion_port__).detach();
+//            }
+
+            std::thread(std::bind(server_work_thread__, this, std::placeholders::_1), completion_port__).detach();
+
+
+            listen_sock__ = WSASocket(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
+            if (listen_sock__ == INVALID_SOCKET)
             {
-                inited__ = false;
                 return;
             }
+
             inited__ = true;
         }
 
-        static std::shared_ptr <sf_tcpserver> make_server()
+
+        static std::shared_ptr<sf_tcpserver> make_server()
         {
             return std::make_shared<sf_tcpserver>();
         }
 
-
-        ~sf_tcpserver()
-        {
-            close();
-            WSACleanup();
-        }
-
-        bool listen(const std::string &ip,
-                    unsigned short port
-        )
+        bool listen(const std::string &ip, unsigned short port)
         {
             if (!inited__)
-                return false;
-            sockaddr_in address;
-            address.sin_family = AF_INET;
-            address.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
-            address.sin_port = htons(port);
-            if (::bind(server_sock__, reinterpret_cast<const sockaddr *>(&address), sizeof(address)) == SOCKET_ERROR)
             {
                 return false;
             }
-            if (::listen(server_sock__, SOMAXCONN) != 0)
+
+            DWORD ret;
+
+
+            sockaddr_in internet_addr{};
+            internet_addr.sin_family = AF_INET;
+            internet_addr.sin_addr.s_addr = inet_addr(ip.c_str());
+            internet_addr.sin_port = htons(port);
+
+            if (SOCKET_ERROR == ::bind(listen_sock__, reinterpret_cast<sockaddr*>(&internet_addr), sizeof(internet_addr)))
+            {
+                return false;
+            }
+
+            if (::listen(listen_sock__, SOMAXCONN) == SOCKET_ERROR)
             {
                 return false;
             }
@@ -77,64 +125,49 @@ namespace skyfire
                         {
                             while (true)
                             {
-                                sockaddr_in address;
-                                int address_len = sizeof(sockaddr_in);
-                                auto sock = ::accept(server_sock__, reinterpret_cast<sockaddr *>(&address),
-                                                     &address_len);
-                                if (sock == INVALID_SOCKET)
+                                SOCKET accept_socket;
+                                sockaddr_in addr;
+                                int addr_len = sizeof(addr);
+                                accept_socket = ::accept(listen_sock__,
+                                                         reinterpret_cast<sockaddr*>(&addr),
+                                                         &addr_len);
+                                if (accept_socket == INVALID_SOCKET)
                                 {
+                                    cout<<__LINE__<<endl;
                                     break;
                                 }
+
                                 std::thread([=]
                                             {
-                                                new_connection(sock);
+                                                new_connection(accept_socket);
                                             }).detach();
-                                std::thread([=]
-                                            {
-                                                byte_array recv_buffer(BUFFER_SIZE);
-                                                byte_array data;
-                                                pkg_header_t header;
-                                                while (true)
-                                                {
-                                                    auto len = ::recv(sock, recv_buffer.data(), BUFFER_SIZE, 0);
-                                                    if (len <= 0)
-                                                    {
-                                                        std::thread([=]
-                                                                    {
-                                                                        closed(sock);
-                                                                    }).detach();
-                                                        break;
-                                                    }
-                                                    data.insert(data.end(), recv_buffer.begin(),
-                                                                recv_buffer.begin() + len);
-                                                    size_t read_pos = 0;
-                                                    while (data.size() - read_pos >= sizeof(pkg_header_t))
-                                                    {
-                                                        memmove_s(&header, sizeof(header), data.data() + read_pos,
-                                                                  sizeof(header));
-                                                        if (data.size() - read_pos - sizeof(header) >= header.length)
-                                                        {
-                                                            std::thread([=]()
-                                                                        {
-                                                                            data_coming(sock, header, byte_array(
-                                                                                    data.begin() + read_pos +
-                                                                                    sizeof(header),
-                                                                                    data.begin() + read_pos +
-                                                                                    sizeof(header) + header.length));
-                                                                        }).detach();
-                                                            read_pos += sizeof(header) + header.length;
-                                                        }
-                                                        else
-                                                        {
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (read_pos != 0)
-                                                    {
-                                                        data.erase(data.begin(), data.begin() + read_pos);
-                                                    }
-                                                }
-                                            }).detach();
+
+                                auto *p_handle_data = reinterpret_cast<per_handle_data_t*>(GlobalAlloc(GPTR, sizeof(per_handle_data_t)));
+                                p_handle_data->socket = accept_socket;
+                                if (CreateIoCompletionPort((HANDLE) accept_socket, completion_port__,
+                                                           (ULONG_PTR) p_handle_data, 0) == nullptr)
+                                {
+                                    cout<<__LINE__<<endl;
+                                    break;
+                                }
+                                auto *p_io_data = reinterpret_cast<per_io_operation_data_t*>(GlobalAlloc(GPTR, sizeof(per_io_operation_data_t)));;
+                                ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+                                p_io_data->data_trans_count = 0;
+                                p_io_data->buffer.resize(__buffer_size__);
+                                p_io_data->is_send = false;
+                                p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
+                                p_io_data->wsa_buffer.len = __buffer_size__;
+                                DWORD tmp_int = 0;
+                                DWORD flags = 0;
+                                if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),
+                                            nullptr) ==
+                                    SOCKET_ERROR)
+                                {
+//                                    ::GlobalFree(p_handle_data);
+//                                    ::GlobalFree(p_io_data);
+//                                    cout<<"error"<<WSAGetLastError()<<endl;
+//                                    continue;
+                                }
                             }
                         }).detach();
             return true;
@@ -144,281 +177,130 @@ namespace skyfire
         {
             if (!inited__)
                 return;
-            closesocket(server_sock__);
-            server_sock__ = INVALID_SOCKET;
+            closesocket(listen_sock__);
+            listen_sock__ = INVALID_SOCKET;
         }
 
         bool send(SOCKET sock, int type, const byte_array &data)
         {
-            if (!inited__)
-                return false;
+            DWORD sendBytes;
+
             pkg_header_t header;
             header.type = type;
             header.length = data.size();
-            auto ret = ::send(sock, make_pkg(header).data(), sizeof(header), 0);
-            if (ret != sizeof(header))
-                return false;
-            return ::send(sock, data.data(), data.size(), 0) == data.size();
-        }
-    };
 
-
-
-
-
-    class sf_tcpserver : public sf_nocopy<sf_object<>>, public std::enable_shared_from_this<sf_tcpserver>
-    {
-
-
-    SF_REG_SIGNAL(new_connection, SOCKET);
-    SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
-    SF_REG_SIGNAL(closed, SOCKET);
-
-    private:
-        bool inited__ = false;
-
-
-        SOCKET listenSocket = INVALID_SOCKET;
-        HANDLE completionPort = INVALID_HANDLE_VALUE;
-
-    public:
-
-        constexpr size_t DataBuffSize = 8 * 1024;
-
-        typedef struct
-        {
-            OVERLAPPED overlapped;
-            WSABUF databuff;
-            CHAR buffer[DataBuffSize];
-            DWORD bytesSend;
-            DWORD bytesRecv;
-        } PER_IO_OPERATEION_DATA, *LPPER_IO_OPERATION_DATA;
-
-        typedef struct
-        {
-            SOCKET socket;
-        } PER_HANDLE_DATA, *LPPER_HANDLE_DATA;
-
-        sf_tcpserver()
-        {
-            DWORD ret;
-            WSADATA wsaData;
-            if (ret = WSAStartup(MAKEWORD(2,2), &wsaData) != 0)
+            auto p_io_data = reinterpret_cast<per_io_operation_data_t*>(GlobalAlloc(GPTR, sizeof(per_io_operation_data_t)));;
+            //ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+            p_io_data->buffer = make_pkg(header) + data;
+            p_io_data->data_trans_count = 0;
+            p_io_data->is_send = true;
+            p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
+            p_io_data->wsa_buffer.len = p_io_data->buffer.size();
+            if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
+                        nullptr) == SOCKET_ERROR)
             {
-                std::cout << "WSAStartup failed. Error:" << ret << std::endl;
-                return;
+//                ::GlobalFree(p_io_data);
+//                return false;
             }
-
-            completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
-            if (completionPort == NULL)
-            {
-                std::cout << "CreateIoCompletionPort failed. Error:" << GetLastError() << std::endl;
-                return;
-            }
-
-            SYSTEM_INFO mySysInfo;
-            GetSystemInfo(&mySysInfo);
-
-            DWORD threadID;
-            for (DWORD i = 0; i < (mySysInfo.dwNumberOfProcessors * 2 + 1); ++i)
-            {
-                std::thread(std::bind(ServerWorkThread, this, std::placeholders::_1), completionPort).detach();
-            }
-
-
-            SOCKET listenSocket = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
-            if (listenSocket == INVALID_SOCKET)
-            {
-                std::cout << " WSASocket( listenSocket ) failed. Error:" << GetLastError() << std::endl;
-                return;
-            }
-
-            inited__ = true;
+            return  true;
         }
 
-        bool listen(const std::string &ip, unsigned short DefaultPort)
+
+        ~sf_tcpserver() override
         {
-            if(!inited__)
-            {
-                return false;
-            }
-
-            LPPER_HANDLE_DATA pHandleData;
-            LPPER_IO_OPERATION_DATA pIoData;
-            DWORD recvBytes;
-            DWORD flags;
-            DWORD ret;
-
-
-            SOCKADDR_IN internetAddr;
-            internetAddr.sin_family = AF_INET;
-            internetAddr.sin_addr.s_addr = inet_addr(ip.c_str());
-            internetAddr.sin_port = htons(DefaultPort);
-
-            if (bind(listenSocket, (PSOCKADDR) &internetAddr, sizeof(internetAddr)) == SOCKET_ERROR)
-            {
-                std::cout << "Bind failed. Error:" << GetLastError() << std::endl;
-                return false;
-            }
-
-            if (::listen(listenSocket, 5) == SOCKET_ERROR)
-            {
-                std::cout << "listen failed. Error:" << GetLastError() << std::endl;
-                return 0;
-            }
-
-            // 开始死循环，处理数据
-            std::thread([=]()
-                        {
-                            while (1)
-                            {
-                                SOCKET acceptSocket = WSAAccept(listenSocket, NULL, NULL, NULL, 0);
-                                if (acceptSocket == SOCKET_ERROR)
-                                {
-                                    std::cout << "WSAAccept failed. Error:" << GetLastError() << std::endl;
-                                    return 0;
-                                }
-
-                                std::thread([=]
-                                            {
-                                                new_connection(acceptSocket);
-                                            }).detach();
-
-                                pHandleData = (LPPER_HANDLE_DATA) GlobalAlloc(GPTR, sizeof(PER_HANDLE_DATA));
-                                if (pHandleData == NULL)
-                                {
-                                    std::cout << "GlobalAlloc( HandleData ) failed. Error:" << GetLastError()
-                                              << std::endl;
-                                    return 0;
-                                }
-
-                                pHandleData->socket = acceptSocket;
-                                if (CreateIoCompletionPort((HANDLE) acceptSocket, completionPort,
-                                                           (ULONG_PTR) pHandleData, 0) == NULL)
-                                {
-                                    std::cout << "CreateIoCompletionPort failed. Error:" << GetLastError() << std::endl;
-                                    return 0;
-                                }
-
-                                pIoData = (LPPER_IO_OPERATION_DATA) GlobalAlloc(GPTR, sizeof(PER_IO_OPERATEION_DATA));
-                                if (pIoData == NULL)
-                                {
-                                    std::cout << "GlobalAlloc( IoData ) failed. Error:" << GetLastError() << std::endl;
-                                    return 0;
-                                }
-
-                                ZeroMemory(&(pIoData->overlapped), sizeof(pIoData->overlapped));
-                                pIoData->bytesSend = 0;
-                                pIoData->bytesRecv = 0;
-                                pIoData->databuff.len = DataBuffSize;
-                                pIoData->databuff.buf = pIoData->buffer;
-
-                                flags = 0;
-                                if (WSARecv(acceptSocket, &(pIoData->databuff), 1, &recvBytes, &flags,
-                                            &(pIoData->overlapped), NULL) ==
-                                    SOCKET_ERROR)
-                                {
-                                    if (WSAGetLastError() != ERROR_IO_PENDING)
-                                    {
-                                        std::cout << "WSARecv() failed. Error:" << GetLastError() << std::endl;
-                                        return 0;
-                                    } else
-                                    {
-                                        std::cout << "WSARecv() io pending" << std::endl;
-                                        return 0;
-                                    }
-                                }
-                            }
-                        }).detach();
-            return true;
+            close();
+            WSACleanup();
         }
 
-        void ServerWorkThread(LPVOID CompletionPortID)
+
+        void server_work_thread__(LPVOID completion_port_id)
         {
-            HANDLE complationPort = (HANDLE) CompletionPortID;
+            auto completion_port = (HANDLE) completion_port_id;
             DWORD bytesTransferred;
-            LPPER_HANDLE_DATA pHandleData = NULL;
-            LPPER_IO_OPERATION_DATA pIoData = NULL;
-            DWORD sendBytes = 0;
-            DWORD recvBytes = 0;
-            DWORD flags;
-            byte_array data;
+            per_handle_data_t *p_handle_data = nullptr;
+            per_io_operation_data_t *p_io_data = nullptr;
 
-            while (1)
+            DWORD tmp_int = 0;
+            DWORD flags = 0;
+
+            while (true)
             {
-                if (GetQueuedCompletionStatus(complationPort, &bytesTransferred, (PULONG_PTR) &pHandleData,
-                                              (LPOVERLAPPED *) &pIoData, INFINITE) == 0)
+                if (GetQueuedCompletionStatus(completion_port, &bytesTransferred, (PULONG_PTR) &p_handle_data,
+                                              (LPOVERLAPPED *) &p_io_data, WSA_INFINITE) == 0)
                 {
-                    std::cout << "GetQueuedCompletionStatus failed. Error:" << GetLastError() << std::endl;
-                    return;
+                    break;
                 }
-                // 检查数据是否已经传输完了
-                if (bytesTransferred == 0)
+                if(p_handle_data == nullptr || p_io_data== nullptr)
                 {
-                    std::cout << " Start closing socket..." << std::endl;
-                    if (CloseHandle((HANDLE) pHandleData->socket) == SOCKET_ERROR)
-                    {
-                        std::cout << "Close socket failed. Error:" << GetLastError() << std::endl;
-                        return;
-                    }
-
-                    GlobalFree(pHandleData);
-                    GlobalFree(pIoData);
+                    CloseHandle((HANDLE) p_handle_data->socket);
+                    std::thread([=]()
+                                {
+                                    closed(p_handle_data->socket);
+                                }).detach();
+                    ::GlobalFree(p_handle_data);
+                    ::GlobalFree(p_io_data);
+                    cout<<__LINE__<<endl;
                     continue;
                 }
-
-                // 检查管道里是否有数据
-                if (pIoData->bytesRecv == 0)
+                if (bytesTransferred == 0)
                 {
-                    pIoData->bytesRecv = bytesTransferred;
-                    pIoData->bytesSend = 0;
-                } else
-                {
-                    pIoData->bytesSend += bytesTransferred;
+                    CloseHandle((HANDLE) p_handle_data->socket);
+                    std::thread([=]()
+                                {
+                                    closed(p_handle_data->socket);
+                                }).detach();
+                    ::GlobalFree(p_handle_data);
+                    ::GlobalFree(p_io_data);
+                    cout<<__LINE__<<endl;
+                    continue;
                 }
-
-                // 数据没有发完，继续发送
-                if (pIoData->bytesRecv > pIoData->bytesSend)
+                if (p_io_data->is_send)
                 {
-                    ZeroMemory(&(pIoData->overlapped), sizeof(OVERLAPPED));
-                    pIoData->databuff.buf = pIoData->buffer + pIoData->bytesSend;
-                    pIoData->databuff.len = pIoData->bytesRecv - pIoData->bytesSend;
+                    p_io_data->data_trans_count += bytesTransferred;
 
-                    // 发送数据出去
-                    if (WSASend(pHandleData->socket, &(pIoData->databuff), 1, &sendBytes, 0, &(pIoData->overlapped),
-                                NULL) == SOCKET_ERROR)
+                    if (p_io_data->data_trans_count != p_io_data->buffer.size())
                     {
-                        if (WSAGetLastError() != ERROR_IO_PENDING)
+                        p_io_data->wsa_buffer.buf = p_io_data->buffer.data() + p_io_data->data_trans_count;
+                        p_io_data->wsa_buffer.len = p_io_data->buffer.size() - p_io_data->data_trans_count;
+                        tmp_int = 0;
+                        if (WSASend(p_handle_data->socket, &(p_io_data->wsa_buffer), 1, &tmp_int, 0,
+                                    &(p_io_data->overlapped),
+                                    nullptr) == SOCKET_ERROR)
                         {
-                            std::cout << "WSASend() failed. Error:" << GetLastError() << std::endl;
-                            return;
-                        } else
-                        {
-                            std::cout << "WSASend() failed. io pending. Error:" << GetLastError() << std::endl;
-                            return;
+                            CloseHandle((HANDLE) p_handle_data->socket);
+                            std::thread([=]()
+                                        {
+                                            closed(p_handle_data->socket);
+                                        }).detach();
+                            ::GlobalFree(p_handle_data);
+                            ::GlobalFree(p_io_data);
+                            cout<<__LINE__<<endl;
+                            continue;
                         }
                     }
-
-                    std::cout << "Send " << pIoData->buffer << std::endl;
                 }
                 else
                 {
-                    pkg_header_t header;
-                    data.insert(data.end(), pIoData->databuff.buf,
-                                pIoData->databuff.buf + pIoData->databuff.length);
+                    p_io_data->data_trans_count = bytesTransferred;
+                    p_io_data->buffer.resize(bytesTransferred);
+
+                    pkg_header_t header{};
+                    sock_data_buffer__[p_handle_data->socket].insert(sock_data_buffer__[p_handle_data->socket].end(),
+                                                                     p_io_data->buffer.begin(),
+                                                                     p_io_data->buffer.end());
                     size_t read_pos = 0;
-                    while (data.size() - read_pos >= sizeof(pkg_header_t))
+                    while (sock_data_buffer__.size() - read_pos >= sizeof(pkg_header_t))
                     {
-                        memmove_s(&header, sizeof(header), data.data() + read_pos,
+                        memmove_s(&header, sizeof(header), sock_data_buffer__[p_handle_data->socket].data() + read_pos,
                                   sizeof(header));
-                        if (data.size() - read_pos - sizeof(header) >= header.length)
+                        if (sock_data_buffer__.size() - read_pos - sizeof(header) >= header.length)
                         {
                             std::thread([=]()
                                         {
-                                            data_coming(pIoData->socket, header, byte_array(
-                                                    data.begin() + read_pos +
+                                            data_coming(p_handle_data->socket, header, byte_array(
+                                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
                                                     sizeof(header),
-                                                    data.begin() + read_pos +
+                                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
                                                     sizeof(header) + header.length));
                                         }).detach();
                             read_pos += sizeof(header) + header.length;
@@ -430,28 +312,33 @@ namespace skyfire
                     }
                     if (read_pos != 0)
                     {
-                        data.erase(data.begin(), data.begin() + read_pos);
+                        sock_data_buffer__[p_handle_data->socket].erase(
+                                sock_data_buffer__[p_handle_data->socket].begin(),
+                                sock_data_buffer__[p_handle_data->socket].begin() + read_pos);
                     }
 
-                    pIoData->bytesRecv = 0;
+                    ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+                    p_io_data->buffer.resize(__buffer_size__);
+                    p_io_data->data_trans_count = 0;
+                    p_io_data->is_send = false;
+                    p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
+                    p_io_data->wsa_buffer.len = __buffer_size__;
+
                     flags = 0;
 
-                    ZeroMemory(&(pIoData->overlapped), sizeof(OVERLAPPED));
-                    pIoData->databuff.len = DataBuffSize;
-                    pIoData->databuff.buf = pIoData->buffer;
-
-                    if (WSARecv(pHandleData->socket, &(pIoData->databuff), 1, &recvBytes, &flags,
-                                &(pIoData->overlapped), NULL) == SOCKET_ERROR)
+                    if (WSARecv(p_handle_data->socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags,
+                                &(p_io_data->overlapped), nullptr) == SOCKET_ERROR)
                     {
-                        if (WSAGetLastError() != ERROR_IO_PENDING)
-                        {
-                            std::cout << "WSARecv() failed. Error:" << GetLastError() << std::endl;
-                            return;
-                        } else
-                        {
-                            std::cout << "WSARecv() io pending" << std::endl;
-                            return;
-                        }
+//                        CloseHandle((HANDLE) p_handle_data->socket);
+//                        std::thread([=]()
+//                                    {
+//                                        closed(p_handle_data->socket);
+//                                    }).detach();
+//                        ::GlobalFree(p_handle_data);
+//                        ::GlobalFree(p_io_data);
+//                        cout<<"error"<<WSAGetLastError()<<endl;
+//                        cout<<__LINE__<<endl;
+                        continue;
                     }
                 }
             }
@@ -459,6 +346,7 @@ namespace skyfire
 
 
     };
+
 
 
 
