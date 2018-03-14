@@ -24,6 +24,9 @@ int main()
     }
     vector<int> data = {1,5,7,56,4,6,556,65,452,185,0,81,631};
     disp_vec(data);
+    cout<<"sync call"<<endl;
+    disp_vec(client->call<vector<int>>("sort"s, data));
+    cout<<"async call"<<endl;
     client->async_call<vector<int>>("sort"s, disp_vec, data);
     cout<<"hello world"<<endl;
     system("pause");
