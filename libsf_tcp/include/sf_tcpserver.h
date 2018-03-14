@@ -181,6 +181,7 @@ namespace skyfire
             listen_sock__ = INVALID_SOCKET;
             CloseHandle(completion_port__);
             completion_port__ = INVALID_HANDLE_VALUE;
+            sock_data_buffer__.clear();
         }
 
         bool send(SOCKET sock, int type, const byte_array &data)
@@ -240,6 +241,7 @@ namespace skyfire
                                 }).detach();
                     delete p_handle_data;
                     delete p_io_data;
+                    sock_data_buffer__.erase(p_handle_data->socket);
                     continue;
                 }
 
