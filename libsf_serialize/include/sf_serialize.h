@@ -156,6 +156,11 @@ namespace skyfire
         std::string _message;
     };
 
+    inline byte_array sf_serialize()
+    {
+        return byte_array();
+    }
+
     template<typename _Pod_Type>
     typename std::enable_if<std::is_pod<_Pod_Type>::value, byte_array>::type sf_serialize(const _Pod_Type &value)
     {
@@ -476,3 +481,5 @@ namespace skyfire
     }
 
 }
+
+

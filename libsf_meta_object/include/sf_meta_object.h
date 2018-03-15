@@ -49,8 +49,7 @@ namespace skyfire
         template <typename _Type, typename ... _Param>
         _Type * make_object(const std::string& type_name, _Param ... params)
         {
-            byte_array param;
-            ((param += sf_serialize(params)), ...);
+            byte_array param = sf_serialize(params...);
             void * ret = nullptr;
             for(auto &p : __func__vec__)
             {
