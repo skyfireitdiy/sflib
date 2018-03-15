@@ -21,6 +21,7 @@ include_directories(
         libsf_watch_time/include
         libsf_type/include
         libsf_meta/include
+        libsf_meta_object/include
 )
 
 file(GLOB headers
@@ -40,6 +41,7 @@ file(GLOB headers
         libsf_watch_time/include/*.h
         libsf_type/include/*.h
         libsf_meta/include/*.h
+        libsf_meta_object/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -49,6 +51,7 @@ include_directories(test)
 
 add_executable(server_main test/server_main.cpp ${headers})
 add_executable(client_main test/client_main.cpp ${headers})
+add_executable(sf_meta_object_test test/sf_meta_object_test.cpp ${headers})
 
 
 target_link_libraries(server_main ws2_32)

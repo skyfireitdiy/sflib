@@ -22,19 +22,6 @@ namespace skyfire
 
         std::vector<std::function<void(SOCKET, int, const std::string &,const byte_array&)>> __func__vec__;
 
-        template<typename Function, typename Tuple, std::size_t... Index>
-        decltype(auto) __invoke_impl(Function&& func, Tuple&& t, std::index_sequence<Index...>)
-        {
-            return func(std::get<Index>(std::forward<Tuple>(t))...);
-        }
-
-        template<typename Function, typename Tuple>
-        decltype(auto) __invoke(Function&& func, Tuple&& t)
-        {
-            constexpr auto size = std::tuple_size<typename std::decay<Tuple>::type>::value;
-            return __invoke_impl(std::forward<Function>(func), std::forward<Tuple>(t), std::make_index_sequence<size>{});
-        }
-
         template <typename _Type>
         void __send_back(SOCKET sock, int id_code, const std::string& id_str, _Type data)
         {
@@ -70,7 +57,7 @@ namespace skyfire
                     {
                         _Param param;
                         sf_deserialize(data, param, 0);
-                        _Ret ret = __invoke(func, param);
+                        _Ret ret = sf_invoke(func, param);
                         __send_back(s, id_code, id_str, ret);
                     }
                 };
@@ -88,7 +75,7 @@ namespace skyfire
                     {
                         _Param param;
                         sf_deserialize(data, param, 0);
-                        _Ret ret = __invoke(func, param);
+                        _Ret ret = sf_invoke(func, param);
                         __send_back(s, id_code, id_str, ret);
                     }
                 };
