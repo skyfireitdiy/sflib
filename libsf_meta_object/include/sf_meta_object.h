@@ -46,7 +46,7 @@ namespace skyfire
             }
         }
 
-        template <typename _Type, typename ... _Param>
+        template <typename _Type = void, typename ... _Param>
         _Type * make_object(const std::string& type_name, _Param ... params)
         {
             byte_array param = sf_serialize(params...);
