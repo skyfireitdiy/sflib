@@ -29,6 +29,6 @@ int main()
         return -1;
     }
 
-    client->async_call<int>("print"s, finished, 500);
+    client->call<>("print"s);
     system("pause");
 }

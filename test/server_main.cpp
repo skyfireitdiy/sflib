@@ -6,10 +6,9 @@ using namespace skyfire;
 
 
 
-int print(int a)
+void print(int a)
 {
     cout<<"print"<<endl;
-    return  a;
 }
 
 

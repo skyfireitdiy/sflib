@@ -71,10 +71,19 @@ namespace skyfire
             __tcp_client__->close();
         }
 
-        template<typename _Ret, typename ... __SF_RPC_ARGS__>
-        _Ret call(const std::string& func_id, const __SF_RPC_ARGS__ &... args)
+        template<typename _Ret=void, typename ... __SF_RPC_ARGS__>
+        _Ret call(const std::string& func_id, __SF_RPC_ARGS__ ... args)
         {
-            std::tuple<__SF_RPC_ARGS__...> param{args...};
+
+
+            static_assert(!std::is_reference<_Ret>::value,"Param can't be reference");
+            static_assert(!std::is_pointer<_Ret>::value,"Param can't be pointer");
+            static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+
+            using __Ret = typename std::decay<_Ret>::type ;
+
+            std::tuple<typename std::decay<__SF_RPC_ARGS__>...> param{args...};
             int call_id = rand();
             pkg_header_t header;
             byte_array data;
@@ -95,7 +104,7 @@ namespace skyfire
             }
             else
             {
-                _Ret ret;
+                __Ret ret;
                 size_t pos = sf_deserialize(__rpc_data__[call_id]->data, id_str, 0);
                 sf_deserialize(__rpc_data__[call_id]->data, ret, pos);
                 __rpc_data__.erase(call_id);
@@ -126,7 +135,9 @@ namespace skyfire
                         __SF_RPC_ARGS__ ...args
         )
         {
-            std::tuple<__SF_RPC_ARGS__...> param{args...};
+            static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+            std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
             int call_id = rand();
             pkg_header_t header;
             byte_array data;
@@ -144,7 +155,13 @@ namespace skyfire
                         __SF_RPC_ARGS__ ...args
         )
         {
-            std::tuple<__SF_RPC_ARGS__...> param{args...};
+            static_assert(!std::is_reference<_Ret>::value,"Param can't be reference");
+            static_assert(!std::is_pointer<_Ret>::value,"Param can't be pointer");
+            static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+
+            using __Ret = typename std::decay<_Ret>::type ;
+            std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
             int call_id = rand();
             pkg_header_t header;
             byte_array data;
@@ -152,7 +169,7 @@ namespace skyfire
             __rpc_data__[call_id]->is_async = true;
             __rpc_data__[call_id]->async_callback = [=](const byte_array& data)
             {
-                _Ret ret;
+                __Ret ret;
                 std::string id_str;
                 size_t pos = sf_deserialize(data, id_str, 0);
                 sf_deserialize(data, ret, pos);

@@ -49,6 +49,11 @@ namespace skyfire
             if constexpr (std::is_bind_expression<_Func>::value)
             {
                 static_assert(!sf_check_param_reference<_Func>::value, "Param can't be reference");
+                static_assert(!sf_check_param_pointer<_Func>::value, "Param can't be pointer");
+                static_assert(!sf_check_return_reference<_Func>::value, "Return can't be reference");
+                static_assert(!sf_check_return_pointer<_Func>::value, "Return can't be pointer");
+
+
                 using _Ret = typename sf_function_type_helper<_Func>::return_type ;
                 using _Param = typename sf_function_type_helper<_Func>::param_type ;
 
@@ -68,6 +73,11 @@ namespace skyfire
             else
             {
                 static_assert(!sf_check_param_reference<decltype(std::function(func))>::value, "Param can't be reference");
+                static_assert(!sf_check_param_pointer<decltype(std::function(func))>::value, "Param can't be pointer");
+                static_assert(!sf_check_return_reference<decltype(std::function(func))>::value, "Return can't be reference");
+                static_assert(!sf_check_return_pointer<decltype(std::function(func))>::value, "Return can't be pointer");
+
+
                 using _Ret = typename sf_function_type_helper<decltype(std::function(func))>::return_type ;
                 using _Param = typename sf_function_type_helper<decltype(std::function(func))>::param_type ;
 

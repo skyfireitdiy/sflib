@@ -59,35 +59,66 @@ namespace skyfire
         return sf_make_obj_from_tuple_impl<_Type>(std::forward<Tuple>(t), std::make_index_sequence<size>{});
     }
 
-
-    template<typename _ThisType>
-    struct sf_check_types_reference
-    {
-        static constexpr bool value = std::is_reference<_ThisType>::value;
-    };
-
-    template<typename _ThisType, typename ... _Param>
-    struct sf_check_types_reference
-    {
-        static  constexpr bool value = std::is_reference<_ThisType>::value || sf_check_types_reference<_Param...>::value;
-    };
-
-
     template<class T>
-    struct sf_check_param_reference
-    {
-
-    };
+    struct sf_check_param_reference {};
 
     template<class T, class ... U>
     struct sf_check_param_reference<std::function<T(U...)>>
     {
-        static constexpr bool value = sf_check_types_reference<U...>::value ;
+        static constexpr bool value = ( std::is_reference<U>::value || ... || false);
     };
 
     template<template<typename> class T, typename U, typename...V>
     struct sf_check_param_reference<T<U(V...)>>
     {
-        static constexpr bool value = sf_check_types_reference<V...>::value ;
+        static constexpr bool value = ( std::is_reference<V>::value || ... || false);
     };
+
+    template <class T>
+    struct sf_check_param_pointer {};
+
+    template<class T, class ... U>
+    struct sf_check_param_pointer<std::function<T(U...)>>
+    {
+        static constexpr bool value = ( std::is_pointer<U>::value || ... || false);
+    };
+
+    template<template<typename> class T, typename U, typename...V>
+    struct sf_check_param_pointer<T<U(V...)>>
+    {
+        static constexpr bool value = ( std::is_pointer<V>::value || ... || false);
+    };
+
+
+
+    template<class T>
+    struct sf_check_return_reference {};
+
+    template<class T, class ... U>
+    struct sf_check_return_reference<std::function<T(U...)>>
+    {
+        static constexpr bool value = std::is_reference<T>::value ;
+    };
+
+    template<template<typename> class T, typename U, typename...V>
+    struct sf_check_return_reference<T<U(V...)>>
+    {
+        static constexpr bool value = std::is_reference<U>::value ;
+    };
+
+    template <class T>
+    struct sf_check_return_pointer {};
+
+    template<class T, class ... U>
+    struct sf_check_return_pointer<std::function<T(U...)>>
+    {
+        static constexpr bool value = std::is_pointer<T>::value ;
+    };
+
+    template<template<typename> class T, typename U, typename...V>
+    struct sf_check_return_pointer<T<U(V...)>>
+    {
+        static constexpr bool value = std::is_pointer<U>::value ;
+    };
+
 }
