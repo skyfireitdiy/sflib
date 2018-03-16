@@ -48,8 +48,9 @@ namespace skyfire
         {
             if constexpr (std::is_bind_expression<_Func>::value)
             {
-                using _Ret = typename sf_bind_type_helper<_Func>::return_type ;
-                using _Param = typename sf_bind_type_helper<_Func>::param_type ;
+                static_assert(!sf_check_param_reference<_Func>::value, "Param can't be reference");
+                using _Ret = typename sf_function_type_helper<_Func>::return_type ;
+                using _Param = typename sf_function_type_helper<_Func>::param_type ;
 
                 auto f = [=](SOCKET s, int id_code, const std::string &id_str,const byte_array& data)
                 {
@@ -66,6 +67,7 @@ namespace skyfire
             }
             else
             {
+                static_assert(!sf_check_param_reference<decltype(std::function(func))>::value, "Param can't be reference");
                 using _Ret = typename sf_function_type_helper<decltype(std::function(func))>::return_type ;
                 using _Param = typename sf_function_type_helper<decltype(std::function(func))>::param_type ;
 
@@ -75,8 +77,16 @@ namespace skyfire
                     {
                         _Param param;
                         sf_deserialize(data, param, 0);
-                        _Ret ret = sf_invoke(func, param);
-                        __send_back(s, id_code, id_str, ret);
+                        if constexpr (std::is_same<_Ret , void>::value)
+                        {
+                            sf_invoke(func, param);
+                            __send_back(s, id_code, id_str, '\0');
+                        }
+                        else
+                        {
+                            _Ret ret = sf_invoke(func, param);
+                            __send_back(s, id_code, id_str, ret);
+                        }
                     }
                 };
                 __func__vec__.push_back(f);

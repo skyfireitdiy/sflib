@@ -4,19 +4,19 @@
 using namespace std;
 using namespace skyfire;
 
-int add(int a,int b)
+
+
+int print(int a)
 {
-    return a+b;
+    cout<<"print"<<endl;
+    return  a;
 }
 
 
 int main()
 {
     auto server = std::make_shared<sf_rpcserver<>>();
-    server->reg_rpc_func("sort"s, [](vector<int> data){
-        std::sort(data.begin(),data.end());
-        return data;
-    });
+    server->reg_rpc_func("print", print);
     cout<<server->listen("127.0.0.1",1234)<<endl;
     sf_eventloop eventloop;
     eventloop.exec();

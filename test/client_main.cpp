@@ -14,6 +14,12 @@ void disp_vec(const vector<int> &data)
     cout<<endl;
 }
 
+void finished(int a)
+{
+    cout<<"finished"<<endl;
+    cout<<a<<endl;
+}
+
 int main()
 {
     auto client = make_shared<sf_rpcclient<>>();
@@ -22,12 +28,7 @@ int main()
         cout << "connect error" << endl;
         return -1;
     }
-    vector<int> data = {1,5,7,56,4,6,556,65,452,185,0,81,631};
-    disp_vec(data);
-    cout<<"sync call"<<endl;
-    disp_vec(client->call<vector<int>>("sort"s, data));
-    cout<<"async call"<<endl;
-    client->async_call<vector<int>>("sort"s, disp_vec, data);
-    cout<<"hello world"<<endl;
+
+    client->async_call<int>("print"s, finished, 500);
     system("pause");
 }

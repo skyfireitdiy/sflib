@@ -54,5 +54,8 @@ add_executable(client_main test/client_main.cpp ${headers})
 add_executable(sf_meta_object_test test/sf_meta_object_test.cpp ${headers})
 
 
+add_executable(test_prij test/test_proj.cpp ${headers})
+
+
 target_link_libraries(server_main ws2_32)
 target_link_libraries(client_main ws2_32)

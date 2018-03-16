@@ -477,7 +477,14 @@ namespace skyfire
     template<typename... _Types>
     size_t sf_deserialize(const byte_array &data, std::tuple<_Types...> &obj, size_t begin_pos)
     {
-        return sf_deserialize_tuple(begin_pos, data, obj);
+        if constexpr (sizeof...(_Types) == 0)
+        {
+            return begin_pos;
+        }
+        else
+        {
+            return sf_deserialize_tuple(begin_pos, data, obj);
+        }
     }
 
 }

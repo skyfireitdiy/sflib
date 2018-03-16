@@ -87,18 +87,43 @@ namespace skyfire
                 std::unique_lock<std::mutex> lck(__rpc_data__[call_id]->back_mu);
                 __rpc_data__[call_id]->back_cond.wait(lck);
             }
-            _Ret ret;
+
             std::string id_str;
-            size_t pos = sf_deserialize(__rpc_data__[call_id]->data, id_str, 0);
-            sf_deserialize(__rpc_data__[call_id]->data, ret, pos);
-            __rpc_data__.erase(call_id);
-            return ret;
+            if constexpr (std::is_same<_Ret,void>::value)
+            {
+                return ;
+            }
+            else
+            {
+                _Ret ret;
+                size_t pos = sf_deserialize(__rpc_data__[call_id]->data, id_str, 0);
+                sf_deserialize(__rpc_data__[call_id]->data, ret, pos);
+                __rpc_data__.erase(call_id);
+                return ret;
+            }
         }
 
-        template<typename _Ret, typename ... __SF_RPC_ARGS__>
-        _Ret async_call(const std::string& func_id,
-                        std::function<void(_Ret)> rpc_callback,
-                        const __SF_RPC_ARGS__& ...args
+        template<typename T>
+        void async_call(const std::string& func_id,
+                        std::function<void()> rpc_callback
+        )
+        {
+            int call_id = rand();
+            pkg_header_t header;
+            byte_array data;
+            __rpc_data__[call_id] = std::make_shared<rpc_struct>();
+            __rpc_data__[call_id]->is_async = true;
+            __rpc_data__[call_id]->async_callback = [=](const byte_array& data){
+                rpc_callback();
+            };
+            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)));
+        }
+
+
+        template<typename ... __SF_RPC_ARGS__>
+        void async_call(const std::string& func_id,
+                        std::function<void()> rpc_callback,
+                        __SF_RPC_ARGS__ ...args
         )
         {
             std::tuple<__SF_RPC_ARGS__...> param{args...};
@@ -108,6 +133,25 @@ namespace skyfire
             __rpc_data__[call_id] = std::make_shared<rpc_struct>();
             __rpc_data__[call_id]->is_async = true;
             __rpc_data__[call_id]->async_callback = [=](const byte_array& data){
+                    rpc_callback();
+            };
+            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
+        }
+
+        template<typename _Ret, typename ... __SF_RPC_ARGS__>
+        void async_call(const std::string& func_id,
+                        std::function<void(_Ret)> rpc_callback,
+                        __SF_RPC_ARGS__ ...args
+        )
+        {
+            std::tuple<__SF_RPC_ARGS__...> param{args...};
+            int call_id = rand();
+            pkg_header_t header;
+            byte_array data;
+            __rpc_data__[call_id] = std::make_shared<rpc_struct>();
+            __rpc_data__[call_id]->is_async = true;
+            __rpc_data__[call_id]->async_callback = [=](const byte_array& data)
+            {
                 _Ret ret;
                 std::string id_str;
                 size_t pos = sf_deserialize(data, id_str, 0);
