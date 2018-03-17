@@ -13,20 +13,20 @@ public:                                                                         
 std::mutex __mu_##name##__;                                                                 \
 std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>> __##name##_func_vec__; \
 template<typename...__SF_OBJECT_ARGS__>                                                     \
-void name(__SF_OBJECT_ARGS__... args) {                                                     \
+void name(__SF_OBJECT_ARGS__&&... args) {                                                   \
     std::lock_guard<std::mutex> lck(__mu_##name##__);                                       \
     for (auto &p : __##name##_func_vec__)                                                   \
     {                                                                                       \
         if (std::get<1>(p))                                                                 \
         {                                                                                   \
-            std::thread([=]() {                                                             \
-                std::get<0>(p)(args...);                                                    \
-            }).detach();                                                                    \
+            std::get<0>(p)(std::forward<__SF_OBJECT_ARGS__>(args)...);                      \
         }                                                                                   \
         else                                                                                \
         {                                                                                   \
-            std::thread([=](){                                                              \
-                __p_msg_queue__->add_msg(this, std::bind(std::get<0>(p),args...));          \
+            auto bind_obj = std::bind(std::get<0>(p),                                       \
+                                         std::forward<__SF_OBJECT_ARGS__>(args)...);        \
+            std::thread([=]{                                                                \
+                __p_msg_queue__->add_msg(this, bind_obj);                                   \
             }).detach();                                                                    \
         }                                                                                   \
     }                                                                                       \
