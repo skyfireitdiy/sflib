@@ -106,9 +106,9 @@ namespace skyfire
 
         sf_rpcserver()
         {
-            sf_bind_signal(__tcp_server__,
+            sf_bind_signal(sf_rpcserver::__tcp_server__,
                            data_coming,
-                           std::bind(__on_data_coming,
+                           std::bind(&sf_rpcserver< _BaseClass>:: __on_data_coming,
                                      this,
                                      std::placeholders::_1,
                                      std::placeholders::_2,

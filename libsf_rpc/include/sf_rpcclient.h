@@ -54,7 +54,7 @@ namespace skyfire
         {
             sf_bind_signal(__tcp_client__,
                            data_coming,
-                           std::bind(__back_callback,
+                           std::bind(&sf_rpcclient<_BaseClass>::__back_callback,
                                                                   this,
                                                                   std::placeholders::_1,
                                                                   std::placeholders::_2),

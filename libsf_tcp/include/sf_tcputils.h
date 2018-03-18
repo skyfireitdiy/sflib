@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cassert>
+#include <cstring>
 #include <string>
 #include "sf_type.h"
 
@@ -30,7 +31,11 @@ namespace skyfire
     typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(const T &data)
     {
         byte_array ret(sizeof(data));
+#ifdef _WIN32
         memmove_s(ret.data(), sizeof(data), &data, sizeof(data));
+#else
+        memmove(ret.data(), &data, sizeof(data));
+#endif
         return ret;
     }
 
@@ -39,7 +44,11 @@ namespace skyfire
     {
         assert(data.size() == sizeof(T));
         T ret;
+#ifdef _WIN32
         memmove_s(&ret, sizeof(ret), data.data(), sizeof(ret));
+#else
+        memmove(&ret, data.data(), sizeof(ret));
+#endif
         return ret;
     }
 
