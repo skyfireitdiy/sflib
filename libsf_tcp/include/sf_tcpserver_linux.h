@@ -126,20 +126,21 @@ namespace skyfire
                                         continue;
                                     }
                                     recv_buf.resize(BUFFER_SIZE);
-                                    int nread = read(evs[i].data.fd, recv_buf.data(), BUFFER_SIZE);
-                                    if (nread <= 0)                     //!> 结束后者出错
+                                    int count_read = read(evs[i].data.fd, recv_buf.data(), BUFFER_SIZE);
+                                    if (count_read <= 0)
                                     {
                                         ::close(evs[i].data.fd);
-                                        epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev);  //!> 删除计入的fd
-                                        --cur_fd_count__;                  //!> 减少一个呗！
+                                        epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev);
+                                        --cur_fd_count__;
                                         std::thread([=]()
                                                     {
                                                         ::close(evs[i].data.fd);
                                                     }).detach();
                                         continue;
-                                    } else
+                                    }
+                                    else
                                     {
-                                        recv_buf.resize(nread);
+                                        recv_buf.resize(count_read);
                                         sock_data_buffer__[evs[i].data.fd].insert(
                                                 sock_data_buffer__[evs[i].data.fd].end(),
                                                 recv_buf.begin(),
@@ -154,17 +155,19 @@ namespace skyfire
                                             if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
                                                 header.length)
                                             {
-                                                std::thread([=]()
+                                                std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
                                                             {
-                                                                data_coming(static_cast<int>(evs[i].data.fd), header,
-                                                                            byte_array(
-                                                                                    sock_data_buffer__[evs[i].data.fd].begin() +
-                                                                                    read_pos +
-                                                                                    sizeof(header),
-                                                                                    sock_data_buffer__[evs[i].data.fd].begin() +
-                                                                                    read_pos +
-                                                                                    sizeof(header) + header.length));
-                                                            }).detach();
+                                                                data_coming(sock, header, pkg_data);
+                                                            },
+                                                            static_cast<SOCKET>(evs[i].data.fd), header,
+                                                            byte_array(
+                                                                    sock_data_buffer__[evs[i].data.fd].begin() +
+                                                                    read_pos +
+                                                                    sizeof(header),
+                                                                    sock_data_buffer__[evs[i].data.fd].begin() +
+                                                                    read_pos +
+                                                                    sizeof(header) + header.length)
+                                                ).detach();
                                                 read_pos += sizeof(header) + header.length;
                                             } else
                                             {

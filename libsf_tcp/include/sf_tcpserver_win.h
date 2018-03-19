@@ -312,14 +312,18 @@ namespace skyfire
                                   sizeof(header));
                         if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >= header.length)
                         {
-                            std::thread([=]()
+                            std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
                                         {
-                                            data_coming(p_handle_data->socket, header, byte_array(
-                                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
-                                                    sizeof(header),
-                                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
-                                                    sizeof(header) + header.length));
-                                        }).detach();
+                                            data_coming(sock, header, pkg_data);
+                                        },
+                                        p_handle_data->socket,
+                                        header,
+                                        byte_array(
+                                                sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+                                                sizeof(header),
+                                                sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+                                                sizeof(header) + header.length)
+                            ).detach();
                             read_pos += sizeof(header) + header.length;
                         }
                         else

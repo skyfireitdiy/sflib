@@ -87,13 +87,15 @@ namespace skyfire
                                     std::memmove(&header, data.data() + read_pos, sizeof(header));
                                     if (data.size() - read_pos - sizeof(header) >= header.length)
                                     {
-                                        std::thread([=]()
+                                        std::thread([=](const pkg_header_t &header, const byte_array &pkg_data)
                                                     {
-                                                        data_coming(header, byte_array(
-                                                                data.begin() + read_pos + sizeof(header),
-                                                                data.begin() + read_pos + sizeof(header) +
-                                                                header.length));
-                                                    }).detach();
+                                                        data_coming(header, pkg_data);
+                                                    },
+                                                    header,
+                                                    byte_array(
+                                                            data.begin() + read_pos + sizeof(header),
+                                                            data.begin() + read_pos + sizeof(header)
+                                                            + header.length)).detach();
                                         read_pos += sizeof(header) + header.length;
                                     } else
                                     {
