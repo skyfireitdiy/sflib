@@ -74,8 +74,6 @@ namespace skyfire
         template<typename _Ret=void, typename ... __SF_RPC_ARGS__>
         _Ret call(const std::string& func_id, __SF_RPC_ARGS__ ... args)
         {
-
-
             static_assert(!std::is_reference<_Ret>::value,"Param can't be reference");
             static_assert(!std::is_pointer<_Ret>::value,"Param can't be pointer");
             static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
@@ -83,7 +81,7 @@ namespace skyfire
 
             using __Ret = typename std::decay<_Ret>::type ;
 
-            std::tuple<typename std::decay<__SF_RPC_ARGS__>...> param{args...};
+            std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param{args...};
             int call_id = rand();
             pkg_header_t header;
             byte_array data;

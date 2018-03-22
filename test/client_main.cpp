@@ -5,19 +5,13 @@
 using namespace std;
 using namespace skyfire;
 
-void disp_vec(const vector<int> &data)
+void disp_vec(vector<int> data)
 {
     for(auto p: data)
     {
         cout<<p<<" "<<flush;
     }
     cout<<endl;
-}
-
-void finished(int a)
-{
-    cout<<"finished"<<endl;
-    cout<<a<<endl;
 }
 
 int main()
@@ -28,7 +22,12 @@ int main()
         cout << "connect error" << endl;
         return -1;
     }
-
     client->call<>("print"s);
+    vector<int> data = {9,5,6,7,41,23,4,5,7};
+    disp_vec(data);
+    data = client->call<vector<int>>("add_one"s, data);
+    disp_vec(data);
+    cout<<"---------"<<endl;
+    client->async_call<vector<int>>("add_one"s, disp_vec, data);
     system("pause");
 }
