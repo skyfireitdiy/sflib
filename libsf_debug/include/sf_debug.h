@@ -274,6 +274,6 @@ namespace skyfire
 #define sf_logout(...) logout(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #define sf_track(...) track(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 
-    template<typename T, typename B>
-    std::map<std::string, std::recursive_mutex> sf_debug<T, B>::file_mutex__;
+    template<typename T>
+    std::map<std::string, std::recursive_mutex> sf_debug<T>::file_mutex__;
 }
