@@ -3,13 +3,16 @@
 #include "sf_tcpclient.h"
 #include "sf_nocopy.h"
 #include "sf_serialize.h"
-#include "sf_event_waiter.h"
+#include "sf_timer.h"
+#include "sf_tri_type.h"
 #include <string>
 #include <functional>
 #include <tuple>
 #include <memory>
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
+
 
 
 namespace skyfire
@@ -32,6 +35,8 @@ namespace skyfire
     protected:
         std::shared_ptr<sf_tcpclient> __tcp_client__ = sf_tcpclient::make_client();
         std::map<int, std::shared_ptr<rpc_struct>> __rpc_data__;
+
+        unsigned int rpc_timeout__ = 30000;
 
         void __back_callback(const pkg_header_t& header_t, const byte_array& data_t)
         {
@@ -61,6 +66,11 @@ namespace skyfire
                            true);
         }
 
+        void set_rpc_timeout(unsigned int ms)
+        {
+            rpc_timeout__ = ms;
+        }
+
         bool connect(const std::string ip, unsigned short port)
         {
             return __tcp_client__->connect(ip,port);
@@ -72,7 +82,7 @@ namespace skyfire
         }
 
         template<typename _Ret=void, typename ... __SF_RPC_ARGS__>
-        _Ret call(const std::string& func_id, __SF_RPC_ARGS__ ... args)
+         sf_tri_type<_Ret> call(const std::string& func_id, __SF_RPC_ARGS__ ... args)
         {
             static_assert(!std::is_reference<_Ret>::value,"Param can't be reference");
             static_assert(!std::is_pointer<_Ret>::value,"Param can't be pointer");
@@ -92,19 +102,26 @@ namespace skyfire
             if (!__rpc_data__[call_id]->back_finished)
             {
                 std::unique_lock<std::mutex> lck(__rpc_data__[call_id]->back_mu);
-                __rpc_data__[call_id]->back_cond.wait(lck);
+                if(__rpc_data__[call_id]->back_cond.wait_for(lck, std::chrono::milliseconds(rpc_timeout__)) == std::cv_status::timeout)
+                {
+                    __rpc_data__.erase(call_id);
+                    return sf_tri_type <__Ret>();
+                }
             }
 
             std::string id_str;
             if constexpr (std::is_same<_Ret,void>::value)
             {
-                return ;
+                __rpc_data__.erase(call_id);
+                return sf_tri_type <void >(true);
             }
             else
             {
-                __Ret ret;
+                sf_tri_type <__Ret> ret;
+                __Ret tmp_ret;
                 size_t pos = sf_deserialize(__rpc_data__[call_id]->data, id_str, 0);
-                sf_deserialize(__rpc_data__[call_id]->data, ret, pos);
+                sf_deserialize(__rpc_data__[call_id]->data, tmp_ret, pos);
+                ret = tmp_ret;
                 __rpc_data__.erase(call_id);
                 return ret;
             }
@@ -145,6 +162,11 @@ namespace skyfire
                     rpc_callback();
             };
             __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
+            auto ptimer = std::make_shared<sf_timer>();
+            sf_bind_signal(ptimer,timeout, [=](){
+                __rpc_data__.erase(call_id);
+            }, true);
+            ptimer->start(rpc_timeout__, true);
         }
 
         template<typename _Ret, typename ... __SF_RPC_ARGS__>
@@ -174,6 +196,11 @@ namespace skyfire
                 rpc_callback(ret);
             };
             __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
+            auto ptimer = std::make_shared<sf_timer>();
+            sf_bind_signal(ptimer,timeout, [=](){
+                __rpc_data__.erase(call_id);
+            }, true);
+            ptimer->start(rpc_timeout__, true);
         }
     };
 }

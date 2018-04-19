@@ -17,31 +17,13 @@ namespace skyfire
 	template<typename>
 	class check_point;
 
-	/**
-	 * @class	sf_watch_time
-	 *
-	 * @brief	A sf watch time.
-	 *
-	 * @author	SkyFire
-	 * @date	2017/8/18
-	 *
-	 * @tparam	T	Generic type parameter.
-	 */
+
 
 	template<typename T=std::string>
 	class sf_watch_time
 	{
 	public:
-		/**
-		 * @fn	void sf_watch_time::watch()
-		 *
-		 * @brief	Output this result.
-		 *
-		 * @author	SkyFire
-		 * @date	2017/8/18
-		 */
 
-	
 		void watch()
 		{
 			std::cout << to_string() << std::flush;

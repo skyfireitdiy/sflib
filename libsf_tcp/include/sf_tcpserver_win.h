@@ -85,6 +85,7 @@ namespace skyfire
             completion_port__ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
             if (completion_port__ == nullptr)
             {
+                close();
                 return false;
             }
 
@@ -95,6 +96,7 @@ namespace skyfire
             listen_sock__ = WSASocket(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
             if (listen_sock__ == INVALID_SOCKET)
             {
+                close();
                 return false;
             }
 
@@ -106,11 +108,13 @@ namespace skyfire
 
             if (SOCKET_ERROR == ::bind(listen_sock__, reinterpret_cast<sockaddr*>(&internet_addr), sizeof(internet_addr)))
             {
+                close();
                 return false;
             }
 
             if (::listen(listen_sock__, SOMAXCONN) == SOCKET_ERROR)
             {
+                close();
                 return false;
             }
 
@@ -167,17 +171,21 @@ namespace skyfire
         void close()
         {
             exit_flag__ = true;
-            for(auto i : sf_range(thread_count__))
+            if(completion_port__ != nullptr)
             {
-                PostQueuedCompletionStatus(completion_port__, 0, 0, nullptr);
+                for (auto i : sf_range(thread_count__))
+                {
+                    PostQueuedCompletionStatus(completion_port__, 0, 0, nullptr);
+                }
+                CloseHandle(completion_port__);
+                completion_port__ = INVALID_HANDLE_VALUE;
             }
-            if (!inited__)
-                return;
-            closesocket(listen_sock__);
-            listen_sock__ = INVALID_SOCKET;
-            CloseHandle(completion_port__);
-            completion_port__ = INVALID_HANDLE_VALUE;
             sock_data_buffer__.clear();
+            if(listen_sock__ != INVALID_SOCKET)
+            {
+                closesocket(listen_sock__);
+                listen_sock__ = INVALID_SOCKET;
+            }
         }
 
         bool send(SOCKET sock, int type, const byte_array &data)
@@ -227,23 +235,39 @@ namespace skyfire
 
             while (true)
             {
-                if (GetQueuedCompletionStatus(completion_port, &bytesTransferred, (PULONG_PTR) &p_handle_data,
-                                              (LPOVERLAPPED *) &p_io_data, WSA_INFINITE) == 0)
-                {
-                    CloseHandle((HANDLE) p_handle_data->socket);
-                    std::thread([=]()
-                                {
-                                    closed(p_handle_data->socket);
-                                }).detach();
-                    delete p_handle_data;
-                    delete p_io_data;
-                    sock_data_buffer__.erase(p_handle_data->socket);
-                    continue;
-                }
-
+                int result = GetQueuedCompletionStatus(completion_port, &bytesTransferred, (PULONG_PTR) &p_handle_data,
+                                          (LPOVERLAPPED *) &p_io_data, WSA_INFINITE);
                 if(exit_flag__)
                 {
+                    if(p_handle_data != nullptr)
+                    {
+                        CloseHandle((HANDLE) p_handle_data->socket);
+                        std::thread([=]()
+                                    {
+                                        closed(p_handle_data->socket);
+                                    }).detach();
+                        delete p_handle_data;
+                        delete p_io_data;
+                        sock_data_buffer__.erase(p_handle_data->socket);
+                    }
                     break;
+                }
+
+                if (result == 0)
+                {
+                    if(p_handle_data != nullptr)
+                    {
+                        CloseHandle((HANDLE) p_handle_data->socket);
+                        std::thread([=]()
+                                    {
+                                        closed(p_handle_data->socket);
+                                    }).detach();
+                        delete p_handle_data;
+                        delete p_io_data;
+                        sock_data_buffer__.erase(p_handle_data->socket);
+                    }
+
+                    continue;
                 }
                 
                 if(p_handle_data == nullptr || p_io_data== nullptr)

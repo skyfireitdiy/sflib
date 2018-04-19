@@ -23,6 +23,21 @@ namespace skyfire
 {
     constexpr char sf_debug_version[] = {"1.0.0.1"};
 
+
+    inline void __out_debug_string__(const char *str)
+    {
+#ifdef QT_CORE_LIB
+        qDebug() << str;
+#else
+#ifdef _WIN32
+        OutputDebugStringA(str);
+#else
+        std::cout << str << std::endl;
+#endif
+#endif
+    }
+
+
 //提供基类链，提供默认sf_empty_class作为模板参数，方便实例化
     template<typename _Base_Class = sf_empty_class>
     class sf_debug : public _Base_Class
@@ -31,7 +46,6 @@ namespace skyfire
         explicit sf_debug(const std::string &debug_file, std::function<bool()> func_log_to_file = if_output_to_file__) :
                 curr_file__(debug_file)
         {
-            p_os__ = new std::ostringstream();
             if_out_to_file__ = func_log_to_file();
             if (!if_out_to_file__)
                 return;
@@ -40,7 +54,6 @@ namespace skyfire
 
         explicit sf_debug(std::function<bool()> func_log_to_file = if_output_to_file__)
         {
-            p_os__ = new std::ostringstream();
             if_out_to_file__ = func_log_to_file();
         }
 
@@ -109,7 +122,7 @@ namespace skyfire
         }
 
         template<typename T>
-        void track(const std::string &file, int line, const std::string &func, const T &dt)
+        static void track(const std::string &file, int line, const std::string &func, const T &dt)
         {
             std::lock_guard<std::recursive_mutex> lck(__debug_mutex);
             *p_os__ << "[" << make_time_str__() << "][" << std::this_thread::get_id() << "][" << file << "][" << line
@@ -118,7 +131,7 @@ namespace skyfire
         }
 
         template<typename...T>
-        void track(const std::string &file, int line, const std::string &func, const T &...dt)
+        static void track(const std::string &file, int line, const std::string &func, const T &...dt)
         {
             std::lock_guard<std::recursive_mutex> lck(__debug_mutex);
             *p_os__ << "[" << make_time_str__() << "][" << std::this_thread::get_id() << "][" << file << "][" << line
@@ -126,26 +139,21 @@ namespace skyfire
             track__(dt...);
         }
 
-    protected:
-        virtual void out_debug_string_(const char *str)
+        static void set_output_debug_string_func(std::function<void(const char*)> f)
         {
-#ifdef QT_CORE_LIB
-            qDebug() << str;
-#else
-#ifdef _WIN32
-            OutputDebugStringA(str);
-#else
-            std::cout << str << std::endl;
-#endif
-#endif
+            out_debug_str_func__ = f;
         }
+
+        template<typename...T>
+        static void __empty_func__(T...){}
 
     private:
         std::string curr_file__;
         std::ofstream fp__;
-        std::ostringstream *p_os__;
+        static std::ostringstream *p_os__;
         static std::map<std::string, std::recursive_mutex> file_mutex__;
-        std::recursive_mutex __debug_mutex;
+        static std::recursive_mutex __debug_mutex;
+        static std::function<void(const char*)> out_debug_str_func__;
         volatile bool if_out_to_file__;
 
         template<typename T, typename...U>
@@ -185,7 +193,7 @@ namespace skyfire
 #endif
 
         template<typename T, typename...U>
-        void track__(const T &tmp, const U &...tmp2)
+        static void track__(const T &tmp, const U &...tmp2)
         {
             std::lock_guard<std::recursive_mutex> lck(__debug_mutex);
             *p_os__ << "[" << tmp << "]";
@@ -193,18 +201,18 @@ namespace skyfire
         }
 
         template<typename T>
-        void track__(const T &tmp)
+        static void track__(const T &tmp)
         {
             std::lock_guard<std::recursive_mutex> lck(__debug_mutex);
             *p_os__ << "[" << tmp << "]";
-            out_debug_string_(p_os__->str().c_str());
+            out_debug_str_func__(p_os__->str().c_str());
             delete p_os__;
             p_os__ = new std::ostringstream();
         }
 
 #ifdef QT_CORE_LIB
         template<typename...U>
-        void track__(const QString& tmp, const U&...tmp2)
+        static void track__(const QString& tmp, const U&...tmp2)
         {
             std::lock_guard<std::recursive_mutex> lck(__debug_mutex);
             *p_os__ << "[" << tmp.toLocal8Bit().data() << "]";
@@ -212,10 +220,10 @@ namespace skyfire
         }
 
 
-        void track__(const QString& tmp) {
+        static void track__(const QString& tmp) {
             std::lock_guard<std::recursive_mutex> lck(__debug_mutex);
             *p_os__ << "[" << tmp.toLocal8Bit().data() << "]";
-            out_debug_string_(p_os__->str().c_str());
+            out_debug_str_func__(p_os__->str().c_str());
             delete p_os__;
             p_os__ = new std::ostringstream();
         }
@@ -272,8 +280,25 @@ namespace skyfire
 
 //声明两个宏作为调用接口,覆盖类中的两个未定义的模板成员函数
 #define sf_logout(...) logout(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+
+#ifndef SF_DISABLE_DEBUG
+#define sf_log(...) skyfire::sf_debug<skyfire::sf_empty_class>::track(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #define sf_track(...) track(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#else
+#define sf_log(...) skyfire::sf_debug<skyfire::sf_empty_class>::__empty_func__(__VA_ARGS__)
+#define sf_track(...) __empty_func__(__VA_ARGS__)
+#endif
 
     template<typename T>
     std::map<std::string, std::recursive_mutex> sf_debug<T>::file_mutex__;
+
+    template <typename T>
+    std::ostringstream * sf_debug<T>::p_os__= new std::ostringstream();
+
+    template <typename T>
+    std::recursive_mutex sf_debug<T>::__debug_mutex;
+
+    template <typename T>
+    std::function<void(const char*)> sf_debug<T>::out_debug_str_func__ = __out_debug_string__;
+
 }

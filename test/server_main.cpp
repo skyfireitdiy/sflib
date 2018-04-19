@@ -18,12 +18,17 @@ vector<int> add_one(vector<int> data)
     return data;
 }
 
+void output(const char *str)
+{
+    cout<<str<<endl;
+}
+
 int main()
 {
     auto server = std::make_shared<sf_rpcserver<>>();
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);
-    cout<<server->listen("127.0.0.1",1234)<<endl;
+    cout<<server->listen("127.0.0.1",10001)<<endl;
     sf_eventloop eventloop;
     eventloop.exec();
 }

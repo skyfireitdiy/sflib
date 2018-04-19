@@ -1,20 +1,21 @@
 #include <iostream>
+#define SF_DISABLE_DEBUG
 #include "sf_debug.h"
 
+#include <iostream>
+
 using namespace skyfire;
+using namespace std;
 
-class my_debug : public sf_debug<>
+void output(const char *str)
 {
-protected:
-    void out_debug_string_(const char *str)
-    {
-        std::cout<< str << std::endl;
-    }
-};
-
+    cout<<str<<endl;
+}
 
 int main()
 {
-    my_debug debug;
-    debug.sf_track("666", 123);
+    sf_debug<> ddd;
+    sf_debug<>::set_output_debug_string_func(output);
+    ddd.sf_track("666", 123);
+    sf_log("123",8997);
 }
