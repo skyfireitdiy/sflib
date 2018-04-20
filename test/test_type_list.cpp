@@ -28,11 +28,7 @@ int main()
     static_assert(is_same_v<sf_type_list<>, typename tl_erase<0,4,t1>::type>);
     static_assert(is_same_v<sf_type_list<double ,char>, typename tl_mid<1,2,t1>::type>);
     static_assert(is_same_v<sf_type_list<int,double,char,char,string>, typename tl_insert<2,char, t1>::type >);
-
-    print_type<sf_type_list<int,double,short,string>>();
-    print_type<typename tl_replace<char,short, t1>::type>();
-
-
-    //static_assert(is_same_v<sf_type_list<int,double,short,string>, typename tl_replace<char,short, t1>::type >);
-
+    static_assert(is_same_v<sf_type_list<int,double,short,string>, typename tl_replace<char,short, t1>::type >);
+    static_assert(is_same_v<sf_type_list<int,double,short,string>, typename tl_replace_index<2, short, t1>::type >);
+    static_assert(is_same_v<sf_type_list<string, char, double , int>,typename tl_reverse<t1>::type >);
 }

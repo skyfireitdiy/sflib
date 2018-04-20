@@ -20,12 +20,6 @@ namespace skyfire
         using type = _Type;
     };
 
-    template<>
-    struct sf_type_list<>
-    {
-        static constexpr int size = 0;
-    };
-
 
     template<typename _Itype, typename _TypeList>
     struct tl_push_front;
@@ -55,6 +49,44 @@ namespace skyfire
     struct tl_insert;
     template<typename _Old, typename _New, typename _TypeList>
     struct tl_replace;
+    template<int _Index, typename _New, typename _TypeList>
+    struct tl_replace_index;
+    template<typename _TypeList>
+    struct tl_reverse;
+
+
+    template<typename _Itype, typename _TypeList>
+    using tl_push_front_t = typename tl_push_front<_Itype, _TypeList>::type;
+    template<typename _Itype, typename _TypeList>
+    using tl_push_back_t = typename tl_push_back<_Itype, _TypeList>::type;
+    template<int _Index, typename _TypeList>
+    using tl_get_t = typename tl_get<_Index, _TypeList>::type;
+    template<typename _TypeList>
+    using tl_front_t = typename tl_front<_TypeList>::type;
+    template<typename _TypeList>
+    using tl_back_t = typename tl_back<_TypeList>::type;
+    template<int _Index, typename _TypeList>
+    using tl_left_t = typename tl_left<_Index, _TypeList>::type;
+    template<int _Index, typename _TypeList>
+    using tl_right_t = typename tl_right<_Index, _TypeList>::type;
+    template<typename _TypeList>
+    using tl_pop_front_t = typename tl_pop_front<_TypeList>::type;
+    template<typename _TypeList>
+    using tl_pop_back_t = typename tl_pop_back<_TypeList>::type;
+    template<typename _TypeList1, typename _TypeList2>
+    using tl_merge_t = typename tl_merge<_TypeList1, _TypeList2>::type;
+    template<int _Index, int _Len, typename _TypeList>
+    using tl_erase_t = typename tl_erase<_Index, _Len, _TypeList>::type;
+    template<int _Index, int _Len, typename _TypeList>
+    using tl_mid_t = typename tl_mid<_Index, _Len, _TypeList>::type;
+    template<int _Pos, typename _Itype, typename _TypeList>
+    using tl_insert_t = typename tl_insert<_Pos, _Itype, _TypeList>::type;
+    template<typename _Old, typename _New, typename _TypeList>
+    using tl_replace_t = typename tl_replace<_Old, _New, _TypeList>::type;
+    template<int _Index, typename _New, typename _TypeList>
+    using tl_replace_index_t = typename tl_replace_index<_Index, _New, _TypeList>::type;
+    template<typename _TypeList>
+    using tl_reverse_t = typename tl_reverse<_TypeList>::type;
 
 
     //////////////////////////////////////////////
@@ -68,8 +100,15 @@ namespace skyfire
     template<int _Index, typename ... _TypeList>
     struct tl_right_helper;
 
-    template <typename  ... _TypeList>
+    template<typename  ... _TypeList>
     struct tl_replace_helper;
+
+    template<int _Index, typename  ... _TypeList>
+    struct tl_replace_index_helper;
+
+    template<typename _TypeList1, typename _TypeList2>
+    struct tl_reverse_helper;
+
 
     ///////////////////////////////////////////////
 
@@ -170,7 +209,7 @@ namespace skyfire
 
     ///////
 
-    template <
+    template<
             typename _Old,
             typename _New,
             typename _Type,
@@ -195,14 +234,14 @@ namespace skyfire
                         _TypeList2...,
                         typename std::conditional<
                                 std::is_same_v<_Type, _Old>,
-                        _New,
-                        _Old
+                                _New,
+                                _Type
                         >::type
                 >
-                >::type;
+        >::type;
     };
 
-    template <
+    template<
             typename _Old,
             typename _New,
             typename ... _TypeList2
@@ -215,6 +254,88 @@ namespace skyfire
     >
     {
         using type = sf_type_list<_TypeList2...>;
+    };
+
+    //////
+
+    template<
+            int _Index,
+            typename _New,
+            typename _Type,
+            typename ... _TypeList1,
+            typename ... _TypeList2
+    >
+    struct tl_replace_index_helper<
+            _Index,
+            _New,
+            sf_type_list<
+                    _Type,
+                    _TypeList1...
+            >,
+            sf_type_list<_TypeList2...>
+    >
+    {
+        using type = typename tl_replace_index_helper<
+                _Index,
+                _New,
+                sf_type_list<_TypeList1...>,
+                sf_type_list<
+                        _TypeList2...,
+                        typename std::conditional<
+                                sizeof...(_TypeList2) == _Index,
+                                _New,
+                                _Type
+                        >::type
+                >
+        >::type;
+    };
+
+    template<
+            int _Index,
+            typename _New,
+            typename ... _TypeList2
+    >
+    struct tl_replace_index_helper<
+            _Index,
+            _New,
+            sf_type_list<>,
+            sf_type_list<_TypeList2...>
+    >
+    {
+        using type = sf_type_list<_TypeList2...>;
+    };
+
+
+    ////////
+
+    template<
+            typename _Type,
+            typename ... _TypeList1,
+            typename ... _TypeList2
+    >
+    struct tl_reverse_helper<
+            sf_type_list<
+                    _Type,
+                    _TypeList1...
+            >,
+            sf_type_list<_TypeList2...>
+    >
+    {
+        using type = typename tl_reverse_helper<
+                sf_type_list<_TypeList1...>,
+                sf_type_list<_Type, _TypeList2...>
+        >::type;
+    };
+
+    template<
+            typename ... _TypeList
+    >
+    struct tl_reverse_helper<
+            sf_type_list<>,
+            sf_type_list<_TypeList...>
+    >
+    {
+        using type = sf_type_list<_TypeList...>;
     };
 
 
@@ -344,6 +465,34 @@ namespace skyfire
     template<typename _Old, typename _New, typename ... _TypeList>
     struct tl_replace<_Old, _New, sf_type_list<_TypeList...>>
     {
-        using type = typename tl_replace_helper<_Old, _New, sf_type_list<_TypeList...>, sf_type_list<>>::type ;
+        using type = typename tl_replace_helper<
+                _Old,
+                _New,
+                sf_type_list<_TypeList...>,
+                sf_type_list<>
+        >::type;
     };
+
+
+    template<int _Index, typename _New, typename ...  _TypeList>
+    struct tl_replace_index<_Index, _New, sf_type_list<_TypeList...>>
+    {
+        using type = typename tl_replace_index_helper<
+                _Index,
+                _New,
+                sf_type_list<_TypeList...>,
+                sf_type_list<>
+        >::type;
+    };
+
+
+    template<typename ... _TypeList>
+    struct tl_reverse<sf_type_list<_TypeList...>>
+    {
+        using type = typename tl_reverse_helper<
+                sf_type_list<_TypeList...>,
+                sf_type_list<>
+        >::type;
+    };
+
 }
