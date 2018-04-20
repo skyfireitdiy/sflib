@@ -22,6 +22,7 @@ include_directories(
         libsf_type/include
         libsf_meta/include
         libsf_meta_object/include
+        libsf_type_list/include
 )
 
 file(GLOB headers
@@ -42,6 +43,7 @@ file(GLOB headers
         libsf_type/include/*.h
         libsf_meta/include/*.h
         libsf_meta_object/include/*.h
+        libsf_type_list/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -59,6 +61,7 @@ IF (WIN32)
     add_executable(test_sf_debug test/test_sf_debug.cpp ${headers})
     add_executable(test_object test/test_object.cpp ${headers})
     add_executable(test_thread_pool test/test_thread_pool.cpp ${headers})
+    add_executable(test_type_list test/test_type_list.cpp ${headers})
 
 
     target_link_libraries(server_main ws2_32)
@@ -72,6 +75,7 @@ ELSE()
     add_executable(test_sf_debug test/test_sf_debug.cpp ${headers})
     add_executable(test_object test/test_object.cpp ${headers})
     add_executable(test_thread_pool test/test_thread_pool.cpp ${headers})
+    add_executable(test_type_list test/test_type_list.cpp ${headers})
 
     target_link_libraries(test_prij pthread)
     target_link_libraries(server_main pthread)

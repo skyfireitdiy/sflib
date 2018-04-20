@@ -3,7 +3,7 @@
 using namespace skyfire;
 using namespace std;
 
-class A : public sf_object<>
+class A : public sf_object
 {
 public:
     SF_REG_AOP(func, int , int)

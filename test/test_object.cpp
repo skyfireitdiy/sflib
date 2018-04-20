@@ -5,7 +5,7 @@
 using namespace std;
 using namespace skyfire;
 
-class A: public sf_object<>
+class A: public sf_object
 {
     SF_REG_SIGNAL(s1, int)
 };

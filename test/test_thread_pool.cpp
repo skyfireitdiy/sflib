@@ -28,10 +28,17 @@ void func2(int a)
 int main()
 {
     sf_thread_pool pool4(4);
-    pool4.add_task(bind(func2,10));
+    pool4.add_task(bind(func2, 10));
     pool4.wait_all_task_finished();
     pool4.add_task(func2, 7);
     pool4.add_task(func);
     pool4.wait_all_task_finished();
-
+    pool4.add_task([](int a)
+                   {
+                       for (auto i = 0; i < 5; ++i)
+                       {
+                           cout << "hello world" << endl;
+                       }
+                   }, 5);
+    pool4.wait_all_task_finished();
 }

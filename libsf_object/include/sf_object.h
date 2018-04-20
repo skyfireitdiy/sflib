@@ -92,8 +92,7 @@ public:                                                                         
 
 namespace skyfire
 {
-    template<typename _BaseClass = sf_empty_class>
-    class sf_object : public _BaseClass
+    class sf_object
     {
     public:
         template<typename _VectorType, typename _FuncType>

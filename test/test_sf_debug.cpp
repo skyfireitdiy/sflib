@@ -1,5 +1,5 @@
 #include <iostream>
-#define SF_DISABLE_DEBUG
+//#define SF_DISABLE_DEBUG
 #include "sf_debug.h"
 
 #include <iostream>
@@ -14,8 +14,8 @@ void output(const char *str)
 
 int main()
 {
-    sf_debug<> ddd;
-    sf_debug<>::set_output_debug_string_func(output);
+    sf_debug ddd;
+    sf_debug::set_output_debug_string_func(output);
     ddd.sf_track("666", 123);
     sf_log("123",8997);
 }
