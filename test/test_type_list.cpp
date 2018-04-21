@@ -31,4 +31,5 @@ int main()
     static_assert(is_same_v<sf_type_list<int,double,short,string>, typename tl_replace<char,short, t1>::type >);
     static_assert(is_same_v<sf_type_list<int,double,short,string>, typename tl_replace_index<2, short, t1>::type >);
     static_assert(is_same_v<sf_type_list<string, char, double , int>,typename tl_reverse<t1>::type >);
+    static_assert(is_same_v<sf_type_list<string,int,char>, typename tl_from_tuple<tuple<string, int, char>>::type>);
 }

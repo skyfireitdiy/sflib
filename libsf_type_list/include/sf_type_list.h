@@ -53,6 +53,8 @@ namespace skyfire
     struct tl_replace_index;
     template<typename _TypeList>
     struct tl_reverse;
+    template <typename _Type>
+    struct tl_from_tuple;
 
 
     template<typename _Itype, typename _TypeList>
@@ -87,6 +89,8 @@ namespace skyfire
     using tl_replace_index_t = typename tl_replace_index<_Index, _New, _TypeList>::type;
     template<typename _TypeList>
     using tl_reverse_t = typename tl_reverse<_TypeList>::type;
+    template <typename _Type>
+    using tl_from_tuple_t = typename tl_from_tuple<_Type>::type ;
 
 
     //////////////////////////////////////////////
@@ -493,6 +497,13 @@ namespace skyfire
                 sf_type_list<_TypeList...>,
                 sf_type_list<>
         >::type;
+    };
+
+
+    template <typename ... _TypeList>
+    struct tl_from_tuple<std::tuple<_TypeList...>>
+    {
+        using type = sf_type_list<_TypeList ... >;
     };
 
 }
