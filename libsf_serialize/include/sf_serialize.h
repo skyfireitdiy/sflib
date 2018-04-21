@@ -16,89 +16,88 @@
 
 namespace skyfire
 {
-
     template<typename _Pod_Type>
     typename std::enable_if<std::is_pod<_Pod_Type>::value, byte_array>::type sf_serialize(const _Pod_Type &value);
 
     template<typename _Pod_Type>
     typename std::enable_if<std::is_pod<_Pod_Type>::value, size_t>::type
-    sf_deserialize(const byte_array &data, _Pod_Type &obj, size_t begin_pos = 0);
+    sf_deserialize(const byte_array &data, _Pod_Type &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::vector <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::vector <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::vector <_Type> &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::list <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::list <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::list <_Type> &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::deque <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::deque <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::deque <_Type> &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::set <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::set <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::set <_Type> &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::unordered_set <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::unordered_set <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::unordered_set <_Type> &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::multiset <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::multiset <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::multiset <_Type> &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::basic_string <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::basic_string <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::basic_string <_Type> &obj, size_t begin_pos);
 
     template<typename _Type>
     byte_array sf_serialize(const std::unordered_multiset <_Type> &value);
 
     template<typename _Type>
-    size_t sf_deserialize(const byte_array &data, std::unordered_multiset <_Type> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::unordered_multiset <_Type> &obj, size_t begin_pos);
 
     template<typename _TypeKey, typename _TypeValue>
     byte_array sf_serialize(const std::unordered_multimap <_TypeKey, _TypeValue> &obj);
 
     template<typename _TypeKey, typename _TypeValue>
     size_t
-    sf_deserialize(const byte_array &data, std::unordered_multimap <_TypeKey, _TypeValue> &obj, size_t begin_pos = 0);
+    sf_deserialize(const byte_array &data, std::unordered_multimap <_TypeKey, _TypeValue> &obj, size_t begin_pos);
 
     template<typename _TypeKey, typename _TypeValue>
     byte_array sf_serialize(const std::unordered_map <_TypeKey, _TypeValue> &obj);
 
     template<typename _TypeKey, typename _TypeValue>
     size_t
-    sf_deserialize(const byte_array &data, std::unordered_map <_TypeKey, _TypeValue> &obj, size_t begin_pos = 0);
+    sf_deserialize(const byte_array &data, std::unordered_map <_TypeKey, _TypeValue> &obj, size_t begin_pos);
 
     template<typename _TypeKey, typename _TypeValue>
     byte_array sf_serialize(const std::multimap <_TypeKey, _TypeValue> &obj);
 
     template<typename _TypeKey, typename _TypeValue>
     size_t
-    sf_deserialize(const byte_array &data, std::multimap <_TypeKey, _TypeValue> &obj, size_t begin_pos = 0);
+    sf_deserialize(const byte_array &data, std::multimap <_TypeKey, _TypeValue> &obj, size_t begin_pos);
 
     template<typename _TypeKey, typename _TypeValue>
     byte_array sf_serialize(const std::map <_TypeKey, _TypeValue> &obj);
 
     template<typename _TypeKey, typename _TypeValue>
     size_t
-    sf_deserialize(const byte_array &data, std::map <_TypeKey, _TypeValue> &obj, size_t begin_pos = 0);
+    sf_deserialize(const byte_array &data, std::map <_TypeKey, _TypeValue> &obj, size_t begin_pos);
 
     template<typename _First_Type, typename... _Types>
     byte_array sf_serialize(const _First_Type &first, const _Types &... value);
@@ -126,7 +125,7 @@ namespace skyfire
     size_t sf_deserialize_tuple(size_t pos, const byte_array &data, _Tuple_Type &obj);
 
     template<typename... _Types>
-    size_t sf_deserialize(const byte_array &data, std::tuple<_Types...> &obj, size_t begin_pos = 0);
+    size_t sf_deserialize(const byte_array &data, std::tuple<_Types...> &obj, size_t begin_pos);
 
     inline byte_array operator+(byte_array b1, const byte_array &b2)
     {

@@ -23,6 +23,7 @@ include_directories(
         libsf_meta/include
         libsf_meta_object/include
         libsf_type_list/include
+        libsf_msg_bus/include
 )
 
 file(GLOB headers
@@ -44,6 +45,7 @@ file(GLOB headers
         libsf_meta/include/*.h
         libsf_meta_object/include/*.h
         libsf_type_list/include/*.h
+        libsf_msg_bus/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -62,10 +64,14 @@ IF (WIN32)
     add_executable(test_object test/test_object.cpp ${headers})
     add_executable(test_thread_pool test/test_thread_pool.cpp ${headers})
     add_executable(test_type_list test/test_type_list.cpp ${headers})
+    add_executable(test_msg_bus_server test/test_msg_bus_server.cpp ${headers})
+    add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
 
 
     target_link_libraries(server_main ws2_32)
     target_link_libraries(client_main ws2_32)
+    target_link_libraries(test_msg_bus_server ws2_32)
+    target_link_libraries(test_msg_bus_client ws2_32)
 ELSE()
     add_executable(server_main test/server_main.cpp ${headers})
     add_executable(client_main test/client_main.cpp ${headers})
@@ -76,6 +82,8 @@ ELSE()
     add_executable(test_object test/test_object.cpp ${headers})
     add_executable(test_thread_pool test/test_thread_pool.cpp ${headers})
     add_executable(test_type_list test/test_type_list.cpp ${headers})
+    add_executable(test_msg_bus_server test/test_msg_bus_server.cpp ${headers})
+    add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
 
     target_link_libraries(test_prij pthread)
     target_link_libraries(server_main pthread)

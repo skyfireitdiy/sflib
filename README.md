@@ -16,6 +16,9 @@
 ### libsf_meta_object
 提供元对象注册，实现简单的运行期反射
 
+### libsf_msg_bus
+提供跨主机消息总线模型
+
 ### libsf_nocopy
 禁止复制工具类
 
@@ -45,6 +48,9 @@ tcp通信库，windows下使用IOCP封装，linux下使用epoll封装
 
 ### libsf_type
 对一些类型的定义
+
+### libsf_type_list
+提供type list元编程操作
 
 ### libsf_watch_time
 提供运行时间统计功能
