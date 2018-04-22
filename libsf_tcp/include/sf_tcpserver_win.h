@@ -35,11 +35,13 @@ namespace skyfire
     {
     SF_REG_SIGNAL(new_connection, SOCKET);
     SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
+    SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&);
     SF_REG_SIGNAL(closed, SOCKET);
 
     private:
         bool inited__ = false;
         bool exit_flag__ = false;
+        bool raw__ = false;
 
         SOCKET listen_sock__ = INVALID_SOCKET;
         HANDLE completion_port__ = INVALID_HANDLE_VALUE;
@@ -50,7 +52,7 @@ namespace skyfire
 
 
 
-        sf_tcpserver()
+        sf_tcpserver(bool raw = false)
         {
             DWORD ret;
             WSADATA wsa_data{};
@@ -64,6 +66,7 @@ namespace skyfire
             GetSystemInfo(&sys_info);
             thread_count__ = sys_info.dwNumberOfProcessors * 2 + 2;
             inited__ = true;
+            raw__ = raw;
         }
 
 
@@ -215,6 +218,29 @@ namespace skyfire
             return  true;
         }
 
+        bool send(SOCKET sock, const byte_array &data)
+        {
+            DWORD sendBytes;
+
+            auto p_io_data = new per_io_operation_data_t;
+            ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+            p_io_data->buffer = data;
+            p_io_data->data_trans_count = 0;
+            p_io_data->is_send = true;
+            p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
+            p_io_data->wsa_buffer.len = p_io_data->buffer.size();
+            if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
+                        nullptr) == SOCKET_ERROR)
+            {
+                if (WSAGetLastError() != ERROR_IO_PENDING)
+                {
+                    delete p_io_data;
+                    return false;
+                }
+            }
+            return  true;
+        }
+
 
         ~sf_tcpserver() override
         {
@@ -325,41 +351,48 @@ namespace skyfire
                     p_io_data->data_trans_count = bytesTransferred;
                     p_io_data->buffer.resize(bytesTransferred);
 
-                    pkg_header_t header{};
-                    sock_data_buffer__[p_handle_data->socket].insert(sock_data_buffer__[p_handle_data->socket].end(),
-                                                                     p_io_data->buffer.begin(),
-                                                                     p_io_data->buffer.end());
-                    size_t read_pos = 0;
-                    while (sock_data_buffer__[p_handle_data->socket].size() - read_pos >= sizeof(pkg_header_t))
+                    if(raw__)
                     {
-                        memmove_s(&header, sizeof(header), sock_data_buffer__[p_handle_data->socket].data() + read_pos,
-                                  sizeof(header));
-                        if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >= header.length)
-                        {
-                            std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
-                                        {
-                                            data_coming(sock, header, pkg_data);
-                                        },
-                                        p_handle_data->socket,
-                                        header,
-                                        byte_array(
-                                                sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
-                                                sizeof(header),
-                                                sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
-                                                sizeof(header) + header.length)
-                            ).detach();
-                            read_pos += sizeof(header) + header.length;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        raw_data_coming(p_handle_data->socket,p_io_data->buffer);
                     }
-                    if (read_pos != 0)
-                    {
-                        sock_data_buffer__[p_handle_data->socket].erase(
-                                sock_data_buffer__[p_handle_data->socket].begin(),
-                                sock_data_buffer__[p_handle_data->socket].begin() + read_pos);
+                    else
+                        {
+                        pkg_header_t header{};
+                        sock_data_buffer__[p_handle_data->socket].insert(sock_data_buffer__[p_handle_data->socket].end(),
+                                                                         p_io_data->buffer.begin(),
+                                                                         p_io_data->buffer.end());
+                        size_t read_pos = 0;
+                        while (sock_data_buffer__[p_handle_data->socket].size() - read_pos >= sizeof(pkg_header_t))
+                        {
+                            memmove_s(&header, sizeof(header), sock_data_buffer__[p_handle_data->socket].data() + read_pos,
+                                      sizeof(header));
+                            if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >= header.length)
+                            {
+                                std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
+                                            {
+                                                data_coming(sock, header, pkg_data);
+                                            },
+                                            p_handle_data->socket,
+                                            header,
+                                            byte_array(
+                                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+                                                    sizeof(header),
+                                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+                                                    sizeof(header) + header.length)
+                                ).detach();
+                                read_pos += sizeof(header) + header.length;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        if (read_pos != 0)
+                        {
+                            sock_data_buffer__[p_handle_data->socket].erase(
+                                    sock_data_buffer__[p_handle_data->socket].begin(),
+                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos);
+                        }
                     }
 
                     ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));

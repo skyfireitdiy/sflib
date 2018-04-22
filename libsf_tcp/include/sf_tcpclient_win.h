@@ -15,12 +15,14 @@ namespace skyfire
     {
         SF_REG_SIGNAL(connected);
         SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &);
+        SF_REG_SIGNAL(raw_data_coming, const byte_array &);
         SF_REG_SIGNAL(closed);
     private:
+        bool raw__ = false;
         bool inited__ = false;
         SOCKET sock__ = INVALID_SOCKET;
     public:
-        sf_tcpclient()
+        sf_tcpclient(bool raw = false)
         {
             WSADATA wsa_data{};
             if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
@@ -36,6 +38,7 @@ namespace skyfire
                 return;
             }
             inited__ = true;
+            raw__ = raw;
         }
 
 
@@ -79,32 +82,39 @@ namespace skyfire
                                                 }).detach();
                                     break;
                                 }
-                                data.insert(data.end(), recv_buffer.begin(), recv_buffer.begin() + len);
-                                size_t read_pos = 0;
-                                while (data.size() - read_pos >= sizeof(pkg_header_t))
+                                if(raw__)
                                 {
-                                    memmove_s(&header, sizeof(header), data.data() + read_pos, sizeof(header));
-                                    if (data.size() - read_pos - sizeof(header) >= header.length)
-                                    {
-                                        std::thread([=](const pkg_header_t &header, const byte_array &pkg_data)
-                                                    {
-                                                        data_coming(header, pkg_data);
-                                                    },
-                                                    header,
-                                                    byte_array(
-                                                            data.begin() + read_pos + sizeof(header),
-                                                            data.begin() + read_pos + sizeof(header)
-                                                            + header.length)).detach();
-                                        read_pos += sizeof(header) + header.length;
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
+                                    raw_data_coming(byte_array(recv_buffer.begin(),recv_buffer.begin()+len));
                                 }
-                                if (read_pos != 0)
+                                else
                                 {
-                                    data.erase(data.begin(), data.begin() + read_pos);
+                                    data.insert(data.end(), recv_buffer.begin(), recv_buffer.begin() + len);
+                                    size_t read_pos = 0;
+                                    while (data.size() - read_pos >= sizeof(pkg_header_t))
+                                    {
+                                        memmove_s(&header, sizeof(header), data.data() + read_pos, sizeof(header));
+                                        if (data.size() - read_pos - sizeof(header) >= header.length)
+                                        {
+                                            std::thread([=](const pkg_header_t &header, const byte_array &pkg_data)
+                                                        {
+                                                            data_coming(header, pkg_data);
+                                                        },
+                                                        header,
+                                                        byte_array(
+                                                                data.begin() + read_pos + sizeof(header),
+                                                                data.begin() + read_pos + sizeof(header)
+                                                                + header.length)).detach();
+                                            read_pos += sizeof(header) + header.length;
+                                        }
+                                        else
+                                        {
+                                            break;
+                                        }
+                                    }
+                                    if (read_pos != 0)
+                                    {
+                                        data.erase(data.begin(), data.begin() + read_pos);
+                                    }
                                 }
                             }
                         }).detach();
@@ -121,6 +131,13 @@ namespace skyfire
             header.length = data.size();
             auto ret = ::send(sock__, make_pkg(header).data(), sizeof(header), 0);
             if (ret != sizeof(header))
+                return false;
+            return ::send(sock__, data.data(), data.size(), 0) == data.size();
+        }
+
+        bool raw_send(const byte_array & data)
+        {
+            if (!inited__)
                 return false;
             return ::send(sock__, data.data(), data.size(), 0) == data.size();
         }

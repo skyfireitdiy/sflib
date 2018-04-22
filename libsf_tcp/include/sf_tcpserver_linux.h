@@ -23,6 +23,7 @@ namespace skyfire
 
     SF_REG_SIGNAL(new_connection, SOCKET);
     SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
+    SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&);
     SF_REG_SIGNAL(closed, SOCKET);
 
     private:
@@ -30,13 +31,14 @@ namespace skyfire
         std::map<int, byte_array> sock_data_buffer__;
         int cur_fd_count__ = -1;
         int epoll_fd__ = -1;
+        bool raw__ = false;
         epoll_event evs[SOMAXCONN];
         epoll_event ev;
 
     public:
-        sf_tcpserver()
+        sf_tcpserver(bool raw = false)
         {
-
+            raw__ = raw;
         }
 
         ~sf_tcpserver()
@@ -141,44 +143,51 @@ namespace skyfire
                                     else
                                     {
                                         recv_buf.resize(count_read);
-                                        sock_data_buffer__[evs[i].data.fd].insert(
-                                                sock_data_buffer__[evs[i].data.fd].end(),
-                                                recv_buf.begin(),
-                                                recv_buf.end());
-                                        size_t read_pos = 0;
-                                        while (sock_data_buffer__[evs[i].data.fd].size() - read_pos >=
-                                               sizeof(pkg_header_t))
+                                        if(raw__)
                                         {
-                                            memmove(&header,
-                                                    sock_data_buffer__[evs[i].data.fd].data() + read_pos,
-                                                    sizeof(header));
-                                            if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
-                                                header.length)
-                                            {
-                                                std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
-                                                            {
-                                                                data_coming(sock, header, pkg_data);
-                                                            },
-                                                            static_cast<SOCKET>(evs[i].data.fd), header,
-                                                            byte_array(
-                                                                    sock_data_buffer__[evs[i].data.fd].begin() +
-                                                                    read_pos +
-                                                                    sizeof(header),
-                                                                    sock_data_buffer__[evs[i].data.fd].begin() +
-                                                                    read_pos +
-                                                                    sizeof(header) + header.length)
-                                                ).detach();
-                                                read_pos += sizeof(header) + header.length;
-                                            } else
-                                            {
-                                                break;
-                                            }
+                                            raw_data_coming(evs[i].data.fd, recv_buf);
                                         }
-                                        if (read_pos != 0)
+                                        else
                                         {
-                                            sock_data_buffer__[evs[i].data.fd].erase(
-                                                    sock_data_buffer__[evs[i].data.fd].begin(),
-                                                    sock_data_buffer__[evs[i].data.fd].begin() + read_pos);
+                                            sock_data_buffer__[evs[i].data.fd].insert(
+                                                    sock_data_buffer__[evs[i].data.fd].end(),
+                                                    recv_buf.begin(),
+                                                    recv_buf.end());
+                                            size_t read_pos = 0;
+                                            while (sock_data_buffer__[evs[i].data.fd].size() - read_pos >=
+                                                   sizeof(pkg_header_t))
+                                            {
+                                                memmove(&header,
+                                                        sock_data_buffer__[evs[i].data.fd].data() + read_pos,
+                                                        sizeof(header));
+                                                if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
+                                                    header.length)
+                                                {
+                                                    std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
+                                                                {
+                                                                    data_coming(sock, header, pkg_data);
+                                                                },
+                                                                static_cast<SOCKET>(evs[i].data.fd), header,
+                                                                byte_array(
+                                                                        sock_data_buffer__[evs[i].data.fd].begin() +
+                                                                        read_pos +
+                                                                        sizeof(header),
+                                                                        sock_data_buffer__[evs[i].data.fd].begin() +
+                                                                        read_pos +
+                                                                        sizeof(header) + header.length)
+                                                    ).detach();
+                                                    read_pos += sizeof(header) + header.length;
+                                                } else
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                            if (read_pos != 0)
+                                            {
+                                                sock_data_buffer__[evs[i].data.fd].erase(
+                                                        sock_data_buffer__[evs[i].data.fd].begin(),
+                                                        sock_data_buffer__[evs[i].data.fd].begin() + read_pos);
+                                            }
                                         }
                                     }
                                 }
@@ -197,11 +206,16 @@ namespace skyfire
 
         bool send(int sock, int type, const byte_array &data)
         {
-            ssize_t sendBytes;
             pkg_header_t header;
             header.type = type;
             header.length = data.size();
             auto send_data = make_pkg(header) + data;
+            return write(sock, send_data.data(), send_data.size()) == send_data.size();
+        }
+
+        bool send(int sock, const byte_array &data)
+        {
+            auto send_data = data;
             return write(sock, send_data.data(), send_data.size()) == send_data.size();
         }
     };
