@@ -66,6 +66,7 @@ IF (WIN32)
     add_executable(test_type_list test/test_type_list.cpp ${headers})
     add_executable(test_msg_bus_server test/test_msg_bus_server.cpp ${headers})
     add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
+    add_executable(test_any test/test_any.cpp ${headers})
 
 
     target_link_libraries(server_main ws2_32)
@@ -84,6 +85,7 @@ ELSE()
     add_executable(test_type_list test/test_type_list.cpp ${headers})
     add_executable(test_msg_bus_server test/test_msg_bus_server.cpp ${headers})
     add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
+    add_executable(test_any test/test_any.cpp ${headers})
 
     target_link_libraries(test_prij pthread)
     target_link_libraries(server_main pthread)

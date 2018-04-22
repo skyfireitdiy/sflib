@@ -11,8 +11,7 @@
 namespace skyfire
 {
 
-    class sf_msg_bus_server : public sf_nocopy<sf_object>,
-            public std::enable_shared_from_this<sf_msg_bus_server>
+    class sf_msg_bus_server : public sf_nocopy<sf_object>
     {
         SF_REG_SIGNAL(msg_come, SOCKET, std::string, byte_array);
 
@@ -135,6 +134,7 @@ namespace skyfire
                 msg_bus_t msg_data;
                 sf_deserialize(data, msg_data, 0);
                 msg_come(sock, msg_data.type, msg_data.data);
+                send_msg(msg_data.type, msg_data.data);
             }
         }
 

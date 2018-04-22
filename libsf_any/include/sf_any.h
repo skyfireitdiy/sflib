@@ -6,28 +6,46 @@ namespace skyfire
 {
     class sf_any
     {
+    private:
+
+        template<typename T>
+        class value_class;
+
     public:
-        template<typename T,class = typename std::enable_if<!std::is_same<std::decay<T>,sf_any>::value,T>::type>
-        sf_any(T value):m_ptr(std::make_shared<ValueClass<T>>(value)){}
-        sf_any(const sf_any& that):m_ptr(that.clone()){}
-        sf_any(sf_any && that):m_ptr(std::move(that.m_ptr)){}
+
+        template<typename T, class =
+                typename std::enable_if<
+                        !std::is_same<std::decay<T>, sf_any>::value &&
+                        !std::is_pointer<T>::value &&
+                        !std::is_reference<T>::value,
+                        T
+                >::type>
+        sf_any(T value):m_ptr(std::make_shared<value_class<T>>(value))
+        {}
+
+        sf_any(const sf_any &that) : m_ptr(that.clone())
+        {}
+
+        sf_any(sf_any &&that) : m_ptr(std::move(that.m_ptr))
+        {}
 
         template<typename V>
         operator V()
         {
-            return dynamic_cast<ValueClass<V>*>(m_ptr.get())->get();
+            return dynamic_cast<value_class<V> *>(m_ptr.get())->get();
         }
 
         template<typename T>
-        sf_any operator=(const T &value)
+        std::enable_if_t<!std::is_pointer_v<T> && !std::is_reference_v<T>, sf_any>
+        operator=(const T &value)
         {
-            m_ptr = std::make_shared<ValueClass<T>>(value);
+            m_ptr = std::make_shared<value_class<typename std::decay<T>::type>>(value);
             return *this;
-        }
+        };
 
         sf_any operator=(const sf_any &that)
         {
-            if(this != &that)
+            if (this != &that)
             {
                 m_ptr = that.clone();
             }
@@ -42,7 +60,7 @@ namespace skyfire
         template<typename T>
         bool operator==(const T &value)
         {
-            return T(*this)==value;
+            return T(*this) == value;
         }
 
         bool isNull()
@@ -55,37 +73,40 @@ namespace skyfire
         class Base
         {
         public:
-            virtual std::shared_ptr<Base> clone() const = 0 ;
+            virtual std::shared_ptr<Base> clone() const = 0;
         };
 
         template<typename T>
-        class ValueClass: public Base
+        class value_class : public Base
         {
         public:
-            ValueClass(T v):m_value(v)
+            value_class(T v) : m_value(v)
             {
             }
-            T& get()
+
+            T &get()
             {
                 return m_value;
             }
+
             std::shared_ptr<Base> clone() const override
             {
-                return std::shared_ptr<Base>(new ValueClass<T>(m_value));
+                return std::shared_ptr<Base>(new value_class<T>(m_value));
             }
+
         private:
             T m_value;
         };
 
         std::shared_ptr<Base> clone() const
         {
-            if(m_ptr != nullptr)
+            if (m_ptr != nullptr)
             {
                 return m_ptr->clone();
             }
             return nullptr;
         }
 
-        std::shared_ptr<Base> m_ptr {nullptr};
+        std::shared_ptr<Base> m_ptr{nullptr};
     };
 }

@@ -8,8 +8,7 @@
 
 namespace skyfire
 {
-    class sf_msg_bus_client : public sf_nocopy<sf_object>,
-                              public std::enable_shared_from_this<sf_msg_bus_client>
+    class sf_msg_bus_client : public sf_nocopy<sf_object>
     {
         SF_REG_SIGNAL(msg_come, std::string, byte_array);
 
