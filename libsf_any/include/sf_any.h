@@ -63,21 +63,21 @@ namespace skyfire
             return T(*this) == value;
         }
 
-        bool isNull()
+        bool is_null()
         {
             return m_ptr == nullptr;
         }
 
     private:
 
-        class Base
+        class base_class
         {
         public:
-            virtual std::shared_ptr<Base> clone() const = 0;
+            virtual std::shared_ptr<base_class> clone() const = 0;
         };
 
         template<typename T>
-        class value_class : public Base
+        class value_class : public base_class
         {
         public:
             value_class(T v) : m_value(v)
@@ -89,16 +89,16 @@ namespace skyfire
                 return m_value;
             }
 
-            std::shared_ptr<Base> clone() const override
+            std::shared_ptr<base_class> clone() const override
             {
-                return std::shared_ptr<Base>(new value_class<T>(m_value));
+                return std::shared_ptr<base_class>(new value_class<T>(m_value));
             }
 
         private:
             T m_value;
         };
 
-        std::shared_ptr<Base> clone() const
+        std::shared_ptr<base_class> clone() const
         {
             if (m_ptr != nullptr)
             {
@@ -107,6 +107,6 @@ namespace skyfire
             return nullptr;
         }
 
-        std::shared_ptr<Base> m_ptr{nullptr};
+        std::shared_ptr<base_class> m_ptr{nullptr};
     };
 }

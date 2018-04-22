@@ -38,7 +38,7 @@ namespace skyfire
 #endif
 #endif
         }
-
+        
 
         class sf_debug
         {

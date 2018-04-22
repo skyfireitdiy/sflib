@@ -11,7 +11,7 @@
 
 namespace skyfire
 {
-    class sf_tcpclient : public sf_nocopy<sf_object>, public std::enable_shared_from_this<sf_tcpclient>
+    class sf_tcpclient : public sf_nocopy<sf_object>
     {
         SF_REG_SIGNAL(connected);
         SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &);

@@ -90,6 +90,13 @@ ELSE()
     target_link_libraries(test_prij pthread)
     target_link_libraries(server_main pthread)
     target_link_libraries(client_main pthread)
+    target_link_libraries(test_msg_bus_client pthread)
+    target_link_libraries(test_msg_bus_server pthread)
+    target_link_libraries(test_object pthread)
+    target_link_libraries(test_thread_pool pthread)
+
+
+
 ENDIF ()
 
 

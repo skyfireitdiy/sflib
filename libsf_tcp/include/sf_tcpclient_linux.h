@@ -20,7 +20,7 @@
 
 namespace skyfire
 {
-    class sf_tcpclient : public sf_nocopy<sf_object<>>, public std::enable_shared_from_this<sf_tcpclient>
+    class sf_tcpclient : public sf_nocopy<sf_object>
     {
     SF_REG_SIGNAL(connected);
     SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &);
@@ -85,7 +85,7 @@ namespace skyfire
                                 }
                                 if(raw__)
                                 {
-                                    raw_data_coming(recv_buffer.begin(),recv_buffer.begin() + len);
+                                    raw_data_coming(byte_array(recv_buffer.begin(),recv_buffer.begin() + len));
                                 }
                                 else
                                 {

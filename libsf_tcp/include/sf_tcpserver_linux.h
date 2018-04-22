@@ -18,7 +18,7 @@
 
 namespace skyfire
 {
-    class sf_tcpserver : public sf_nocopy<sf_object<>>, public std::enable_shared_from_this<sf_tcpserver>
+    class sf_tcpserver : public sf_nocopy<sf_object>
     {
 
     SF_REG_SIGNAL(new_connection, SOCKET);
@@ -145,7 +145,7 @@ namespace skyfire
                                         recv_buf.resize(count_read);
                                         if(raw__)
                                         {
-                                            raw_data_coming(evs[i].data.fd, recv_buf);
+                                            raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
                                         }
                                         else
                                         {

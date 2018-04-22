@@ -6,7 +6,7 @@
 
 namespace skyfire
 {
-    class sf_timer : public sf_nocopy<sf_object>, public std::enable_shared_from_this<sf_timer>
+    class sf_timer : public sf_nocopy<sf_object>
     {
     public:
         SF_REG_SIGNAL(timeout);
