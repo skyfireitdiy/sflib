@@ -17,7 +17,6 @@
 #include <iostream>
 #endif
 #endif
-#include "sf_empty_class.h"
 
 namespace skyfire
 {
