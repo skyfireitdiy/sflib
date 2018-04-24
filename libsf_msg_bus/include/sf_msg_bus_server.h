@@ -140,9 +140,16 @@ namespace skyfire
 
         void on_disconnect__(SOCKET sock)
         {
+            std::vector<std::string> remove_msg;
             for(auto &p : msg_map__)
             {
                 std::remove(p.second.begin(),p.second.end(),sock);
+                if(p.second.empty())
+                    remove_msg.push_back(p.first);
+            }
+            for(auto &p: remove_msg)
+            {
+                msg_map__.erase(p);
             }
         }
     };
