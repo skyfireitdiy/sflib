@@ -50,6 +50,16 @@ namespace skyfire
             p_client__->send(msg_bus_reg_type_multi, sf_serialize(types));
         }
 
+        void unreg_msg_to_bus(const std::string& type)
+        {
+            p_client__->send(msg_bus_unreg_single, sf_serialize(type));
+        }
+
+        void unreg_msg_to_bus(const std::vector<std::string> &types)
+        {
+            p_client__->send(msg_bus_unreg_multi, sf_serialize(types));
+        }
+
         bool connect_to_bus(const std::string &ip, unsigned short port)
         {
             return p_client__->connect(ip,port);

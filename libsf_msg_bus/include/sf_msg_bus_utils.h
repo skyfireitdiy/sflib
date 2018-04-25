@@ -11,6 +11,9 @@ namespace skyfire
     constexpr int msg_bus_reg_type_single = 0;
     constexpr int msg_bus_reg_type_multi = 1;
     constexpr int msg_bus_new_msg = 2;
+    constexpr int msg_bus_unreg_single = 3;
+    constexpr int msg_bus_unreg_multi = 4;
+
 
     struct msg_bus_t
     {

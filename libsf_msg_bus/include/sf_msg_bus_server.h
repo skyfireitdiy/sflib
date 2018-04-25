@@ -136,6 +136,29 @@ namespace skyfire
                 msg_come(sock, msg_data.type, msg_data.data);
                 send_msg(msg_data.type, msg_data.data);
             }
+            else if(header.type == msg_bus_unreg_single)
+            {
+                std::string name;
+                sf_deserialize(data, name, 0);
+                unreg_msg__(sock, name);
+            }
+            else if(header.type == msg_bus_unreg_multi)
+            {
+                std::vector<std::string> names;
+                sf_deserialize(data, names, 0);
+                for(auto &p:names)
+                {
+                    unreg_msg__(sock, p);
+                }
+            }
+        }
+
+        void unreg_msg__(SOCKET sock, const std::string &msg)
+        {
+            if(msg_map__.count(msg) != 0)
+            {
+                msg_map__[msg].remove(sock);
+            }
         }
 
         void on_disconnect__(SOCKET sock)
