@@ -104,7 +104,7 @@ namespace skyfire
             static_assert(!std::is_reference<_Ret>::value,"Param can't be reference");
             static_assert(!std::is_pointer<_Ret>::value,"Param can't be pointer");
             static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
-            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
 
             using __Ret = typename std::decay<_Ret>::type ;
 
@@ -174,7 +174,7 @@ namespace skyfire
         )
         {
             static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
-            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
             std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
             int call_id = rand();
             pkg_header_t header;
@@ -201,7 +201,7 @@ namespace skyfire
             static_assert(!std::is_reference<_Ret>::value,"Param can't be reference");
             static_assert(!std::is_pointer<_Ret>::value,"Param can't be pointer");
             static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
-            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
+            static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
 
             using __Ret = typename std::decay<_Ret>::type ;
             std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
