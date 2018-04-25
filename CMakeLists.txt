@@ -24,6 +24,7 @@ include_directories(
         libsf_meta_object/include
         libsf_type_list/include
         libsf_msg_bus/include
+        libsf_chain_call/include
 )
 
 file(GLOB headers
@@ -46,6 +47,7 @@ file(GLOB headers
         libsf_meta_object/include/*.h
         libsf_type_list/include/*.h
         libsf_msg_bus/include/*.h
+        libsf_chain_call/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -67,6 +69,7 @@ IF (WIN32)
     add_executable(test_msg_bus_server test/test_msg_bus_server.cpp ${headers})
     add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
     add_executable(test_any test/test_any.cpp ${headers})
+    add_executable(test_chain_call test/test_chain_call.cpp ${headers})
 
 
     target_link_libraries(server_main ws2_32)
@@ -86,6 +89,7 @@ ELSE()
     add_executable(test_msg_bus_server test/test_msg_bus_server.cpp ${headers})
     add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
     add_executable(test_any test/test_any.cpp ${headers})
+    add_executable(test_chain_call test/test_chain_call.cpp ${headers})
 
     target_link_libraries(test_prij pthread)
     target_link_libraries(server_main pthread)
