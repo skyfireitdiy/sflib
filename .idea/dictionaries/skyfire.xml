@@ -6,6 +6,7 @@
       <w>libsf</w>
       <w>rpcserver</w>
       <w>tcpserver</w>
+      <w>unreg</w>
     </words>
   </dictionary>
 </component>
