@@ -54,6 +54,18 @@ namespace skyfire
                 __rpc_data__[call_id]->back_cond.notify_one();
             }
         }
+
+        void __on_closed()
+        {
+            for(auto &p : __rpc_data__)
+            {
+                if(!p.second->is_async)
+                {
+                    p.second->back_finished = false;
+                    p.second->back_cond.notify_one();
+                }
+            }
+        }
     public:
         sf_rpcclient()
         {
@@ -63,6 +75,11 @@ namespace skyfire
                                                                   this,
                                                                   std::placeholders::_1,
                                                                   std::placeholders::_2),
+                           true);
+            sf_bind_signal(__tcp_client__,
+                           closed,
+                           std::bind(&sf_rpcclient<_BaseClass>::__on_closed,
+                                                                   this),
                            true);
         }
 
@@ -107,6 +124,12 @@ namespace skyfire
                     __rpc_data__.erase(call_id);
                     return sf_tri_type <__Ret>();
                 }
+            }
+
+            // 连接断开
+            if(!__rpc_data__[call_id]-> back_finished)
+            {
+                return sf_tri_type <__Ret>();
             }
 
             std::string id_str;

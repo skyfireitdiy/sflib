@@ -190,6 +190,11 @@ namespace skyfire
                 listen_sock__ = INVALID_SOCKET;
             }
         }
+        
+        void close(SOCKET sock)
+        {
+            ::closesocket(sock);
+        }
 
         bool send(SOCKET sock, int type, const byte_array &data)
         {
@@ -198,7 +203,7 @@ namespace skyfire
             pkg_header_t header;
             header.type = type;
             header.length = data.size();
-
+            make_header_checksum(header);
             auto p_io_data = new per_io_operation_data_t;
             ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
             p_io_data->buffer = make_pkg(header) + data;
@@ -366,6 +371,11 @@ namespace skyfire
                         {
                             memmove_s(&header, sizeof(header), sock_data_buffer__[p_handle_data->socket].data() + read_pos,
                                       sizeof(header));
+                            if(!check_header_checksum(header))
+                            {
+                                close(p_handle_data->socket);
+                                break;
+                            }
                             if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >= header.length)
                             {
                                 std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)

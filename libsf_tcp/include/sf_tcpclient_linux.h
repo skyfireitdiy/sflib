@@ -94,6 +94,11 @@ namespace skyfire
                                     while (data.size() - read_pos >= sizeof(pkg_header_t))
                                     {
                                         std::memmove(&header, data.data() + read_pos, sizeof(header));
+                                        if(!check_header_checksum(header))
+                                        {
+                                            close();
+                                            return;
+                                        }
                                         if (data.size() - read_pos - sizeof(header) >= header.length)
                                         {
                                             std::thread([=](const pkg_header_t &header, const byte_array &pkg_data)

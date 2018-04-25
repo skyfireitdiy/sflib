@@ -160,6 +160,11 @@ namespace skyfire
                                                 memmove(&header,
                                                         sock_data_buffer__[evs[i].data.fd].data() + read_pos,
                                                         sizeof(header));
+                                                if(!check_header_checksum(header))
+                                                {
+                                                    close(evs[i].data.fd);
+                                                    break;
+                                                }
                                                 if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
                                                     header.length)
                                                 {
@@ -203,12 +208,18 @@ namespace skyfire
             listen_fd__ = -1;
             sock_data_buffer__.clear();
         }
+        
+        void close(SOCKET sock)
+        {
+            ::close(sock);
+        }
 
         bool send(int sock, int type, const byte_array &data)
         {
             pkg_header_t header;
             header.type = type;
             header.length = data.size();
+            make_header_checksum(header);
             auto send_data = make_pkg(header) + data;
             return write(sock, send_data.data(), send_data.size()) == send_data.size();
         }

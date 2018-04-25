@@ -25,6 +25,7 @@ void output(const char *str)
 
 int main()
 {
+    cout<< sizeof(pkg_header_t) << endl;
     auto server = std::make_shared<sf_rpcserver<>>();
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);

@@ -11,21 +11,12 @@ namespace skyfire
 
     constexpr size_t BUFFER_SIZE = 4096;
 
-    struct alignas(1) pkg_header_t
+    struct alignas(4) pkg_header_t
     {
+        unsigned char checksum;
         int type;
         size_t length;
     };
-
-    inline std::string ba2str(const byte_array &data)
-    {
-        return std::string(data.begin(), data.end());
-    }
-
-    inline byte_array str2ba(const std::string &str)
-    {
-        return byte_array(str.begin(), str.end());
-    }
 
     template<typename T>
     typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(const T &data)
@@ -52,4 +43,26 @@ namespace skyfire
         return ret;
     }
 
+    inline void make_header_checksum(pkg_header_t& header)
+    {
+        header.checksum = 0;
+        auto offset = SF_GET_OFFSET(pkg_header_t, type);
+        auto p_byte = reinterpret_cast<const unsigned char*>(&header);
+        for(auto i = offset; i < sizeof(header); ++i)
+        {
+            header.checksum ^= p_byte[i];
+        }
+    }
+
+    inline bool check_header_checksum(const pkg_header_t& header)
+    {
+        unsigned char checksum = 0;
+        auto offset = SF_GET_OFFSET(pkg_header_t, type);
+        auto p_byte = reinterpret_cast<const unsigned char*>(&header);
+        for(auto i = offset; i < sizeof(header); ++i)
+        {
+            checksum ^= p_byte[i];
+        }
+        return checksum == header.checksum;
+    }
 }

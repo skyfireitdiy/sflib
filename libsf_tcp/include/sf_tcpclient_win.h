@@ -93,6 +93,11 @@ namespace skyfire
                                     while (data.size() - read_pos >= sizeof(pkg_header_t))
                                     {
                                         memmove_s(&header, sizeof(header), data.data() + read_pos, sizeof(header));
+                                        if(!check_header_checksum(header))
+                                        {
+                                            close();
+                                            return;
+                                        }
                                         if (data.size() - read_pos - sizeof(header) >= header.length)
                                         {
                                             std::thread([=](const pkg_header_t &header, const byte_array &pkg_data)
@@ -129,6 +134,7 @@ namespace skyfire
             pkg_header_t header;
             header.type = type;
             header.length = data.size();
+            make_header_checksum(header);
             auto ret = ::send(sock__, make_pkg(header).data(), sizeof(header), 0);
             if (ret != sizeof(header))
                 return false;
