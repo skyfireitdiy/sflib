@@ -24,7 +24,7 @@ include_directories(
         libsf_meta_object/include
         libsf_type_list/include
         libsf_msg_bus/include
-        libsf_chain_call/include
+        libsf_chain/include
 )
 
 file(GLOB headers
@@ -47,7 +47,7 @@ file(GLOB headers
         libsf_meta_object/include/*.h
         libsf_type_list/include/*.h
         libsf_msg_bus/include/*.h
-        libsf_chain_call/include/*.h
+        libsf_chain/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)

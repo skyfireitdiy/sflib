@@ -1,5 +1,5 @@
 #include <iostream>
-#include "sf_chain_call.h"
+#include "sf_chain.h"
 
 
 using namespace skyfire;
@@ -28,4 +28,8 @@ int main()
 {
     auto p = make_chain_call(sum, 1, 1).then(append).then(append).then(append_n, 25);
     p.call();
+
+    make_chain_async_call(sum,1,1).then(append).then(append);
+
+    cout<<"hello world"<<endl;
 }
