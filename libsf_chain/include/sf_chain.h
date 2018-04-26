@@ -23,7 +23,7 @@ namespace skyfire
         template <typename _R, typename ... _Params>
         sf_chain_call__<_R> then(std::function<_R(_Ret, _Params...)> func, _Params&& ... param) const
         {
-            std::function<_Ret()> f = [=, &param ... ]() -> _R{
+            std::function<_R()> f = [=, &param ... ]() -> _R{
                 func(func__(), std::forward<_Params>(param) ...);
             };
             return sf_chain_call__<_R> (f);
@@ -32,7 +32,7 @@ namespace skyfire
         template <typename _R, typename ... _Params>
         sf_chain_call__<_R> then(_R(func)(_Ret, _Params...), _Params&& ... param) const
         {
-            std::function<_Ret()> f = [=, &param ... ]() -> _R{
+            std::function<_R()> f = [=, &param ... ]() -> _R{
                 func(func__(), std::forward<_Params>(param) ...);
             };
             return sf_chain_call__<_R> (f);
@@ -44,6 +44,47 @@ namespace skyfire
             return func__();
         }
 
+    };
+
+    template <>
+    class sf_chain_call__<void>
+    {
+    private:
+
+        std::function<void()> func__;
+
+    public:
+
+        sf_chain_call__(std::function<void()> func) :
+                func__(func)
+        {
+        };
+
+        template <typename _R, typename ... _Params>
+        sf_chain_call__<_R> then(std::function<_R(_Params...)> func, _Params&& ... param) const
+        {
+            std::function<_R()> f = [=, &param ... ]() -> _R{
+                func__();
+                func(std::forward<_Params>(param) ...);
+            };
+            return sf_chain_call__<_R> (f);
+        }
+
+        template <typename _R, typename ... _Params>
+        sf_chain_call__<_R> then(_R(func)(_Params...), _Params&& ... param) const
+        {
+            std::function<_R()> f = [=, &param ... ]() -> _R{
+                func__();
+                func(std::forward<_Params>(param) ...);
+            };
+            return sf_chain_call__<_R> (f);
+        }
+
+
+        void call() const
+        {
+            func__();
+        }
     };
 
 
@@ -63,15 +104,53 @@ namespace skyfire
         template <typename _R, typename ... _Params>
         sf_chain_async_call__<_R> then(std::function<_R(_Ret, _Params...)> func, _Params&& ... param)
         {
-            auto task=std::make_shared<std::packaged_task<_Ret()>>(std::bind(func, ret__.get(), std::forward<_Params>(param) ...));
+            auto task=std::make_shared<std::packaged_task<_R()>>(std::bind(func, ret__.get(), std::forward<_Params>(param) ...));
             return sf_chain_async_call__<_R>(task);
         }
 
         template <typename _R, typename ... _Params>
         sf_chain_async_call__<_R> then(_R(func)(_Ret, _Params...), _Params&& ... param)
         {
-            auto task=std::make_shared<std::packaged_task<_Ret()>>(std::bind(func, ret__.get(), std::forward<_Params>(param) ...));
+            auto task=std::make_shared<std::packaged_task<_R()>>(std::bind(func, ret__.get(), std::forward<_Params>(param) ...));
             return sf_chain_async_call__<_R>(task);
+        }
+
+        std::future<_Ret> get_future()
+        {
+            return ret__;
+        }
+    };
+
+
+    template <>
+    class sf_chain_async_call__<void>
+    {
+    private:
+
+    public:
+        sf_chain_async_call__(std::shared_ptr<std::packaged_task<void()>> task)
+        {
+            task->get_future();
+            std::thread(std::move(*task)).detach();
+        }
+
+        template <typename _R, typename ... _Params>
+        sf_chain_async_call__<_R> then(std::function<_R(_Params...)> func, _Params&& ... param)
+        {
+            auto task=std::make_shared<std::packaged_task<void()>>(std::bind(func, std::forward<_Params>(param) ...));
+            return sf_chain_async_call__<_R>(task);
+        }
+
+        template <typename _R, typename ... _Params>
+        sf_chain_async_call__<_R> then(_R(func)(_Params...), _Params&& ... param)
+        {
+            auto task=std::make_shared<std::packaged_task<void()>>(std::bind(func, std::forward<_Params>(param) ...));
+            return sf_chain_async_call__<_R>(task);
+        }
+
+        std::future<void> get_future()
+        {
+            return std::future<void>();
         }
     };
 
