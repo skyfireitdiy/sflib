@@ -55,11 +55,7 @@ namespace skyfire
 
         bool listen(const std::string &ip, unsigned short port)
         {
-            if(!p_server__->listen(ip, port))
-            {
-                return false;
-            }
-
+            return p_server__->listen(ip, port);
         }
 
         void close()
