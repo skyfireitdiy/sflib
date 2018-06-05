@@ -70,6 +70,7 @@ IF (WIN32)
     add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
     add_executable(test_any test/test_any.cpp ${headers})
     add_executable(test_chain_call test/test_chain_call.cpp ${headers})
+    add_executable(test_timer test/test_timer.cpp ${headers})
 
 
     target_link_libraries(server_main ws2_32)
@@ -90,6 +91,7 @@ ELSE()
     add_executable(test_msg_bus_client test/test_msg_bus_client.cpp ${headers})
     add_executable(test_any test/test_any.cpp ${headers})
     add_executable(test_chain_call test/test_chain_call.cpp ${headers})
+    add_executable(test_timer test/test_timer.cpp ${headers})
 
     target_link_libraries(test_prij pthread)
     target_link_libraries(server_main pthread)
@@ -99,6 +101,7 @@ ELSE()
     target_link_libraries(test_object pthread)
     target_link_libraries(test_thread_pool pthread)
     target_link_libraries(test_chain_call pthread)
+    target_link_libraries(test_timer pthread)
 ENDIF ()
 
 

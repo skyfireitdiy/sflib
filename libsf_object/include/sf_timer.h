@@ -7,6 +7,7 @@
 #include "sf_nocopy.h"
 #include "sf_object.h"
 #include <atomic>
+#include <random>
 
 namespace skyfire
 {
@@ -18,6 +19,14 @@ namespace skyfire
          */
         SF_REG_SIGNAL(timeout);
     public:
+
+        /**
+         * @brief sf_timer 构造函数
+         */
+        sf_timer(): e__(rd__()), ed__(0,INT_MAX){
+
+        }
+
         /**
          * @brief start 启动定时器
          * @param ms 毫秒
@@ -30,17 +39,23 @@ namespace skyfire
                 return;
             }
             running__ = true;
-            std::thread([=]()
+            curr_work_timer__ = ed__(e__);
+            std::thread([=](int current_timer, bool is_once)
                         {
                             while (true)
                             {
                                 std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+                                if(current_timer != curr_work_timer__)
+                                {
+                                    return;
+                                }
                                 if (running__)
                                 {
                                     timeout();
-                                    if (once)
+                                    if (is_once)
                                     {
-                                        break;
+                                        running__ = false;
+                                        return;
                                     }
                                 }
                                 else
@@ -48,8 +63,8 @@ namespace skyfire
                                     break;
                                 }
                             }
-                            running__ = false;
-                        }).detach();
+
+                        }, curr_work_timer__, once).detach();
         }
 
         /**
@@ -71,5 +86,9 @@ namespace skyfire
 
     private:
         std::atomic<bool> running__ {false};
+        int curr_work_timer__;
+        std::random_device rd__;
+        std::default_random_engine e__;
+        std::uniform_int_distribution<int> ed__;
     };
 }
