@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.7)
 
 project(sflib)
 
@@ -98,9 +98,7 @@ ELSE()
     target_link_libraries(test_msg_bus_server pthread)
     target_link_libraries(test_object pthread)
     target_link_libraries(test_thread_pool pthread)
-
-
-
+    target_link_libraries(test_chain_call pthread)
 ENDIF ()
 
 
