@@ -1,57 +1,25 @@
-/// @file	sf_single_instance.h
-///
-/// @brief	Declares the sf single instance class.
+/*
+ * sf_single_instance单例支持
+ */
 
 #pragma once
 #include <mutex>
 #include "sf_empty_class.h"
 
-/// @namespace	skyfire
-///
-/// @brief	.
 
 namespace skyfire
 {
-	/// @class	sf_single_instance
-	///
-	/// @brief	A sf single instance.
-	///
-	/// @author	SkyFire
-	/// @date	2017/8/16
-	///
-	/// @tparam	ThisClass	Type of this class.
-	/// @tparam	BaseClass	Type of the base class.
 
 	template<typename ThisClass,typename BaseClass=sf_empty_class>
-
-	/// @class	sf_single_instance
-	///
-	/// @brief	A sf single instance.
-	///
-	/// @author	SkyFire
-	/// @date	2017/8/16
-
 	class sf_single_instance:public BaseClass
 	{
 	public:
 
-		/// @fn	static ThisClass* sf_single_instance::get_instance();
-		///
-		/// @brief	Gets the instance.
-		///
-		/// @author	SkyFire
-		/// @date	2017/8/16
-		///
-		/// @return	The instance.
-
+        /**
+         * @brief get_instance 获取单例对象
+         * @return
+         */
 		static ThisClass* get_instance();
-
-		/// @fn	sf_single_instance::~sf_single_instance();
-		///
-		/// @brief	Destructor.
-		///
-		/// @author	SkyFire
-		/// @date	2017/8/16
 
 		~sf_single_instance();
 
@@ -89,14 +57,9 @@ namespace skyfire
 	std::mutex sf_single_instance<ThisClass, BaseClass>::mu;
 }
 
-/// @def	SF_SINGLE_TON(ClassName)
-///
-/// @brief	A macro that defines sf single ton.
-///
-/// @author	SkyFire
-/// @date	2017/8/16
-///
-/// @param	ClassName	Name of the class.
+/*
+ * qiqinrushi侵入式单例宏实现
+ */
 
 #define SF_SINGLE_TON(ClassName)								\
 ClassName(const ClassName&) = delete;							\

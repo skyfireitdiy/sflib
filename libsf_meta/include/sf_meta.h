@@ -1,3 +1,7 @@
+/*
+ * sf_meta 元编程辅助函数
+ */
+
 #pragma once
 
 #include <functional>

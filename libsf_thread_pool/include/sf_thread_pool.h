@@ -1,3 +1,7 @@
+/*
+ * sf_thread_pool 线程池
+ */
+
 #pragma once
 #include <functional>
 #include <atomic>
@@ -14,7 +18,10 @@ namespace skyfire
 	class sf_thread_pool
 	{
 	public:
-
+        /**
+         * @brief sf_thread_pool 构造函数
+         * @param thread_count 线程数量
+         */
 		explicit sf_thread_pool(size_t thread_count = 4)
 		{
 			add_thread__(thread_count);
@@ -25,7 +32,12 @@ namespace skyfire
 			clear_thread();
 		}
 
-		template <typename Func,typename ... T>
+        /**
+         * @brief add_task 添加任务
+         * @param func 函数
+         * @param args 参数
+         */
+        template <typename Func,typename ... T>
 		void add_task(Func func, T&&...args)
 		{
 			std::lock_guard<std::mutex> lck(mu_task_deque__);
@@ -33,6 +45,10 @@ namespace skyfire
 			thread_cv__.notify_all();
 		}
 
+        /**
+         * @brief add_task 添加任务
+         * @param func 函数
+         */
         void add_task(std::function<void()> func)
         {
             std::lock_guard<std::mutex> lck(mu_task_deque__);
@@ -40,32 +56,53 @@ namespace skyfire
             thread_cv__.notify_all();
         }
 
+        /**
+         * @brief pause 暂停
+         */
 		void pause()
 		{
 			is_pause__ = true;
 		}
 
+        /**
+         * @brief resume 继续
+         */
 		void resume()
 		{
 			is_pause__ = false;
 			thread_cv__.notify_all();
 		}
 
+        /**
+         * @brief add_thread 添加调度线程
+         * @param thread_num 添加调度线程数量
+         */
 		void add_thread(size_t thread_num = 1)
 		{
 			add_thread__(thread_num);
 		}
 
+        /**
+         * @brief get_thread_count 获取调度线程数量
+         * @return 调度线程数量
+         */
 		size_t get_thread_count() const
 		{
 			return thread_count__;
 		}
 
+        /**
+         * @brief get_busy_thread_count 获取繁忙线程数量
+         * @return
+         */
 		size_t get_busy_thread_count()const
 		{
-			return busy_thread_num__;
+            return static_cast<size_t>(busy_thread_num__);
 		}
 
+        /**
+         * @brief clear_thread 清除所有的调度线程
+         */
 		void clear_thread()
 		{
 			is_pause__ = false;
@@ -78,12 +115,18 @@ namespace skyfire
 			thread_vec__.clear();
 		}
 
+        /**
+         * @brief clear_task 清空所有任务
+         */
 		void clear_task()
 		{
 			std::lock_guard<std::mutex> lck(mu_task_deque__);
 			task_deque__.clear();
 		}
 
+        /**
+         * @brief wait_all_task_finished 等待所有任务结束
+         */
 		void wait_all_task_finished()
 		{
 			while (!task_deque__.empty())

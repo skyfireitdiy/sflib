@@ -1,3 +1,7 @@
+/*
+ * sf_range range产生序列的功能
+ */
+
 #pragma once
 
 #include <stdexcept>

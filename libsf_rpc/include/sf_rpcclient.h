@@ -1,3 +1,7 @@
+/*
+ * sf_rpcclient rpc客户端
+ */
+
 #pragma once
 
 #include "sf_tcpclient.h"
@@ -67,6 +71,18 @@ namespace skyfire
             }
         }
     public:
+        /**
+         * @brief make_client 创建RPC客户端
+         * @return 客户端对象
+         */
+        static std::shared_ptr<sf_rpcclient> make_client()
+        {
+            return std::make_shared<sf_rpcclient>();
+        }
+
+        /**
+         * @brief sf_rpcclient 构造RPC客户端
+         */
         sf_rpcclient()
         {
             sf_bind_signal(__tcp_client__,
@@ -83,21 +99,40 @@ namespace skyfire
                            true);
         }
 
+        /**
+         * @brief set_rpc_timeout 设置RPC超时
+         * @param ms 超时毫秒数
+         */
         void set_rpc_timeout(unsigned int ms)
         {
             rpc_timeout__ = ms;
         }
 
+        /**
+         * @brief connect 连接RPC服务端
+         * @param ip ip
+         * @param port 端口
+         * @return 是否连接成功
+         */
         bool connect(const std::string ip, unsigned short port)
         {
             return __tcp_client__->connect(ip,port);
         }
 
+        /**
+         * @brief close 关闭RPC客户端
+         */
         void close()
         {
             __tcp_client__->close();
         }
 
+        /**
+          * @brief call 调用
+          * @param func_id 函数id
+          * @param args 参数列表
+          * @return 返回值
+          */
         template<typename _Ret=void, typename ... __SF_RPC_ARGS__>
          sf_tri_type<_Ret> call(const std::string& func_id, __SF_RPC_ARGS__ ... args)
         {
@@ -150,6 +185,11 @@ namespace skyfire
             }
         }
 
+         /**
+           * @brief async_call 异步调用
+           * @param func_id 函数id
+           * @param rpc_callback 返回后的回调函数
+           */
         template<typename T>
         void async_call(const std::string& func_id,
                         std::function<void()> rpc_callback
@@ -166,7 +206,12 @@ namespace skyfire
             __tcp_client__->send(call_id, sf_serialize(std::string(func_id)));
         }
 
-
+        /**
+          * @brief async_call 异步调用（无返回）
+          * @param func_id 函数id
+          * @param rpc_callback 返回后的回调函数
+          * @param args 参数
+          */
         template<typename ... __SF_RPC_ARGS__>
         void async_call(const std::string& func_id,
                         std::function<void()> rpc_callback,
@@ -192,6 +237,12 @@ namespace skyfire
             ptimer->start(rpc_timeout__, true);
         }
 
+        /**
+          * @brief async_call 异步调用（有返回）
+          * @param func_id 函数id
+          * @param rpc_callback 返回后的回调函数
+          * @param args 参数
+          */
         template<typename _Ret, typename ... __SF_RPC_ARGS__>
         void async_call(const std::string& func_id,
                         std::function<void(_Ret)> rpc_callback,

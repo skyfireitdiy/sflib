@@ -1,3 +1,7 @@
+/*
+ * 提供链式调用接口
+ */
+
 #pragma once
 
 #include <functional>
@@ -156,7 +160,12 @@ namespace skyfire
 
 
 
-
+    /**
+     * @brief make_chain_call 初始化一个链式调用
+     * @param func function对象
+     * @param args 参数
+     * @return 链式调用对象
+     */
     template <typename _Ret, typename ... _Args>
     sf_chain_call__<_Ret> make_chain_call(std::function<_Ret(_Args...)> func, _Args &&... args)
     {
@@ -164,6 +173,12 @@ namespace skyfire
         return sf_chain_call__(f);
     };
 
+    /**
+     * @brief make_chain_call 初始化一个链式调用
+     * @param func 函数
+     * @param args 参数
+     * @return 链式调用对象
+     */
     template <typename _Ret, typename ... _Args>
     sf_chain_call__<_Ret> make_chain_call(_Ret(func)(_Args...), _Args &&... args)
     {
@@ -171,7 +186,12 @@ namespace skyfire
         return sf_chain_call__(f);
     };
 
-
+    /**
+     * @brief make_chain_async_call 创建一个异步链式调用
+     * @param func function 对象
+     * @param args 参数
+     * @return 链式调用对象
+     */
     template <typename _Ret, typename ... _Args>
     sf_chain_async_call__<_Ret> make_chain_async_call(std::function<_Ret(_Args...)> func, _Args &&... args)
     {
@@ -179,6 +199,12 @@ namespace skyfire
         return sf_chain_async_call__(std::make_shared<std::packaged_task<_Ret()>>(f));
     };
 
+    /**
+     * @brief make_chain_async_call 创建一个异步链式调用
+     * @param func function 对象
+     * @param args 参数
+     * @return 链式调用对象
+     */
     template <typename _Ret, typename ... _Args>
     sf_chain_async_call__<_Ret> make_chain_async_call(_Ret(func)(_Args...), _Args &&... args)
     {

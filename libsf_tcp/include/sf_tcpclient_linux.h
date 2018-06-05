@@ -22,14 +22,14 @@ namespace skyfire
 {
     class sf_tcpclient : public sf_nocopy<sf_object>
     {
-    SF_REG_SIGNAL(connected);
-    SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &);
-    SF_REG_SIGNAL(raw_data_coming, const byte_array &);
-    SF_REG_SIGNAL(closed);
+    SF_REG_SIGNAL(connected)
+    SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &)
+    SF_REG_SIGNAL(raw_data_coming, const byte_array &)
+    SF_REG_SIGNAL(closed)
     private:
         bool inited__ = false;
-        int sock__ = -1;
         bool raw__ = false;
+        int sock__ = -1;
     public:
         sf_tcpclient(bool raw = false)
         {
@@ -107,9 +107,9 @@ namespace skyfire
                                                         },
                                                         header,
                                                         byte_array(
-                                                                data.begin() + read_pos + sizeof(header),
-                                                                data.begin() + read_pos + sizeof(header)
-                                                                + header.length)).detach();
+                                                                data.begin() + static_cast<long>(read_pos) + sizeof(header),
+                                                                data.begin() + static_cast<long>(read_pos) + sizeof(header)
+                                                                + static_cast<long>(header.length))).detach();
                                             read_pos += sizeof(header) + header.length;
                                         } else
                                         {
@@ -118,7 +118,7 @@ namespace skyfire
                                     }
                                     if (read_pos != 0)
                                     {
-                                        data.erase(data.begin(), data.begin() + read_pos);
+                                        data.erase(data.begin(), data.begin() + static_cast<long>(read_pos));
                                     }
                                 }
                             }
@@ -137,14 +137,14 @@ namespace skyfire
             auto ret = write(sock__, make_pkg(header).data(), sizeof(header));
             if (ret != sizeof(header))
                 return false;
-            return write(sock__, data.data(), data.size()) == data.size();
+            return write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
         }
 
         bool send(const byte_array &data)
         {
             if (!inited__)
                 return false;
-            return write(sock__, data.data(), data.size()) == data.size();
+            return write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
         }
 
 

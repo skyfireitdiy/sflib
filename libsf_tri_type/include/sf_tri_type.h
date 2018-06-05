@@ -1,3 +1,7 @@
+/*
+ * sf_tri_type tri类型
+ */
+
 #pragma once
 
 namespace skyfire
@@ -6,13 +10,26 @@ namespace skyfire
 	class sf_tri_type
 	{
 	public:
+        /**
+         * @brief sf_tri_type 创建tri类型
+         */
 		sf_tri_type(){}
 
+        /**
+         * @brief sf_tri_type 构造函数
+         * @param a 要保存的对象
+         */
 		template<typename ... Args>
 		explicit sf_tri_type(Args...a):data__(a...)
 		{
 
 		}
+
+        /**
+         * @brief operator = 赋值运算符
+         * @param other 其他类型
+         * @return sf_tri_type对象
+         */
 		sf_tri_type& operator=(const T &other)
 		{
 			if (&other == &data__)
@@ -22,11 +39,17 @@ namespace skyfire
 			return *this;
 		}
 
+        /**
+         * @brief operator * 解引用操作符
+         * @return 类型对象
+         */
 		T& operator*()
 		{
 			return data__;
 		}
-
+        /**
+         * @brief operator bool 判断是否赋值
+         */
 		operator bool() const
 		{
 			return init__;

@@ -1,7 +1,11 @@
+/*
+ * 常用类型声明
+ */
+
 #pragma once
 
 #include <vector>
-
+#include <string>
 
 #ifndef _WIN32
 #define SOCKET int

@@ -1,3 +1,7 @@
+/*
+ * sf_msg_queue 消息队列
+ */
+
 #pragma once
 
 #include "sf_single_instance.h"

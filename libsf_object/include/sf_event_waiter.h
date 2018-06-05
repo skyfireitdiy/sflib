@@ -1,3 +1,7 @@
+/*
+ * sf_event_waiter 事件等待
+ */
+
 #pragma once
 
 #include "sf_nocopy.h"
@@ -6,9 +10,12 @@
 #include <mutex>
 
 
-
-
-#define sf_wait(obj,name,...)                                                    \
+/*
+ * @brief sf_wait 等待事件
+ * @param obj 对象
+ * @param name 信号
+ */
+#define sf_wait(obj,name)                                                        \
 {                                                                                \
     auto p_waiter = sf_make_waiter((obj)->__##name##_func_vec__);                \
     auto bind_id = sf_bind_signal(obj,name,p_waiter->__make_quit_func(), true);  \
@@ -26,10 +33,16 @@ namespace skyfire
         std::mutex mu_cond__;
         std::condition_variable cond__;
     public:
+        /**
+         * @brief sf_event_waiter 构造一个事件等待对象
+         */
         sf_event_waiter()
         {
         }
 
+        /**
+         * @brief wait 等待
+         */
         void wait()
         {
             std::unique_lock<std::mutex> lck(mu_cond__);
@@ -39,6 +52,7 @@ namespace skyfire
         template<std::size_t... Index>
         auto __make_quit_func_helper(std::index_sequence<Index...>)
         {
+            // WARNING _Placeholder不是标准类型
             return std::bind(&sf_event_waiter<ARGS...>::quit, this, std::_Placeholder<Index + 1>()...);
         }
 
@@ -74,6 +88,9 @@ namespace skyfire
             //else if constexpr (sizeof...(ARGS) == 25)return std::bind(&sf_event_waiter<ARGS...>::quit, this, _1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16,_17,_18,_19,_20,_21,_22,_23,_24,_25);
         }
 
+        /**
+         * @brief quit 退出等待
+         */
         void quit(ARGS ...)
         {
             cond__.notify_one();

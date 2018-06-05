@@ -1,3 +1,7 @@
+/*
+ * sf_rpcserver RPC服务器
+ */
+
 #pragma once
 
 #include "sf_tcpserver.h"
@@ -16,7 +20,7 @@ namespace skyfire
     template <typename _BaseClass = sf_empty_class>
     class sf_rpcserver : public sf_nocopy<_BaseClass>
     {
-    protected:
+        private:
 
         std::shared_ptr<sf_tcpserver> __tcp_server__ = sf_tcpserver::make_server();
 
@@ -43,6 +47,11 @@ namespace skyfire
 
     public:
 
+        /**
+         * @brief reg_rpc_func 注册远程调用函数
+         * @param id 标识
+         * @param func 函数
+         */
         template<typename _Func>
         void reg_rpc_func(const std::string &id, _Func func)
         {
@@ -104,6 +113,18 @@ namespace skyfire
 
         }
 
+        /**
+         * @brief make_server 创建RPC服务器
+         * @return 服务器对象
+         */
+        static std::shared_ptr<sf_rpcserver> make_server()
+        {
+            return std::make_shared<sf_rpcserver>();
+        }
+
+        /**
+         * @brief sf_rpcserver 构造函数
+         */
         sf_rpcserver()
         {
             sf_bind_signal(sf_rpcserver::__tcp_server__,
@@ -116,12 +137,20 @@ namespace skyfire
                            false);
         }
 
-
+        /**
+         * @brief listen 监听
+         * @param ip ip
+         * @param port 端口
+         * @return 是否成功
+         */
         bool listen(const std::string& ip, unsigned short port)
         {
             return __tcp_server__->listen(ip,port);
         }
 
+        /**
+         * @brief close 关闭RPC服务器
+         */
         void close()
         {
             __tcp_server__->close();

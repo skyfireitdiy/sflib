@@ -1,7 +1,5 @@
-/**
- * @file	sf_watch_time.h
- *
- * @brief	Declares the sf watch time class.
+/*
+ * sf_watch_time 时间监测类型
  */
 
 #pragma once
@@ -16,7 +14,6 @@ namespace skyfire
 {
 	template<typename>
 	class check_point;
-
 
 
 	template<typename T=std::string>
@@ -139,17 +136,6 @@ namespace skyfire
 		friend class check_point<T>;
 	};
 
-	/**
-	 * @class	check_point
-	 *
-	 * @brief	A check point.
-	 *
-	 * @author	Sky Fire
-	 * @date	2017/8/18
-	 *
-	 * @tparam	T	Generic type parameter.
-	 */
-
 	template<typename T=std::string>
 	class check_point
 	{
@@ -159,31 +145,15 @@ namespace skyfire
 		sf_watch_time<T> &parent__;
 	public:
 
-		/**
-		 * @fn	check_point::check_point(const T &name, sf_watch_time<T> &parent) : point_name__(name), clock__(std::chrono::high_resolution_clock::now()), parent__(parent)
-		 *
-		 * @brief	Constructor.
-		 *
-		 * @author	Sky Fire
-		 * @date	2017/8/18
-		 *
-		 * @param 		  	name  	The check point name.
-		 * @param [in,out]	parent	The parent.
-		 */
-
+        /**
+         * @brief check_point 设置检查点
+         * @param name 检查点名称
+         * @param parent 对象
+         */
 		check_point(const T &name, sf_watch_time<T> &parent) : 
 			point_name__(name), clock__(std::chrono::high_resolution_clock::now()),
 			parent__(parent)
 		{}
-
-		/**
-		 * @fn	check_point::~check_point()
-		 *
-		 * @brief	Destructor.
-		 *
-		 * @author	Sky Fire
-		 * @date	2017/8/18
-		 */
 
 		~check_point()
 		{

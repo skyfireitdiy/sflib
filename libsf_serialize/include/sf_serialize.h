@@ -1,3 +1,7 @@
+/*
+ * 提供序列化支持（二进制）
+ */
+
 #pragma once
 
 #include <type_traits>

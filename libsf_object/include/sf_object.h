@@ -1,3 +1,8 @@
+/*
+ * sf_object 基础对象
+ * 提供了信号---槽的通信机制、AOP编程
+ */
+
 #pragma once
 
 #include <map>
@@ -8,6 +13,9 @@
 #include "sf_msg_queue.h"
 #include "sf_eventloop.h"
 
+/*
+ * SF_REG_SIGNAL 注册信号的宏
+ */
 #define SF_REG_SIGNAL(name,...)                                                                                         \
 public:                                                                                                                 \
 std::mutex __mu_##name##_signal_;                                                                                       \
@@ -33,7 +41,9 @@ void name(__SF_OBJECT_ARGS__&&... args) {                                       
 }                                                                                                                       \
 
 
-
+/*
+ * SF_REG_AOP 注册AOP的宏
+ */
 #define SF_REG_AOP(name, ...)                                                                                           \
 public:                                                                                                                 \
     std::mutex __mu_##name##_aop__;                                                                                     \
@@ -66,26 +76,40 @@ public:                                                                         
         }                                                                                                               \
     }                                                                                                                   \
 
-
+/*
+ * sf_aop_before_bind AOP调用前注册
+ */
 #define sf_aop_before_bind(objptr, name, func)                                                                          \
 (objptr)->__sf_aop_before_add_helper((objptr)->__mu_##name##_aop__,(objptr)->__##name##_aop_before_func_vec__,func)     \
 
+/*
+ * sf_aop_after_bind AOP调用后注册
+ */
 #define sf_aop_after_bind(objptr, name, func)                                                                           \
 (objptr)->__sf_aop_after_add_helper((objptr)->__mu_##name##_aop__,(objptr)->__##name##_aop_after_func_vec__,func)       \
 
-
+/*
+ * sf_aop_before_unbind AOP调用前反注册
+ */
 #define sf_aop_before_unbind(objptr,name,bind_id)                                                                       \
 (objptr)->__sf_aop_unbind_helper((objptr)->__mu_##name##_aop__,(objptr)->__##name##_aop_before_func_vec__,bind_id);     \
 
-
+/*
+ * sf_aop_after_unbind AOP调用后反注册
+ */
 #define sf_aop_after_unbind(objptr,name,bind_id)                                                                        \
 (objptr)->__sf_aop_unbind_helper((objptr)->__mu_##name##_aop__,(objptr)->__##name##_aop_after_func_vec__,bind_id);      \
 
-
+/*
+ * sf_bind_signal 信号绑定注册
+ */
 #define sf_bind_signal(objptr,name,func,mul_thread)                                                                     \
 (objptr)->__sf_bind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,func,mul_thread)      \
 
 
+/*
+ * sf_unbind_signal 信号绑定反注册
+ */
 #define sf_unbind_signal(objptr,name,bind_id)                                                                           \
 (objptr)->__sf_signal_unbind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,bind_id);    \
 
