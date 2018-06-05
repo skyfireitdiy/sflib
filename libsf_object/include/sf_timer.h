@@ -7,7 +7,6 @@
 #include "sf_nocopy.h"
 #include "sf_object.h"
 #include <atomic>
-#include <random>
 
 namespace skyfire
 {
@@ -21,13 +20,6 @@ namespace skyfire
     public:
 
         /**
-         * @brief sf_timer 构造函数
-         */
-        sf_timer(): e__(rd__()), ed__(0,INT_MAX){
-
-        }
-
-        /**
          * @brief start 启动定时器
          * @param ms 毫秒
          * @param once 是否是一次性定时器
@@ -39,13 +31,13 @@ namespace skyfire
                 return;
             }
             running__ = true;
-            curr_work_timer__ = ed__(e__);
-            std::thread([=](int current_timer, bool is_once)
+
+            std::thread new_thread = std::thread ([=](bool is_once)
                         {
                             while (true)
                             {
                                 std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-                                if(current_timer != curr_work_timer__)
+                                if(std::this_thread::get_id() != current_timer_thread__)
                                 {
                                     return;
                                 }
@@ -64,7 +56,9 @@ namespace skyfire
                                 }
                             }
 
-                        }, curr_work_timer__, once).detach();
+                        }, once);
+            current_timer_thread__ = new_thread.get_id();
+            new_thread.detach();
         }
 
         /**
@@ -86,9 +80,6 @@ namespace skyfire
 
     private:
         std::atomic<bool> running__ {false};
-        int curr_work_timer__;
-        std::random_device rd__;
-        std::default_random_engine e__;
-        std::uniform_int_distribution<int> ed__;
+        std::thread::id current_timer_thread__ ;
     };
 }
