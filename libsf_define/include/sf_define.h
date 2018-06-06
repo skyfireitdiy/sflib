@@ -11,5 +11,7 @@ namespace skyfire{
 
 
     // 以下为系统定义type类型
-    constexpr int TYPE_NAT_TRAVERSAL_REG = 0x00010001;
+    constexpr int TYPE_NAT_TRAVERSAL_GET_LIST = 0x00010001;
+
+    constexpr int TYPE_NAT_TRAVERSAL_LIST = 0x00010002;
 }

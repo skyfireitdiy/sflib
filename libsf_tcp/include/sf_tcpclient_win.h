@@ -13,7 +13,6 @@ namespace skyfire
 {
     class sf_tcpclient : public sf_nocopy<sf_object>
     {
-        SF_REG_SIGNAL(connected);
         SF_REG_SIGNAL(data_coming, const pkg_header_t &, const byte_array &);
         SF_REG_SIGNAL(raw_data_coming, const byte_array &);
         SF_REG_SIGNAL(closed);
