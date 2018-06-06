@@ -16,12 +16,16 @@ namespace skyfire{
         std::shared_ptr<sf_tcpserver> server__{sf_tcpserver::make_server()};
 
         void on_new_connnection(SOCKET sock){
-            clients__.insert(sock);
-            on_update_client_list();
+            // TODO 做一些处理
         }
 
         void on_disconnect(SOCKET sock){
             clients__.erase(sock);
+        }
+
+        void on_client_reg(SOCKET sock){
+            clients__.insert(sock);
+            on_update_client_list();
         }
 
         void on_update_client_list(SOCKET sock = static_cast<SOCKET>(-1)) {
@@ -40,6 +44,9 @@ namespace skyfire{
             switch (header.type){
                 case TYPE_NAT_TRAVERSAL_GET_LIST:
                     on_update_client_list(sock);
+                    break;
+                case TYPE_NAT_TRAVERSAL_REG:
+                    on_client_reg(sock);
                     break;
                 default:
                     break;

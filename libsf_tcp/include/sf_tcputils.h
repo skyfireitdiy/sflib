@@ -5,11 +5,12 @@
 #include <cstring>
 #include <string>
 #include "sf_type.h"
+#include "sf_define.h"
 
 namespace skyfire
 {
 
-    constexpr size_t BUFFER_SIZE = 4096;
+
 
     struct alignas(4) pkg_header_t
     {

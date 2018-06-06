@@ -40,7 +40,13 @@ namespace skyfire {
         }
 
         bool connect(const std::string& ip, unsigned short port){
-            return client__->connect(ip, port);
+            if(client__->connect(ip, port))
+            {
+                client__->send(TYPE_NAT_TRAVERSAL_REG, byte_array());
+                return true;
+            }else{
+                return false;
+            }
         }
 
         std::set<unsigned long long> get_clients(){

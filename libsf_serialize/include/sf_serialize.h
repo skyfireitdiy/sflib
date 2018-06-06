@@ -131,18 +131,6 @@ namespace skyfire
     template<typename... _Types>
     size_t sf_deserialize(const byte_array &data, std::tuple<_Types...> &obj, size_t begin_pos);
 
-    inline byte_array operator+(byte_array b1, const byte_array &b2)
-    {
-        b1.insert(b1.end(), b2.begin(), b2.end());
-        return b1;
-    }
-
-    inline byte_array &operator+=(byte_array &b1, const byte_array &b2)
-    {
-        b1.insert(b1.end(), b2.begin(), b2.end());
-        return b1;
-    }
-
     class sf_serialize_size_mismatch_exception : public std::exception
     {
     public:

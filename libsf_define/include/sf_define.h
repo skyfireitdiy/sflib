@@ -14,4 +14,11 @@ namespace skyfire{
     constexpr int TYPE_NAT_TRAVERSAL_GET_LIST = 0x00010001;
 
     constexpr int TYPE_NAT_TRAVERSAL_LIST = 0x00010002;
+
+    constexpr int TYPE_NAT_TRAVERSAL_REG = 0x00010003;
+
+
+
+
+    constexpr size_t BUFFER_SIZE = 4096;
 }
