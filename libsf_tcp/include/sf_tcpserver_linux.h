@@ -16,6 +16,7 @@
 #include "sf_range.h"
 #include "sf_serialize.h"
 
+
 namespace skyfire
 {
     class sf_tcpserver : public sf_nocopy<sf_object>
@@ -93,7 +94,7 @@ namespace skyfire
 
                             byte_array recv_buf(BUFFER_SIZE);
                             pkg_header_t header{};
-                            while (1)
+                            while (true)
                             {
                                 int wait_fds = 0;
                                 if ((wait_fds = epoll_wait(epoll_fd__, evs, cur_fd_count__, -1)) == -1)
@@ -106,7 +107,7 @@ namespace skyfire
                                     if (evs[i].data.fd == listen_fd__ && cur_fd_count__ < SOMAXCONN)
                                     {
                                         int conn_fd = 0;
-                                        sockaddr_in client_addr;
+                                        sockaddr_in client_addr{};
                                         socklen_t len = sizeof(client_addr);
                                         if ((conn_fd = accept(listen_fd__, (struct sockaddr *) &client_addr, &len)) ==
                                             -1)
@@ -128,9 +129,10 @@ namespace skyfire
                                         continue;
                                     }
                                     recv_buf.resize(BUFFER_SIZE);
-                                    int count_read = read(evs[i].data.fd, recv_buf.data(), BUFFER_SIZE);
+                                    auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(), BUFFER_SIZE));
                                     if (count_read <= 0)
                                     {
+                                        closed(static_cast<SOCKET>(evs[i].data.fd));
                                         ::close(evs[i].data.fd);
                                         epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev);
                                         --cur_fd_count__;
@@ -140,9 +142,9 @@ namespace skyfire
                                                     }).detach();
                                         continue;
                                     }
-                                    else
-                                    {
-                                        recv_buf.resize(count_read);
+
+
+                                    recv_buf.resize(static_cast<unsigned long>(count_read));
                                         if(raw__)
                                         {
                                             raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
@@ -163,14 +165,15 @@ namespace skyfire
                                                 if(!check_header_checksum(header))
                                                 {
                                                     close(evs[i].data.fd);
+                                                    closed(static_cast<SOCKET>(evs[i].data.fd));
                                                     break;
                                                 }
                                                 if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
                                                     header.length)
                                                 {
-                                                    std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
+                                                    std::thread([=](SOCKET sock, const pkg_header_t& tmp_header, const byte_array& pkg_data)
                                                                 {
-                                                                    data_coming(sock, header, pkg_data);
+                                                                    data_coming(sock, tmp_header, pkg_data);
                                                                 },
                                                                 static_cast<SOCKET>(evs[i].data.fd), header,
                                                                 byte_array(
@@ -194,7 +197,7 @@ namespace skyfire
                                                         sock_data_buffer__[evs[i].data.fd].begin() + read_pos);
                                             }
                                         }
-                                    }
+
                                 }
                             }
                         }).detach();
@@ -216,7 +219,7 @@ namespace skyfire
 
         bool send(int sock, int type, const byte_array &data)
         {
-            pkg_header_t header;
+            pkg_header_t header{};
             header.type = type;
             header.length = data.size();
             make_header_checksum(header);
@@ -228,6 +231,11 @@ namespace skyfire
         {
             auto send_data = data;
             return write(sock, send_data.data(), send_data.size()) == send_data.size();
+        }
+
+        SOCKET get_raw_socket()
+        {
+            return listen_fd__;
         }
     };
 }

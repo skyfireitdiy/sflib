@@ -43,6 +43,10 @@ namespace skyfire
             raw__ = raw;
         }
 
+        SOCKET get_raw_socket()
+        {
+            return sock__;
+        }
 
         static std::shared_ptr<sf_tcpclient> make_client()
         {
@@ -101,9 +105,9 @@ namespace skyfire
                                         }
                                         if (data.size() - read_pos - sizeof(header) >= header.length)
                                         {
-                                            std::thread([=](const pkg_header_t &header, const byte_array &pkg_data)
+                                            std::thread([=](const pkg_header_t &header_tmp, const byte_array &pkg_data)
                                                         {
-                                                            data_coming(header, pkg_data);
+                                                            data_coming(header_tmp, pkg_data);
                                                         },
                                                         header,
                                                         byte_array(
@@ -134,6 +138,7 @@ namespace skyfire
             pkg_header_t header;
             header.type = type;
             header.length = data.size();
+            make_header_checksum(header);
             auto ret = write(sock__, make_pkg(header).data(), sizeof(header));
             if (ret != sizeof(header))
                 return false;

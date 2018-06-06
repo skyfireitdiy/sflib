@@ -22,6 +22,12 @@ namespace skyfire
         bool inited__ = false;
         SOCKET sock__ = INVALID_SOCKET;
     public:
+
+        SOCKET get_raw_socket()
+        {
+            return sock__;
+        }
+
         sf_tcpclient(bool raw = false)
         {
             WSADATA wsa_data{};

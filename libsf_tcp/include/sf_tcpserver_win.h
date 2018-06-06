@@ -50,7 +50,10 @@ namespace skyfire
 
     public:
 
-
+        SOCKET get_raw_socket()
+        {
+            return listen_sock__;
+        }
 
         sf_tcpserver(bool raw = false)
         {

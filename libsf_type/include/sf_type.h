@@ -17,6 +17,11 @@ namespace skyfire
 {
     using byte_array = std::vector<char>;
 
+    struct addr_info_t{
+        char ip[16];
+        unsigned short port;
+    };
+
     inline std::string to_string(const byte_array& data)
     {
         return std::string(data.begin(),data.end());

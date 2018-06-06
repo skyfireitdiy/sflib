@@ -59,6 +59,9 @@ include_directories(
         libsf_type_list/include
         libsf_msg_bus/include
         libsf_chain/include
+        libsf_tcp_nat_traversal/include
+        libsf_tl/include
+        libsf_define/include
 )
 
 file(GLOB headers
@@ -82,6 +85,9 @@ file(GLOB headers
         libsf_type_list/include/*.h
         libsf_msg_bus/include/*.h
         libsf_chain/include/*.h
+        libsf_tcp_nat_traversal/include/*.h
+        libsf_tl/include/*.h
+        libsf_define/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -105,15 +111,22 @@ IF (WIN32)
     add_executable(test_any test/test_any/test_any.cpp ${headers})
     add_executable(test_chain_call test/test_chain_call/test_chain_call.cpp ${headers})
     add_executable(test_timer test/test_timer/test_timer.cpp ${headers})
+    add_executable(test_tcp_nat_traversal_server test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp ${headers})
+    add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp ${headers})
+
 
 
     target_link_libraries(test_rpc_server ws2_32)
     target_link_libraries(test_rpc_client ws2_32)
     target_link_libraries(test_msg_bus_server ws2_32)
     target_link_libraries(test_msg_bus_client ws2_32)
+    target_link_libraries(test_tcp_nat_traversal_server ws2_32)
+    target_link_libraries(test_tcp_nat_traversal_client ws2_32)
+
+
 ELSE()
     add_executable(test_rpc_server test/test_rpc/test_rpc_server.cpp ${headers})
-    add_executable(test_roc_client test/test_rpc/test_rpc_client.cpp ${headers})
+    add_executable(test_rpc_client test/test_rpc/test_rpc_client.cpp ${headers})
     add_executable(test_meta_object test/test_meta_object/test_meta_object.cpp ${headers})
     add_executable(test_meta test/test_meta/test_meta.cpp ${headers})
     add_executable(test_aop test/test_aop/test_aop.cpp ${headers})
@@ -126,16 +139,21 @@ ELSE()
     add_executable(test_any test/test_any/test_any.cpp ${headers})
     add_executable(test_chain_call test/test_chain_call/test_chain_call.cpp ${headers})
     add_executable(test_timer test/test_timer/test_timer.cpp ${headers})
+    add_executable(test_tcp_nat_traversal_server test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp ${headers})
+    add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp ${headers})
 
     target_link_libraries(test_meta pthread)
     target_link_libraries(test_rpc_server pthread)
-    target_link_libraries(test_roc_client pthread)
+    target_link_libraries(test_rpc_client pthread)
     target_link_libraries(test_msg_bus_client pthread)
     target_link_libraries(test_msg_bus_server pthread)
     target_link_libraries(test_object pthread)
     target_link_libraries(test_thread_pool pthread)
     target_link_libraries(test_chain_call pthread)
     target_link_libraries(test_timer pthread)
+    target_link_libraries(test_tcp_nat_traversal_server pthread)
+    target_link_libraries(test_tcp_nat_traversal_client pthread)
+
 ENDIF ()
 
 

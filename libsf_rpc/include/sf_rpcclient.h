@@ -9,6 +9,7 @@
 #include "sf_serialize.h"
 #include "sf_timer.h"
 #include "sf_tri_type.h"
+#include "sf_define.h"
 #include <string>
 #include <functional>
 #include <tuple>
@@ -36,11 +37,17 @@ namespace skyfire
     template <typename _BaseClass = sf_empty_class>
     class sf_rpcclient : public sf_nocopy<_BaseClass>
     {
-    protected:
+    private:
         std::shared_ptr<sf_tcpclient> __tcp_client__ = sf_tcpclient::make_client();
         std::map<int, std::shared_ptr<rpc_struct>> __rpc_data__;
 
+        int current_call_id__ = 0;
         unsigned int rpc_timeout__ = 30000;
+
+        int __make_call_id(){
+            current_call_id__ = (current_call_id__ +1)&TCP_RPC_TYPE_MASK;
+            return current_call_id__;
+        }
 
         void __back_callback(const pkg_header_t& header_t, const byte_array& data_t)
         {
@@ -144,7 +151,7 @@ namespace skyfire
             using __Ret = typename std::decay<_Ret>::type ;
 
             std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param{args...};
-            int call_id = rand();
+            int call_id = __make_call_id();
             pkg_header_t header;
             byte_array data;
 
@@ -195,7 +202,7 @@ namespace skyfire
                         std::function<void()> rpc_callback
         )
         {
-            int call_id = rand();
+            int call_id = __make_call_id();
             pkg_header_t header;
             byte_array data;
             __rpc_data__[call_id] = std::make_shared<rpc_struct>();
@@ -221,7 +228,7 @@ namespace skyfire
             static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
             static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
             std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
-            int call_id = rand();
+            int call_id = __make_call_id();
             pkg_header_t header;
             byte_array data;
             __rpc_data__[call_id] = std::make_shared<rpc_struct>();
@@ -256,7 +263,7 @@ namespace skyfire
 
             using __Ret = typename std::decay<_Ret>::type ;
             std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
-            int call_id = rand();
+            int call_id = __make_call_id();
             pkg_header_t header;
             byte_array data;
             __rpc_data__[call_id] = std::make_shared<rpc_struct>();
