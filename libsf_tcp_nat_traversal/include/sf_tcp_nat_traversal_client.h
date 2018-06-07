@@ -16,7 +16,7 @@ namespace skyfire {
         std::shared_ptr<sf_tcpclient> client__ {sf_tcpclient::make_client()};
         std::set<unsigned long long> client_list__;
 
-        void on_data_coming(const pkg_header_t & header, const byte_array & data){
+        void on_client_data_coming__(const pkg_header_t &header, const byte_array &data){
             switch (header.type){
                 case TYPE_NAT_TRAVERSAL_LIST:
                     sf_deserialize(data, client_list__, 0);
@@ -26,9 +26,16 @@ namespace skyfire {
             }
         }
 
-        void on_close(){
+        void on_client_close__(){
             client_list__.clear();
         }
+
+        void on_point_client_data_coming__(std::shared_ptr<sf_tcpclient> client_point,
+                                           const pkg_header_t &header,
+                                           const byte_array &data){
+
+        }
+
 
     public:
         static std::shared_ptr<sf_tcp_nat_traversal_client> make_client(){
@@ -36,11 +43,11 @@ namespace skyfire {
         }
 
         sf_tcp_nat_traversal_client(){
-            sf_bind_signal(client__, data_coming, std::bind(&sf_tcp_nat_traversal_client::on_data_coming,
+            sf_bind_signal(client__, data_coming, std::bind(&sf_tcp_nat_traversal_client::on_client_data_coming__,
                                                             this,
                                                             std::placeholders::_1,
                                                             std::placeholders::_2),false);
-            sf_bind_signal(client__, closed, std::bind(&sf_tcp_nat_traversal_client::on_close, this), false);
+            sf_bind_signal(client__, closed, std::bind(&sf_tcp_nat_traversal_client::on_client_close__, this), false);
         }
 
         bool connect(const std::string& ip, unsigned short port){

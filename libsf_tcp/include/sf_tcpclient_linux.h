@@ -38,6 +38,12 @@ namespace skyfire
                 inited__ = false;
                 return;
             }
+            int opt = 1;
+            if (-1 == setsockopt( sock__, SOL_SOCKET,SO_REUSEADDR,
+                        reinterpret_cast<const void *>&opt, sizeof(opt))){
+                inited__ = false;
+                return ;
+            }
             inited__ = true;
             raw__ = raw;
         }
@@ -45,6 +51,14 @@ namespace skyfire
         SOCKET get_raw_socket()
         {
             return sock__;
+        }
+
+        bool bind(const std::string& ip, unsigned short port){
+            sockaddr_in address;
+            address.sin_family = AF_INET;
+            address.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
+            address.sin_port = htons(port);
+            return -1 != ::bind(sock__,reinterpret_cast<sockaddr*>(&address), sizeof(address));
         }
 
         static std::shared_ptr<sf_tcpclient> make_client()
