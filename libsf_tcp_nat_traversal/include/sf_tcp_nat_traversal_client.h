@@ -6,6 +6,9 @@
 #include "sf_serialize.h"
 #include "sf_define.h"
 #include "sf_tcp_nat_traversal_utils.h"
+#include "sf_random.h"
+#include <climits>
+#include <sf_tcpserver.h>
 
 namespace skyfire {
     class sf_tcp_nat_traversal_client : public sf_nocopy<sf_object> {
@@ -45,17 +48,28 @@ namespace skyfire {
             {
                 client__->send(TYPE_NAT_TRAVERSAL_REG, byte_array());
                 return true;
-            }else{
-                return false;
             }
+            return false;
         }
 
         std::set<unsigned long long> get_clients(){
             return client_list__;
         }
 
+        /**
+         * 连接远程peer端
+         * @param peer_id 远端id
+         * @return -1表示失败，其他表示此次连接的id
+         */
         int connect_to_peer(unsigned long long peer_id){
-
+            sf_tcp_nat_traversal_context_t__ context;
+            context.connect_id = sf_random::get_instance()->get_int(0, INT_MAX);
+            context.dest_id = peer_id;
+            // TODO 本机需要做一些准备
+            if(client__->send(TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER, sf_serialize(context))) {
+                return context.connect_id;
+            }
+            return  -1;
         }
 
         void close(){

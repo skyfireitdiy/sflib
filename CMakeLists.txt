@@ -62,6 +62,7 @@ include_directories(
         libsf_tcp_nat_traversal/include
         libsf_tl/include
         libsf_define/include
+        libsf_random/include
 )
 
 file(GLOB headers
@@ -88,6 +89,7 @@ file(GLOB headers
         libsf_tcp_nat_traversal/include/*.h
         libsf_tl/include/*.h
         libsf_define/include/*.h
+        libsf_random/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)

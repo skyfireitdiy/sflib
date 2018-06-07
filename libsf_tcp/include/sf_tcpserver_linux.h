@@ -92,7 +92,7 @@ namespace skyfire
             std::thread([=]
                         {
 
-                            byte_array recv_buf(BUFFER_SIZE);
+                            byte_array recv_buf(SF_NET_BUFFER_SIZE);
                             pkg_header_t header{};
                             while (true)
                             {
@@ -128,8 +128,8 @@ namespace skyfire
                                                     }).detach();
                                         continue;
                                     }
-                                    recv_buf.resize(BUFFER_SIZE);
-                                    auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(), BUFFER_SIZE));
+                                    recv_buf.resize(SF_NET_BUFFER_SIZE);
+                                    auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(), SF_NET_BUFFER_SIZE));
                                     if (count_read <= 0)
                                     {
                                         closed(static_cast<SOCKET>(evs[i].data.fd));

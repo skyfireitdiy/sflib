@@ -11,14 +11,18 @@ namespace skyfire{
 
 
     // 以下为系统定义type类型
+    // NAT穿透获取客户端列表
     constexpr int TYPE_NAT_TRAVERSAL_GET_LIST = 0x00010001;
 
+    // NAT穿透客户端列表
     constexpr int TYPE_NAT_TRAVERSAL_LIST = 0x00010002;
 
+    // NAT穿透客户端注册
     constexpr int TYPE_NAT_TRAVERSAL_REG = 0x00010003;
 
+    // NAT穿透请求连接远端peer
+    constexpr int TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER = 0x00010004;
 
-
-
-    constexpr size_t BUFFER_SIZE = 4096;
+    // 网络缓冲区大小
+    constexpr size_t SF_NET_BUFFER_SIZE = 4096;
 }
