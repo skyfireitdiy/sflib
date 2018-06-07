@@ -7,7 +7,7 @@
 #include "sf_tcpclient.h"
 #include "sf_tcpserver.h"
 #include "sf_define.h"
-#include "../../libsf_define/include/sf_define.h"
+#include "sf_tcp_nat_traversal_utils.h"
 
 namespace skyfire{
     class sf_tcp_nat_traversal_server : public sf_nocopy<sf_object>{
