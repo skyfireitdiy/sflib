@@ -153,6 +153,7 @@ namespace skyfire{
             if(running__)
                 return false;
             running__ = true;
+            return server__->listen(ip, port);
         }
 
         /**

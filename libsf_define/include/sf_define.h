@@ -1,5 +1,10 @@
 #pragma once
 
+#ifdef __GNUC__
+#if __GNUC__ < 7
+#error Please update your complier!
+#endif
+#endif
 
 
 #define SF_PRIVATE_ARGS_GLUE(x, y) x y

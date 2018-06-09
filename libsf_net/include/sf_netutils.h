@@ -30,7 +30,15 @@ namespace skyfire
         addr.port = ntohs(sock_addr.sin_port);
         return true;
 #else
-
+        sockaddr_in sock_addr;
+        memset(&sock_addr,0, sizeof(sock_addr));
+        socklen_t len = sizeof(sock_addr);
+        if(getpeername(sock, reinterpret_cast<sockaddr*>(&sock_addr), &len) != 0){
+            return false;
+        }
+        addr.ip = inet_ntoa(sock_addr.sin_addr);
+        addr.port = ntohs(sock_addr.sin_port);
+        return true;
 #endif
     }
 
@@ -47,7 +55,15 @@ namespace skyfire
         addr.port = ntohs(sock_addr.sin_port);
         return true;
 #else
-
+        sockaddr_in sock_addr;
+        memset(&sock_addr,0, sizeof(sock_addr));
+        socklen_t len = sizeof(sock_addr);
+        if(getsockname(sock, reinterpret_cast<sockaddr*>(&sock_addr), &len) != 0){
+            return false;
+        }
+        addr.ip = inet_ntoa(sock_addr.sin_addr);
+        addr.port = ntohs(sock_addr.sin_port);
+        return true;
 #endif
     }
 

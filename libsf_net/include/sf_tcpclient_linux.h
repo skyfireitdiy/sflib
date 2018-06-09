@@ -40,7 +40,7 @@ namespace skyfire
             }
             int opt = 1;
             if (-1 == setsockopt( sock__, SOL_SOCKET,SO_REUSEADDR,
-                        reinterpret_cast<const void *>&opt, sizeof(opt))){
+                        reinterpret_cast<const void *>(&opt), sizeof(opt))){
                 inited__ = false;
                 return ;
             }
@@ -56,7 +56,7 @@ namespace skyfire
         bool bind(const std::string& ip, unsigned short port){
             sockaddr_in address;
             address.sin_family = AF_INET;
-            address.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
+            address.sin_addr.s_addr = inet_addr(ip.c_str());
             address.sin_port = htons(port);
             return -1 != ::bind(sock__,reinterpret_cast<sockaddr*>(&address), sizeof(address));
         }

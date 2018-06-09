@@ -1,5 +1,5 @@
 /*
- * sf_debug日志打印
+ * sf_logger日志打印
  */
 
 #pragma once
@@ -25,7 +25,7 @@
 
 namespace skyfire
 {
-    constexpr char sf_debug_version[] = {"1.0.0.1"};
+    constexpr char sf_logger_version[] = {"1.0.0.1"};
 
 
     inline void __out_debug_string__(const char *str)
@@ -42,10 +42,10 @@ namespace skyfire
     }
 
     template <typename _BaseClass = sf_empty_class>
-    class sf_debug : public _BaseClass
+    class sf_logger : public _BaseClass
     {
     public:
-        explicit sf_debug(const std::string &debug_file,
+        explicit sf_logger(const std::string &debug_file,
                           std::function<bool()> func_log_to_file = if_output_to_file__) :
                 curr_file__(debug_file)
         {
@@ -55,12 +55,12 @@ namespace skyfire
             fp__.open(debug_file, std::ios::out | std::ios::app);
         }
 
-        explicit sf_debug(std::function<bool()> func_log_to_file = if_output_to_file__)
+        explicit sf_logger(std::function<bool()> func_log_to_file = if_output_to_file__)
         {
             if_out_to_file__ = func_log_to_file();
         }
 
-        virtual ~sf_debug()
+        virtual ~sf_logger()
         {
             if (fp__.is_open())
                 fp__.close();
@@ -242,7 +242,7 @@ namespace skyfire
             if (!if_out_to_file__ || !fp__.is_open())
                 return;
             std::lock_guard<std::recursive_mutex> lck(file_mutex__[curr_file__]);
-            fp__ << "Welcome to SkyFire debug, version: " << sf_debug_version << std::endl;
+            fp__ << "Welcome to SkyFire debug, version: " << sf_logger_version << std::endl;
         }
 
         static std::string make_time_str__()
@@ -294,24 +294,24 @@ namespace skyfire
 #define sf_logout(...) logout(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 
 #ifndef SF_DISABLE_DEBUG
-#define sf_log(...) skyfire::sf_debug<>::track(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_log(...) skyfire::sf_logger<>::track(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #define sf_track(...) track(__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #else
-#define sf_log(...) skyfire::sf_debug<>::__empty_func__(__VA_ARGS__)
+#define sf_log(...) skyfire::sf_logger<>::__empty_func__(__VA_ARGS__)
 #define sf_track(...) __empty_func__(__VA_ARGS__)
 #endif
 
     template <typename _BaseClass>
-    std::map<std::string, std::recursive_mutex> sf_debug<_BaseClass>::file_mutex__;
+    std::map<std::string, std::recursive_mutex> sf_logger<_BaseClass>::file_mutex__;
 
     template <typename _BaseClass>
-    std::ostringstream *sf_debug<_BaseClass>::p_os__ = new std::ostringstream();
+    std::ostringstream *sf_logger<_BaseClass>::p_os__ = new std::ostringstream();
 
     template <typename _BaseClass>
-    std::recursive_mutex sf_debug<_BaseClass>::__debug_mutex;
+    std::recursive_mutex sf_logger<_BaseClass>::__debug_mutex;
 
     template <typename _BaseClass>
-    std::function<void(const char *)> sf_debug<_BaseClass>::out_debug_str_func__ = __out_debug_string__;
+    std::function<void(const char *)> sf_logger<_BaseClass>::out_debug_str_func__ = __out_debug_string__;
 
-    using sf_debug_t = sf_debug<>;
+    using sf_logger_t = sf_logger<>;
 }

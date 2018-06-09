@@ -22,10 +22,10 @@ namespace skyfire
     class sf_tcpserver : public sf_nocopy<sf_object>
     {
 
-    SF_REG_SIGNAL(new_connection, SOCKET);
-    SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
-    SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&);
-    SF_REG_SIGNAL(closed, SOCKET);
+    SF_REG_SIGNAL(new_connection, SOCKET)
+    SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&)
+    SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&)
+    SF_REG_SIGNAL(closed, SOCKET)
 
     private:
         int listen_fd__ = -1;
