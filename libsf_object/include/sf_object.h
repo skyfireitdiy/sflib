@@ -101,14 +101,14 @@ public:                                                                         
 (objptr)->__sf_aop_unbind_helper((objptr)->__mu_##name##_aop__,(objptr)->__##name##_aop_after_func_vec__,bind_id);      \
 
 /*
- * sf_bind_signal 信号绑定注册
+ * sf_bind_signal 信号绑定
  */
 #define sf_bind_signal(objptr,name,func,mul_thread)                                                                     \
 (objptr)->__sf_bind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,func,mul_thread)      \
 
 
 /*
- * sf_unbind_signal 信号绑定反注册
+ * sf_unbind_signal 信号解绑
  */
 #define sf_unbind_signal(objptr,name,bind_id)                                                                           \
 (objptr)->__sf_signal_unbind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,bind_id);    \

@@ -15,11 +15,9 @@ namespace skyfire{
         // 保存客户端列表
         std::set<SOCKET> clients__;
 
-        // 主Server
+        // Server
         std::shared_ptr<sf_tcpserver> server__{sf_tcpserver::make_server()};
 
-        // 帮助连接的Server
-        std::shared_ptr<sf_tcpserver> help_connect_server__{sf_tcpserver::make_server()};
 
         // 当前已运行
         bool running__ = false;
@@ -28,7 +26,7 @@ namespace skyfire{
          * 主Server新连接到来处理
          * @param sock 新连接的socket
          */
-        void on_new_connnection(SOCKET sock){
+        void on_new_connnection__(SOCKET sock){
             // TODO 做一些处理
         }
 
@@ -36,7 +34,7 @@ namespace skyfire{
          * 主Server连接断开处理
          * @param sock 断开的socket
          */
-        void on_disconnect(SOCKET sock){
+        void on_disconnect__(SOCKET sock){
             clients__.erase(sock);
         }
 
@@ -44,16 +42,18 @@ namespace skyfire{
          * 主Server处理注册请求
          * @param sock 注册的Socket
          */
-        void on_client_reg(SOCKET sock){
+        void on_client_reg__(SOCKET sock){
             clients__.insert(sock);
-            on_update_client_list();
+            unsigned long long id = sock;
+            server__->send(sock, TYPE_NAT_TRAVERSAL_SET_ID, sf_serialize(id));
+            on_update_client_list__();
         }
 
         /**
          * 更新客户信息
          * @param sock
          */
-        void on_update_client_list(SOCKET sock = static_cast<SOCKET>(-1)) {
+        void on_update_client_list__(SOCKET sock = static_cast<SOCKET>(-1)) {
             std::set<unsigned long long> tmp_data {clients__.begin(), clients__.end()};
             auto data = sf_serialize(tmp_data);
             if (sock == -1) {
@@ -71,17 +71,53 @@ namespace skyfire{
          * @param header 消息头
          * @param data 数据
          */
-        void on_msg_coming(SOCKET sock, const pkg_header_t& header, const byte_array& data){
+        void on_msg_coming__(SOCKET sock, const pkg_header_t &header, const byte_array &data){
             switch (header.type){
                 case TYPE_NAT_TRAVERSAL_GET_LIST:
-                    on_update_client_list(sock);
+                    on_update_client_list__(sock);
                     break;
                 case TYPE_NAT_TRAVERSAL_REG:
-                    on_client_reg(sock);
+                    on_client_reg__(sock);
+                    break;
+                case TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER: {
+                    sf_tcp_nat_traversal_context_t__ context;
+                    sf_deserialize(data, context, 0);
+                }
                     break;
                 default:
                     break;
             }
+        }
+
+        /**
+         * 处理客户端远程连接请求
+         * @param context
+         */
+        void on_client_require_connect_to_peer_client__(sf_tcp_nat_traversal_context_t__ &context)
+        {
+            if(clients__.count(context.src_id) == 0)
+            {
+                return;
+            }
+            if(clients__.count(context.dest_id) == 0)
+            {
+                context.error_code = SF_ERR_NOT_EXIST;
+                server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+            if(!get_peer_addr(context.src_id,context.src_addr))
+            {
+                context.error_code = SF_ERR_DISCONNECT;
+                server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+            if(!server__->send(context.dest_id,TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED, sf_serialize(context)))
+            {
+                context.error_code = SF_ERR_REMOTE_ERR;
+                server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+            server__->send(context.src_id, TYPE_NAT_TRAVERSAL_STEP_1_OK, sf_serialize(context));
         }
 
     public:
@@ -97,11 +133,11 @@ namespace skyfire{
          * 构造函数
          */
         sf_tcp_nat_traversal_server(){
-            sf_bind_signal(server__, new_connection, std::bind(&sf_tcp_nat_traversal_server::on_new_connnection,
+            sf_bind_signal(server__, new_connection, std::bind(&sf_tcp_nat_traversal_server::on_new_connnection__,
                                                                this, std::placeholders::_1), false);
-            sf_bind_signal(server__, closed, std::bind(&sf_tcp_nat_traversal_server::on_disconnect,
+            sf_bind_signal(server__, closed, std::bind(&sf_tcp_nat_traversal_server::on_disconnect__,
                                                        this, std::placeholders::_1), false);
-            sf_bind_signal(server__, data_coming, std::bind(&sf_tcp_nat_traversal_server::on_msg_coming,
+            sf_bind_signal(server__, data_coming, std::bind(&sf_tcp_nat_traversal_server::on_msg_coming__,
                                                        this, std::placeholders::_1,
                                                             std::placeholders::_2,
                                                             std::placeholders::_3), false);
@@ -117,8 +153,6 @@ namespace skyfire{
             if(running__)
                 return false;
             running__ = true;
-            // NOTE 辅助服务器随机分配端口
-            return server__->listen(ip, port) && help_connect_server__->listen(ip, 0);
         }
 
         /**
@@ -126,7 +160,6 @@ namespace skyfire{
          */
         void close(){
             server__->close();
-            help_connect_server__->close();
             clients__.clear();
         }
     };

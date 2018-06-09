@@ -49,7 +49,7 @@ include_directories(
         libsf_rpc/include
         libsf_serialize/include
         libsf_single_instance/include
-        libsf_tcp/include
+        libsf_net/include
         libsf_thread_pool/include
         libsf_tri_type/include
         libsf_watch_time/include
@@ -76,7 +76,7 @@ file(GLOB headers
         libsf_rpc/include/*.h
         libsf_serialize/include/*.h
         libsf_single_instance/include/*.h
-        libsf_tcp/include/*.h
+        libsf_net/include/*.h
         libsf_thread_pool/include/*.h
         libsf_tri_type/include/*.h
         libsf_watch_time/include/*.h

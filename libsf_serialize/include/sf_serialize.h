@@ -478,6 +478,36 @@ namespace skyfire
         }
     }
 
+    template <typename ... _Type>
+    byte_array sf_serialize_obj_helper(const _Type&... obj)
+    {
+        return (sf_serialize(obj) + ...);
+    }
+
+    template<typename T>
+    size_t sf_deserialize_obj_helper(const byte_array& data, size_t begin_pos, T &obj)
+    {
+        return sf_deserialize(data, obj, begin_pos);
+    }
+
+    template<typename T,typename ... _Type>
+    size_t sf_deserialize_obj_helper(const byte_array& data, size_t begin_pos, T &obj ,_Type &... other)
+    {
+        auto pos = sf_deserialize(data, obj, begin_pos);
+        return sf_deserialize_obj_helper(data, pos, other...);
+    }
+
+
+    //使一个结构变成可序列化的结构（需保证内部的每个成员都可以序列化，使用时需要注入到skyfire命名空间内部）
+
+#define SF_MAKE_SERIALIZABLE(className, ...)                                                                            \
+inline byte_array sf_serialize(const className& obj){                                                                  \
+        return sf_serialize_obj_helper(SF_EXPAND_OBJ_MEM(obj, __VA_ARGS__));                                            \
+    }                                                                                                                   \
+    inline size_t                                                                                                       \
+    sf_deserialize(const byte_array &data, className &obj, size_t begin_pos){                                           \
+        return sf_deserialize_obj_helper(data, begin_pos, SF_EXPAND_OBJ_MEM(obj, __VA_ARGS__));                         \
+    }                                                                                                                   \
 
 
 }
