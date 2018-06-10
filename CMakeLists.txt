@@ -40,7 +40,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(
         libsf_any/include
-        libsf_debug/include
+        libsf_logger/include
         libsf_empty_class/include
         libsf_finally/include
         libsf_nocopy/include
@@ -67,7 +67,7 @@ include_directories(
 
 file(GLOB headers
         libsf_any/include/*.h
-        libsf_debug/include/*.h
+        libsf_logger/include/*.h
         libsf_empty_class/include/*.h
         libsf_finally/include/*.h
         libsf_nocopy/include/*.h
@@ -153,6 +153,7 @@ ELSE()
     target_link_libraries(test_timer pthread)
     target_link_libraries(test_tcp_nat_traversal_server pthread)
     target_link_libraries(test_tcp_nat_traversal_client pthread)
+    target_link_libraries(test_sf_debug pthread)
 
 ENDIF ()
 

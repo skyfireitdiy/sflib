@@ -3,19 +3,23 @@
 #include "sf_logger.h"
 
 #include <iostream>
+#include <sf_finally.h>
 
 using namespace skyfire;
 using namespace std;
 
-void output(const char *str)
+void output(const std::string& str)
 {
-    cout<<str<<endl;
+    cout<<"--->"<<str<<flush;
 }
 
 int main()
 {
-    sf_logger_t ddd;
-    sf_logger_t ::set_output_debug_string_func(output);
-    ddd.sf_track("666", 123);
-    sf_log("123",8997);
+    auto logger = sf_logger::get_instance();
+    logger->add_level_stream(SF_DEBUG_LEVEL, &cout);
+    logger->add_level_func(SF_ERROR_LEVEL, output);
+    getchar();
+    logger->sf_error("hello", "world");
+    logger->sf_warn("this is warn");
+    getchar();
 }
