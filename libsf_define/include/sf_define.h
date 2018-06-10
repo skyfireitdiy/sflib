@@ -100,6 +100,11 @@ namespace skyfire {
     // 远程错误
     constexpr int SF_ERR_REMOTE_ERR = 0x00010003;
 
+    // 监听错误
+    constexpr int SF_ERR_LISTEN_ERR = 0x00010003;
+
+
+
 
 
 }

@@ -82,8 +82,10 @@ namespace skyfire{
                 case TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER: {
                     sf_tcp_nat_traversal_context_t__ context;
                     sf_deserialize(data, context, 0);
+                    on_client_require_connect_to_peer_client__(context);
                 }
                     break;
+
                 default:
                     break;
             }
