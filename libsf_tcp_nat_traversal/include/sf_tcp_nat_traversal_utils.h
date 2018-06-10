@@ -16,8 +16,9 @@ namespace skyfire{
         unsigned long long dest_id;
         addr_info_t dest_addr;
         int error_code;
+        int step;
     };
-    SF_MAKE_SERIALIZABLE(sf_tcp_nat_traversal_context_t__, connect_id, src_id, src_addr, dest_id, dest_addr, error_code)
+    SF_MAKE_SERIALIZABLE(sf_tcp_nat_traversal_context_t__, connect_id, src_id, src_addr, dest_id, dest_addr, error_code, step)
 
 }
 

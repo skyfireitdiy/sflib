@@ -97,28 +97,35 @@ namespace skyfire{
          */
         void on_client_require_connect_to_peer_client__(sf_tcp_nat_traversal_context_t__ &context)
         {
+            // 判断来源是否存在
             if(clients__.count(context.src_id) == 0)
             {
                 return;
             }
+            // 判断目的是否存在，如果不存在，通知来源
             if(clients__.count(context.dest_id) == 0)
             {
                 context.error_code = SF_ERR_NOT_EXIST;
                 server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
                 return;
             }
+            // 获取来源的外网IP和端口，填充到连接上下文
             if(!get_peer_addr(context.src_id,context.src_addr))
             {
                 context.error_code = SF_ERR_DISCONNECT;
                 server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
                 return;
             }
+            // 第1步：server获取发起端信息，提交至接受端，context有效字段：connect_id、dest_id、src_id、src_addr
+            context.step = 1;
+            // 将来源的外网ip端口通知给目的
             if(!server__->send(context.dest_id,TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED, sf_serialize(context)))
             {
                 context.error_code = SF_ERR_REMOTE_ERR;
                 server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
                 return;
             }
+            // 通知来源，阶段1成功
             server__->send(context.src_id, TYPE_NAT_TRAVERSAL_STEP_1_OK, sf_serialize(context));
         }
 

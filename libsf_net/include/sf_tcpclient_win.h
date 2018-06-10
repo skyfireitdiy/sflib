@@ -176,6 +176,7 @@ namespace skyfire
         {
             if (!inited__)
                 return;
+            shutdown(sock__,SD_BOTH);
             closesocket(sock__);
             sock__ = INVALID_SOCKET;
         }

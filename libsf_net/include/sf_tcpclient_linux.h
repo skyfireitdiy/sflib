@@ -171,6 +171,7 @@ namespace skyfire
         {
             if (!inited__)
                 return;
+            shutdown(sock__,SD_BOTH);
             ::close(sock__);
             sock__ = -1;
         }

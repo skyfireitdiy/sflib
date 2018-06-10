@@ -84,6 +84,11 @@ namespace skyfire {
     // net穿透阶段1成功
     constexpr int TYPE_NAT_TRAVERSAL_STEP_1_OK = 0x00010007;
 
+    // net穿透B端回复地址
+    constexpr int TYPE_NAT_TRAVERSAL_B_REPLY_ADDR = 0x00010008;
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     // error_code
@@ -101,7 +106,10 @@ namespace skyfire {
     constexpr int SF_ERR_REMOTE_ERR = 0x00010003;
 
     // 监听错误
-    constexpr int SF_ERR_LISTEN_ERR = 0x00010003;
+    constexpr int SF_ERR_LISTEN_ERR = 0x00010004;
+
+    // 绑定错误
+    constexpr int SF_ERR_BIND_ERR = 0x00010005;
 
 
 
