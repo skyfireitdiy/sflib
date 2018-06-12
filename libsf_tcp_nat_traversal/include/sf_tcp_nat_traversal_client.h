@@ -25,6 +25,9 @@ namespace skyfire {
     };
 
     class sf_tcp_nat_traversal_client : public sf_nocopy<sf_object> {
+
+        SF_REG_SIGNAL(new_connection, std::shared_ptr<sf_tcpclient>)
+
     private:
         std::shared_ptr<sf_tcpclient> client__ {sf_tcpclient::make_client()};
         std::set<unsigned long long> client_list__;
@@ -32,43 +35,6 @@ namespace skyfire {
         std::map<int, sf_p2p_connect_context_t__> connect_context_map__;
         addr_info_t server_addr__;
 
-        /**
-         * 来源，阶段1成功处理
-         * @param context
-         */
-        void on_step_1_ok__(sf_tcp_nat_traversal_context_t__& context)
-        {
-            // 检测连接是否存在
-            if(connect_context_map__.count(context.connect_id) == 0)
-            {
-                context.error_code = SF_ERR_NOT_EXIST;
-                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
-                return;
-            }
-            // 保存上下文
-            connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
-            addr_info_t addr;
-            // 获取到本机要连接外网的ip端口，保存至连接上下文
-            if(!get_local_addr(connect_context_map__[context.connect_id].point_a_client_1->get_raw_socket(), addr))
-            {
-                context.error_code = SF_ERR_DISCONNECT;
-                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
-                connect_context_map__.erase(context.connect_id);
-                return;
-            }
-            // 关闭与server的连接1
-            connect_context_map__[context.connect_id].point_a_client_1->close();
-            // 创建服务器
-            connect_context_map__[context.connect_id].point_a_server = sf_tcpserver::make_server();
-            // 复用刚才断开的连接1端口号
-            if(!connect_context_map__[context.connect_id].point_a_server->listen(addr.ip, addr.port))
-            {
-                context.error_code = SF_ERR_LISTEN_ERR;
-                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
-                connect_context_map__.erase(context.connect_id);
-                return;
-            }
-        }
 
         /**
          * 目的，有远程主机请求建立连接
@@ -81,18 +47,76 @@ namespace skyfire {
             connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
             // 建立客户端1
             connect_context_map__[context.connect_id].point_b_client_1 = sf_tcpclient::make_client();
-            // 使用客户端1连接至server，便于server获取目的的外网ip端口
-            if (!connect_context_map__[context.connect_id].point_b_client_1->connect(server_addr__.ip,
+
+            // 第2步，接受端尝试连接A的外网端口，如果连上，一切ok，context有效字段：connect_id、dest_id、src_id、src_addr
+            connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 2;
+
+            addr_info_t server_addr;
+            if (!get_local_addr(client__->get_raw_socket(), server_addr)) {
+                context.error_code = SF_ERR_DISCONNECT;
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR,
+                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                return;
+            }
+
+            // 生成一个自动端口
+            unsigned short auto_port = sf_random::get_instance()->get_int(1025, 65535);
+
+            // 绑定
+            if (connect_context_map__[context.connect_id].point_a_client_1->bind(server_addr.ip, auto_port)) {
+                context.error_code = SF_ERR_BIND_ERR;
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR,
+                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                return;
+            }
+
+            // 尝试连接a的外网ip端口，留下路由信息（一般会失败，但有时会直接成功）
+            if (connect_context_map__[context.connect_id].point_b_client_1->connect(
+                    connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.ip,
+                    connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.port
+            )) {
+                client__->send(TYPE_NAT_TRAVERSAL_CONNECTED,
+                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                new_connection(connect_context_map__[context.connect_id].point_b_client_1);
+                return;
+            }
+            // 连接失败，B建立服务器2
+
+            // 第3步：接受端建立socket，发送信息，便于server获取到接受端地址信息，同时监听端口，context有效字段：connect_id、dest_id、src_id、src_addr
+
+            connect_context_map__[context.connect_id].point_b_client_2 = sf_tcpclient::make_client();
+
+            // 将客户端2绑定至于客户端1相同的ip端口
+            if (!connect_context_map__[context.connect_id].point_b_client_2->bind(
+                    server_addr.ip, auto_port
+            )) {
+                context.error_code = SF_ERR_BIND_ERR;
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR,
+                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                return;
+            }
+
+            // 使用客户端2连接至server，便于server获取目的的外网ip端口
+            if (!connect_context_map__[context.connect_id].point_b_client_2->connect(server_addr__.ip,
                                                                                      server_addr__.port)) {
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
                                sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
-            // 第2步：接受端连接server，发送信息，便于server获取到接受端地址信息，context有效字段：connect_id、dest_id、src_id、src_addr
-            connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 2;
-            // 向server发送信息，server获取ip端口
-            if (!connect_context_map__[context.connect_id].point_b_client_1->send(TYPE_NAT_TRAVERSAL_B_REPLY_ADDR,
+
+            // 监听端口，等待连接
+            connect_context_map__[context.connect_id].point_b_server = sf_tcpserver::make_server();
+            if (!connect_context_map__[context.connect_id].point_b_server->listen(server_addr.ip, auto_port)) {
+                context.error_code = SF_ERR_DISCONNECT;
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR,
+                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                return;
+            }
+
+            connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 3;
+            // 向server发送信息，server获取ip端口（此时已在路由器留下记录）
+            if (!connect_context_map__[context.connect_id].point_b_client_2->send(TYPE_NAT_TRAVERSAL_B_REPLY_ADDR,
                                                                                   sf_serialize(
                                                                                           connect_context_map__[context.connect_id].tcp_nat_traversal_context))) {
                 context.error_code = SF_ERR_DISCONNECT;
@@ -101,30 +125,7 @@ namespace skyfire {
                 return;
             }
 
-            // 建立客户端2
-            connect_context_map__[context.connect_id].point_b_client_2 = sf_tcpclient::make_client();
-            addr_info_t addr;
-            // 获取客户端1的本地ip端口
-            if (!get_local_addr(connect_context_map__[context.connect_id].point_b_client_1->get_raw_socket(), addr)) {
-                context.error_code = SF_ERR_DISCONNECT;
-                client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
-                return;
-            }
-            // 将客户端2绑定至于客户端1相同的ip端口
-            if (!connect_context_map__[context.connect_id].point_b_client_2->bind(
-                    addr.ip, addr.port
-            )) {
-                context.error_code = SF_ERR_BIND_ERR;
-                client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
-                return;
-            }
-            // 尝试连接a的外网ip端口，留下路由信息（一般会失败，不用关心返回结果）
-            connect_context_map__[context.connect_id].point_b_client_2->connect(
-                    connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.ip,
-                    connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.port
-                    );
+
         }
 
 
@@ -136,13 +137,6 @@ namespace skyfire {
                 case TYPE_NAT_TRAVERSAL_SET_ID:
                     sf_deserialize(data, self_id__, 0);
                     break;
-                case TYPE_NAT_TRAVERSAL_STEP_1_OK:
-                {
-                    sf_tcp_nat_traversal_context_t__ context;
-                    sf_deserialize(data, context, 0);
-                    on_step_1_ok__(context);
-                }
-                break;
                 case TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED:
                 {
                     sf_tcp_nat_traversal_context_t__ context;
@@ -221,6 +215,21 @@ namespace skyfire {
             tmp_p2p_conn_context.point_a_client_1 = sf_tcpclient::make_client();
             // 尝试连接服务器
             if(tmp_p2p_conn_context.point_a_client_1->connect(server_addr__.ip,server_addr__.port)) {
+
+                addr_info_t addr;
+                // 获取到本机要连接外网的ip端口，保存至连接上下文
+                if(!get_local_addr(tmp_p2p_conn_context.point_a_client_1->get_raw_socket(), addr))
+                {
+                    return -1;
+                }
+
+                tmp_p2p_conn_context.point_a_server = sf_tcpserver::make_server();
+                // 复用刚才断开的连接1端口号
+                if(!tmp_p2p_conn_context.point_a_server->listen(addr.ip, addr.port))
+                {
+                    return -1;
+                }
+
                 // 发起连接请求
                 if (tmp_p2p_conn_context.point_a_client_1->send(TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER,
                                    sf_serialize(tmp_p2p_conn_context.tcp_nat_traversal_context))) {

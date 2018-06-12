@@ -125,8 +125,6 @@ namespace skyfire{
                 server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
                 return;
             }
-            // 通知来源，阶段1成功
-            server__->send(context.src_id, TYPE_NAT_TRAVERSAL_STEP_1_OK, sf_serialize(context));
         }
 
     public:

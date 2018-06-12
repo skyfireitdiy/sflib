@@ -81,13 +81,13 @@ namespace skyfire {
     // 新连接请求
     constexpr int TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED = 0x00010006;
 
-    // net穿透阶段1成功
-    constexpr int TYPE_NAT_TRAVERSAL_STEP_1_OK = 0x00010007;
+
 
     // net穿透B端回复地址
     constexpr int TYPE_NAT_TRAVERSAL_B_REPLY_ADDR = 0x00010008;
 
-
+    // net穿透连接成功
+    constexpr int TYPE_NAT_TRAVERSAL_CONNECTED = 0x00010009;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,9 +110,6 @@ namespace skyfire {
 
     // 绑定错误
     constexpr int SF_ERR_BIND_ERR = 0x00010005;
-
-
-
 
 
 }
