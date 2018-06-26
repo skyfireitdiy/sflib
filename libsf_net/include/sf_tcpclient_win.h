@@ -165,7 +165,7 @@ namespace skyfire
             return ::send(sock__, data.data(), data.size(), 0) == data.size();
         }
 
-        bool raw_send(const byte_array & data)
+        bool send(const byte_array & data)
         {
             if (!inited__)
                 return false;
