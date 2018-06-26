@@ -61,10 +61,11 @@ namespace skyfire
             return -1 != ::bind(sock__,reinterpret_cast<sockaddr*>(&address), sizeof(address));
         }
 
-        static std::shared_ptr<sf_tcpclient> make_client()
+        static std::shared_ptr<sf_tcpclient> make_client(bool raw = false)
         {
-            return std::make_shared<sf_tcpclient>();
+            return std::make_shared<sf_tcpclient>(raw);
         }
+
 
         ~sf_tcpclient()
         {
@@ -171,7 +172,7 @@ namespace skyfire
         {
             if (!inited__)
                 return;
-            shutdown(sock__,SD_BOTH);
+            shutdown(sock__,SHUT_RDWR);
             ::close(sock__);
             sock__ = -1;
         }

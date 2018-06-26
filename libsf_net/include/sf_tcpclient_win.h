@@ -66,9 +66,9 @@ namespace skyfire
         }
 
 
-        static std::shared_ptr <sf_tcpclient> make_client()
+        static std::shared_ptr <sf_tcpclient> make_client(bool raw = false)
         {
-            return std::make_shared<sf_tcpclient>();
+            return std::make_shared<sf_tcpclient>(raw);
         }
 
         ~sf_tcpclient()

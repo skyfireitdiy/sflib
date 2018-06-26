@@ -65,6 +65,36 @@ namespace skyfire{
             }
         }
 
+        void on_nat_traversal_b_reply_addr(sf_tcp_nat_traversal_context_t__ &context, SOCKET sock){
+            // 第4步，服务器将目的的监听地址信息发送至来源，context有效字段：connect_id、dest_id、src_id、src_addr、dest_addr
+            context.step = 4;
+            // 判断目的是否存在，不存在，通知来源
+            if(clients__.count(context.dest_id) == 0)
+            {
+                context.error_code = SF_ERR_NOT_EXIST;
+                server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+            // 判断来源是否存在，如果不存在，通知回复者
+            if(clients__.count(context.src_id) == 0)
+            {
+                context.error_code = SF_ERR_NOT_EXIST;
+                server__->send(context.dest_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+
+            if(!get_peer_addr(sock, context.dest_addr)){
+                context.error_code = SF_ERR_DISCONNECT;
+                server__->send(context.dest_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+            if(!server__->send(context.src_id, TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR, sf_serialize(context))){
+                context.error_code = SF_ERR_REMOTE_ERR;
+                server__->send(context.dest_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+        }
+
         /**
          * 消息到来处理
          * @param sock 来源socket
@@ -85,7 +115,12 @@ namespace skyfire{
                     on_client_require_connect_to_peer_client__(context);
                 }
                     break;
-
+                case TYPE_NAT_TRAVERSAL_B_REPLY_ADDR:{
+                    sf_tcp_nat_traversal_context_t__ context;
+                    sf_deserialize(data, context, 0);
+                    on_nat_traversal_b_reply_addr(context, sock);
+                }
+                    break;
                 default:
                     break;
             }
@@ -97,6 +132,8 @@ namespace skyfire{
          */
         void on_client_require_connect_to_peer_client__(sf_tcp_nat_traversal_context_t__ &context)
         {
+            // 第1步：server获取发起端信息，提交至接受端，context有效字段：connect_id、dest_id、src_id、src_addr
+            context.step = 1;
             // 判断来源是否存在
             if(clients__.count(context.src_id) == 0)
             {
@@ -116,8 +153,6 @@ namespace skyfire{
                 server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
                 return;
             }
-            // 第1步：server获取发起端信息，提交至接受端，context有效字段：connect_id、dest_id、src_id、src_addr
-            context.step = 1;
             // 将来源的外网ip端口通知给目的
             if(!server__->send(context.dest_id,TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED, sf_serialize(context)))
             {

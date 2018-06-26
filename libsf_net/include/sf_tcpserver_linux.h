@@ -47,9 +47,9 @@ namespace skyfire
             close();
         }
 
-        static std::shared_ptr<sf_tcpserver> make_server()
+        static std::shared_ptr<sf_tcpserver> make_server(bool raw = false)
         {
-            return std::make_shared<sf_tcpserver>();
+            return std::make_shared<sf_tcpserver>(raw);
         }
 
         bool listen(const std::string &ip, unsigned short port)

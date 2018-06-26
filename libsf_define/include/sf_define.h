@@ -72,22 +72,26 @@ namespace skyfire {
     // NAT穿透请求连接远端peer
     constexpr int TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER = 0x00010004;
 
-    // 设置client id
+    // NAT设置client id
     constexpr int TYPE_NAT_TRAVERSAL_SET_ID = 0x00010005;
 
     // NAT穿透错误
     constexpr int TYPE_NAT_TRAVERSAL_ERROR = 0x00010005;
 
-    // 新连接请求
+    // NAT穿透新连接请求
     constexpr int TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED = 0x00010006;
 
+    // NAT穿透服务器回复B的地址
+    constexpr int TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR = 0x00010007;
 
-
-    // net穿透B端回复地址
+    // NAT穿透B端回复地址
     constexpr int TYPE_NAT_TRAVERSAL_B_REPLY_ADDR = 0x00010008;
 
-    // net穿透连接成功
+    // NAT穿透连接成功
     constexpr int TYPE_NAT_TRAVERSAL_CONNECTED = 0x00010009;
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -110,8 +114,6 @@ namespace skyfire {
 
     // 绑定错误
     constexpr int SF_ERR_BIND_ERR = 0x00010005;
-
-
 }
 
 

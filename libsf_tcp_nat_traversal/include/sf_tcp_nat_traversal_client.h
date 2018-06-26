@@ -26,7 +26,8 @@ namespace skyfire {
 
     class sf_tcp_nat_traversal_client : public sf_nocopy<sf_object> {
 
-        SF_REG_SIGNAL(new_connection, std::shared_ptr<sf_tcpclient>)
+        // 新连接，返回建立连接成功的tcpserver和已经连接上的socket，可通过这两个与被连接方通信
+        SF_REG_SIGNAL(new_nat_connection,std::shared_ptr<sf_tcp_nat_traversal_connection>,int)
 
     private:
         std::shared_ptr<sf_tcpclient> client__ {sf_tcpclient::make_client()};
@@ -45,11 +46,14 @@ namespace skyfire {
             connect_context_map__[context.connect_id] = sf_p2p_connect_context_t__{};
             // 保存连接上下文
             connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
-            // 建立客户端1
-            connect_context_map__[context.connect_id].point_b_client_1 = sf_tcpclient::make_client();
 
             // 第2步，接受端尝试连接A的外网端口，如果连上，一切ok，context有效字段：connect_id、dest_id、src_id、src_addr
             connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 2;
+
+            // 建立客户端1
+            connect_context_map__[context.connect_id].point_b_client_1 = sf_tcpclient::make_client();
+
+
 
             addr_info_t server_addr;
             if (!get_local_addr(client__->get_raw_socket(), server_addr)) {
@@ -60,7 +64,7 @@ namespace skyfire {
             }
 
             // 生成一个自动端口
-            unsigned short auto_port = sf_random::get_instance()->get_int(1025, 65535);
+            unsigned short auto_port = static_cast<unsigned short>(sf_random::get_instance()->get_int(1025, 65535));
 
             // 绑定
             if (connect_context_map__[context.connect_id].point_a_client_1->bind(server_addr.ip, auto_port)) {
@@ -75,14 +79,12 @@ namespace skyfire {
                     connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.ip,
                     connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.port
             )) {
-                client__->send(TYPE_NAT_TRAVERSAL_CONNECTED,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
-                new_connection(connect_context_map__[context.connect_id].point_b_client_1);
-                return;
+                // TODO 为了维持操作统一，成功暂时也不做处理
             }
             // 连接失败，B建立服务器2
 
             // 第3步：接受端建立socket，发送信息，便于server获取到接受端地址信息，同时监听端口，context有效字段：connect_id、dest_id、src_id、src_addr
+            connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 3;
 
             connect_context_map__[context.connect_id].point_b_client_2 = sf_tcpclient::make_client();
 
@@ -106,15 +108,38 @@ namespace skyfire {
             }
 
             // 监听端口，等待连接
-            connect_context_map__[context.connect_id].point_b_server = sf_tcpserver::make_server();
+            connect_context_map__[context.connect_id].point_b_server = sf_tcpserver::make_server(context.raw);
             if (!connect_context_map__[context.connect_id].point_b_server->listen(server_addr.ip, auto_port)) {
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
                                sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
+            // lambda 里面需要此绑定id，所以需要传递指针
+            std::shared_ptr<int> tmp_bind_id= std::make_shared<int>();
+            *tmp_bind_id = sf_bind_signal(connect_context_map__[context.connect_id].point_b_server,
+                                             new_connection,
+                                             [=](SOCKET sock){
+                                                 // 解除绑定
+                                                 sf_unbind_signal(connect_context_map__[context.connect_id].point_b_server,
+                                                                  new_connection,
+                                                                  *tmp_bind_id
+                                                 );
+                                                std::shared_ptr<sf_tcp_nat_traversal_connection> connection(
+                                                        new sf_tcp_nat_traversal_connection(
+                                                                nullptr,
+                                                                connect_context_map__[context.connect_id].point_b_server,
+                                                                sock,
+                                                                context.connect_id,
+                                                                sf_tcp_nat_traversal_connection_type ::type_server_valid
+                                                        )
+                                                );
+                                                 new_nat_connection(connection, context.connect_id);
+                                                // TODO 清理资源
+                                             },
+                                             false
+            );
 
-            connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 3;
             // 向server发送信息，server获取ip端口（此时已在路由器留下记录）
             if (!connect_context_map__[context.connect_id].point_b_client_2->send(TYPE_NAT_TRAVERSAL_B_REPLY_ADDR,
                                                                                   sf_serialize(
@@ -126,6 +151,33 @@ namespace skyfire {
             }
 
 
+        }
+
+        void on_server_reply_b_addr(sf_tcp_nat_traversal_context_t__ &context){
+            // 第5步，a连接b的监听端口,context有效字段：connect_id、dest_id、src_id、src_addr、dest_addr
+            context.step = 5;
+            if(connect_context_map__.count(context.connect_id)==0){
+                context.error_code = SF_ERR_NOT_EXIST;
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
+            connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
+            connect_context_map__[context.connect_id].point_a_client_2 = sf_tcpclient::make_client(context.raw);
+            if(connect_context_map__[context.connect_id].point_a_client_2->connect(context.dest_addr.ip,context.dest_addr.port)){
+                // TODO 清理资源
+                std::shared_ptr<sf_tcp_nat_traversal_connection> connection (new sf_tcp_nat_traversal_connection(
+                        connect_context_map__[context.connect_id].point_a_client_2,
+                        nullptr,
+                        -1,
+                        context.connect_id,
+                        sf_tcp_nat_traversal_connection_type ::type_client_valid
+                ));
+                new_nat_connection(connection, context.connect_id);
+            }else{
+                context.error_code = SF_ERR_DISCONNECT;
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                return;
+            }
         }
 
 
@@ -142,6 +194,13 @@ namespace skyfire {
                     sf_tcp_nat_traversal_context_t__ context;
                     sf_deserialize(data, context, 0);
                     on_new_connect_required__(context);
+                }
+                break;
+                case TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR:
+                {
+                    sf_tcp_nat_traversal_context_t__ context;
+                    sf_deserialize(data, context, 0);
+                    on_server_reply_b_addr(context);
                 }
                 break;
                 default:
@@ -200,17 +259,19 @@ namespace skyfire {
          * @param peer_id 远端id
          * @return -1表示失败，其他表示此次连接的id
          */
-        int connect_to_peer(unsigned long long peer_id){
+        int connect_to_peer(unsigned long long peer_id, bool raw){
             // 生成一个连接上下文
             sf_p2p_connect_context_t__ tmp_p2p_conn_context;
+            // 第0步：发起端主动连接server，context有效字段：connect_id、dest_id、src_id
+            tmp_p2p_conn_context.tcp_nat_traversal_context.step = 0;
             // 生成随机连接id
             tmp_p2p_conn_context.tcp_nat_traversal_context.connect_id = sf_random::get_instance()->get_int(0, INT_MAX);
             // 指定对方id
             tmp_p2p_conn_context.tcp_nat_traversal_context.dest_id = peer_id;
             // 指定自身id
             tmp_p2p_conn_context.tcp_nat_traversal_context.src_id = self_id__;
-            // 第0步：发起端主动连接server，context有效字段：connect_id、dest_id、src_id
-            tmp_p2p_conn_context.tcp_nat_traversal_context.step = 0;
+            // 原始数据传输
+            tmp_p2p_conn_context.tcp_nat_traversal_context.raw = raw;
             // 生成连接a客户端
             tmp_p2p_conn_context.point_a_client_1 = sf_tcpclient::make_client();
             // 尝试连接服务器
