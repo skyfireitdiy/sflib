@@ -135,15 +135,18 @@ namespace skyfire {
                                                         )
                                                 );
                                                  new_nat_connection(connection, context.connect_id);
-                                                // TODO 清理资源
+                                                 connect_context_map__.erase(context.connect_id);
                                              },
                                              false
             );
 
             // 向server发送信息，server获取ip端口（此时已在路由器留下记录）
-            if (!connect_context_map__[context.connect_id].point_b_client_2->send(TYPE_NAT_TRAVERSAL_B_REPLY_ADDR,
-                                                                                  sf_serialize(
-                                                                                          connect_context_map__[context.connect_id].tcp_nat_traversal_context))) {
+            if (!connect_context_map__[context.connect_id].point_b_client_2->send(
+                    TYPE_NAT_TRAVERSAL_B_REPLY_ADDR,
+                    sf_serialize(
+                            connect_context_map__[context.connect_id].tcp_nat_traversal_context))
+                    )
+            {
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
                                sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
@@ -164,7 +167,6 @@ namespace skyfire {
             connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
             connect_context_map__[context.connect_id].point_a_client_2 = sf_tcpclient::make_client(context.raw);
             if(connect_context_map__[context.connect_id].point_a_client_2->connect(context.dest_addr.ip,context.dest_addr.port)){
-                // TODO 清理资源
                 std::shared_ptr<sf_tcp_nat_traversal_connection> connection (new sf_tcp_nat_traversal_connection(
                         connect_context_map__[context.connect_id].point_a_client_2,
                         nullptr,
@@ -173,6 +175,7 @@ namespace skyfire {
                         sf_tcp_nat_traversal_connection_type ::type_client_valid
                 ));
                 new_nat_connection(connection, context.connect_id);
+                connect_context_map__.erase(context.connect_id);
             }else{
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
