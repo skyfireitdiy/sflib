@@ -14,10 +14,8 @@
 #include "sf_serialize.h"
 
 
-namespace skyfire
-{
-    struct per_io_operation_data_t
-    {
+namespace skyfire {
+    struct per_io_operation_data_t {
         OVERLAPPED overlapped{};
         WSABUF wsa_buffer{};
         byte_array buffer;
@@ -25,14 +23,12 @@ namespace skyfire
         bool is_send{};
     };
 
-    struct per_handle_data_t
-    {
+    struct per_handle_data_t {
         SOCKET socket;
     };
 
 
-    class sf_tcpserver : public sf_nocopy<sf_object>
-    {
+    class sf_tcpserver : public sf_nocopy<sf_object> {
     SF_REG_SIGNAL(new_connection, SOCKET);
     SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
     SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&);
@@ -50,18 +46,15 @@ namespace skyfire
 
     public:
 
-        SOCKET get_raw_socket()
-        {
+        SOCKET get_raw_socket() {
             return listen_sock__;
         }
 
-        sf_tcpserver(bool raw = false)
-        {
+        sf_tcpserver(bool raw = false) {
             DWORD ret;
             WSADATA wsa_data{};
 
-            if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
-            {
+            if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
                 return;
             }
 
@@ -73,15 +66,12 @@ namespace skyfire
         }
 
 
-        static std::shared_ptr<sf_tcpserver> make_server(bool raw = false)
-        {
+        static std::shared_ptr<sf_tcpserver> make_server(bool raw = false) {
             return std::make_shared<sf_tcpserver>(raw);
         }
 
-        bool listen(const std::string &ip, unsigned short port)
-        {
-            if (!inited__)
-            {
+        bool listen(const std::string &ip, unsigned short port) {
+            if (!inited__) {
                 return false;
             }
 
@@ -89,19 +79,16 @@ namespace skyfire
 
             DWORD ret;
             completion_port__ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
-            if (completion_port__ == nullptr)
-            {
+            if (completion_port__ == nullptr) {
                 close();
                 return false;
             }
 
-            for (auto i : sf_range(thread_count__))
-            {
-                std::thread(std::bind(server_work_thread__, this, std::placeholders::_1), completion_port__).detach();
+            for (auto i : sf_range(thread_count__)) {
+                std::thread([=] { server_work_thread__(completion_port__); }).detach();
             }
             listen_sock__ = WSASocket(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
-            if (listen_sock__ == INVALID_SOCKET)
-            {
+            if (listen_sock__ == INVALID_SOCKET) {
                 close();
                 return false;
             }
@@ -112,95 +99,81 @@ namespace skyfire
             internet_addr.sin_addr.s_addr = inet_addr(ip.c_str());
             internet_addr.sin_port = htons(port);
 
-            if (SOCKET_ERROR == ::bind(listen_sock__, reinterpret_cast<sockaddr*>(&internet_addr), sizeof(internet_addr)))
-            {
+            if (SOCKET_ERROR ==
+                ::bind(listen_sock__, reinterpret_cast<sockaddr *>(&internet_addr), sizeof(internet_addr))) {
                 close();
                 return false;
             }
 
-            if (::listen(listen_sock__, SOMAXCONN) == SOCKET_ERROR)
-            {
+            if (::listen(listen_sock__, SOMAXCONN) == SOCKET_ERROR) {
                 close();
                 return false;
             }
 
-            std::thread([=]()
-                        {
-                            while (true)
-                            {
-                                SOCKET accept_socket;
-                                sockaddr_in addr;
-                                int addr_len = sizeof(addr);
-                                accept_socket = WSAAccept(listen_sock__, nullptr, nullptr, nullptr, 0);
-                                if (accept_socket == INVALID_SOCKET)
-                                {
-                                    break;
-                                }
+            std::thread([=]() {
+                while (true) {
+                    SOCKET accept_socket;
+                    sockaddr_in addr;
+                    int addr_len = sizeof(addr);
+                    accept_socket = WSAAccept(listen_sock__, nullptr, nullptr, nullptr, 0);
+                    if (accept_socket == INVALID_SOCKET) {
+                        break;
+                    }
 
-                                std::thread([=]
-                                            {
-                                                new_connection(accept_socket);
-                                            }).detach();
+                    std::thread([=] {
+                        new_connection(accept_socket);
+                    }).detach();
 
-                                auto *p_handle_data = new per_handle_data_t;
-                                p_handle_data->socket = accept_socket;
-                                if (CreateIoCompletionPort((HANDLE) accept_socket, completion_port__,
-                                                           (ULONG_PTR) p_handle_data, 0) == nullptr)
-                                {
-                                    break;
-                                }
-                                auto *p_io_data = new per_io_operation_data_t;
-                                ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
-                                p_io_data->data_trans_count = 0;
-                                p_io_data->buffer.resize(SF_NET_BUFFER_SIZE);
-                                p_io_data->is_send = false;
-                                p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
-                                p_io_data->wsa_buffer.len = SF_NET_BUFFER_SIZE;
-                                DWORD tmp_int = 0;
-                                DWORD flags = 0;
-                                if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),
-                                            nullptr) ==
-                                    SOCKET_ERROR)
-                                {
-                                    if (WSAGetLastError() != ERROR_IO_PENDING)
-                                    {
-                                        delete p_handle_data;
-                                        delete p_io_data;
-                                        continue;
-                                    }
-                                }
-                            }
-                        }).detach();
+                    auto *p_handle_data = new per_handle_data_t;
+                    p_handle_data->socket = accept_socket;
+                    if (CreateIoCompletionPort((HANDLE) accept_socket, completion_port__,
+                                               (ULONG_PTR) p_handle_data, 0) == nullptr) {
+                        break;
+                    }
+                    auto *p_io_data = new per_io_operation_data_t;
+                    ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+                    p_io_data->data_trans_count = 0;
+                    p_io_data->buffer.resize(SF_NET_BUFFER_SIZE);
+                    p_io_data->is_send = false;
+                    p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
+                    p_io_data->wsa_buffer.len = SF_NET_BUFFER_SIZE;
+                    DWORD tmp_int = 0;
+                    DWORD flags = 0;
+                    if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),
+                                nullptr) ==
+                        SOCKET_ERROR) {
+                        if (WSAGetLastError() != ERROR_IO_PENDING) {
+                            delete p_handle_data;
+                            delete p_io_data;
+                            continue;
+                        }
+                    }
+                }
+            }).detach();
             return true;
         }
 
-        void close()
-        {
+        void close() {
             exit_flag__ = true;
-            if(completion_port__ != nullptr)
-            {
-                for (auto i : sf_range(thread_count__))
-                {
+            if (completion_port__ != nullptr) {
+                for (auto i : sf_range(thread_count__)) {
                     PostQueuedCompletionStatus(completion_port__, 0, 0, nullptr);
                 }
                 CloseHandle(completion_port__);
                 completion_port__ = INVALID_HANDLE_VALUE;
             }
             sock_data_buffer__.clear();
-            if(listen_sock__ != INVALID_SOCKET)
-            {
+            if (listen_sock__ != INVALID_SOCKET) {
                 closesocket(listen_sock__);
                 listen_sock__ = INVALID_SOCKET;
             }
         }
-        
-        void close(SOCKET sock)
-        {
+
+        void close(SOCKET sock) {
             ::closesocket(sock);
         }
 
-        bool send(SOCKET sock, int type, const byte_array &data)
-        {
+        bool send(SOCKET sock, int type, const byte_array &data) {
             DWORD sendBytes;
 
             pkg_header_t header;
@@ -215,19 +188,16 @@ namespace skyfire
             p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
             p_io_data->wsa_buffer.len = p_io_data->buffer.size();
             if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
-                        nullptr) == SOCKET_ERROR)
-            {
-                if (WSAGetLastError() != ERROR_IO_PENDING)
-                {
+                        nullptr) == SOCKET_ERROR) {
+                if (WSAGetLastError() != ERROR_IO_PENDING) {
                     delete p_io_data;
                     return false;
                 }
             }
-            return  true;
+            return true;
         }
 
-        bool send(SOCKET sock, const byte_array &data)
-        {
+        bool send(SOCKET sock, const byte_array &data) {
             DWORD sendBytes;
 
             auto p_io_data = new per_io_operation_data_t;
@@ -238,27 +208,23 @@ namespace skyfire
             p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
             p_io_data->wsa_buffer.len = p_io_data->buffer.size();
             if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
-                        nullptr) == SOCKET_ERROR)
-            {
-                if (WSAGetLastError() != ERROR_IO_PENDING)
-                {
+                        nullptr) == SOCKET_ERROR) {
+                if (WSAGetLastError() != ERROR_IO_PENDING) {
                     delete p_io_data;
                     return false;
                 }
             }
-            return  true;
+            return true;
         }
 
 
-        ~sf_tcpserver() override
-        {
+        ~sf_tcpserver() override {
             close();
             WSACleanup();
         }
 
 
-        void server_work_thread__(LPVOID completion_port_id)
-        {
+        void server_work_thread__(LPVOID completion_port_id) {
             auto completion_port = (HANDLE) completion_port_id;
             DWORD bytesTransferred;
             per_handle_data_t *p_handle_data = nullptr;
@@ -267,19 +233,15 @@ namespace skyfire
             DWORD tmp_int = 0;
             DWORD flags = 0;
 
-            while (true)
-            {
+            while (true) {
                 int result = GetQueuedCompletionStatus(completion_port, &bytesTransferred, (PULONG_PTR) &p_handle_data,
-                                          (LPOVERLAPPED *) &p_io_data, WSA_INFINITE);
-                if(exit_flag__)
-                {
-                    if(p_handle_data != nullptr)
-                    {
+                                                       (LPOVERLAPPED *) &p_io_data, WSA_INFINITE);
+                if (exit_flag__) {
+                    if (p_handle_data != nullptr) {
                         CloseHandle((HANDLE) p_handle_data->socket);
-                        std::thread([=]()
-                                    {
-                                        closed(p_handle_data->socket);
-                                    }).detach();
+                        std::thread([=]() {
+                            closed(p_handle_data->socket);
+                        }).detach();
                         delete p_handle_data;
                         delete p_io_data;
                         sock_data_buffer__.erase(p_handle_data->socket);
@@ -287,15 +249,12 @@ namespace skyfire
                     break;
                 }
 
-                if (result == 0)
-                {
-                    if(p_handle_data != nullptr)
-                    {
+                if (result == 0) {
+                    if (p_handle_data != nullptr) {
                         CloseHandle((HANDLE) p_handle_data->socket);
-                        std::thread([=]()
-                                    {
-                                        closed(p_handle_data->socket);
-                                    }).detach();
+                        std::thread([=]() {
+                            closed(p_handle_data->socket);
+                        }).detach();
                         delete p_handle_data;
                         delete p_io_data;
                         sock_data_buffer__.erase(p_handle_data->socket);
@@ -303,86 +262,71 @@ namespace skyfire
 
                     continue;
                 }
-                
-                if(p_handle_data == nullptr || p_io_data== nullptr)
-                {
+
+                if (p_handle_data == nullptr || p_io_data == nullptr) {
                     CloseHandle((HANDLE) p_handle_data->socket);
-                    std::thread([=]()
-                                {
-                                    closed(p_handle_data->socket);
-                                }).detach();
+                    std::thread([=]() {
+                        closed(p_handle_data->socket);
+                    }).detach();
                     delete p_handle_data;
                     delete p_io_data;
                     continue;
                 }
-                if (bytesTransferred == 0)
-                {
+                if (bytesTransferred == 0) {
                     CloseHandle((HANDLE) p_handle_data->socket);
-                    std::thread([=]()
-                                {
-                                    closed(p_handle_data->socket);
-                                }).detach();
+                    std::thread([=]() {
+                        closed(p_handle_data->socket);
+                    }).detach();
                     delete p_handle_data;
                     delete p_io_data;
                     continue;
                 }
-                if (p_io_data->is_send)
-                {
+                if (p_io_data->is_send) {
                     p_io_data->data_trans_count += bytesTransferred;
 
-                    if (p_io_data->data_trans_count != p_io_data->buffer.size())
-                    {
+                    if (p_io_data->data_trans_count != p_io_data->buffer.size()) {
                         ZeroMemory(&p_io_data->overlapped, sizeof(p_io_data->overlapped));
                         p_io_data->wsa_buffer.buf = p_io_data->buffer.data() + p_io_data->data_trans_count;
                         p_io_data->wsa_buffer.len = p_io_data->buffer.size() - p_io_data->data_trans_count;
                         tmp_int = 0;
                         if (WSASend(p_handle_data->socket, &(p_io_data->wsa_buffer), 1, &tmp_int, 0,
                                     &(p_io_data->overlapped),
-                                    nullptr) == SOCKET_ERROR)
-                        {
-                            if (WSAGetLastError() != ERROR_IO_PENDING)
-                            {
+                                    nullptr) == SOCKET_ERROR) {
+                            if (WSAGetLastError() != ERROR_IO_PENDING) {
                                 CloseHandle((HANDLE) p_handle_data->socket);
-                                std::thread([=]()
-                                            {
-                                                closed(p_handle_data->socket);
-                                            }).detach();
+                                std::thread([=]() {
+                                    closed(p_handle_data->socket);
+                                }).detach();
                                 delete p_handle_data;
                                 delete p_io_data;
                                 continue;
                             }
                         }
                     }
-                }
-                else
-                {
+                } else {
                     p_io_data->data_trans_count = bytesTransferred;
                     p_io_data->buffer.resize(bytesTransferred);
 
-                    if(raw__)
-                    {
-                        raw_data_coming(p_handle_data->socket,p_io_data->buffer);
-                    }
-                    else
-                        {
+                    if (raw__) {
+                        raw_data_coming(p_handle_data->socket, p_io_data->buffer);
+                    } else {
                         pkg_header_t header{};
-                        sock_data_buffer__[p_handle_data->socket].insert(sock_data_buffer__[p_handle_data->socket].end(),
-                                                                         p_io_data->buffer.begin(),
-                                                                         p_io_data->buffer.end());
+                        sock_data_buffer__[p_handle_data->socket].insert(
+                                sock_data_buffer__[p_handle_data->socket].end(),
+                                p_io_data->buffer.begin(),
+                                p_io_data->buffer.end());
                         size_t read_pos = 0;
-                        while (sock_data_buffer__[p_handle_data->socket].size() - read_pos >= sizeof(pkg_header_t))
-                        {
-                            memmove_s(&header, sizeof(header), sock_data_buffer__[p_handle_data->socket].data() + read_pos,
+                        while (sock_data_buffer__[p_handle_data->socket].size() - read_pos >= sizeof(pkg_header_t)) {
+                            memmove_s(&header, sizeof(header),
+                                      sock_data_buffer__[p_handle_data->socket].data() + read_pos,
                                       sizeof(header));
-                            if(!check_header_checksum(header))
-                            {
+                            if (!check_header_checksum(header)) {
                                 close(p_handle_data->socket);
                                 break;
                             }
-                            if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >= header.length)
-                            {
-                                std::thread([=](SOCKET sock, const pkg_header_t& header, const byte_array& pkg_data)
-                                            {
+                            if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >=
+                                header.length) {
+                                std::thread([=](SOCKET sock, const pkg_header_t &header, const byte_array &pkg_data) {
                                                 data_coming(sock, header, pkg_data);
                                             },
                                             p_handle_data->socket,
@@ -394,14 +338,11 @@ namespace skyfire
                                                     sizeof(header) + header.length)
                                 ).detach();
                                 read_pos += sizeof(header) + header.length;
-                            }
-                            else
-                            {
+                            } else {
                                 break;
                             }
                         }
-                        if (read_pos != 0)
-                        {
+                        if (read_pos != 0) {
                             sock_data_buffer__[p_handle_data->socket].erase(
                                     sock_data_buffer__[p_handle_data->socket].begin(),
                                     sock_data_buffer__[p_handle_data->socket].begin() + read_pos);
@@ -418,15 +359,12 @@ namespace skyfire
                     flags = 0;
 
                     if (WSARecv(p_handle_data->socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags,
-                                &(p_io_data->overlapped), nullptr) == SOCKET_ERROR)
-                    {
-                        if (WSAGetLastError() != ERROR_IO_PENDING)
-                        {
+                                &(p_io_data->overlapped), nullptr) == SOCKET_ERROR) {
+                        if (WSAGetLastError() != ERROR_IO_PENDING) {
                             CloseHandle((HANDLE) p_handle_data->socket);
-                            std::thread([=]()
-                                        {
-                                            closed(p_handle_data->socket);
-                                        }).detach();
+                            std::thread([=]() {
+                                closed(p_handle_data->socket);
+                            }).detach();
                             delete p_handle_data;
                             delete p_io_data;
                             continue;
@@ -438,9 +376,6 @@ namespace skyfire
 
 
     };
-
-
-
 
 
 }

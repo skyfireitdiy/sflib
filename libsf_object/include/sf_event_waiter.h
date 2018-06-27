@@ -15,7 +15,7 @@
  * @param obj 对象
  * @param name 信号
  */
-#define sf_wait(obj,name)                                                        \
+#define sf_wait(obj, name)                                                        \
 {                                                                                \
     auto p_waiter = sf_make_waiter((obj)->__##name##_func_vec__);                \
     auto bind_id = sf_bind_signal(obj,name,p_waiter->__make_quit_func(), true);  \
@@ -24,11 +24,9 @@
 }                                                                                \
 
 
-namespace skyfire
-{
-    template <typename ... ARGS>
-    class sf_event_waiter : public sf_nocopy<>
-    {
+namespace skyfire {
+    template<typename ... ARGS>
+    class sf_event_waiter : public sf_nocopy<> {
     private:
         std::mutex mu_cond__;
         std::condition_variable cond__;
@@ -36,28 +34,26 @@ namespace skyfire
         /**
          * @brief sf_event_waiter 构造一个事件等待对象
          */
-        sf_event_waiter()
-        {
+        sf_event_waiter() {
         }
 
         /**
          * @brief wait 等待
          */
-        void wait()
-        {
+        void wait() {
             std::unique_lock<std::mutex> lck(mu_cond__);
             cond__.wait(lck);
         }
 
         template<std::size_t... Index>
-        auto __make_quit_func_helper(std::index_sequence<Index...>)
-        {
+        auto __make_quit_func_helper(std::index_sequence<Index...>) {
             // WARNING _Placeholder不是标准类型
-            return std::bind(&sf_event_waiter<ARGS...>::quit, this, std::_Placeholder<Index + 1>()...);
+            return [=]() {
+                quit(std::_Placeholder<Index + 1>()...)
+            };
         }
 
-        auto __make_quit_func()
-        {
+        auto __make_quit_func() {
             return __make_quit_func_helper(std::make_index_sequence<sizeof...(ARGS)>{});
             //using namespace std::placeholders;
             //if constexpr(sizeof...(ARGS) == 0)return std::bind(&sf_event_waiter<ARGS...>::quit, this);
@@ -91,16 +87,15 @@ namespace skyfire
         /**
          * @brief quit 退出等待
          */
-        void quit(ARGS ...)
-        {
+        void quit(ARGS ...) {
             cond__.notify_one();
         }
     };
 
 
     template<typename...ARGS>
-    std::shared_ptr<sf_event_waiter<ARGS...>> sf_make_waiter(const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>>&)
-    {
+    std::shared_ptr<sf_event_waiter<ARGS...>>
+    sf_make_waiter(const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>> &) {
         return std::make_shared<sf_event_waiter<ARGS...>>();
     }
 }
