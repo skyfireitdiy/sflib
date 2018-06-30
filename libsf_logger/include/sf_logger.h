@@ -13,6 +13,7 @@
 #include <thread>
 #include <condition_variable>
 #include <deque>
+#include <atomic>
 
 #include "sf_single_instance.h"
 #include "sf_empty_class.h"
@@ -67,6 +68,21 @@ namespace skyfire
                                                });
         }
 
+        void add_level_file(SF_LOG_LEVEL level, const std::string &filename)
+        {
+            std::ofstream *ofs = std::make_shared<std::ofstream>(filename);
+            if(*ofs)
+            {
+                if (logger_func_set__.count(level) == 0)
+                {
+                    logger_func_set__[level] = std::vector<std::function<void(const std::string &)>>();
+                }
+                logger_func_set__[level].push_back([=](const std::string &str){
+                    *ofs << str;
+                });
+            }
+        }
+
         template<typename T>
         void logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func, const T &dt)
         {
@@ -101,6 +117,10 @@ namespace skyfire
             logout__(level, dt...);
         }
 
+        void stop_logger()
+        {
+            run__ = false;
+        }
 
     private:
         std::deque<logger_info_t__> log_deque__;
@@ -108,6 +128,7 @@ namespace skyfire
         std::condition_variable cond__;
         std::mutex deque_mu__;
         std::map<int, std::vector<std::function<void(const std::string &)>>> logger_func_set__;
+        std::atomic<bool> run__ {true};
 
         static thread_local std::shared_ptr<std::ostringstream> p_os__;
 
@@ -143,6 +164,10 @@ namespace skyfire
                                     }
                                 }
                                 log_deque__.clear();
+                                if(!run__){
+                                    run__ = true;
+                                    break;
+                                }
                             }
                         }).detach();
         }
