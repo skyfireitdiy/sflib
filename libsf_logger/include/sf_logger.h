@@ -14,9 +14,41 @@
 #include <condition_variable>
 #include <deque>
 #include <atomic>
+#include <unordered_map>
+#include <climits>
+#include <shared_mutex>
 
+// 独立使用
+
+#ifdef SF_LOGGER_STANDALONE
+namespace skyfire{
+    class sf_empty_class{};
+
+}
+
+#define SF_SINGLE_TON(ClassName)								\
+ClassName(const ClassName&) = delete;							\
+ClassName(ClassName&&) = delete;								\
+ClassName& operator=(const ClassName&) = delete;				\
+static ClassName* get_instance()								\
+{																\
+	static std::mutex init_mutex;								\
+	static ClassName* instance__{ nullptr };					\
+	if(instance__==nullptr){									\
+		std::lock_guard<std::mutex> lck(init_mutex);			\
+		if (instance__ == nullptr)								\
+		{														\
+			instance__ = new ClassName;							\
+		}														\
+	}															\
+	return instance__;											\
+}																\
+
+#else
+#include "sf_random.h"
 #include "sf_single_instance.h"
 #include "sf_empty_class.h"
+#endif
 
 namespace skyfire
 {
@@ -47,39 +79,59 @@ namespace skyfire
         {
         }
 
-        void add_level_func(SF_LOG_LEVEL level, std::function<void(const std::string &)> func)
+        int add_level_func(SF_LOG_LEVEL level, std::function<void(const std::string &)> func)
         {
+            std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
             if (logger_func_set__.count(level) == 0)
             {
-                logger_func_set__[level] = std::vector<std::function<void(const std::string &)>>();
+                logger_func_set__[level] = std::unordered_map<int,std::function<void(const std::string &)>>();
             }
-            logger_func_set__[level].push_back(func);
+            auto key = make_random_logger_id__();
+            logger_func_set__[level][key] = func;
+            return key;
         }
 
-        void add_level_stream(SF_LOG_LEVEL level, std::ostream *os)
+        int add_level_stream(SF_LOG_LEVEL level, std::ostream *os)
         {
+            std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
             if (logger_func_set__.count(level) == 0)
             {
-                logger_func_set__[level] = std::vector<std::function<void(const std::string &)>>();
+                logger_func_set__[level] = std::unordered_map<int,std::function<void(const std::string &)>>();
             }
-            logger_func_set__[level].push_back([=](const std::string &str)
-                                               {
-                                                   *os << str;
-                                               });
+            auto key = make_random_logger_id__();
+            logger_func_set__[level][key] = [=](const std::string &str)
+            {
+                *os << str << std::flush;
+            };
+            return key;
         }
 
-        void add_level_file(SF_LOG_LEVEL level, const std::string &filename)
+        int add_level_file(SF_LOG_LEVEL level, const std::string &filename)
         {
-            std::ofstream *ofs = std::make_shared<std::ofstream>(filename);
+            std::shared_ptr<std::ofstream> ofs = std::make_shared<std::ofstream>(filename, std::ios::app);
             if(*ofs)
             {
+                std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
                 if (logger_func_set__.count(level) == 0)
                 {
-                    logger_func_set__[level] = std::vector<std::function<void(const std::string &)>>();
+                    logger_func_set__[level] = std::unordered_map<int,std::function<void(const std::string &)>>();
                 }
-                logger_func_set__[level].push_back([=](const std::string &str){
-                    *ofs << str;
-                });
+
+                auto key = make_random_logger_id__();
+                logger_func_set__[level][key] = [=](const std::string &str){
+                    *ofs << str << std::flush;
+                };
+                return key;
+
+            }else{
+                return -1;
+            }
+        }
+
+        void remove_filter(int key){
+            std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
+            for(auto &p:logger_func_set__){
+                p.second.erase(key);
             }
         }
 
@@ -127,10 +179,39 @@ namespace skyfire
         std::mutex cond_mu__;
         std::condition_variable cond__;
         std::mutex deque_mu__;
-        std::map<int, std::vector<std::function<void(const std::string &)>>> logger_func_set__;
+        std::map<int, std::unordered_map<int ,std::function<void(const std::string &)>>> logger_func_set__;
         std::atomic<bool> run__ {true};
+        std::recursive_mutex func_set_mutex__;
 
         static thread_local std::shared_ptr<std::ostringstream> p_os__;
+
+        bool check_key_can_use__(int key){
+            std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
+            for(const auto &p: logger_func_set__){
+                for(const auto &q:p.second){
+                    if(q.first == key)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        int make_random_logger_id__(){
+
+            auto make_rand = []{
+#ifdef SF_LOGGER_STANDALONE
+                return rand();
+#else
+                return sf_random::get_instance()->get_int(0, INT_MAX);
+#endif
+            };
+            int tmp_key = make_rand();
+            while(!check_key_can_use__(tmp_key))
+            {
+                tmp_key = make_rand();
+            }
+            return tmp_key;
+        }
 
         std::map<SF_LOG_LEVEL, std::string> logger_level_str__{
                 {SF_DEBUG_LEVEL, "DEBUG"},
@@ -152,13 +233,14 @@ namespace skyfire
                                 std::unique_lock<std::mutex> de_lck(deque_mu__);
                                 for (auto &log: log_deque__)
                                 {
+                                    std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
                                     for (auto &level_func:logger_func_set__)
                                     {
                                         if (log.level >= level_func.first)
                                         {
                                             for (auto &func:level_func.second)
                                             {
-                                                func(log.msg);
+                                                func.second(log.msg);
                                             }
                                         }
                                     }
