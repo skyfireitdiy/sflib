@@ -12,7 +12,7 @@ int main()
         string str;
         sf_deserialize(data, str, 0);
         cout<<"msg_come:"<<str<<endl;
-        }, false);
+        }, true);
     string type;
     cin>>type;
     client->reg_msg_to_bus(type);

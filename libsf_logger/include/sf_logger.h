@@ -174,6 +174,8 @@ namespace skyfire
             run__ = false;
         }
 
+        void empty_func__(){}
+
     private:
         std::deque<logger_info_t__> log_deque__;
         std::mutex cond_mu__;
@@ -313,7 +315,12 @@ namespace skyfire
 
     using sf_logger = sf_logger__<>;
 
+#ifdef SF_DEBUG
 #define sf_debug(...) logout(SF_DEBUG_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#else
+#define sf_debug(...) empty_func__()
+#endif
+
 #define sf_info(...) logout(SF_INFO_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #define sf_warn(...) logout(SF_WARN_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #define sf_error(...) logout(SF_ERROR_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)

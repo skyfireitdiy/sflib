@@ -64,6 +64,12 @@ namespace skyfire
                 return false;
             }
 
+            int opt = 1;
+            if (-1 == setsockopt( listen_fd__, SOL_SOCKET,SO_REUSEADDR,
+                                  reinterpret_cast<const void *>(&opt), sizeof(opt))){
+                return false;
+            }
+
             sockaddr_in internet_addr{};
             internet_addr.sin_family = AF_INET;
             internet_addr.sin_addr.s_addr = inet_addr(ip.c_str());

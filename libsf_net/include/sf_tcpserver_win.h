@@ -93,6 +93,14 @@ namespace skyfire {
                 return false;
             }
 
+            int op = 1;
+            if(SOCKET_ERROR == setsockopt(listen_sock__,
+                                          SOL_SOCKET,
+                                          SO_REUSEADDR,
+                                          reinterpret_cast<char*>(&op),
+                                          sizeof(op))){
+                return false;
+            }
 
             sockaddr_in internet_addr{};
             internet_addr.sin_family = AF_INET;

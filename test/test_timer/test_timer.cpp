@@ -21,7 +21,7 @@ void func(){
 
 int main() {
 
-    sf_bind_signal(&timer, timeout, func, false);
+    sf_bind_signal(&timer, timeout, func, true);
     timer.start(3000);
     timer.stop();
     timer.start(3000);

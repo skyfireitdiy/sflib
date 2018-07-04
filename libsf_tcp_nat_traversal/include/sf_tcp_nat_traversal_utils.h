@@ -11,6 +11,10 @@
 #include "sf_nocopy.h"
 
 
+#include "sf_logger.h"
+static auto __logger__ = skyfire::sf_logger::get_instance();
+
+
 namespace skyfire {
 
     // nat穿透连接上下文
@@ -68,35 +72,35 @@ namespace skyfire {
                                data_coming,
                                [=](const pkg_header_t &header, const byte_array &data) {
                                    data_coming(header, data);
-                               }, false);
+                               }, true);
                 sf_bind_signal(client__,
                                raw_data_coming,
                                [=](const byte_array &data) {
                                    raw_data_coming(data);
-                               }, false);
+                               }, true);
                 sf_bind_signal(client__,
                                closed,
                                [=]() {
                                    closed();
                                },
-                               false);
+                               true);
             } else {
                 sf_bind_signal(server__,
                                data_coming,
                                [=](SOCKET, const pkg_header_t &header, const byte_array &data) {
                                    data_coming(header, data);
-                               }, false);
+                               }, true);
                 sf_bind_signal(server__,
                                raw_data_coming,
                                [=](SOCKET, const byte_array &data) {
                                    raw_data_coming(data);
-                               }, false);
+                               }, true);
                 sf_bind_signal(server__,
                                closed,
                                [=](SOCKET) {
                                    closed();
                                },
-                               false);
+                               true);
             }
         }
 

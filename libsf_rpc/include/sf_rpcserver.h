@@ -117,7 +117,7 @@ namespace skyfire {
                            [=](SOCKET sock, const pkg_header_t &header, const byte_array &data) {
                                __on_data_coming(sock, header, data);
                            },
-                           false);
+                           true);
         }
 
         /**

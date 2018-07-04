@@ -18,11 +18,11 @@
  */
 #define SF_REG_SIGNAL(name,...)                                                                                         \
 public:                                                                                                                 \
-std::mutex __mu_##name##_signal_;                                                                                       \
+std::recursive_mutex __mu_##name##_signal_;                                                                                       \
 std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>__##name##_signal_func_vec__;                        \
 template<typename...__SF_OBJECT_ARGS__>                                                                                 \
 void name(__SF_OBJECT_ARGS__&&... args) {                                                                               \
-    std::lock_guard<std::mutex> lck(__mu_##name##_signal_);                                                             \
+    std::lock_guard<std::recursive_mutex> lck(__mu_##name##_signal_);                                                             \
     for (auto &p :__##name##_signal_func_vec__)                                                                          \
     {                                                                                                                   \
         if (std::get<1>(p))                                                                                             \
@@ -46,13 +46,13 @@ void name(__SF_OBJECT_ARGS__&&... args) {                                       
  */
 #define SF_REG_AOP(name, ...)                                                                                           \
 public:                                                                                                                 \
-    std::mutex __mu_##name##_aop__;                                                                                     \
+    std::recursive_mutex __mu_##name##_aop__;                                                                                     \
     std::vector<std::tuple<std::function<void(__VA_ARGS__)>,int>> __##name##_aop_before_func_vec__;                     \
     std::vector<std::tuple<std::function<void()>,int>> __##name##_aop_after_func_vec__;                                 \
     template<typename...__SF_OBJECT_ARGS__>                                                                             \
     decltype(auto) aop_##name(__SF_OBJECT_ARGS__&& ... args)                                                            \
     {                                                                                                                   \
-        std::lock_guard<std::mutex> lck(__mu_##name##_aop__);                                                           \
+        std::lock_guard<std::recursive_mutex> lck(__mu_##name##_aop__);                                                           \
         for(auto &p :  __##name##_aop_before_func_vec__)                                                                \
         {                                                                                                               \
             std::get<0>(p)(std::forward<__SF_OBJECT_ARGS__>(args)...);                                                  \
@@ -120,9 +120,9 @@ namespace skyfire
     {
     public:
         template<typename _VectorType, typename _FuncType>
-        int __sf_bind_helper(std::mutex &mu,_VectorType &vec, _FuncType func, bool mul_thread)
+        int __sf_bind_helper(std::recursive_mutex &mu,_VectorType &vec, _FuncType func, bool mul_thread)
         {
-            std::lock_guard<std::mutex> lck(mu);
+            std::lock_guard<std::recursive_mutex> lck(mu);
             int bind_id = rand();
             while(std::find_if(vec.begin(),vec.end(),[=](auto p){
                 return std::get<2>(p) == bind_id;
@@ -135,18 +135,18 @@ namespace skyfire
         }
 
         template<typename _VectorType>
-        void __sf_signal_unbind_helper(std::mutex &mu,_VectorType &vec, int bind_id)
+        void __sf_signal_unbind_helper(std::recursive_mutex &mu,_VectorType &vec, int bind_id)
         {
-            std::lock_guard<std::mutex> lck(mu);
+            std::lock_guard<std::recursive_mutex> lck(mu);
             vec.erase(std::remove_if(vec.begin(),vec.end(),[=](auto p){
                 return std::get<2>(p) == bind_id;
             }), vec.end());
         }
 
         template<typename _VectorType, typename _FuncType>
-        int __sf_aop_before_add_helper(std::mutex &mu,_VectorType &vec, _FuncType func)
+        int __sf_aop_before_add_helper(std::recursive_mutex &mu,_VectorType &vec, _FuncType func)
         {
-            std::lock_guard<std::mutex> lck(mu);
+            std::lock_guard<std::recursive_mutex> lck(mu);
             int bind_id = rand();
             while(std::find_if(vec.begin(),vec.end(),[=](auto p){
                 return std::get<1>(p) == bind_id;
@@ -159,9 +159,9 @@ namespace skyfire
         }
 
         template<typename _VectorType, typename _FuncType>
-        int __sf_aop_after_add_helper(std::mutex &mu,_VectorType &vec, _FuncType func)
+        int __sf_aop_after_add_helper(std::recursive_mutex &mu,_VectorType &vec, _FuncType func)
         {
-            std::lock_guard<std::mutex> lck(mu);
+            std::lock_guard<std::recursive_mutex> lck(mu);
             int bind_id = rand();
             while(std::find_if(vec.begin(),vec.end(),[=](auto p){
                 return std::get<1>(p) == bind_id;
@@ -174,9 +174,9 @@ namespace skyfire
         }
 
         template<typename _VectorType>
-        void __sf_aop_unbind_helper(std::mutex &mu,_VectorType &vec, int bind_id)
+        void __sf_aop_unbind_helper(std::recursive_mutex &mu,_VectorType &vec, int bind_id)
         {
-            std::lock_guard<std::mutex> lck(mu);
+            std::lock_guard<std::recursive_mutex> lck(mu);
             vec.erase(std::remove_if(vec.begin(),vec.end(),[=](auto p){
                 return std::get<1>(p) == bind_id;
             }), vec.end());
