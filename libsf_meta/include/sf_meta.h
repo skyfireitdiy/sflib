@@ -153,5 +153,4 @@ namespace skyfire
         constexpr auto size = std::tuple_size<typename std::decay<Tuple>::type>::value;
         return sf_make_obj_from_tuple_impl<_Type>(std::forward<Tuple>(t), std::make_index_sequence<size>{});
     }
-
 }

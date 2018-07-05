@@ -49,7 +49,7 @@ namespace skyfire {
         auto __make_quit_func_helper(std::index_sequence<Index...>) {
             // WARNING _Placeholder不是标准类型
             return [=]() {
-                quit(std::_Placeholder<Index + 1>()...)
+                quit(std::_Placeholder<Index + 1>()...);
             };
         }
 
