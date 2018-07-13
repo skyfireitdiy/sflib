@@ -17,6 +17,7 @@
 #include <unordered_set>
 #include <tuple>
 #include "sf_type.h"
+#include "sf_define.h"
 
 namespace skyfire
 {

@@ -3,6 +3,7 @@
     <words>
       <w>addr</w>
       <w>bimap</w>
+      <w>httpserver</w>
       <w>itype</w>
       <w>libsf</w>
       <w>rpcserver</w>

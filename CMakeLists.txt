@@ -63,6 +63,7 @@ include_directories(
         libsf_tl/include
         libsf_define/include
         libsf_random/include
+        libsf_httpserver/include
 )
 
 file(GLOB headers
@@ -90,6 +91,7 @@ file(GLOB headers
         libsf_tl/include/*.h
         libsf_define/include/*.h
         libsf_random/include/*.h
+        libsf_httpserver/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -115,6 +117,7 @@ add_executable(test_timer test/test_timer/test_timer.cpp ${headers})
 add_executable(test_tcp_nat_traversal_server test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp ${headers})
 add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp ${headers})
 add_executable(test_event_waiter test/test_event_waiter/test_event_waiter.cpp ${headers})
+add_executable(test_httpserver test/test_httpserver.cpp ${header})
 
 
 IF (WIN32)
@@ -124,6 +127,7 @@ IF (WIN32)
     target_link_libraries(test_msg_bus_client ws2_32)
     target_link_libraries(test_tcp_nat_traversal_server ws2_32)
     target_link_libraries(test_tcp_nat_traversal_client ws2_32)
+    target_link_libraries(test_httpserver ws2_32)
 ELSE()
     target_link_libraries(test_meta pthread)
     target_link_libraries(test_rpc_server pthread)
@@ -138,6 +142,7 @@ ELSE()
     target_link_libraries(test_tcp_nat_traversal_client pthread)
     target_link_libraries(test_sf_logger pthread)
     target_link_libraries(test_event_waiter pthread)
+    target_link_libraries(test_httpserver pthread)
 ENDIF ()
 
 
