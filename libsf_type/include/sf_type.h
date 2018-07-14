@@ -34,5 +34,19 @@ namespace skyfire
         return b1;
     }
 
+    template <typename T>
+    inline byte_array to_byte_array(const T& t)
+    {
+        byte_array ret(sizeof(t));
+        memcpy(ret.data(),&t,sizeof(t));
+        return ret;
+    }
 
+    template <>
+    inline byte_array to_byte_array(const std::string& str)
+    {
+        byte_array ret(str.length());
+        memcpy(ret.data(),str.data(),str.length());
+        return ret;
+    }
 }

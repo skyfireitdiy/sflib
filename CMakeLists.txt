@@ -63,7 +63,8 @@ include_directories(
         libsf_tl/include
         libsf_define/include
         libsf_random/include
-        libsf_httpserver/include
+        libsf_http_server/include
+        libsf_utils/include
 )
 
 file(GLOB headers
@@ -91,7 +92,8 @@ file(GLOB headers
         libsf_tl/include/*.h
         libsf_define/include/*.h
         libsf_random/include/*.h
-        libsf_httpserver/include/*.h
+        libsf_http_server/include/*.h
+        libsf_utils/include/*.h
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -117,7 +119,7 @@ add_executable(test_timer test/test_timer/test_timer.cpp ${headers})
 add_executable(test_tcp_nat_traversal_server test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp ${headers})
 add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp ${headers})
 add_executable(test_event_waiter test/test_event_waiter/test_event_waiter.cpp ${headers})
-add_executable(test_httpserver test/test_httpserver.cpp ${header})
+add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${header})
 
 
 IF (WIN32)
