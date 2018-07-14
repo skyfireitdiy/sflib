@@ -10,6 +10,9 @@
 ### libsf_finally
 提供在作用域结束时执行某函数的功能
 
+### libsf_http_server
+HTTP服务器
+
 ### libsf_logger
 提供基础日志打印功能
 
@@ -47,7 +50,7 @@
 提供单例模式实现
 
 ### libsf_tcp_nat_traversal
-tcp内网穿透库（开发中）
+tcp内网穿透库（测试中）
 
 ### libsf_thread_pool
 提供简单线程池的实现

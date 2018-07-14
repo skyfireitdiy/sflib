@@ -16,6 +16,7 @@ void request_callback(const sf_http_request& req, sf_http_response& res)
 
     sf_http_header res_header;
     res_header.set_header("Content-Type","text/html; charset=utf8");
+    res.set_header(res_header);
     res.set_body(to_byte_array(std::string("Hello World")));
 }
 
