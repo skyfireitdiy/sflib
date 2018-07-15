@@ -12,7 +12,7 @@ namespace skyfire
 
 
 
-    struct alignas(4) pkg_header_t
+    struct pkg_header_t
     {
         unsigned char checksum;
         int type;

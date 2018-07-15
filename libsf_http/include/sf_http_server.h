@@ -13,7 +13,7 @@ namespace skyfire
     class sf_http_server: public sf_http_base_server
     {
     private:
-        std::set<sf_http_router> routers__;
+        std::multiset<sf_http_router> routers__;
         void default_callback__(const sf_http_request& req,sf_http_response& res)
         {
             auto req_line = req.get_request_line();

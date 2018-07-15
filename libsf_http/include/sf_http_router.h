@@ -43,18 +43,20 @@ namespace skyfire
                        const std::vector<std::string> &methods = {{"*"}} ,int priority = 0)
         {
             priority__ = priority;
+            cout<<"size:"<<methods.size()<<endl;
+            for(auto &p:methods)cout<<"1-->"<<p<<endl;
             route_callback__ = [=](const sf_http_request &req,sf_http_response& res,const std::string &url, const std::string &method)
             {
-                for(auto &p:methods)cout<<p<<endl;
-
+                cout<<"size:"<<methods.size()<<endl;
+                for(const auto &p:methods)cout<<"2-->"<<p<<endl;
                 // TODO 为何methods内容会改变？
-//                if(std::find(methods.begin(), methods.end(), "*") == methods.end())
-//                {
-//                    if(std::find(methods.begin(), methods.end(), method) == methods.end())
-//                    {
-//                        return false;
-//                    }
-//                }
+                if(std::find(methods.cbegin(), methods.cend(), "*"s) == methods.cend())
+                {
+                    if(std::find(methods.cbegin(), methods.cend(), method) == methods.cend())
+                    {
+                        return false;
+                    }
+                }
                 std::regex re(pattern);
                 std::smatch sm;
                 if(!std::regex_match(url, sm, re))
