@@ -63,7 +63,7 @@ include_directories(
         libsf_tl/include
         libsf_define/include
         libsf_random/include
-        libsf_http_server/include
+        libsf_http/include
         libsf_utils/include
 )
 
@@ -92,7 +92,7 @@ file(GLOB headers
         libsf_tl/include/*.h
         libsf_define/include/*.h
         libsf_random/include/*.h
-        libsf_http_server/include/*.h
+        libsf_http/include/*.h
         libsf_utils/include/*.h
         )
 
