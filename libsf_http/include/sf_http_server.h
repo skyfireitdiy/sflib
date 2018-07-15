@@ -32,7 +32,7 @@ namespace skyfire
             });
         }
 
-        void add_router(sf_http_router router, int priority = 0)
+        void add_router(sf_http_router router)
         {
             routers__.insert(router);
         }
