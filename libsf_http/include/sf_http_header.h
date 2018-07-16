@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <sf_utils.h>
 #include "sf_type.h"
 
 namespace skyfire{
@@ -13,20 +14,23 @@ namespace skyfire{
             header_data__.clear();
         }
 
-        void set_header(const std::string& key, const std::string& value)
+        void set_header(std::string key, const std::string& value)
         {
+            key = sf_to_lower_string(key);
             header_data__[key] = value;
         }
 
-        std::string get_header_value(const std::string& key, const std::string& default_value = "") const
+        std::string get_header_value(std::string key, const std::string& default_value = "") const
         {
+            key = sf_to_lower_string(key);
             if(header_data__.count(key) == 0)
                 return default_value;
             return header_data__.at(key);
         }
 
-        void remove_header(const std::string& key)
+        void remove_header(std::string key)
         {
+            key = sf_to_lower_string(key);
             header_data__.erase(key);
         }
 

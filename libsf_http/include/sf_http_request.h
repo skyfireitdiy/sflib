@@ -31,7 +31,7 @@ namespace skyfire{
             header_lines.clear();
             while(!si.eof()){
                 getline(si,tmp_str);
-                header_lines.emplace_back(tmp_str);
+                header_lines.push_back(tmp_str);
             }
             return true;
         }
@@ -57,7 +57,7 @@ namespace skyfire{
                 std::string key(line.begin(),line.begin()+pos);
                 std::string value(line.begin()+pos+1, line.end());
                 value = sf_string_trim(value);
-                header.set_header(key,value);
+                header.set_header(sf_to_lower_string(key),value);
             }
             return true;
         }

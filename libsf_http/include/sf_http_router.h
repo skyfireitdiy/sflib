@@ -1,6 +1,8 @@
+#pragma once
 #include <map>
 #include <vector>
 #include <regex>
+#include <mutex>
 #include "sf_http_response.h"
 #include "sf_http_request.h"
 #include <iostream>
@@ -12,8 +14,10 @@ namespace skyfire
     class sf_http_router
     {
     private:
-        std::function<bool(const sf_http_request &,sf_http_response&,const std::string &, const std::string &)> route_callback__;
-        int priority__;
+        std::function<bool(const sf_http_request &,sf_http_response&,const std::string &)> route_callback__;
+        const int priority__;
+        const std::vector<std::string> methods__;
+        std::recursive_mutex methods_mu__;
 
         template <typename  FuncType, int N, typename ... Args>
         typename std::enable_if<sizeof...(Args) == N, void>::type
@@ -40,42 +44,50 @@ namespace skyfire
 
         template <typename ... StringType>
         sf_http_router(const std::string& pattern,std::function<void(const sf_http_request &,sf_http_response&,StringType...)> callback,
-                       const std::vector<std::string> &methods = {{"*"}} ,int priority = 0)
+                       const std::vector<std::string> &methods = {{"*"}} ,int priority = 0):
+            priority__(priority),methods__(methods)
         {
-            priority__ = priority;
             cout<<"size:"<<methods.size()<<endl;
             for(auto &p:methods)cout<<"1-->"<<p<<endl;
-            route_callback__ = [=](const sf_http_request &req,sf_http_response& res,const std::string &url, const std::string &method)
+            route_callback__ = [=](const sf_http_request &req,sf_http_response& res,const std::string &url)
             {
-                cout<<"size:"<<methods.size()<<endl;
-                for(const auto &p:methods)cout<<"2-->"<<p<<endl;
-                // TODO 为何methods内容会改变？
-                if(std::find(methods.cbegin(), methods.cend(), "*"s) == methods.cend())
-                {
-                    if(std::find(methods.cbegin(), methods.cend(), method) == methods.cend())
-                    {
-                        return false;
-                    }
-                }
                 std::regex re(pattern);
                 std::smatch sm;
                 if(!std::regex_match(url, sm, re))
                 {
+                    cout<<url<<"  "<<pattern<<" "<<"false"<<endl;
                     return false;
                 }
+                cout<<url<<"  "<<pattern<<" "<<"true"<<endl;
                 callback_call_helper__<decltype(callback),sizeof...(StringType)>(req,res,callback,sm);
                 return true;
             };
         }
 
 
-        bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method) const
+        bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method)
         {
-            return route_callback__(req, res, url, method);
+            {
+                std::unique_lock<std::recursive_mutex> lck(methods_mu__);
+                cout << "methods:" << endl;
+                for (auto &p:methods__)cout << p << &p << endl;
+                cout << "method:" << method << endl;
+                if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
+                    if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method)) {
+                        return false;
+                    }
+                }
+            }
+            return route_callback__(req, res, url);
         }
 
         bool operator<(const sf_http_router& router) const {
             return priority__ < router.priority__;
+        }
+
+        int get_priority() const
+        {
+            return priority__;
         }
     };
 }

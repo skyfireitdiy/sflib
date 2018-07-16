@@ -172,12 +172,14 @@ namespace skyfire {
             }
             sock_data_buffer__.clear();
             if (listen_sock__ != INVALID_SOCKET) {
+                shutdown(sock__,SD_BOTH);
                 closesocket(listen_sock__);
                 listen_sock__ = INVALID_SOCKET;
             }
         }
 
         void close(SOCKET sock) {
+            shutdown(sock,SD_BOTH);
             ::closesocket(sock);
         }
 

@@ -37,6 +37,16 @@ namespace skyfire
             body__ = body;
         }
 
+        unsigned long long get_length() const
+        {
+            return body__.size();
+        }
+
+        sf_http_header& get_header()
+        {
+            return header__;
+        }
+
         byte_array to_package() const
         {
             std::string response_head;

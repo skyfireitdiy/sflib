@@ -6,7 +6,7 @@
 namespace skyfire
 {
     namespace {
-        std::map<std::string, std::string> header_map__{
+        std::map<std::string, std::string> sf_http_content_type{
                 {"001",     "application/x-001"},
                 {"323",     "text/h323"},
                 {"907",     "drawing/907"},

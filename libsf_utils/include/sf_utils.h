@@ -28,4 +28,19 @@ namespace skyfire
         }
         return {str.begin()+begin, str.begin()+end};
     }
+
+    inline std::string sf_to_lower_string(std::string str)
+    {
+        for(auto &p:str)
+            p = tolower(p);
+        return str;
+    }
+
+    inline std::string sf_get_path_ext(const std::string &path)
+    {
+        auto pos = path.rfind('.');
+        if(pos == -1)
+            return "";
+        return std::string(path.begin()+pos+1,path.end());
+    }
 }

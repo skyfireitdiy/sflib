@@ -213,6 +213,7 @@ namespace skyfire
 
         void close()
         {
+            shutdown(listen_fd__, SHUT_RDWR);
             ::close(listen_fd__);
             listen_fd__ = -1;
             sock_data_buffer__.clear();
@@ -220,6 +221,7 @@ namespace skyfire
         
         void close(SOCKET sock)
         {
+            ::shutdown(sock,SHUT_RDWR);
             ::close(sock);
         }
 

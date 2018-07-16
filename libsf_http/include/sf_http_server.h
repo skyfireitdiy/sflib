@@ -13,14 +13,14 @@ namespace skyfire
     class sf_http_server: public sf_http_base_server
     {
     private:
-        std::multiset<sf_http_router> routers__;
+        std::set<std::shared_ptr<sf_http_router>> routers__;
         void default_callback__(const sf_http_request& req,sf_http_response& res)
         {
             auto req_line = req.get_request_line();
             cout<<req_line.url<<endl;
             for(auto &p:routers__)
             {
-                if(p.run_route(req,res,req_line.url,req_line.method))
+                if(p->run_route(req,res,req_line.url,req_line.method))
                     return;
             }
         }
@@ -32,7 +32,7 @@ namespace skyfire
             });
         }
 
-        void add_router(sf_http_router router)
+        void add_router(const std::shared_ptr<sf_http_router>& router)
         {
             routers__.insert(router);
         }
