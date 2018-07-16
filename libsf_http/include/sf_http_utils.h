@@ -64,36 +64,55 @@ namespace skyfire
     }
 
 
-    inline void sf_parse_url(const std::string &raw_url, std::string &url, std::map<std::string,std::string>& param)
-    {
-        auto pos = raw_url.find('?');
+    void sf_parse_param(map<string, string> param,std::string &param_str) {
         param.clear();
-        if(pos == -1){
-            url = raw_url;
-            return;
-        }
-        url = std::string(raw_url.begin(),raw_url.begin()+pos);
-        auto param_str = std::string(raw_url.begin()+pos+1,raw_url.end());
-        while((pos = param_str.find('&'))!=-1)
+        unsigned long url_pos;
+        while((url_pos = param_str.find('&')) != std::string::npos)
         {
-            auto tmp_param = std::string(param_str.begin(),param_str.begin()+pos);
-            param_str = std::string(param_str.begin()+pos+1,param_str.end());
+            auto tmp_param = string(param_str.begin(),param_str.begin()+url_pos);
+            param_str = string(param_str.begin()+url_pos+1,param_str.end());
             if(tmp_param.empty())
                 continue;
-            if(pos = tmp_param.find('=') == -1)
+            if((url_pos = tmp_param.find('=')) == std::string::npos)
                 continue;
-            auto key = sf_url_decode(std::string(tmp_param.begin(),tmp_param.begin()+pos));
-            auto value = sf_url_decode(std::string(tmp_param.begin()+pos+1,tmp_param.end()));
+            auto key = sf_url_decode(string(tmp_param.begin(), tmp_param.begin() + url_pos));
+            auto value = sf_url_decode(string(tmp_param.begin() + url_pos + 1, tmp_param.end()));
             param[key] = value;
         }
         if(param_str.empty())
             return;
-        if(pos = param_str.find('=') == -1)
+        if((url_pos = param_str.find('=')) == std::string::npos)
             return;
-        auto key = sf_url_decode(std::string(param_str.begin(),param_str.begin()+pos));
-        auto value = sf_url_decode(std::string(param_str.begin()+pos+1,param_str.end()));
+        auto key = sf_url_decode(string(param_str.begin(), param_str.begin() + url_pos));
+        auto value = sf_url_decode(string(param_str.begin() + url_pos + 1, param_str.end()));
         param[key] = value;
     }
+
+
+    inline void sf_parse_url(const std::string &raw_url, std::string &url, std::map<std::string,std::string>& param,
+                             std::string frame)
+    {
+        auto frame_pos = raw_url.find('#');
+        std::string raw_url_without_frame;
+        if(frame_pos == std::string::npos) {
+            raw_url_without_frame = raw_url;
+            frame = "";
+        }
+        else{
+            raw_url_without_frame = std::string(raw_url.begin(),raw_url.begin()+frame_pos);
+            frame = std::string(raw_url.begin()+frame_pos+1,raw_url.end());
+        }
+        auto url_pos = raw_url_without_frame.find('?');
+        if(url_pos == std::string::npos){
+            url = raw_url_without_frame;
+            return;
+        }
+        url = std::string(raw_url_without_frame.begin(),raw_url_without_frame.begin()+url_pos);
+        auto param_str = std::string(raw_url_without_frame.begin()+url_pos+1,raw_url_without_frame.end());
+        sf_parse_param(param, param_str);
+    }
+
+
 
     inline std::string sf_make_http_time_str()
     {

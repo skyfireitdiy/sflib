@@ -47,8 +47,7 @@ namespace skyfire
                     auto func = __p_msg_queue__->take();
                     if(!func)
                     {
-                        running__ = false;
-                        break;
+                        continue;
                     }
                     else
                     {

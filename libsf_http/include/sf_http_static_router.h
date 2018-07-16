@@ -32,15 +32,17 @@ namespace skyfire
                     cout<<"raw_url:"<<raw_url<<endl;
                     std::string url;
                     std::map<std::string, std::string> param;
-                    sf_parse_url(raw_url, url, param);
+                    std::string frame;
+                    sf_parse_url(raw_url, url, param, frame);
                     auto abspath = path + url;
 
                     sf_http_header header;
 
                     header.set_header("Date", sf_make_http_time_str());
 
-                    ifstream fi(abspath);
+                    // TODO 判断路径是否是目录
 
+                    ifstream fi(abspath);
                     if(!fi)
                     {
                         res.set_status(404);
@@ -55,10 +57,11 @@ namespace skyfire
                     unsigned long long file_size = fi.tellg();
                     cout<<"file size:"<<file_size<<endl;
                     if (file_size > max_file_size) {
-                        res.set_status(401);
+                        res.set_status(403);
                         res.set_reason("FORBIDDEN");
                         header.set_header("Content-Type", "text/plain; charset=" + charset);
                         res.set_header(header);
+                        res.set_body(to_byte_array(url + " size out of range! (" + std::to_string(max_file_size) + ")"));
                         fi.close();
                         return;
                     }

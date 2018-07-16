@@ -43,4 +43,5 @@ namespace skyfire
             return "";
         return std::string(path.begin()+pos+1,path.end());
     }
+
 }
