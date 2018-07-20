@@ -21,13 +21,29 @@ namespace skyfire {
         const sf_http_server_config config__;
         std::shared_ptr<sf_tcpserver> server__ = std::make_shared<sf_tcpserver>(true);
         std::function<void(const sf_http_request&,sf_http_response&)> request_callback__;
+        std::unordered_map<SOCKET, byte_array> req_data__;
+        std::mutex mu_req_data__;
 
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
-            cout<<"数据到来：\n"<<to_string(data)<<endl;
+            {
+                std::unique_lock<std::mutex> lck(mu_req_data__);
+                cout << "数据到来：\n" << to_string(data) << endl;
+                if (req_data__.count(sock) == 0) {
+                    req_data__[sock] = byte_array();
+                }
+                req_data__[sock] += data;
+                if (req_data__[sock].empty()) {
+                    return;
+                }
+            }
             sf_http_request request(data);
             if(request.is_valid())
             {
+                {
+                    std::unique_lock<std::mutex> lck(mu_req_data__);
+                    req_data__.erase(sock);
+                }
                 if(request_callback__)
                 {
                     sf_http_response res;

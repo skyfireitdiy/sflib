@@ -70,7 +70,10 @@ namespace skyfire{
                 return false;
             if(!parse_request_line(request_line,request_line__))
                 return false;
-            return parse_header(header_lines, header__);
+            if(!parse_header(header_lines, header__))
+                return false;
+            auto content_len = header__.get_header_value("Content-Length","0");
+            return body__.size() == std::atoll(content_len.c_str());
         }
 
     public:
