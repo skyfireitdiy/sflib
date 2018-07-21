@@ -23,6 +23,7 @@ int main() {
     config.host = "0.0.0.0";
     config.port = 8080;
     config.thread_count = 8;
+    config.request_timeout = 30;
     sf_http_server server(config);
 
     server.add_router(std::make_shared<sf_http_router>(
@@ -38,6 +39,6 @@ int main() {
     ));
 
 
-    server.add_router(make_static_router("/home/skyfire/Desktop/html", {{"*"s}}, "utf-8", false));
+    server.add_router(make_static_router("/home/skyfire/IdeaProjects/hhjr-python/public", {{"*"s}}, "utf-8", false));
     server.start();
 }

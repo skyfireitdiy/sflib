@@ -5,6 +5,17 @@
 
 namespace skyfire
 {
+    struct req_data_t
+    {
+        bool new_req = false;
+        byte_array buffer;
+    };
+
+    struct websocket_data_t
+    {
+        std::string url;
+    };
+
     inline unsigned char sf_to_hex(unsigned char x)
     {
         return  x > 9 ? x + 55 : x + 48;
@@ -64,27 +75,27 @@ namespace skyfire
     }
 
 
-    void sf_parse_param(map<string, string> param,std::string &param_str) {
+    void sf_parse_param(std::map<std::string, std::string> param,std::string &param_str) {
         param.clear();
         unsigned long url_pos;
         while((url_pos = param_str.find('&')) != std::string::npos)
         {
-            auto tmp_param = string(param_str.begin(),param_str.begin()+url_pos);
-            param_str = string(param_str.begin()+url_pos+1,param_str.end());
+            auto tmp_param = std::string(param_str.begin(),param_str.begin()+url_pos);
+            param_str = std::string(param_str.begin()+url_pos+1,param_str.end());
             if(tmp_param.empty())
                 continue;
             if((url_pos = tmp_param.find('=')) == std::string::npos)
                 continue;
-            auto key = sf_url_decode(string(tmp_param.begin(), tmp_param.begin() + url_pos));
-            auto value = sf_url_decode(string(tmp_param.begin() + url_pos + 1, tmp_param.end()));
+            auto key = sf_url_decode(std::string(tmp_param.begin(), tmp_param.begin() + url_pos));
+            auto value = sf_url_decode(std::string(tmp_param.begin() + url_pos + 1, tmp_param.end()));
             param[key] = value;
         }
         if(param_str.empty())
             return;
         if((url_pos = param_str.find('=')) == std::string::npos)
             return;
-        auto key = sf_url_decode(string(param_str.begin(), param_str.begin() + url_pos));
-        auto value = sf_url_decode(string(param_str.begin() + url_pos + 1, param_str.end()));
+        auto key = sf_url_decode(std::string(param_str.begin(), param_str.begin() + url_pos));
+        auto value = sf_url_decode(std::string(param_str.begin() + url_pos + 1, param_str.end()));
         param[key] = value;
     }
 

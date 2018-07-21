@@ -44,4 +44,8 @@ namespace skyfire
         return std::string(path.begin()+pos+1,path.end());
     }
 
+    inline bool sf_equal_nocase_string(const std::string& str1,const std::string& str2)
+    {
+        return sf_to_lower_string(str1) == sf_to_lower_string(str2);
+    }
 }

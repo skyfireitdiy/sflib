@@ -46,9 +46,9 @@ namespace skyfire
                     if(!fi)
                     {
                         res.set_status(404);
-                        res.set_reason("NOTFOUND");
-                        res.set_body(to_byte_array(url + " Not Found"s));
-                        header.set_header("Content-Type", "text/plain; charset=" + charset);
+                        res.set_reason("NOT FOUND");
+                        res.set_body(to_byte_array("<p>"+url + " Not Found</p>"));
+                        header.set_header("Content-Type", "text/html; charset=" + charset);
                         res.set_header(header);
                         return;
                     }
@@ -59,9 +59,9 @@ namespace skyfire
                     if (file_size > max_file_size) {
                         res.set_status(403);
                         res.set_reason("FORBIDDEN");
-                        header.set_header("Content-Type", "text/plain; charset=" + charset);
+                        header.set_header("Content-Type", "text/html; charset=" + charset);
                         res.set_header(header);
-                        res.set_body(to_byte_array(url + " size out of range! (" + std::to_string(max_file_size) + ")"));
+                        res.set_body(to_byte_array("<p>" + url + " size out of range! (" + std::to_string(max_file_size) + ")</p>"));
                         fi.close();
                         return;
                     }

@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <utility>
+#include <iostream>
 #include "sf_type.h"
 #include "sf_http_request_line.h"
 #include "sf_http_header.h"
@@ -73,6 +74,7 @@ namespace skyfire{
             if(!parse_header(header_lines, header__))
                 return false;
             auto content_len = header__.get_header_value("Content-Length","0");
+            std::cout<<body__.size()<<std::endl;
             return body__.size() == std::atoll(content_len.c_str());
         }
 
