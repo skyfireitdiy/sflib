@@ -47,15 +47,12 @@ namespace skyfire
                        const std::vector<std::string> &methods = {{"*"}} ,int priority = 0):
             priority__(priority),methods__(methods)
         {
-            cout<<"size:"<<methods.size()<<endl;
-            for(auto &p:methods)cout<<"1-->"<<p<<endl;
             route_callback__ = [=](const sf_http_request &req,sf_http_response& res,const std::string &url)
             {
                 std::regex re(pattern);
                 std::smatch sm;
                 if(!std::regex_match(url, sm, re))
                 {
-                    cout<<url<<"  "<<pattern<<" "<<"false"<<endl;
                     return false;
                 }
                 cout<<url<<"  "<<pattern<<" "<<"true"<<endl;
@@ -69,9 +66,7 @@ namespace skyfire
         {
             {
                 std::unique_lock<std::recursive_mutex> lck(methods_mu__);
-                cout << "methods:" << endl;
                 for (auto &p:methods__)cout << p << &p << endl;
-                cout << "method:" << method << endl;
                 if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
                     if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method)) {
                         return false;

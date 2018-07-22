@@ -121,8 +121,20 @@ add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tc
 add_executable(test_event_waiter test/test_event_waiter/test_event_waiter.cpp ${headers})
 add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${header})
 
+add_executable(test_encrypt test/test_encrypt/test_encrypt.cpp ${header})
 
-IF (WIN32)
+find_package(OpenSSL REQUIRED)
+
+if( OpenSSL_FOUND )
+    include_directories(${OPENSSL_INCLUDE_DIRS})
+    link_directories(${OPENSSL_LIBRARIES})
+    message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
+    target_link_libraries(test_httpserver crypto)
+    target_link_libraries(test_encrypt crypto)
+endif()
+
+
+    IF (WIN32)
     target_link_libraries(test_rpc_server ws2_32)
     target_link_libraries(test_rpc_client ws2_32)
     target_link_libraries(test_msg_bus_server ws2_32)

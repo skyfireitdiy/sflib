@@ -41,7 +41,7 @@ namespace skyfire {
             }
             {
                 std::unique_lock<std::mutex> lck(mu_req_data__);
-                cout << "数据到来：\n" << to_string(data) << endl;
+                cout << "请求：\n" << to_string(data) << endl;
                 if (req_data__.count(sock) == 0) {
                     req_data__[sock] = req_data_t();
                 }
@@ -58,21 +58,32 @@ namespace skyfire {
                 bool keep_alive = true;
 
                 auto req_header = request.get_header();
-                if(sf_equal_nocase_string(req_header.get_header_value("Connection"), "Upgrade"))
+
+                auto connection_header = req_header.get_header_value("Connection");
+
+                auto connection_header_list = sf_split_string(connection_header, ",");
+
+                // 过滤Connection为Upgrade的请求
+                if(std::find_if(connection_header_list.begin(),connection_header_list.end(),[](const std::string& str){
+                    return sf_equal_nocase_string(sf_string_trim(str),"Upgrade");
+                })!=connection_header_list.end())
                 {
+                    // 筛选Websocket请求
                     if(sf_equal_nocase_string(req_header.get_header_value("Upgrade"),"websocket"))
                     {
                         // NOTE 删除记录，防止超时检测线程关闭连接
                         req_data__.erase(sock);
                         websocket_data_t ws_data;
                         ws_data.url = request.get_request_line().url;
-                        websocket_sock__.insert({sock,ws_data});
+
                         if(websocket_request_callback__)
                         {
                             sf_http_response res;
                             websocket_request_callback__(request, res);
                             res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
+                            cout<<"回应:\n"<<to_string(res.to_package())<<endl;
                             server__->send(sock,res.to_package());
+                            websocket_sock__.insert({sock,ws_data});
                         }
                     }
                     return;
@@ -87,12 +98,12 @@ namespace skyfire {
                     res.set_http_version(request.get_request_line().http_version);
                     request_callback__(request,res);
                     res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
-                    if(sf_to_lower_string(req_header.get_header_value("Connection","Close")) ==
-                            sf_to_lower_string("Close"))
+                    if(sf_equal_nocase_string(req_header.get_header_value("Connection","Close"), "Close"))
                     {
                         keep_alive = false;
                     }
                     res.get_header().set_header("Connection",keep_alive?"Keep-Alive":"Close");
+                    cout<<"回应:\n"<<to_string(res.to_package())<<endl;
                     server__->send(sock,res.to_package());
                     if(!keep_alive)
                     {

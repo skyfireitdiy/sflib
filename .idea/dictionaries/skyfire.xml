@@ -3,12 +3,15 @@
     <words>
       <w>addr</w>
       <w>bimap</w>
+      <w>bmem</w>
+      <w>bptr</w>
       <w>httpserver</w>
       <w>itype</w>
       <w>libsf</w>
       <w>rpcserver</w>
       <w>tcpserver</w>
       <w>unreg</w>
+      <w>websocket</w>
     </words>
   </dictionary>
 </component>

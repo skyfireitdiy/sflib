@@ -58,7 +58,7 @@ namespace skyfire{
                 std::string key(line.begin(),line.begin()+pos);
                 std::string value(line.begin()+pos+1, line.end());
                 value = sf_string_trim(value);
-                header.set_header(sf_to_lower_string(key),value);
+                header.set_header(key,value);
             }
             return true;
         }
@@ -74,8 +74,7 @@ namespace skyfire{
             if(!parse_header(header_lines, header__))
                 return false;
             auto content_len = header__.get_header_value("Content-Length","0");
-            std::cout<<body__.size()<<std::endl;
-            return body__.size() == std::atoll(content_len.c_str());
+            return std::atoll(content_len.c_str()) == body__.size();
         }
 
     public:

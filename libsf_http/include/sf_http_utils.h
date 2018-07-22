@@ -2,9 +2,15 @@
 
 #include <string>
 #include <ctime>
+#include <map>
 
 namespace skyfire
 {
+
+    namespace {
+        std::string websocket_sha1_append_str = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+    }
+
     struct req_data_t
     {
         bool new_req = false;
@@ -18,16 +24,15 @@ namespace skyfire
 
     inline unsigned char sf_to_hex(unsigned char x)
     {
-        return  x > 9 ? x + 55 : x + 48;
+        return static_cast<unsigned char>(x > 9 ? x + 55 : x + 48);
     }
 
     inline unsigned char sf_from_hex(unsigned char x)
     {
-        unsigned char y;
-        if (x >= 'A' && x <= 'Z') y = x - 'A' + 10;
-        else if (x >= 'a' && x <= 'z') y = x - 'a' + 10;
+        unsigned char y = 0;
+        if (x >= 'A' && x <= 'Z') y = static_cast<unsigned char>(x - 'A' + 10);
+        else if (x >= 'a' && x <= 'z') y = static_cast<unsigned char>(x - 'a' + 10);
         else if (x >= '0' && x <= '9') y = x - '0';
-        else assert(0);
         return y;
     }
 
@@ -64,7 +69,6 @@ namespace skyfire
             if (str[i] == '+') strTemp += ' ';
             else if (str[i] == '%')
             {
-                assert(i + 2 < length);
                 unsigned char high = sf_from_hex((unsigned char)str[++i]);
                 unsigned char low = sf_from_hex((unsigned char)str[++i]);
                 strTemp += high*16 + low;
@@ -133,5 +137,19 @@ namespace skyfire
         std::string ret(128,'\0');
         strftime(ret.data(),128,"%a, %d %b %Y %T GMT",time_info);
         return ret;
+    }
+
+    inline std::string sf_to_header_key_format(std::string key) {
+        bool flag = false;
+        for (auto &k:key) {
+            if (isalnum(k)) {
+                if (!flag)
+                    k = static_cast<char>(toupper(k));
+                flag = true;
+            } else {
+                flag = false;
+            }
+        }
+        return key;
     }
 }

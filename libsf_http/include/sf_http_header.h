@@ -4,6 +4,7 @@
 #include <string>
 #include <sf_utils.h>
 #include "sf_type.h"
+#include "sf_http_utils.h"
 
 namespace skyfire{
     class sf_http_header{
@@ -16,13 +17,13 @@ namespace skyfire{
 
         void set_header(std::string key, const std::string& value)
         {
-            key = sf_to_lower_string(key);
+            key = sf_to_header_key_format(key);
             header_data__[key] = value;
         }
 
         std::string get_header_value(std::string key, const std::string& default_value = "") const
         {
-            key = sf_to_lower_string(key);
+            key = sf_to_header_key_format(key);
             if(header_data__.count(key) == 0)
                 return default_value;
             return header_data__.at(key);
@@ -30,7 +31,7 @@ namespace skyfire{
 
         void remove_header(std::string key)
         {
-            key = sf_to_lower_string(key);
+            key = sf_to_header_key_format(key);
             header_data__.erase(key);
         }
 
