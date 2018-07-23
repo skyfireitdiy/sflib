@@ -67,4 +67,27 @@ namespace skyfire
         }
         return checksum == header.checksum;
     }
+
+
+    inline unsigned long long sf_ntoh64(unsigned long long input)
+    {
+        unsigned long long val;
+        auto *data = reinterpret_cast<unsigned char *>(&val);
+
+        data[0] = static_cast<unsigned char>(input >> 56);
+        data[1] = static_cast<unsigned char>(input >> 48);
+        data[2] = static_cast<unsigned char>(input >> 40);
+        data[3] = static_cast<unsigned char>(input >> 32);
+        data[4] = static_cast<unsigned char>(input >> 24);
+        data[5] = static_cast<unsigned char>(input >> 16);
+        data[6] = static_cast<unsigned char>(input >> 8);
+        data[7] = static_cast<unsigned char>(input >> 0);
+        return val;
+    }
+
+    inline unsigned long long sf_hton64(unsigned long long input)
+    {
+        return (sf_ntoh64(input));
+    }
+
 }

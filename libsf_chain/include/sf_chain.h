@@ -32,7 +32,7 @@ namespace skyfire {
         template<typename _R, typename ... _Params>
         sf_chain_call__<_R> then(_R(func)(_Ret, _Params...), _Params &&... param) const {
             std::function<_R()> f = [=, &param ...]() -> _R {
-                func(func__(), std::forward<_Params>(param) ...);
+                return func(func__(), std::forward<_Params>(param) ...);
             };
             return sf_chain_call__<_R>(f);
         }

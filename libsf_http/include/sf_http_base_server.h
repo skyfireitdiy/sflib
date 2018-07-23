@@ -9,6 +9,7 @@
 #include "sf_http_request.h"
 #include "sf_http_response.h"
 #include "sf_http_utils.h"
+#include "sf_websocket_utils.h"
 
 #include <utility>
 
@@ -41,6 +42,17 @@ namespace skyfire {
             if(websocket_context__.count(sock) != 0)
             {
                 // TODO 解析websocket帧，然后发至相应的回调函数
+                websocket_context__[sock].buffer += data;
+                int resolve_pos = 0;
+                while(websocket_context__[sock].buffer.size()-resolve_pos >= sizeof(websocket_data_header_t))
+                {
+                    auto header = *reinterpret_cast<const websocket_data_header_t*>(websocket_context__[sock].buffer.data() + resolve_pos);
+                    auto len = sf_get_size(header);
+                    if(websocket_context__[sock].buffer.size()-resolve_pos- sizeof(websocket_data_header_t) < 0) {
+                        break;
+                    }
+                    // TODO 获取类型等消息
+                }
                 return;
             }
             {
@@ -54,6 +66,7 @@ namespace skyfire {
                     return;
                 }
             }
+            // TODO 会不会存在两个请求同时到来导致的粘包现象？
             sf_http_request request(request_context__[sock].buffer);
             if(request.is_valid())
             {
