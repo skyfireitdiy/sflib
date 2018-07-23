@@ -136,13 +136,14 @@ namespace skyfire
         std::tm *time_info = std::localtime(&raw_time);
         std::string ret(128,'\0');
         strftime(ret.data(),128,"%a, %d %b %Y %T GMT",time_info);
+        ret.resize(strlen(ret.c_str()));
         return ret;
     }
 
     inline std::string sf_to_header_key_format(std::string key) {
         bool flag = false;
         for (auto &k:key) {
-            if (isalnum(k)) {
+            if (0 != isalnum(k)) {
                 if (!flag)
                     k = static_cast<char>(toupper(k));
                 flag = true;

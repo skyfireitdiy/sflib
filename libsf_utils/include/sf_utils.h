@@ -5,7 +5,6 @@
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/sha.h>
-#include <ecryptfs.h>
 
 #include <cstring>
 
@@ -97,7 +96,8 @@ namespace skyfire
     inline byte_array sf_sha1_encode(const byte_array &data)
     {
         SHA_CTX sha_ctx;
-        byte_array ret(SHA1_DIGEST_LENGTH,'\0');
+        // NOTE 20表示sha1的长度
+        byte_array ret(20,'\0');
         if(!SHA1_Init(&sha_ctx))
         {
             return ret;

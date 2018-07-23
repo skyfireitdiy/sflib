@@ -7,12 +7,9 @@ using namespace std;
 
 int main()
 {
-    auto src_str = "dGhlIHNhbXBsZSBub25jZQ==" + websocket_sha1_append_str;
-    auto sha = sf_sha1_encode(to_byte_array(src_str));
-    for(unsigned char p:sha)
-        printf("%02x",p);
-
-    auto result = sf_base64_encode(sha);
-    cout<<result<<endl;
-
+    auto sec_websocket_key = "nA1n3JLq123ENhNkHrhNhQ=="s;
+    sec_websocket_key+=websocket_sha1_append_str;
+    auto sha1_encoded_key = sf_sha1_encode(to_byte_array(sec_websocket_key));
+    auto base64_encoded_key = sf_base64_encode(sha1_encoded_key);
+    cout<<base64_encoded_key<<endl;
 }

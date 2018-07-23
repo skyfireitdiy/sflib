@@ -9,8 +9,7 @@
 
 namespace skyfire
 {
-
-
+#pragma pack(1)
 
     struct pkg_header_t
     {
@@ -18,6 +17,8 @@ namespace skyfire
         int type;
         size_t length;
     };
+
+#pragma pack()
 
     template<typename T>
     typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(const T &data)

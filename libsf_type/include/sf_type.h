@@ -23,9 +23,7 @@ namespace skyfire
 
     inline std::string to_string(const byte_array& data)
     {
-        auto ret = std::string(data.begin(),data.end());
-        ret.push_back(0);
-        return ret;
+        return std::string(data.begin(),data.end());
     }
 
     inline byte_array operator+(byte_array b1, const byte_array &b2)
@@ -51,9 +49,6 @@ namespace skyfire
     template <>
     inline byte_array to_byte_array(const std::string& str)
     {
-
-        cout<<str.length()<<endl;
-        cout<<str.length()<<endl;
         byte_array ret(str.length());
         memcpy(ret.data(),str.data(),str.length());
         return ret;

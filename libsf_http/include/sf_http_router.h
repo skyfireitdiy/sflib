@@ -55,7 +55,6 @@ namespace skyfire
                 {
                     return false;
                 }
-                cout<<url<<"  "<<pattern<<" "<<"true"<<endl;
                 callback_call_helper__<decltype(callback),sizeof...(StringType)>(req,res,callback,sm);
                 return true;
             };

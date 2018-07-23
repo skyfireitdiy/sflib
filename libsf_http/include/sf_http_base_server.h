@@ -11,6 +11,7 @@
 #include "sf_http_utils.h"
 
 #include <iostream>
+#include <utility>
 
 using namespace std;
 
@@ -22,21 +23,26 @@ namespace skyfire {
         const sf_http_server_config config__;
         std::shared_ptr<sf_tcpserver> server__ = std::make_shared<sf_tcpserver>(true);
         std::function<void(const sf_http_request&,sf_http_response&)> request_callback__;
+
         std::function<void(const sf_http_request&,sf_http_response&)> websocket_request_callback__;
-        std::function<void(SOCKET,const byte_array& data)> websocket_data_callback__;
+
+        std::function<void(SOCKET,const std::string &url,const byte_array& data)> websocket_binary_data_callback__;
+        std::function<void(SOCKET,const std::string &url,const std::string& data)> websocket_text_data_callback__;
+        std::function<void(SOCKET,const std::string &url)> websocket_open_callback__;
+        std::function<void(SOCKET,const std::string &url)> websocket_close_callback__;
+
 
         std::unordered_map<SOCKET, req_data_t> req_data__;
         std::mutex mu_req_data__;
         std::unordered_map<SOCKET, websocket_data_t> websocket_sock__;
 
+        std::unordered_map<SOCKET, byte_array> websocket_buffer__;
+
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
             if(websocket_sock__.count(sock) != 0)
             {
-                if(websocket_data_callback__)
-                {
-                    websocket_data_callback__(sock,data);
-                }
+                // TODO 解析websocket帧，然后发至相应的回调函数
                 return;
             }
             {
@@ -144,8 +150,8 @@ namespace skyfire {
         }
 
     public:
-        explicit sf_http_base_server(const sf_http_server_config& config):
-                config__ (config)
+        explicit sf_http_base_server(sf_http_server_config config):
+                config__ (std::move(config))
         {
             sf_bind_signal(server__, raw_data_coming, [=](SOCKET sock, const byte_array &data){
                 raw_data_coming__(sock,data);
@@ -182,18 +188,34 @@ namespace skyfire {
 
         void set_request_callback(std::function<void(const sf_http_request&,sf_http_response&)> request_callback)
         {
-            request_callback__ = request_callback;
+            request_callback__ = std::move(request_callback);
         }
 
         void set_websocket_request_callback(std::function<void(const sf_http_request&,sf_http_response&)> websocket_request_callback)
         {
-            websocket_request_callback__ = websocket_request_callback;
+            websocket_request_callback__ = std::move(websocket_request_callback);
         }
 
-        void set_websocket_data_callback(std::function<void(SOCKET,const byte_array&)> websocket_data_callback)
+        void set_websocket_binary_data_callback(std::function<void(SOCKET,const std::string &url,const byte_array&)> websocket_binary_data_callback)
         {
-            websocket_data_callback__ = websocket_data_callback;
+            websocket_binary_data_callback__ = std::move(websocket_binary_data_callback);
         }
+
+        void set_websocket_text_data_callback(std::function<void(SOCKET,const std::string &url,const std::string&)> websocket_text_data_callback)
+        {
+            websocket_text_data_callback__ = std::move(websocket_text_data_callback);
+        }
+
+        void set_websocket_open_callback(std::function<void(SOCKET,const std::string &url)> websocket_open_callback)
+        {
+            websocket_open_callback__ = std::move(websocket_open_callback);
+        }
+        void set_websocket_close_callback(std::function<void(SOCKET,const std::string &url)> websocket_close_callback)
+        {
+            websocket_close_callback__ = std::move(websocket_close_callback);
+        }
+
+
     };
 
 
