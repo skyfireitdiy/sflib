@@ -11,15 +11,17 @@ namespace skyfire
         std::string websocket_sha1_append_str = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     }
 
-    struct req_data_t
+    struct request_context_t
     {
         bool new_req = false;
         byte_array buffer;
     };
 
-    struct websocket_data_t
+    struct websocket_context_t
     {
         std::string url;
+        SOCKET sock;
+        byte_array buffer;
     };
 
     inline unsigned char sf_to_hex(unsigned char x)

@@ -32,15 +32,15 @@ namespace skyfire {
         std::function<void(SOCKET,const std::string &url)> websocket_close_callback__;
 
 
-        std::unordered_map<SOCKET, req_data_t> req_data__;
+        std::unordered_map<SOCKET, request_context_t> request_context__;
         std::mutex mu_req_data__;
-        std::unordered_map<SOCKET, websocket_data_t> websocket_sock__;
 
-        std::unordered_map<SOCKET, byte_array> websocket_buffer__;
+        // TODO 以后可能需要加锁
+        std::unordered_map<SOCKET, websocket_context_t> websocket_context__;
 
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
-            if(websocket_sock__.count(sock) != 0)
+            if(websocket_context__.count(sock) != 0)
             {
                 // TODO 解析websocket帧，然后发至相应的回调函数
                 return;
@@ -48,19 +48,19 @@ namespace skyfire {
             {
                 std::unique_lock<std::mutex> lck(mu_req_data__);
                 cout << "请求：\n" << to_string(data) << endl;
-                if (req_data__.count(sock) == 0) {
-                    req_data__[sock] = req_data_t();
+                if (request_context__.count(sock) == 0) {
+                    request_context__[sock] = request_context_t();
                 }
-                req_data__[sock].buffer += data;
-                if (req_data__[sock].buffer.empty()) {
+                request_context__[sock].buffer += data;
+                if (request_context__[sock].buffer.empty()) {
                     return;
                 }
             }
-            sf_http_request request(req_data__[sock].buffer);
+            sf_http_request request(request_context__[sock].buffer);
             if(request.is_valid())
             {
-                req_data__[sock].new_req = true;
-                req_data__[sock].buffer.clear();
+                request_context__[sock].new_req = true;
+                request_context__[sock].buffer.clear();
                 bool keep_alive = true;
 
                 auto req_header = request.get_header();
@@ -78,8 +78,8 @@ namespace skyfire {
                     if(sf_equal_nocase_string(req_header.get_header_value("Upgrade"),"websocket"))
                     {
                         // NOTE 删除记录，防止超时检测线程关闭连接
-                        req_data__.erase(sock);
-                        websocket_data_t ws_data;
+                        request_context__.erase(sock);
+                        websocket_context_t ws_data;
                         ws_data.url = request.get_request_line().url;
 
                         if(websocket_request_callback__)
@@ -89,7 +89,9 @@ namespace skyfire {
                             res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
                             cout<<"回应:\n"<<to_string(res.to_package())<<endl;
                             server__->send(sock,res.to_package());
-                            websocket_sock__.insert({sock,ws_data});
+                            websocket_context__.insert({sock,ws_data});
+                            websocket_context__[sock].sock = sock;
+                            websocket_context__[sock].buffer = byte_array();
                         }
                     }
                     return;
@@ -115,7 +117,7 @@ namespace skyfire {
                     {
                         server__->close(sock);
                         std::unique_lock<std::mutex> lck(mu_req_data__);
-                        req_data__.erase(sock);
+                        request_context__.erase(sock);
                     }
                 }
             }
@@ -127,12 +129,12 @@ namespace skyfire {
                 while(true) {
                     std::this_thread::sleep_for(std::chrono::seconds(config__.request_timeout));
                     std::unique_lock<std::mutex> lck(mu_req_data__);
-                    if (req_data__.count(sock) != 0) {
-                        if (!req_data__[sock].new_req) {
+                    if (request_context__.count(sock) != 0) {
+                        if (!request_context__[sock].new_req) {
                             server__->close(sock);
-                            req_data__.erase(sock);
+                            request_context__.erase(sock);
                         } else {
-                            req_data__[sock].new_req = true;
+                            request_context__[sock].new_req = true;
                         }
                     }else{
                         break;
@@ -143,10 +145,10 @@ namespace skyfire {
 
         void on_socket_closed(SOCKET sock)
         {
-            if(req_data__.count(sock)!=0)
-                req_data__.erase(sock);
-            if(websocket_sock__.count(sock) != 0)
-                websocket_sock__.erase(sock);
+            if(request_context__.count(sock)!=0)
+                request_context__.erase(sock);
+            if(websocket_context__.count(sock) != 0)
+                websocket_context__.erase(sock);
         }
 
     public:
