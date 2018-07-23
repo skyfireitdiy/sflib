@@ -53,7 +53,7 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
 
 int main() {
 
-    __logger__->add_level_stream(SF_DEBUG_LEVEL,&cout);
+    g_logger->add_level_stream(SF_DEBUG_LEVEL,&cout);
     auto pclient = sf_tcp_nat_traversal_client::make_client();
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 

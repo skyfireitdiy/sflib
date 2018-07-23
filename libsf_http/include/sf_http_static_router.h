@@ -6,9 +6,6 @@
 #include "sf_content_type.h"
 #include <fstream>
 
-#include <iostream>
-
-using namespace std;
 
 namespace skyfire
 {

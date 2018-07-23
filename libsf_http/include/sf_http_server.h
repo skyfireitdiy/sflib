@@ -4,11 +4,6 @@
 #include "sf_http_router.h"
 #include <set>
 
-#include <iostream>
-
-
-using namespace std;
-
 namespace skyfire
 {
     class sf_http_server: public sf_http_base_server

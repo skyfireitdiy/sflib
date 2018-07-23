@@ -10,10 +10,8 @@
 #include "sf_http_response.h"
 #include "sf_http_utils.h"
 
-#include <iostream>
 #include <utility>
 
-using namespace std;
 
 
 namespace skyfire {

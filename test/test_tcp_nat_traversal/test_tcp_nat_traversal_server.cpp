@@ -8,7 +8,7 @@ using namespace std;
 using namespace skyfire;
 
 int main(){
-    __logger__->add_level_stream(SF_DEBUG_LEVEL,&cout);
+    g_logger->add_level_stream(SF_DEBUG_LEVEL,&cout);
     auto pserver = sf_tcp_nat_traversal_server::make_server();
     cout<<"port:"<<flush;
     unsigned short port;

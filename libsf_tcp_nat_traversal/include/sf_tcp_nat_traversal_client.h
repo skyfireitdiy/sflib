@@ -64,7 +64,7 @@ namespace skyfire {
             // 生成一个自动端口
             unsigned short auto_port = static_cast<unsigned short>(sf_random::get_instance()->get_int(1025, 65535));
 
-            __logger__->sf_debug("生成本地连接地址",server_addr.ip,auto_port);
+            sf_debug("生成本地连接地址",server_addr.ip,auto_port);
 
             // 绑定
             if (!connect_context_map__[context.connect_id].point_b_client_1->bind(server_addr.ip, auto_port)) {
@@ -75,7 +75,7 @@ namespace skyfire {
             }
 
 
-            __logger__->sf_debug("尝试连接a的外网ip端口，留下路由信息",
+            sf_debug("尝试连接a的外网ip端口，留下路由信息",
                                  connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.ip,
                                  connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.port);
             // 尝试连接a的外网ip端口，留下路由信息（一般会失败，但有时会直接成功）
@@ -84,7 +84,7 @@ namespace skyfire {
                     connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.port
             )) {
                 // TODO 为了维持操作统一，成功暂时也不做处理
-                __logger__->sf_debug("成功连接到来源端口");
+                sf_debug("成功连接到来源端口");
             }
             // 连接失败，B建立服务器2
 
@@ -117,7 +117,7 @@ namespace skyfire {
             *tmp_bind_id = sf_bind_signal(connect_context_map__[context.connect_id].point_b_server,
                                           new_connection,
                                           [=](SOCKET sock) {
-                                              __logger__->sf_debug("B端新连接到来，NAT穿透连接建立成功");
+                                              sf_debug("B端新连接到来，NAT穿透连接建立成功");
                                               std::shared_ptr<sf_tcp_nat_traversal_connection> connection(
                                                       new sf_tcp_nat_traversal_connection(
                                                               nullptr,
@@ -133,13 +133,13 @@ namespace skyfire {
                                                                new_connection,
                                                                *tmp_bind_id
                                               );
-                                              __logger__->sf_debug("解绑id", *tmp_bind_id);
+                                              sf_debug("解绑id", *tmp_bind_id);
                                               connect_context_map__.erase(context.connect_id);
                                           },
                                           true
             );
 
-            __logger__->sf_debug("绑定id", *tmp_bind_id);
+            sf_debug("绑定id", *tmp_bind_id);
 
             // 使用客户端2连接至server，便于server获取目的的外网ip端口
             if (!connect_context_map__[context.connect_id].point_b_client_2->connect(server_addr__.ip,
@@ -151,7 +151,7 @@ namespace skyfire {
             }
 
             // 向server发送信息，server获取ip端口（此时已在路由器留下记录）
-            __logger__->sf_debug("回复服务器");
+            sf_debug("回复服务器");
             if (!connect_context_map__[context.connect_id].point_b_client_2->send(
                     TYPE_NAT_TRAVERSAL_B_REPLY_ADDR,
                     sf_serialize(
@@ -176,7 +176,7 @@ namespace skyfire {
             }
             connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
             connect_context_map__[context.connect_id].point_a_client_2 = sf_tcpclient::make_client(context.raw);
-            __logger__->sf_debug("连接B的端口");
+            sf_debug("连接B的端口");
             if (connect_context_map__[context.connect_id].point_a_client_2->connect(context.dest_addr.ip,
                                                                                     context.dest_addr.port)) {
                 std::shared_ptr<sf_tcp_nat_traversal_connection> connection(new sf_tcp_nat_traversal_connection(
@@ -186,7 +186,7 @@ namespace skyfire {
                         context.connect_id,
                         sf_tcp_nat_traversal_connection_type::type_client_valid
                 ));
-                __logger__->sf_debug("NAT穿透连接成功");
+                sf_debug("NAT穿透连接成功");
                 new_nat_connection(connection, context.connect_id);
                 connect_context_map__.erase(context.connect_id);
             } else {
@@ -198,7 +198,7 @@ namespace skyfire {
 
 
         void on_client_data_coming__(const pkg_header_t &header, const byte_array &data) {
-            __logger__->sf_debug(header.type);
+            sf_debug(header.type);
             switch (header.type) {
                 case TYPE_NAT_TRAVERSAL_LIST:
                     sf_deserialize(data, client_list__, 0);
@@ -207,14 +207,14 @@ namespace skyfire {
                     sf_deserialize(data, self_id__, 0);
                     break;
                 case TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED: {
-                    __logger__->sf_debug("收到连接请求");
+                    sf_debug("收到连接请求");
                     sf_tcp_nat_traversal_context_t__ context;
                     sf_deserialize(data, context, 0);
                     on_new_connect_required__(context);
                 }
                     break;
                 case TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR: {
-                    __logger__->sf_debug("收到B的地址");
+                    sf_debug("收到B的地址");
                     sf_tcp_nat_traversal_context_t__ context;
                     sf_deserialize(data, context, 0);
                     on_server_reply_b_addr(context);
@@ -297,19 +297,19 @@ namespace skyfire {
                 addr_info_t addr;
                 // 获取到本机要连接外网的ip端口，保存至连接上下文
                 if (!get_local_addr(tmp_p2p_conn_context.point_a_client_1->get_raw_socket(), addr)) {
-                    __logger__->sf_debug("获取本地ip端口失败");
+                    sf_debug("获取本地ip端口失败");
                     return -1;
                 }
 
                 tmp_p2p_conn_context.point_a_server = sf_tcpserver::make_server();
                 // 复用刚才断开的连接1端口号
                 if (!tmp_p2p_conn_context.point_a_server->listen(addr.ip, addr.port)) {
-                    __logger__->sf_debug("监听本地ip端口失败", addr.ip, addr.port);
+                    sf_debug("监听本地ip端口失败", addr.ip, addr.port);
                     return -1;
                 }
 
 
-                __logger__->sf_debug("发起连接请求");
+                sf_debug("发起连接请求");
                 // 发起连接请求
                 if (tmp_p2p_conn_context.point_a_client_1->send(TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER,
                                                                 sf_serialize(

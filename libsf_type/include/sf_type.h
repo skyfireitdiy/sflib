@@ -14,6 +14,7 @@
 #define SF_GET_OFFSET(obj,member)   (reinterpret_cast<size_t>(&(reinterpret_cast<obj*>(0)->member)))
 
 #include <iostream>
+#include <cstring>
 
 using namespace std;
 
@@ -42,7 +43,7 @@ namespace skyfire
     inline byte_array to_byte_array(const T& t)
     {
         byte_array ret(sizeof(t));
-        memcpy(ret.data(),&t,sizeof(t));
+        std::memcpy(ret.data(),&t,sizeof(t));
         return ret;
     }
 
@@ -50,7 +51,7 @@ namespace skyfire
     inline byte_array to_byte_array(const std::string& str)
     {
         byte_array ret(str.length());
-        memcpy(ret.data(),str.data(),str.length());
+        std::memcpy(ret.data(),str.data(),str.length());
         return ret;
     }
 }

@@ -3,7 +3,6 @@
 
 #include <sstream>
 #include <utility>
-#include <iostream>
 #include "sf_type.h"
 #include "sf_http_request_line.h"
 #include "sf_http_header.h"

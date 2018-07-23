@@ -1,3 +1,4 @@
+#define SF_DEBUG
 #include "sf_http_base_server.h"
 #include "sf_http_static_router.h"
 #include "sf_logger.h"
@@ -7,10 +8,9 @@
 using namespace skyfire;
 using namespace std;
 
-auto logger = sf_logger::get_instance();
 
 void root_route(const sf_http_request &req,sf_http_response& res,const std::string& root) {
-    logger->sf_info(root);
+    sf_debug(root);
     sf_http_header header;
     header.set_header("Content-Type", "text/html;charset=utf-8");
     res.set_header(header);
@@ -18,7 +18,7 @@ void root_route(const sf_http_request &req,sf_http_response& res,const std::stri
 }
 
 int main() {
-    logger->add_level_stream(SF_LOG_LEVEL::SF_INFO_LEVEL, &cout);
+    g_logger->add_level_stream(SF_LOG_LEVEL::SF_INFO_LEVEL, &cout);
     sf_http_server_config config;
     config.host = "0.0.0.0";
     config.port = 8080;

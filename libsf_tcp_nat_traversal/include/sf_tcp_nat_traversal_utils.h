@@ -9,11 +9,7 @@
 #include "sf_netutils.h"
 #include "sf_object.h"
 #include "sf_nocopy.h"
-
-
 #include "sf_logger.h"
-static auto __logger__ = skyfire::sf_logger::get_instance();
-
 
 namespace skyfire {
 

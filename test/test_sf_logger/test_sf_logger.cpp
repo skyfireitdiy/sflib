@@ -21,11 +21,11 @@ int main()
     int b = logger->add_level_func(SF_ERROR_LEVEL, output);
     int c = logger->add_level_file(SF_WARN_LEVEL, "runlog.log");
     getchar();
-    logger->sf_error("hello", "world");
-    logger->sf_warn("this is warn");
+    sf_error("hello", "world");
+    sf_warn("this is warn");
     getchar();
     logger->remove_filter(b);
-    logger->sf_error("hello", "world");
-    logger->sf_warn("this is warn");
+    sf_error("hello", "world");
+    sf_warn("this is warn");
     getchar();
 }

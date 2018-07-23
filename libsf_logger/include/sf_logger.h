@@ -4,6 +4,7 @@
 
 #pragma once
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <mutex>
 #include <map>
@@ -226,6 +227,7 @@ namespace skyfire
 
         sf_logger__()
         {
+            add_level_stream(SF_DEBUG_LEVEL, &std::cout);
             std::thread([=]()
                         {
                             while (true)
@@ -315,16 +317,21 @@ namespace skyfire
 
     using sf_logger = sf_logger__<>;
 
+    namespace {
+        auto g_logger = sf_logger::get_instance();
+    }
+
 #ifdef SF_DEBUG
-#define sf_debug(...) logout(SF_DEBUG_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_debug(...) g_logger->logout(SF_DEBUG_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #else
-#define sf_debug(...) empty_func__()
+#define sf_debug(...) g_logger->empty_func__()
 #endif
 
-#define sf_info(...) logout(SF_INFO_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
-#define sf_warn(...) logout(SF_WARN_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
-#define sf_error(...) logout(SF_ERROR_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
-#define sf_fatal(...) logout(SF_FATAL_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_info(...) g_logger->logout(SF_INFO_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_warn(...) g_logger->logout(SF_WARN_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_error(...) g_logger->logout(SF_ERROR_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_fatal(...) g_logger->logout(SF_FATAL_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+
 
 
 }
