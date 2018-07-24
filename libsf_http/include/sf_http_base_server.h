@@ -10,7 +10,7 @@
 #include "sf_http_response.h"
 #include "sf_http_utils.h"
 #include "sf_websocket_utils.h"
-
+#include "sf_logger.h"
 #include <utility>
 
 
@@ -40,14 +40,16 @@ namespace skyfire {
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
             // 过滤websocket消息
+            sf_debug("socket",sock);
             if(websocket_context__.count(sock) != 0)
             {
                 websocket_data_coming__(sock, data);
                 return;
             }
+
             {
                 std::unique_lock<std::mutex> lck(mu_req_data__);
-                cout << "请求：\n" << to_string(data) << endl;
+                sf_debug("Request",to_string(data));
                 if (request_context__.count(sock) == 0) {
                     request_context__[sock] = request_context_t();
                 }
@@ -88,11 +90,12 @@ namespace skyfire {
                             sf_http_response res;
                             websocket_request_callback__(request, res);
                             res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
-                            cout<<"回应:\n"<<to_string(res.to_package())<<endl;
+                            sf_debug("Response",to_string(res.to_package()));
                             server__->send(sock,res.to_package());
                             websocket_context__.insert({sock,ws_data});
                             websocket_context__[sock].sock = sock;
                             websocket_context__[sock].buffer = byte_array();
+                            sf_debug("websocket add to context", sock);
                         }
                     }
                     return;
@@ -126,46 +129,41 @@ namespace skyfire {
 
         void websocket_data_coming__(int sock, const byte_array &data) {// TODO 解析websocket帧，然后发至相应的回调函数
             websocket_context__[sock].buffer += data;
+            sf_debug("buffer size", websocket_context__[sock].buffer.size());
             int resolve_pos = 0;
-            while (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_header_t)) {
-                websocket_data_frame_t frame;
-                frame.header = *reinterpret_cast<const websocket_data_header_t *>(
+
+            while (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_1_header_t)) {
+                const websocket_data_1_header_t *header1 = nullptr;
+                const websocket_data_2_header_t *header2 = nullptr;
+                const websocket_data_3_header_t *header3 = nullptr;
+
+                header1 = reinterpret_cast<const websocket_data_1_header_t *>(
                         websocket_context__[sock].buffer.data() + resolve_pos);
-                auto len = sf_get_size(frame.header);
-                if (websocket_context__[sock].buffer.size() - resolve_pos - sizeof(websocket_data_header_t) < 0) {
-                    break;
+
+                bool fin = false;
+                bool mask = false;
+                unsigned char* mask_key = nullptr;
+
+                // TODO 根据不同的len，获取body
+                auto len = sf_get_size(*header1);
+                if(len == 126)
+                {
+                    if(websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_2_header_t))
+                        break;
+                    header2 = reinterpret_cast<const websocket_data_2_header_t *>(
+                            websocket_context__[sock].buffer.data() + resolve_pos);
+                    len = sf_get_size(*header2);
                 }
-                // TODO 获取类型等消息
-                frame.body = byte_array(
-                        websocket_context__[sock].buffer.data() + resolve_pos + sizeof(websocket_data_header_t),
-                        websocket_context__[sock].buffer.data() + resolve_pos + sizeof(websocket_data_header_t) + len);
-                if (sf_with_mask(frame.header)) {
-                    sf_decode_websocket_pkg(frame.body, frame.header.mask_key);
-                }
-                resolve_pos += sizeof(websocket_data_header_t) + len;
-
-                auto op_code = sf_get_op_code(frame.header);
-                if (op_code == WEBSOCKET_OP_MIDDLE_PKG) {
-
-                } else if (op_code == WEBSOCKET_OP_BINARY_PKG) {
-
-                } else if (op_code == WEBSOCKET_OP_DISCONNECT_PKG) {
-
-                } else if (op_code == WEBSOCKET_OP_PING_PKG) {
-
-                } else if (op_code == WEBSOCKET_OP_PONG_PKG) {
-
-                } else if (op_code == WEBSOCKET_OP_TEXT_PKG) {
-
-                } else if (op_code == WEBSOCKET_OP_DISCONNECT_PKG) {
-
-                } else {
-
+                else if(len == 127)
+                {
+                    if(websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_3_header_t))
+                        break;
+                    header3 = reinterpret_cast<const websocket_data_3_header_t *>(
+                            websocket_context__[sock].buffer.data() + resolve_pos);
+                    len = sf_get_size(*header3);
                 }
 
-                if (sf_is_fin(frame.header)) {
 
-                }
             }
             websocket_context__[sock].buffer.erase(websocket_context__[sock].buffer.begin(),websocket_context__[sock].buffer.begin() + resolve_pos);
         }
