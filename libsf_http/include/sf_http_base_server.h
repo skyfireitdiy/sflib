@@ -12,7 +12,7 @@
 #include "sf_websocket_utils.h"
 #include "sf_logger.h"
 #include <utility>
-
+#include <mutex>
 
 
 namespace skyfire {
@@ -32,23 +32,25 @@ namespace skyfire {
 
 
         std::unordered_map<SOCKET, request_context_t> request_context__;
-        std::mutex mu_req_data__;
+        std::mutex mu_request_context__;
 
-        // TODO 以后可能需要加锁
         std::unordered_map<SOCKET, websocket_context_t> websocket_context__;
+        std::recursive_mutex mu_websocket_context__;
 
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
             // 过滤websocket消息
             sf_debug("socket",sock);
-            if(websocket_context__.count(sock) != 0)
             {
-                websocket_data_coming__(sock, data);
-                return;
+                std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+                if (websocket_context__.count(sock) != 0) {
+                    websocket_data_coming__(sock, data);
+                    return;
+                }
             }
 
             {
-                std::unique_lock<std::mutex> lck(mu_req_data__);
+                std::unique_lock<std::mutex> lck(mu_request_context__);
                 sf_debug("Request",to_string(data));
                 if (request_context__.count(sock) == 0) {
                     request_context__[sock] = request_context_t();
@@ -92,9 +94,13 @@ namespace skyfire {
                             res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
                             sf_debug("Response",to_string(res.to_package()));
                             server__->send(sock,res.to_package());
+                            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
                             websocket_context__.insert({sock,ws_data});
                             websocket_context__[sock].sock = sock;
                             websocket_context__[sock].buffer = byte_array();
+                            if(websocket_open_callback__){
+                                websocket_open_callback__(sock, ws_data.url);
+                            }
                             sf_debug("websocket add to context", sock);
                         }
                     }
@@ -120,7 +126,7 @@ namespace skyfire {
                     if(!keep_alive)
                     {
                         server__->close(sock);
-                        std::unique_lock<std::mutex> lck(mu_req_data__);
+                        std::unique_lock<std::mutex> lck(mu_request_context__);
                         request_context__.erase(sock);
                     }
                 }
@@ -130,6 +136,7 @@ namespace skyfire {
         template <typename T>
         bool analysis_websocket_pkg(SOCKET sock, const T* header,int &resolve_pos, unsigned long long &len, byte_array& body, bool &fin, int &op_code)
         {
+            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
             len = sf_get_size(*header);
             if (websocket_context__[sock].buffer.size() - resolve_pos - sizeof(T) < len) {
                 return false;
@@ -153,7 +160,9 @@ namespace skyfire {
         }
 
 
-        void websocket_data_coming__(int sock, const byte_array &data) {// TODO 解析websocket帧，然后发至相应的回调函数
+        void websocket_data_coming__(int sock, const byte_array &data) {
+            // TODO 解析websocket帧，然后发至相应的回调函数
+            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
             websocket_context__[sock].buffer += data;
             sf_debug("buffer size", websocket_context__[sock].buffer.size());
             int resolve_pos = 0;
@@ -174,7 +183,7 @@ namespace skyfire {
                 auto len = sf_get_size(*header1);
                 sf_debug("base len", len);
                 if (len == 126) {
-                    if (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_2_header_t)) {
+                    if (websocket_context__[sock].buffer.size() - resolve_pos < sizeof(websocket_data_2_header_t)) {
                         break;
                     }
                     header2 = reinterpret_cast<const websocket_data_2_header_t *>(
@@ -183,7 +192,7 @@ namespace skyfire {
                         break;
                     }
                 } else if (len == 127) {
-                    if (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_3_header_t)) {
+                    if (websocket_context__[sock].buffer.size() - resolve_pos < sizeof(websocket_data_3_header_t)) {
                         break;
                     }
                     header3 = reinterpret_cast<const websocket_data_3_header_t *>(
@@ -207,13 +216,13 @@ namespace skyfire {
                 }
                 if(fin) {
                     if (WEBSOCKET_OP_TEXT_PKG == op_code) {
-                        sf_debug("文本消息", to_string(websocket_context__[sock].data_buffer));
+                        sf_debug("text data", to_string(websocket_context__[sock].data_buffer));
                         if(!websocket_text_data_callback__){
                             websocket_text_data_callback__(sock, websocket_context__[sock].url,
                                                            to_string(websocket_context__[sock].data_buffer));
                         }
                     } else if (WEBSOCKET_OP_BINARY_PKG == op_code) {
-                        sf_debug("二进制消息", websocket_context__[sock].data_buffer.size());
+                        sf_debug("binary data", websocket_context__[sock].data_buffer.size());
                         if(!websocket_binary_data_callback__){
                             websocket_binary_data_callback__(sock,websocket_context__[sock].url,
                                                              websocket_context__[sock].data_buffer);
@@ -234,11 +243,11 @@ namespace skyfire {
         }
 
         void build_new_request__(SOCKET sock) {
-            std::unique_lock<std::mutex> lck(mu_req_data__);
+            std::unique_lock<std::mutex> lck(mu_request_context__);
             std::thread([=]() {
                 while(true) {
                     std::this_thread::sleep_for(std::chrono::seconds(config__.request_timeout));
-                    std::unique_lock<std::mutex> lck(mu_req_data__);
+                    std::unique_lock<std::mutex> lck(mu_request_context__);
                     if (request_context__.count(sock) != 0) {
                         if (!request_context__[sock].new_req) {
                             server__->close(sock);
@@ -257,7 +266,7 @@ namespace skyfire {
         {
             if(request_context__.count(sock)!=0)
                 request_context__.erase(sock);
-
+            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
             if(websocket_context__.count(sock) != 0) {
                 if(websocket_close_callback__){
                     websocket_close_callback__(sock, websocket_context__[sock].url);
