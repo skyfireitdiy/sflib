@@ -22,9 +22,7 @@ namespace skyfire
         std::string url;
         SOCKET sock;
         byte_array buffer;
-        // WARNING 会不会数据量太大导致内存不足？
-        std::string text_msg;
-        byte_array binary_msg;
+        byte_array data_buffer;
     };
 
     inline unsigned char sf_to_hex(unsigned char x)

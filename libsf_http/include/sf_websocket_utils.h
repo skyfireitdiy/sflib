@@ -75,7 +75,8 @@ namespace skyfire {
         return static_cast<bool>(header.mask_len & 0b10000000);
     }
 
-    inline int sf_get_op_code(const websocket_data_3_header_t&header){
+    template <typename T>
+    inline int sf_get_op_code(const T&header){
         return header.fin_rsv_oc & 0b00001111;
     }
 

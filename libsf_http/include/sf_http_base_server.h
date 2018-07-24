@@ -127,6 +127,32 @@ namespace skyfire {
             }
         }
 
+        template <typename T>
+        bool analysis_websocket_pkg(SOCKET sock, const T* header,int &resolve_pos, unsigned long long &len, byte_array& body, bool &fin, int &op_code)
+        {
+            len = sf_get_size(*header);
+            if (websocket_context__[sock].buffer.size() - resolve_pos - sizeof(T) < len) {
+                return false;
+            }
+            sf_debug(len,sizeof(T),websocket_context__[sock].buffer.size());
+
+            body = byte_array(
+                    websocket_context__[sock].buffer.begin() + resolve_pos + sizeof(T),
+                    websocket_context__[sock].buffer.begin() + resolve_pos + sizeof(T) +
+                    len
+            );
+            if(sf_with_mask(*header)) {
+                sf_debug("mask true", *reinterpret_cast<const unsigned int*> (header->mask_key));
+                sf_decode_websocket_pkg(body, header->mask_key);
+            }
+            fin = sf_is_fin(*header);
+            op_code = sf_get_op_code(*header);
+            resolve_pos += sizeof(T) + len;
+            sf_debug("resolve_pos", resolve_pos);
+            return true;
+        }
+
+
         void websocket_data_coming__(int sock, const byte_array &data) {// TODO 解析websocket帧，然后发至相应的回调函数
             websocket_context__[sock].buffer += data;
             sf_debug("buffer size", websocket_context__[sock].buffer.size());
@@ -137,33 +163,72 @@ namespace skyfire {
                 const websocket_data_2_header_t *header2 = nullptr;
                 const websocket_data_3_header_t *header3 = nullptr;
 
-                header1 = reinterpret_cast<const websocket_data_1_header_t *>(
-                        websocket_context__[sock].buffer.data() + resolve_pos);
+                header1 = reinterpret_cast<const websocket_data_1_header_t *>(websocket_context__[sock].buffer.data() +
+                                                                              resolve_pos);
 
                 bool fin = false;
-                bool mask = false;
-                unsigned char* mask_key = nullptr;
+                int op_code = -1;
+                byte_array body;
 
                 // TODO 根据不同的len，获取body
                 auto len = sf_get_size(*header1);
-                if(len == 126)
-                {
-                    if(websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_2_header_t))
+                sf_debug("base len", len);
+                if (len == 126) {
+                    if (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_2_header_t)) {
                         break;
+                    }
                     header2 = reinterpret_cast<const websocket_data_2_header_t *>(
                             websocket_context__[sock].buffer.data() + resolve_pos);
-                    len = sf_get_size(*header2);
-                }
-                else if(len == 127)
-                {
-                    if(websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_3_header_t))
+                    if (!analysis_websocket_pkg(sock, header2, resolve_pos, len, body, fin, op_code)) {
                         break;
+                    }
+                } else if (len == 127) {
+                    if (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_3_header_t)) {
+                        break;
+                    }
                     header3 = reinterpret_cast<const websocket_data_3_header_t *>(
                             websocket_context__[sock].buffer.data() + resolve_pos);
-                    len = sf_get_size(*header3);
+                    if (!analysis_websocket_pkg(sock, header3, resolve_pos, len, body, fin, op_code)) {
+                        break;
+                    }
+                } else {
+                    if (!analysis_websocket_pkg(sock, header1, resolve_pos, len, body, fin, op_code)) {
+                        break;
+                    }
                 }
-
-
+                websocket_context__[sock].data_buffer += body;
+                if (WEBSOCKET_OP_DISCONNECT_PKG == op_code) {
+                    server__->close(sock);
+                    if(websocket_close_callback__){
+                        websocket_close_callback__(sock, websocket_context__[sock].url);
+                    }
+                    websocket_context__.erase(sock);
+                    return;
+                }
+                if(fin) {
+                    if (WEBSOCKET_OP_TEXT_PKG == op_code) {
+                        sf_debug("文本消息", to_string(websocket_context__[sock].data_buffer));
+                        if(!websocket_text_data_callback__){
+                            websocket_text_data_callback__(sock, websocket_context__[sock].url,
+                                                           to_string(websocket_context__[sock].data_buffer));
+                        }
+                    } else if (WEBSOCKET_OP_BINARY_PKG == op_code) {
+                        sf_debug("二进制消息", websocket_context__[sock].data_buffer.size());
+                        if(!websocket_binary_data_callback__){
+                            websocket_binary_data_callback__(sock,websocket_context__[sock].url,
+                                                             websocket_context__[sock].data_buffer);
+                        }
+                    } else if (WEBSOCKET_OP_PING_PKG == op_code) {
+                        // TODO ping消息相应
+                    } else if (WEBSOCKET_OP_PONG_PKG == op_code) {
+                        // TODO pong消息相应
+                    }else if (WEBSOCKET_OP_MIDDLE_PKG == op_code) {
+                        // TODO middle 消息响应
+                    } else {
+                        // TODO 其他消息响应
+                    }
+                    websocket_context__[sock].data_buffer.clear();
+                }
             }
             websocket_context__[sock].buffer.erase(websocket_context__[sock].buffer.begin(),websocket_context__[sock].buffer.begin() + resolve_pos);
         }
@@ -192,8 +257,13 @@ namespace skyfire {
         {
             if(request_context__.count(sock)!=0)
                 request_context__.erase(sock);
-            if(websocket_context__.count(sock) != 0)
+
+            if(websocket_context__.count(sock) != 0) {
+                if(websocket_close_callback__){
+                    websocket_close_callback__(sock, websocket_context__[sock].url);
+                }
                 websocket_context__.erase(sock);
+            }
         }
 
     public:
