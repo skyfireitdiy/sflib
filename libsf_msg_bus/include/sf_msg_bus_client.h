@@ -58,7 +58,7 @@ namespace skyfire
          */
         void reg_msg_to_bus(const std::string& type)
         {
-            p_client__->send(msg_bus_reg_type_single, sf_serialize(type));
+            p_client__->send(msg_bus_reg_type_single, sf_serialize_binary(type));
         }
 
         /**
@@ -67,7 +67,7 @@ namespace skyfire
          */
         void reg_msg_to_bus(const std::vector<std::string> &types)
         {
-            p_client__->send(msg_bus_reg_type_multi, sf_serialize(types));
+            p_client__->send(msg_bus_reg_type_multi, sf_serialize_binary(types));
         }
         /**
          * @brief unreg_msg_to_bus 向消息总线反注册消息
@@ -75,7 +75,7 @@ namespace skyfire
          */
         void unreg_msg_to_bus(const std::string& type)
         {
-            p_client__->send(msg_bus_unreg_single, sf_serialize(type));
+            p_client__->send(msg_bus_unreg_single, sf_serialize_binary(type));
         }
 
         /**
@@ -84,7 +84,7 @@ namespace skyfire
          */
         void unreg_msg_to_bus(const std::vector<std::string> &types)
         {
-            p_client__->send(msg_bus_unreg_multi, sf_serialize(types));
+            p_client__->send(msg_bus_unreg_multi, sf_serialize_binary(types));
         }
 
         /**
@@ -108,7 +108,7 @@ namespace skyfire
             msg_bus_t msg;
             msg.type = type;
             msg.data = data;
-            auto send_data = sf_serialize(msg);
+            auto send_data = sf_serialize_binary(msg);
             p_client__->send(msg_bus_new_msg, send_data);
         }
 
@@ -128,7 +128,7 @@ namespace skyfire
             if(header.type == msg_bus_new_msg)
             {
                 msg_bus_t msg_data;
-                sf_deserialize(data, msg_data, 0);
+                sf_deserialize_binary(data, msg_data, 0);
                 msg_come(msg_data.type, msg_data.data);
             }
         }

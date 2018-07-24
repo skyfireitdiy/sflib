@@ -47,7 +47,7 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
     cout<<"msg:"<<flush;
     string msg;
     getline(cin,msg);
-    conn->send(TCP_PKG_TYPE_USER + 1,sf_serialize(msg));
+    conn->send(TCP_PKG_TYPE_USER + 1,sf_serialize_binary(msg));
 }
 
 
@@ -62,7 +62,7 @@ int main() {
         conn = conn_t;
         sf_bind_signal(conn, data_coming, [](const pkg_header_t &header, const byte_array &data){
             string msg;
-            sf_deserialize(data,msg,0);
+            sf_deserialize_binary(data,msg,0);
             cout<<"Recv:"<<msg<<endl;
         }, true);
     },true);

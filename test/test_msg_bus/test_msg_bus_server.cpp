@@ -18,7 +18,7 @@ int main()
             break;
         cout<<"data:"<<flush;
         cin>>data;
-        server->send_msg(type, sf_serialize(data));
+        server->send_msg(type, sf_serialize_binary(data));
     }
     server->close();
 }

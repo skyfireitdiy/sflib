@@ -10,7 +10,7 @@
 #include "sf_type.h"
 #include "sf_object.h"
 #include "sf_tcpserver.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 
 namespace skyfire {
 
@@ -90,7 +90,7 @@ namespace skyfire {
             msg_bus_t msg;
             msg.type = type;
             msg.data = data;
-            auto send_data = sf_serialize(msg);
+            auto send_data = sf_serialize_binary(msg);
             if (msg_map__.count(type) != 0) {
                 for (auto &sock : msg_map__[type]) {
                     p_server__->send(sock, msg_bus_new_msg, send_data);
@@ -122,27 +122,27 @@ namespace skyfire {
         void on_reg_data__(SOCKET sock, const pkg_header_t &header, const byte_array &data) {
             if (header.type == msg_bus_reg_type_single) {
                 std::string name;
-                sf_deserialize(data, name, 0);
+                sf_deserialize_binary(data, name, 0);
                 reg_msg__(sock, name);
             } else if (header.type == msg_bus_reg_type_multi) {
                 std::vector<std::string> names;
-                sf_deserialize(data, names, 0);
+                sf_deserialize_binary(data, names, 0);
                 for (auto &p:names) {
                     reg_msg__(sock, p);
                 }
             } else if (header.type == msg_bus_new_msg) {
                 msg_bus_t msg_data;
-                sf_deserialize(data, msg_data, 0);
+                sf_deserialize_binary(data, msg_data, 0);
                 msg_come(sock, msg_data.type, msg_data.data);
                 // TODO 服务器是否需要转发所有的消息？
                 send_msg(msg_data.type, msg_data.data);
             } else if (header.type == msg_bus_unreg_single) {
                 std::string name;
-                sf_deserialize(data, name, 0);
+                sf_deserialize_binary(data, name, 0);
                 unreg_msg__(sock, name);
             } else if (header.type == msg_bus_unreg_multi) {
                 std::vector<std::string> names;
-                sf_deserialize(data, names, 0);
+                sf_deserialize_binary(data, names, 0);
                 for (auto &p:names) {
                     unreg_msg__(sock, p);
                 }

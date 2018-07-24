@@ -10,7 +10,7 @@ int main()
     client->connect_to_bus("127.0.0.1", 5678);
     sf_bind_signal(client, msg_come, [](std::string, byte_array data){
         string str;
-        sf_deserialize(data, str, 0);
+        sf_deserialize_binary(data, str, 0);
         cout<<"msg_come:"<<str<<endl;
         }, true);
     string type;

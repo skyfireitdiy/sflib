@@ -4,7 +4,7 @@
 #include "sf_object.h"
 #include "sf_tcpclient.h"
 #include "sf_tcpserver.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 #include "sf_define.h"
 #include "sf_tcp_nat_traversal_utils.h"
 #include "sf_random.h"
@@ -57,7 +57,7 @@ namespace skyfire {
             if (!get_local_addr(client__->get_raw_socket(), server_addr)) {
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                               sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
 
@@ -70,7 +70,7 @@ namespace skyfire {
             if (!connect_context_map__[context.connect_id].point_b_client_1->bind(server_addr.ip, auto_port)) {
                 context.error_code = SF_ERR_BIND_ERR;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                               sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
 
@@ -99,7 +99,7 @@ namespace skyfire {
             )) {
                 context.error_code = SF_ERR_BIND_ERR;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                               sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
 
@@ -108,7 +108,7 @@ namespace skyfire {
             if (!connect_context_map__[context.connect_id].point_b_server->listen(server_addr.ip, auto_port)) {
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                               sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
 
@@ -146,7 +146,7 @@ namespace skyfire {
                                                                                      server_addr__.port)) {
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                               sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
 
@@ -154,12 +154,12 @@ namespace skyfire {
             sf_debug("回复服务器");
             if (!connect_context_map__[context.connect_id].point_b_client_2->send(
                     TYPE_NAT_TRAVERSAL_B_REPLY_ADDR,
-                    sf_serialize(
+                    sf_serialize_binary(
                             connect_context_map__[context.connect_id].tcp_nat_traversal_context))
                     ) {
                 context.error_code = SF_ERR_DISCONNECT;
                 client__->send(TYPE_NAT_TRAVERSAL_ERROR,
-                               sf_serialize(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                               sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
                 return;
             }
 
@@ -171,7 +171,7 @@ namespace skyfire {
             context.step = 5;
             if (connect_context_map__.count(context.connect_id) == 0) {
                 context.error_code = SF_ERR_NOT_EXIST;
-                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize_binary(context));
                 return;
             }
             connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
@@ -191,7 +191,7 @@ namespace skyfire {
                 connect_context_map__.erase(context.connect_id);
             } else {
                 context.error_code = SF_ERR_DISCONNECT;
-                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize(context));
+                client__->send(TYPE_NAT_TRAVERSAL_ERROR, sf_serialize_binary(context));
                 return;
             }
         }
@@ -201,22 +201,22 @@ namespace skyfire {
             sf_debug(header.type);
             switch (header.type) {
                 case TYPE_NAT_TRAVERSAL_LIST:
-                    sf_deserialize(data, client_list__, 0);
+                    sf_deserialize_binary(data, client_list__, 0);
                     break;
                 case TYPE_NAT_TRAVERSAL_SET_ID:
-                    sf_deserialize(data, self_id__, 0);
+                    sf_deserialize_binary(data, self_id__, 0);
                     break;
                 case TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED: {
                     sf_debug("收到连接请求");
                     sf_tcp_nat_traversal_context_t__ context;
-                    sf_deserialize(data, context, 0);
+                    sf_deserialize_binary(data, context, 0);
                     on_new_connect_required__(context);
                 }
                     break;
                 case TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR: {
                     sf_debug("收到B的地址");
                     sf_tcp_nat_traversal_context_t__ context;
-                    sf_deserialize(data, context, 0);
+                    sf_deserialize_binary(data, context, 0);
                     on_server_reply_b_addr(context);
                 }
                     break;
@@ -312,7 +312,7 @@ namespace skyfire {
                 sf_debug("发起连接请求");
                 // 发起连接请求
                 if (tmp_p2p_conn_context.point_a_client_1->send(TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER,
-                                                                sf_serialize(
+                                                                sf_serialize_binary(
                                                                         tmp_p2p_conn_context.tcp_nat_traversal_context))) {
                     // 保存连接上下文
                     connect_context_map__[tmp_p2p_conn_context.tcp_nat_traversal_context.connect_id] = tmp_p2p_conn_context;

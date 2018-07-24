@@ -9,7 +9,7 @@
 #include <functional>
 #include <tuple>
 #include "sf_type.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 #include "sf_meta.h"
 
 
@@ -54,7 +54,7 @@ namespace skyfire
                     if (name == name_str)
                     {
                         _Param param;
-                        sf_deserialize(data, param, 0);
+                        sf_deserialize_binary(data, param, 0);
                         obj = sf_make_obj_from_tuple<__Type>(param);
                     }
                 };
@@ -71,7 +71,7 @@ namespace skyfire
         template <typename _Type = void, typename ... _Param>
         _Type * make_object(const std::string& type_name, _Param ... params)
         {
-            byte_array param = sf_serialize(params...);
+            byte_array param = sf_serialize_binary(params...);
             void * ret = nullptr;
             for(auto &p : __func__vec__)
             {

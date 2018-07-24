@@ -6,7 +6,7 @@
 
 #include "sf_tcpserver.h"
 #include "sf_nocopy.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 #include "sf_meta.h"
 #include <string>
 #include <functional>
@@ -26,14 +26,14 @@ namespace skyfire {
 
         template<typename _Type>
         void __send_back(SOCKET sock, int id_code, const std::string &id_str, _Type data) {
-            __tcp_server__->send(sock, id_code, sf_serialize(id_str) + sf_serialize(data));
+            __tcp_server__->send(sock, id_code, sf_serialize_binary(id_str) + sf_serialize_binary(data));
         }
 
 
         void __on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data) {
             std::string id;
             byte_array param;
-            size_t pos = sf_deserialize(data, id, 0);
+            size_t pos = sf_deserialize_binary(data, id, 0);
             for (auto &p : __func__vec__) {
                 p(sock, header.type, id, byte_array(data.begin() + pos, data.end()));
             }
@@ -62,7 +62,7 @@ namespace skyfire {
                 auto f = [=](SOCKET s, int id_code, const std::string &id_str, const byte_array &data) {
                     if (id == id_str) {
                         _Param param;
-                        sf_deserialize(data, param, 0);
+                        sf_deserialize_binary(data, param, 0);
                         _Ret ret = sf_invoke(func, param);
                         __send_back(s, id_code, id_str, ret);
                     }
@@ -85,7 +85,7 @@ namespace skyfire {
                 auto f = [=](SOCKET s, int id_code, const std::string &id_str, const byte_array &data) {
                     if (id == id_str) {
                         _Param param;
-                        sf_deserialize(data, param, 0);
+                        sf_deserialize_binary(data, param, 0);
                         if constexpr (std::is_same<_Ret, void>::value) {
                             sf_invoke(func, param);
                             __send_back(s, id_code, id_str, '\0');

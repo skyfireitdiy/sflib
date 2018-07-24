@@ -6,7 +6,7 @@
 
 #include "sf_tcpclient.h"
 #include "sf_nocopy.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 #include "sf_timer.h"
 #include "sf_tri_type.h"
 #include "sf_define.h"
@@ -143,7 +143,7 @@ namespace skyfire {
 
             __rpc_data__[call_id] = std::make_shared<rpc_struct>();
             __rpc_data__[call_id]->is_async = false;
-            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
+            __tcp_client__->send(call_id, sf_serialize_binary(std::string(func_id)) + sf_serialize_binary(param));
             if (!__rpc_data__[call_id]->back_finished) {
                 std::unique_lock<std::mutex> lck(__rpc_data__[call_id]->back_mu);
                 if (__rpc_data__[call_id]->back_cond.wait_for(lck, std::chrono::milliseconds(rpc_timeout__)) ==
@@ -165,8 +165,8 @@ namespace skyfire {
             } else {
                 sf_tri_type<__Ret> ret;
                 __Ret tmp_ret;
-                size_t pos = sf_deserialize(__rpc_data__[call_id]->data, id_str, 0);
-                sf_deserialize(__rpc_data__[call_id]->data, tmp_ret, pos);
+                size_t pos = sf_deserialize_binary(__rpc_data__[call_id]->data, id_str, 0);
+                sf_deserialize_binary(__rpc_data__[call_id]->data, tmp_ret, pos);
                 ret = tmp_ret;
                 __rpc_data__.erase(call_id);
                 return ret;
@@ -190,7 +190,7 @@ namespace skyfire {
             __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
                 rpc_callback();
             };
-            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)));
+            __tcp_client__->send(call_id, sf_serialize_binary(std::string(func_id)));
         }
 
         /**
@@ -215,7 +215,7 @@ namespace skyfire {
             __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
                 rpc_callback();
             };
-            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
+            __tcp_client__->send(call_id, sf_serialize_binary(std::string(func_id)) + sf_serialize_binary(param));
             auto ptimer = std::make_shared<sf_timer>();
             sf_bind_signal(ptimer, timeout, [=]() {
                 __rpc_data__.erase(call_id);
@@ -249,11 +249,11 @@ namespace skyfire {
             __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
                 __Ret ret;
                 std::string id_str;
-                size_t pos = sf_deserialize(data, id_str, 0);
-                sf_deserialize(data, ret, pos);
+                size_t pos = sf_deserialize_binary(data, id_str, 0);
+                sf_deserialize_binary(data, ret, pos);
                 rpc_callback(ret);
             };
-            __tcp_client__->send(call_id, sf_serialize(std::string(func_id)) + sf_serialize(param));
+            __tcp_client__->send(call_id, sf_serialize_binary(std::string(func_id)) + sf_serialize_binary(param));
             auto ptimer = std::make_shared<sf_timer>();
             sf_bind_signal(ptimer, timeout, [=]() {
                 __rpc_data__.erase(call_id);

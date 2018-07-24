@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 
 namespace skyfire {
 
@@ -11,6 +11,4 @@ namespace skyfire {
         size_t thread_count;
         int request_timeout;
     };
-
-    SF_MAKE_SERIALIZABLE(sf_http_server_config, host, port, thread_count, request_timeout);
 }

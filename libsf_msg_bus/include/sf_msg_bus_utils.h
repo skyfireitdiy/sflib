@@ -3,7 +3,7 @@
 #include <string>
 
 #include "sf_type.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 
 namespace skyfire
 {
@@ -22,16 +22,16 @@ namespace skyfire
     };
 
     template<>
-    byte_array sf_serialize(const msg_bus_t &value)
+    byte_array sf_serialize_binary(const msg_bus_t &value)
     {
-        return sf_serialize(value.type) + sf_serialize(value.data);
+        return sf_serialize_binary(value.type) + sf_serialize_binary(value.data);
     }
 
-    size_t sf_deserialize(const byte_array &data, msg_bus_t &obj,
+    size_t sf_deserialize_binary(const byte_array &data, msg_bus_t &obj,
                           size_t begin_pos)
     {
-        auto ret = sf_deserialize(data, obj.type, begin_pos);
-        ret = sf_deserialize(data, obj.data, ret);
+        auto ret = sf_deserialize_binary(data, obj.type, begin_pos);
+        ret = sf_deserialize_binary(data, obj.data, ret);
         return ret;
     }
 

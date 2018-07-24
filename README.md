@@ -43,7 +43,7 @@ HTTP服务器
 ### libsf_rpc
 简单易用的远程过程调用（RPC）框架
 
-### libsf_serialize
+### libsf_serialize_binary
 提供基础的序列化/反序列化（二进制格式）功能
 
 ### libsf_single_instance

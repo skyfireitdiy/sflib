@@ -39,20 +39,10 @@ namespace skyfire {
 
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
+            // 过滤websocket消息
             if(websocket_context__.count(sock) != 0)
             {
-                // TODO 解析websocket帧，然后发至相应的回调函数
-                websocket_context__[sock].buffer += data;
-                int resolve_pos = 0;
-                while(websocket_context__[sock].buffer.size()-resolve_pos >= sizeof(websocket_data_header_t))
-                {
-                    auto header = *reinterpret_cast<const websocket_data_header_t*>(websocket_context__[sock].buffer.data() + resolve_pos);
-                    auto len = sf_get_size(header);
-                    if(websocket_context__[sock].buffer.size()-resolve_pos- sizeof(websocket_data_header_t) < 0) {
-                        break;
-                    }
-                    // TODO 获取类型等消息
-                }
+                websocket_data_coming__(sock, data);
                 return;
             }
             {
@@ -132,6 +122,52 @@ namespace skyfire {
                     }
                 }
             }
+        }
+
+        void websocket_data_coming__(int sock, const byte_array &data) {// TODO 解析websocket帧，然后发至相应的回调函数
+            websocket_context__[sock].buffer += data;
+            int resolve_pos = 0;
+            while (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_header_t)) {
+                websocket_data_frame_t frame;
+                frame.header = *reinterpret_cast<const websocket_data_header_t *>(
+                        websocket_context__[sock].buffer.data() + resolve_pos);
+                auto len = sf_get_size(frame.header);
+                if (websocket_context__[sock].buffer.size() - resolve_pos - sizeof(websocket_data_header_t) < 0) {
+                    break;
+                }
+                // TODO 获取类型等消息
+                frame.body = byte_array(
+                        websocket_context__[sock].buffer.data() + resolve_pos + sizeof(websocket_data_header_t),
+                        websocket_context__[sock].buffer.data() + resolve_pos + sizeof(websocket_data_header_t) + len);
+                if (sf_with_mask(frame.header)) {
+                    sf_decode_websocket_pkg(frame.body, frame.header.mask_key);
+                }
+                resolve_pos += sizeof(websocket_data_header_t) + len;
+
+                auto op_code = sf_get_op_code(frame.header);
+                if (op_code == WEBSOCKET_OP_MIDDLE_PKG) {
+
+                } else if (op_code == WEBSOCKET_OP_BINARY_PKG) {
+
+                } else if (op_code == WEBSOCKET_OP_DISCONNECT_PKG) {
+
+                } else if (op_code == WEBSOCKET_OP_PING_PKG) {
+
+                } else if (op_code == WEBSOCKET_OP_PONG_PKG) {
+
+                } else if (op_code == WEBSOCKET_OP_TEXT_PKG) {
+
+                } else if (op_code == WEBSOCKET_OP_DISCONNECT_PKG) {
+
+                } else {
+
+                }
+
+                if (sf_is_fin(frame.header)) {
+
+                }
+            }
+            websocket_context__[sock].buffer.erase(websocket_context__[sock].buffer.begin(),websocket_context__[sock].buffer.begin() + resolve_pos);
         }
 
         void build_new_request__(SOCKET sock) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -16,7 +16,7 @@ namespace skyfire
         std::string ip;
         unsigned short port;
     };
-    SF_MAKE_SERIALIZABLE(addr_info_t,ip,port)
+    SF_MAKE_SERIALIZABLE_BINARY(addr_info_t,ip,port)
 
     inline bool get_peer_addr(SOCKET sock, addr_info_t &addr){
 #ifdef _WIN32

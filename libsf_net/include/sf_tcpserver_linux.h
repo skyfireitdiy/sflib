@@ -14,7 +14,7 @@
 #include "sf_object.h"
 #include "sf_type.h"
 #include "sf_range.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 
 
 namespace skyfire

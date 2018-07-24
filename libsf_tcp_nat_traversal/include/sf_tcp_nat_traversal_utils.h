@@ -5,7 +5,7 @@
 #include "sf_tcpclient.h"
 #include "sf_tcpserver.h"
 #include "sf_type.h"
-#include "sf_serialize.h"
+#include "sf_serialize_binary.h"
 #include "sf_netutils.h"
 #include "sf_object.h"
 #include "sf_nocopy.h"
@@ -25,7 +25,7 @@ namespace skyfire {
         bool raw;
     };
 
-    SF_MAKE_SERIALIZABLE(sf_tcp_nat_traversal_context_t__, connect_id, src_id, src_addr, dest_id, dest_addr, error_code,
+    SF_MAKE_SERIALIZABLE_BINARY(sf_tcp_nat_traversal_context_t__, connect_id, src_id, src_addr, dest_id, dest_addr, error_code,
                          step, raw)
 
     enum class sf_tcp_nat_traversal_connection_type {

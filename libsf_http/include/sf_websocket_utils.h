@@ -20,7 +20,7 @@ namespace skyfire {
         // 如果len的是127，则后面8个字节形成的64bits无符号整型数的值是payload的真实长度。注意，网络字节序，需要转换。
         unsigned char extend_len[8];
         // 掩码密钥（当mask为1时有效）
-        unsigned int mask_key;
+        unsigned char mask_key[4];
     };
 
     struct websocket_data_frame_t {
@@ -29,24 +29,49 @@ namespace skyfire {
     };
 #pragma pack()
 
+
+    constexpr int WEBSOCKET_OP_MIDDLE_PKG = 0x0;
+
+    constexpr int WEBSOCKET_OP_TEXT_PKG = 0x1;
+
+    constexpr int WEBSOCKET_OP_BINARY_PKG = 0x2;
+
+    constexpr int WEBSOCKET_OP_DISCONNECT_PKG = 0x08;
+
+    constexpr int WEBSOCKET_OP_PING_PKG = 0x09;
+
+    constexpr int WEBSOCKET_OP_PONG_PKG = 0x0A;
+
+
     inline bool sf_is_fin(const websocket_data_header_t& header){
-        return header.fin_rsv_oc & 0b10000000;
+        return static_cast<bool>(header.fin_rsv_oc & 0b10000000);
     }
 
     inline bool sf_with_mask(const websocket_data_header_t& header){
-        return header.mask_len & 0b10000000;
+        return static_cast<bool>(header.mask_len & 0b10000000);
+    }
+
+    inline int sf_get_op_code(const websocket_data_header_t&header){
+        return header.fin_rsv_oc & 0b00001111;
     }
 
     inline unsigned long long sf_get_size(const websocket_data_header_t& header){
         auto base_len = header.mask_len & 0b01111111;
         if(base_len<126)
-            return base_len;
+            return static_cast<unsigned long long int>(base_len);
         if(base_len==126) {
             auto len = *reinterpret_cast<const unsigned short*>(header.extend_len);
             return ntohs(len);
         }else{
             auto len = *reinterpret_cast<const unsigned long long*>(header.extend_len);
             return sf_ntoh64(len);
+        }
+    }
+
+    inline void sf_decode_websocket_pkg(byte_array &data, const unsigned char* mask_key){
+        auto size = data.size();
+        for(size_t i = 0;i<size;++i){
+            data[i] ^= mask_key[i%4];
         }
     }
 
