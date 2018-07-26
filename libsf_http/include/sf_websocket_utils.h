@@ -1,7 +1,17 @@
 #pragma once
 
+#include <memory>
+
 #include "sf_type.h"
 #include "sf_tcputils.h"
+#include "sf_serialize_binary.h"
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else
+
+#include <arpa/inet.h>
+#endif
 
 namespace skyfire {
 
@@ -51,6 +61,22 @@ namespace skyfire {
     };
 
 #pragma pack()
+
+    enum class websocket_data_type{
+        TextData,
+        BinaryData
+    };
+
+    class sf_http_server;
+
+    struct websocket_param_t{
+        SOCKET sock;
+        websocket_data_type type;
+        std::string text_msg;
+        byte_array binary_data;
+        std::shared_ptr<sf_http_server> p_server;
+    };
+
 
 
     constexpr int WEBSOCKET_OP_MIDDLE_PKG = 0x0;

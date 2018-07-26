@@ -4,6 +4,9 @@
 #include <ctime>
 #include <map>
 
+#include "sf_type.h"
+#include "sf_serialize_binary.h"
+
 namespace skyfire
 {
 
@@ -17,6 +20,9 @@ namespace skyfire
         byte_array buffer;
     };
 
+    SF_MAKE_SERIALIZABLE_BINARY(request_context_t,new_req,buffer)
+
+
     struct websocket_context_t
     {
         std::string url;
@@ -24,6 +30,8 @@ namespace skyfire
         byte_array buffer;
         byte_array data_buffer;
     };
+
+    SF_MAKE_SERIALIZABLE_BINARY(websocket_context_t, url, sock, buffer, data_buffer)
 
     inline unsigned char sf_to_hex(unsigned char x)
     {

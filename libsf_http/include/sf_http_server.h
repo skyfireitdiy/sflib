@@ -2,18 +2,20 @@
 
 #include "sf_http_base_server.h"
 #include "sf_http_router.h"
+#include "sf_websocket_router.h"
 #include <set>
 
 namespace skyfire
 {
-    class sf_http_server: public sf_http_base_server
+    class sf_http_server: public sf_http_base_server,  public enable_shared_from_this<sf_http_server>
     {
     private:
-        std::set<std::shared_ptr<sf_http_router>> routers__;
+        std::set<std::shared_ptr<sf_http_router>> http_routers__;
+        std::set<std::shared_ptr<sf_websocket_router>> websocket_routers__;
         void default_dequest_callback__(const sf_http_request &req, sf_http_response &res)
         {
             auto req_line = req.get_request_line();
-            for(auto &p:routers__)
+            for(auto &p:http_routers__)
             {
                 if(p->run_route(req,res,req_line.url,req_line.method))
                     return;
@@ -68,7 +70,9 @@ namespace skyfire
         {
             // TODO websocket 关闭事件响应
         }
-    public:
+
+    private:
+        // WARNING 这个函数不应该直接被调用，而是应该使用make_server函数
         explicit sf_http_server(const sf_http_server_config& config):sf_http_base_server(config)
         {
             // NOTE 普通http回调函数
@@ -96,9 +100,16 @@ namespace skyfire
             });
         }
 
+    public:
+
         void add_router(const std::shared_ptr<sf_http_router>& router)
         {
-            routers__.insert(router);
+            http_routers__.insert(router);
+        }
+
+        static std::shared_ptr<sf_http_server> make_erver(const sf_http_server_config& config)
+        {
+            return std::shared_ptr<sf_http_server>(new sf_http_server(config));
         }
     };
 }

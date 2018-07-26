@@ -275,7 +275,7 @@ namespace skyfire {
             }
         }
 
-    public:
+    protected:
         explicit sf_http_base_server(sf_http_server_config config):
                 config__ (std::move(config))
         {
@@ -289,27 +289,6 @@ namespace skyfire {
                 on_socket_closed(sock);
             }, false);
 
-        }
-
-        bool start()
-        {
-            if(!server__->listen(config__.host,config__.port))
-            {
-                return false;
-            }
-            std::vector<std::thread> thread_vec;
-            for(auto i=0;i<config__.thread_count;++i)
-            {
-                thread_vec.emplace_back(thread([=]{
-                    sf_eventloop loop;
-                    loop.exec();
-                }));
-            }
-            for(auto &p:thread_vec)
-            {
-                p.join();
-            }
-            return true;
         }
 
         void set_request_callback(std::function<void(const sf_http_request&,sf_http_response&)> request_callback)
@@ -339,6 +318,29 @@ namespace skyfire {
         void set_websocket_close_callback(std::function<void(SOCKET,const std::string &url)> websocket_close_callback)
         {
             websocket_close_callback__ = std::move(websocket_close_callback);
+        }
+
+    public:
+
+        bool start()
+        {
+            if(!server__->listen(config__.host,config__.port))
+            {
+                return false;
+            }
+            std::vector<std::thread> thread_vec;
+            for(auto i=0;i<config__.thread_count;++i)
+            {
+                thread_vec.emplace_back(thread([=]{
+                    sf_eventloop loop;
+                    loop.exec();
+                }));
+            }
+            for(auto &p:thread_vec)
+            {
+                p.join();
+            }
+            return true;
         }
 
 
