@@ -53,7 +53,7 @@ namespace skyfire
             response_head += http_version__ + " " + std::to_string(status__) + " " + reason__ + "\r\n";
             for(auto &p:header__.get_key_list())
             {
-                response_head += p + ": " + header__.get_header_value(p) + "\r\n";
+                response_head += p + ":" + header__.get_header_value(p) + "\r\n";
             }
             response_head += "\r\n";
             byte_array pkg(response_head.begin(),response_head.end());

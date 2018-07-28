@@ -51,7 +51,7 @@ namespace skyfire
                     }
 
                     fi.seekg(0, ios::end);
-                    unsigned long long file_size = fi.tellg();
+                    auto file_size = static_cast<unsigned long long int>(fi.tellg());
                     cout<<"file size:"<<file_size<<endl;
                     if (file_size > max_file_size) {
                         res.set_status(403);
@@ -67,7 +67,7 @@ namespace skyfire
                     fi.read(data.data(), file_size);
                     fi.close();
 
-                    auto accept = req.get_header().get_header_value("Accept","");
+                    auto accept = req.get_header().get_header_value("Accept-Encoding","");
                     auto accept_list = sf_split_string(accept,",");
                     for(auto &p:accept_list)
                         p = sf_string_trim(p);
@@ -75,7 +75,7 @@ namespace skyfire
                         return sf_equal_nocase_string(str,"gzip");
                     }) != accept_list.end()) {
                         if(sf_gzip_compress(data,data)) {
-                            header.set_header("content-encoding", "gzip");
+                            header.set_header("Content-Encoding", "gzip");
                         }
                     }
 

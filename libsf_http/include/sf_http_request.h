@@ -74,6 +74,22 @@ namespace skyfire{
                 return false;
             auto content_len = header__.get_header_value("Content-Length","0");
             return std::atoll(content_len.c_str()) == body__.size();
+
+//            std::string request_line;
+//            std::vector<std::string> header_lines;
+//            if (!split_request__(raw__, request_line, header_lines, body__))
+//                return false;
+//            if (!parse_request_line(request_line, request_line__))
+//                return false;
+//            if (!parse_header(header_lines, header__))
+//                return false;
+//            auto content_len = header__.get_header_value("Content-Length", "0");
+//            char *_;
+//            if (std::strtoll(content_len.c_str(), &_, 10) != body__.size())
+//                return false;
+//            if (header__.get_header_value("Content-Encoding", "") == "gzip")
+//                sf_gzip_uncompress(body__, body__);
+//            return true;
         }
 
     public:
