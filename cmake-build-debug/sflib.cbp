@@ -1,0 +1,2857 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="sflib"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_httpserver">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_httpserver" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_httpserver"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_httpserver/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_httpserver" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_httpserver/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_aop">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_aop" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_aop"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_aop/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_aop" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_aop/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_meta">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_meta" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_meta"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_meta/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_meta" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_meta/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sf_meta_object_test">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/sf_meta_object_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 sf_meta_object_test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="sf_meta_object_test/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/sf_meta_object_test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 sf_meta_object_test/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_thread_pool">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_thread_pool" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_thread_pool"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_thread_pool/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_thread_pool" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_thread_pool/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_timer">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_timer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_timer"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_timer/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_timer" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_timer/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_event_waiter">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_event_waiter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_event_waiter"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_event_waiter/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_event_waiter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_event_waiter/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_encrypt">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_encrypt" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_encrypt"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_encrypt/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_encrypt" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_encrypt/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_rpc_client">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_rpc_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_rpc_client"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_rpc_client/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_rpc_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_rpc_client/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_rpc_server">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_rpc_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_rpc_server"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_rpc_server/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_rpc_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_rpc_server/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_object">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_object" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_object"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_object/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_object" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_object/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_type_list">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_type_list" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_type_list"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_type_list/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_type_list" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_type_list/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_msg_bus_server">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_msg_bus_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_msg_bus_server"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_msg_bus_server/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_msg_bus_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_msg_bus_server/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_msg_bus_client">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_msg_bus_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_msg_bus_client"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_msg_bus_client/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_msg_bus_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_msg_bus_client/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_chain_call">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_chain_call" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_chain_call"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_chain_call/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_chain_call" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_chain_call/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_tcp_nat_traversal_client">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_tcp_nat_traversal_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_tcp_nat_traversal_client"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_tcp_nat_traversal_client/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_tcp_nat_traversal_client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_tcp_nat_traversal_client/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_sf_logger">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_sf_logger" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_sf_logger"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_sf_logger/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_sf_logger" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_sf_logger/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_tcp_nat_traversal_server">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_tcp_nat_traversal_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_tcp_nat_traversal_server"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_tcp_nat_traversal_server/fast">
+				<Option output="/home/skyfire/CLionProjects/sflib/cmake-build-debug/test_tcp_nat_traversal_server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/skyfire/CLionProjects/sflib/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_any/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_logger/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_finally/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_range/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_rpc/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_serialize/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_net/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_type_list/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_chain/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_tl/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_define/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_random/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_http/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/libsf_utils/include"/>
+					<Add directory="/home/skyfire/CLionProjects/sflib/test"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/../../../../include/c++/8.1.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/8.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 test_tcp_nat_traversal_server/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/skyfire/CLionProjects/sflib/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_chain/include/sf_chain.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_define/include/sf_define.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_empty_class/include/sf_empty_class.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_finally/include/sf_finally.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_content_type.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_base_server.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_header.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_request.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_request_line.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_response.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_router.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_server.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_server_config.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_static_router.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_http_utils.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_websocket_router.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_http/include/sf_websocket_utils.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_logger/include/sf_logger.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_meta/include/sf_meta.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_meta_object/include/sf_meta_object.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include/sf_msg_bus_client.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include/sf_msg_bus_server.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_msg_bus/include/sf_msg_bus_utils.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_netutils.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_tcpclient.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_tcpclient_linux.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_tcpclient_win.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_tcpserver.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_tcpserver_linux.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_tcpserver_win.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_net/include/sf_tcputils.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_nocopy/include/sf_nocopy.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_object/include/sf_event_waiter.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_object/include/sf_eventloop.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_object/include/sf_msg_queue.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_object/include/sf_object.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_object/include/sf_timer.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_random/include/sf_random.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_range/include/sf_range.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_rpc/include/sf_rpcclient.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_rpc/include/sf_rpcserver.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_serialize/include/sf_serialize_binary.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_single_instance/include/sf_single_instance.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_client.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_server.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_utils.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_thread_pool/include/sf_thread_pool.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_tl/include/sf_bimap.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_tri_type/include/sf_tri_type.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_type/include/sf_type.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_type_list/include/sf_type_list.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_utils/include/sf_utils.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/libsf_watch_time/include/sf_watch_time.h">
+			<Option target="test_aop"/>
+			<Option target="test_meta"/>
+			<Option target="sf_meta_object_test"/>
+			<Option target="test_thread_pool"/>
+			<Option target="test_timer"/>
+			<Option target="test_event_waiter"/>
+			<Option target="test_rpc_client"/>
+			<Option target="test_rpc_server"/>
+			<Option target="test_object"/>
+			<Option target="test_type_list"/>
+			<Option target="test_msg_bus_server"/>
+			<Option target="test_msg_bus_client"/>
+			<Option target="test_chain_call"/>
+			<Option target="test_tcp_nat_traversal_client"/>
+			<Option target="test_sf_logger"/>
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_aop/test_aop.cpp">
+			<Option target="test_aop"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_chain_call/test_chain_call.cpp">
+			<Option target="test_chain_call"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_encrypt/test_encrypt.cpp">
+			<Option target="test_encrypt"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_event_waiter/test_event_waiter.cpp">
+			<Option target="test_event_waiter"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_http_server/test_http_server.cpp">
+			<Option target="test_httpserver"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_meta/test_meta.cpp">
+			<Option target="test_meta"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_meta_object/test_meta_object.cpp">
+			<Option target="sf_meta_object_test"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_msg_bus/test_msg_bus_client.cpp">
+			<Option target="test_msg_bus_client"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_msg_bus/test_msg_bus_server.cpp">
+			<Option target="test_msg_bus_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_object/test_object.cpp">
+			<Option target="test_object"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_rpc/test_rpc_client.cpp">
+			<Option target="test_rpc_client"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_rpc/test_rpc_server.cpp">
+			<Option target="test_rpc_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_sf_logger/test_sf_logger.cpp">
+			<Option target="test_sf_logger"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp">
+			<Option target="test_tcp_nat_traversal_client"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp">
+			<Option target="test_tcp_nat_traversal_server"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_thread_pool/test_thread_pool.cpp">
+			<Option target="test_thread_pool"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_timer/test_timer.cpp">
+			<Option target="test_timer"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/test/test_type_list/test_type_list.cpp">
+			<Option target="test_type_list"/>
+		</Unit>
+		<Unit filename="/home/skyfire/CLionProjects/sflib/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../libsf_thread_pool/include/sf_thread_pool.h
+functional
+-
+atomic
+-
+deque
+-
+mutex
+-
+vector
+-
+memory
+-
+thread
+-
+condition_variable
+-
+
+/home/skyfire/CLionProjects/sflib/test/test_thread_pool/test_thread_pool.cpp
+sf_thread_pool.h
+/home/skyfire/CLionProjects/sflib/test/test_thread_pool/sf_thread_pool.h
+iostream
+-
+chrono
+-
+functional
+-
+

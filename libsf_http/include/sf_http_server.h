@@ -111,5 +111,7 @@ namespace skyfire
         {
             return std::shared_ptr<sf_http_server>(new sf_http_server(config));
         }
+
+        friend sf_websocket_router;
     };
 }

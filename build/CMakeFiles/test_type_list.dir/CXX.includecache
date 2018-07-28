@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../libsf_type_list/include/sf_type_list.h
+tuple
+-
+type_traits
+-
+
+/home/skyfire/CLionProjects/sflib/test/test_type_list/test_type_list.cpp
+sf_type_list.h
+/home/skyfire/CLionProjects/sflib/test/test_type_list/sf_type_list.h
+iostream
+-
+typeinfo
+-
+string
+-
+

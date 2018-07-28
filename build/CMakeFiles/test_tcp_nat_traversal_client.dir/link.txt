@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/test_tcp_nat_traversal_client.dir/test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp.o  -o test_tcp_nat_traversal_client -lpthread 
