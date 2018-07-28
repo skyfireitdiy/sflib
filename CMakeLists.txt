@@ -133,6 +133,15 @@ if( OpenSSL_FOUND )
     target_link_libraries(test_encrypt crypto)
 endif()
 
+find_package(ZLIB REQUIRED)
+
+if(ZLIB_FOUND)
+    include_directories(${ZLIB_INCLUDE_DIRS})
+    link_directories(${ZLIB_LIBRARIES})
+    message(STATUS "Using zlib ${ZLIB_VERSION_STRING}")
+    target_link_libraries(test_httpserver z)
+endif()
+
 
     IF (WIN32)
     target_link_libraries(test_rpc_server ws2_32)

@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 
 #ifndef _WIN32
 #define SOCKET int
@@ -53,5 +54,14 @@ namespace skyfire
         byte_array ret(str.length());
         std::memcpy(ret.data(),str.data(),str.length());
         return ret;
+    }
+
+    inline bool dump_byte_array(const byte_array& data, const std::string &filename,bool app = false)
+    {
+        std::ofstream fo(filename, app?(std::ios::app|std::ios::binary):(std::ios::trunc|std::ios::out));
+        if(!fo)
+            return false;
+        fo.write(data.data(), data.size());
+        return true;
     }
 }

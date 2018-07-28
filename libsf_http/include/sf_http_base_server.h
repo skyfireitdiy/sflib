@@ -167,12 +167,12 @@ namespace skyfire {
             sf_debug("buffer size", websocket_context__[sock].buffer.size());
             int resolve_pos = 0;
 
-            while (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_data_1_header_t)) {
-                const websocket_data_1_header_t *header1 = nullptr;
-                const websocket_data_2_header_t *header2 = nullptr;
-                const websocket_data_3_header_t *header3 = nullptr;
+            while (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_client_data_1_header_t)) {
+                const websocket_client_data_1_header_t *header1 = nullptr;
+                const websocket_client_data_2_header_t *header2 = nullptr;
+                const websocket_client_data_3_header_t *header3 = nullptr;
 
-                header1 = reinterpret_cast<const websocket_data_1_header_t *>(websocket_context__[sock].buffer.data() +
+                header1 = reinterpret_cast<const websocket_client_data_1_header_t *>(websocket_context__[sock].buffer.data() +
                                                                               resolve_pos);
 
                 bool fin = false;
@@ -183,19 +183,19 @@ namespace skyfire {
                 auto len = sf_get_size(*header1);
                 sf_debug("base len", len);
                 if (len == 126) {
-                    if (websocket_context__[sock].buffer.size() - resolve_pos < sizeof(websocket_data_2_header_t)) {
+                    if (websocket_context__[sock].buffer.size() - resolve_pos < sizeof(websocket_client_data_2_header_t)) {
                         break;
                     }
-                    header2 = reinterpret_cast<const websocket_data_2_header_t *>(
+                    header2 = reinterpret_cast<const websocket_client_data_2_header_t *>(
                             websocket_context__[sock].buffer.data() + resolve_pos);
                     if (!analysis_websocket_pkg(sock, header2, resolve_pos, len, body, fin, op_code)) {
                         break;
                     }
                 } else if (len == 127) {
-                    if (websocket_context__[sock].buffer.size() - resolve_pos < sizeof(websocket_data_3_header_t)) {
+                    if (websocket_context__[sock].buffer.size() - resolve_pos < sizeof(websocket_client_data_3_header_t)) {
                         break;
                     }
-                    header3 = reinterpret_cast<const websocket_data_3_header_t *>(
+                    header3 = reinterpret_cast<const websocket_client_data_3_header_t *>(
                             websocket_context__[sock].buffer.data() + resolve_pos);
                     if (!analysis_websocket_pkg(sock, header3, resolve_pos, len, body, fin, op_code)) {
                         break;
@@ -217,13 +217,13 @@ namespace skyfire {
                 if(fin) {
                     if (WEBSOCKET_OP_TEXT_PKG == op_code) {
                         sf_debug("text data", to_string(websocket_context__[sock].data_buffer));
-                        if(!websocket_text_data_callback__){
+                        if(websocket_text_data_callback__){
                             websocket_text_data_callback__(sock, websocket_context__[sock].url,
                                                            to_string(websocket_context__[sock].data_buffer));
                         }
                     } else if (WEBSOCKET_OP_BINARY_PKG == op_code) {
                         sf_debug("binary data", websocket_context__[sock].data_buffer.size());
-                        if(!websocket_binary_data_callback__){
+                        if(websocket_binary_data_callback__){
                             websocket_binary_data_callback__(sock,websocket_context__[sock].url,
                                                              websocket_context__[sock].data_buffer);
                         }
@@ -274,6 +274,8 @@ namespace skyfire {
                 websocket_context__.erase(sock);
             }
         }
+
+
 
     protected:
         explicit sf_http_base_server(sf_http_server_config config):
@@ -343,6 +345,24 @@ namespace skyfire {
             return true;
         }
 
+        template <typename T>
+        bool send_websocket_data(SOCKET sock, const T& data){
+            if constexpr (std::is_same_v<T,std::string>) {
+                sf_debug("send websocket message", data);
+            }
+            return server__->send(sock, make_server_websocket_data_pkg(data));
+        }
+
+        void close_websocket(SOCKET sock){
+            server__->close(sock);
+            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+            if(websocket_context__.count(sock) != 0) {
+                if(websocket_close_callback__){
+                    websocket_close_callback__(sock, websocket_context__[sock].url);
+                }
+                websocket_context__.erase(sock);
+            }
+        }
 
     };
 

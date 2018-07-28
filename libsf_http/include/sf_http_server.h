@@ -12,7 +12,7 @@ namespace skyfire
     private:
         std::set<std::shared_ptr<sf_http_router>> http_routers__;
         std::set<std::shared_ptr<sf_websocket_router>> websocket_routers__;
-        void default_dequest_callback__(const sf_http_request &req, sf_http_response &res)
+        void default_request_callback__(const sf_http_request &req, sf_http_response &res)
         {
             auto req_line = req.get_request_line();
             for(auto &p:http_routers__)
@@ -54,11 +54,33 @@ namespace skyfire
         void default_websocket_binary_data_callback__(SOCKET sock,const std::string& url, const byte_array& data)
         {
             // TODO 默认Websocket二进制数据回调函数
+            websocket_param_t param;
+            param.url = url;
+            param.sock = sock;
+            param.binary_data = data;
+            param.type = websocket_data_type ::BinaryData;
+            param.p_server = shared_from_this();
+            for(auto &p:websocket_routers__)
+            {
+                if(p->run_route(param))
+                    return;
+            }
         }
 
         void default_websocket_text_data_callback__(SOCKET sock,const std::string& url, const std::string& data)
         {
             // TODO 默认Websocket文本数据回调函数
+            websocket_param_t param;
+            param.url = url;
+            param.sock = sock;
+            param.text_msg = data;
+            param.type = websocket_data_type ::TextData;
+            param.p_server = shared_from_this();
+            for(auto &p:websocket_routers__)
+            {
+                if(p->run_route(param))
+                    return;
+            }
         }
 
         void default_websocket_open_callback__(SOCKET sock,const std::string& url)
@@ -77,7 +99,7 @@ namespace skyfire
         {
             // NOTE 普通http回调函数
             set_request_callback([=](const sf_http_request& req,sf_http_response& res){
-                default_dequest_callback__(req, res);
+                default_request_callback__(req, res);
             });
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,6 +112,7 @@ namespace skyfire
                 default_websocket_binary_data_callback__(sock, url, data);
             });
             set_websocket_text_data_callback([=](SOCKET sock, const std::string& url,const std::string& data){
+                sf_debug("收到消息",data);
                 default_websocket_text_data_callback__(sock, url, data);
             });
             set_websocket_open_callback([=](SOCKET sock,const std::string& url){
@@ -107,7 +130,12 @@ namespace skyfire
             http_routers__.insert(router);
         }
 
-        static std::shared_ptr<sf_http_server> make_erver(const sf_http_server_config& config)
+        void add_router(const std::shared_ptr<sf_websocket_router>& router)
+        {
+            websocket_routers__.insert(router);
+        }
+
+        static std::shared_ptr<sf_http_server> make_server(const sf_http_server_config &config)
         {
             return std::shared_ptr<sf_http_server>(new sf_http_server(config));
         }

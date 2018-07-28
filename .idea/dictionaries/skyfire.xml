@@ -9,7 +9,9 @@
       <w>itype</w>
       <w>libsf</w>
       <w>rpcserver</w>
+      <w>strm</w>
       <w>tcpserver</w>
+      <w>uncomp</w>
       <w>unreg</w>
       <w>websocket</w>
     </words>

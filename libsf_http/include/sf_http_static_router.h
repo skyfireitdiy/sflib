@@ -66,9 +66,17 @@ namespace skyfire
                     byte_array data(file_size);
                     fi.read(data.data(), file_size);
                     fi.close();
-                    if (gzip) {
-                        header.set_header("content-encoding", "gzip");
-                        // 进行gzip压缩
+
+                    auto accept = req.get_header().get_header_value("Accept","");
+                    auto accept_list = sf_split_string(accept,",");
+                    for(auto &p:accept_list)
+                        p = sf_string_trim(p);
+                    if (gzip && std::find_if(accept_list.begin(),accept_list.end(),[=](const std::string& str){
+                        return sf_equal_nocase_string(str,"gzip");
+                    }) != accept_list.end()) {
+                        if(sf_gzip_compress(data,data)) {
+                            header.set_header("content-encoding", "gzip");
+                        }
                     }
 
                     std::string suffix = sf_to_lower_string(sf_get_path_ext(abspath));

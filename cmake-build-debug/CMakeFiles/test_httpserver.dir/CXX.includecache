@@ -141,6 +141,8 @@ string
 -
 functional
 -
+sf_websocket_utils.h
+../libsf_http/include/sf_websocket_utils.h
 sf_type.h
 ../libsf_http/include/sf_type.h
 
@@ -383,6 +385,8 @@ vector
 -
 string
 -
+fstream
+-
 iostream
 -
 cstring
@@ -398,6 +402,10 @@ openssl/bio.h
 openssl/buffer.h
 -
 openssl/sha.h
+-
+zlib.h
+-
+zconf.h
 -
 cstring
 -
