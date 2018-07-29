@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/test_rpc_client.dir/test/test_rpc/test_rpc_client.cpp.o  -o test_rpc_client -lpthread 

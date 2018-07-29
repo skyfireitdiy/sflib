@@ -1,9 +1,0 @@
-/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/skyfire/CLionProjects/sflib
-which: no g++-7 in (/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl)
-which: no g++-8 in (/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl)
--- Can't find g++-7 and g++-8, use default g++ !
--- Using OpenSSL 1.1.0h
--- Using zlib 1.2.11
--- Configuring done
--- Generating done
--- Build files have been written to: /home/skyfire/CLionProjects/sflib/cmake-build-debug
