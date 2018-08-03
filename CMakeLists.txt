@@ -5,34 +5,34 @@ project(sflib)
 if(WIN32)
 
 else()
-    # 找到G++ 7/8的位置
-    execute_process(COMMAND which g++-7
-            OUTPUT_VARIABLE GCC7_PATH
-            )
-    execute_process(COMMAND which g++-8
-            OUTPUT_VARIABLE GCC8_PATH
-            )
-
-    # 去除which命令最后的换行
-    string(STRIP "${GCC7_PATH}" GCC7_PATH)
-    string(STRIP "${GCC8_PATH}" GCC8_PATH)
-
-    # 判断有效变量
-    string(COMPARE NOTEQUAL "${GCC7_PATH}" "" GCC7_OK)
-    string(COMPARE NOTEQUAL "${GCC8_PATH}" "" GCC8_OK)
-
-    # 设置编译器
-    if(${GCC7_OK})
-        message(STATUS "Find g++-7 ---> ${GCC7_PATH}")
-        message(STATUS "Set CMAKE_CXX_COMPILER=${GCC7_PATH}")
-        set(CMAKE_CXX_COMPILER ${GCC7_PATH})
-    elseif(${GCC8_OK})
-        message(STATUS "Find g++-8 ---> ${GCC8_PATH}")
-        message(STATUS "Set CMAKE_CXX_COMPILER=${GCC8_PATH}")
-        set(CMAKE_CXX_COMPILER ${GCC8_PATH})
-    else()
-        message(STATUS "Can't find g++-7 and g++-8, use default g++ !")
-    endif()
+#    # 找到G++ 7/8的位置
+#    execute_process(COMMAND which g++-7
+#            OUTPUT_VARIABLE GCC7_PATH
+#            )
+#    execute_process(COMMAND which g++-8
+#            OUTPUT_VARIABLE GCC8_PATH
+#            )
+#
+#    # 去除which命令最后的换行
+#    string(STRIP "${GCC7_PATH}" GCC7_PATH)
+#    string(STRIP "${GCC8_PATH}" GCC8_PATH)
+#
+#    # 判断有效变量
+#    string(COMPARE NOTEQUAL "${GCC7_PATH}" "" GCC7_OK)
+#    string(COMPARE NOTEQUAL "${GCC8_PATH}" "" GCC8_OK)
+#
+#    # 设置编译器
+#    if(${GCC7_OK})
+#        message(STATUS "Find g++-7 ---> ${GCC7_PATH}")
+#        message(STATUS "Set CMAKE_CXX_COMPILER=${GCC7_PATH}")
+#        set(CMAKE_CXX_COMPILER ${GCC7_PATH})
+#    elseif(${GCC8_OK})
+#        message(STATUS "Find g++-8 ---> ${GCC8_PATH}")
+#        message(STATUS "Set CMAKE_CXX_COMPILER=${GCC8_PATH}")
+#        set(CMAKE_CXX_COMPILER ${GCC8_PATH})
+#    else()
+#        message(STATUS "Can't find g++-7 and g++-8, use default g++ !")
+#    endif()
 endif()
 
 
@@ -100,8 +100,6 @@ install(FILES ${headers} DESTINATION include)
 
 
 include_directories(test)
-
-
 
 add_executable(test_rpc_server test/test_rpc/test_rpc_server.cpp ${headers})
 add_executable(test_rpc_client test/test_rpc/test_rpc_client.cpp ${headers})

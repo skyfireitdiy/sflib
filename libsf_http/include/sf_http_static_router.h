@@ -71,13 +71,17 @@ namespace skyfire
                     auto accept_list = sf_split_string(accept,",");
                     for(auto &p:accept_list)
                         p = sf_string_trim(p);
+
+                    // TODO gzip有错误
+
                     if (gzip && std::find_if(accept_list.begin(),accept_list.end(),[=](const std::string& str){
                         return sf_equal_nocase_string(str,"gzip");
                     }) != accept_list.end()) {
                         if(sf_gzip_compress(data,data)) {
-                            header.set_header("Content-Encoding", "gzip");
+                            header.set_header("Content-Encoding", " gzip");
                         }
                     }
+
 
                     std::string suffix = sf_to_lower_string(sf_get_path_ext(abspath));
 

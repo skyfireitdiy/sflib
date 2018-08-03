@@ -53,6 +53,7 @@ namespace skyfire {
                 std::unique_lock<std::mutex> lck(mu_request_context__);
                 sf_debug("Request",to_string(data));
                 if (request_context__.count(sock) == 0) {
+                    sf_debug("检测为websocket连接");
                     request_context__[sock] = request_context_t();
                 }
                 request_context__[sock].buffer += data;
@@ -130,6 +131,8 @@ namespace skyfire {
                         request_context__.erase(sock);
                     }
                 }
+            } else{
+                sf_debug("非法请求或请求不完整");
             }
         }
 

@@ -73,7 +73,11 @@ namespace skyfire{
             if(!parse_header(header_lines, header__))
                 return false;
             auto content_len = header__.get_header_value("Content-Length","0");
-            return std::atoll(content_len.c_str()) == body__.size();
+            if(std::atoll(content_len.c_str()) != body__.size())
+                return false;
+            if (header__.get_header_value("Content-Encoding", "") == "gzip")
+                sf_gzip_uncompress(body__, body__);
+            return true;
 
 //            std::string request_line;
 //            std::vector<std::string> header_lines;
