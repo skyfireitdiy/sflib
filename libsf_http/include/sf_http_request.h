@@ -7,6 +7,7 @@
 #include "sf_http_request_line.h"
 #include "sf_http_header.h"
 #include "sf_utils.h"
+#include "sf_logger.h"
 
 namespace skyfire{
     class sf_http_request
@@ -66,34 +67,35 @@ namespace skyfire{
         {
             std::string request_line;
             std::vector<std::string> header_lines;
-            if(!split_request__(raw__,request_line, header_lines, body__))
+            if(!split_request__(raw__,request_line, header_lines, body__)) {
+                sf_debug("split request error");
                 return false;
-            if(!parse_request_line(request_line,request_line__))
+            }
+            if(!parse_request_line(request_line,request_line__)) {
+                sf_debug("parse request line error");
                 return false;
-            if(!parse_header(header_lines, header__))
+            }
+            if(!parse_header(header_lines, header__)) {
+                sf_debug("parse header error");
                 return false;
+            }
             auto content_len = header__.get_header_value("Content-Length","0");
-            if(std::atoll(content_len.c_str()) != body__.size())
+
+
+            if(std::atoll(content_len.c_str()) != body__.size()){
                 return false;
-            if (header__.get_header_value("Content-Encoding", "") == "gzip")
-                sf_gzip_uncompress(body__, body__);
+            }
+
+            // TODO 为何不能使用strtoll
+//            char *pos;
+//            if(std::strtoll(content_len.c_str(), &pos, 10) != body__.size()){
+//                sf_debug("body size error");
+//                return false;
+//            }
+
             return true;
 
-//            std::string request_line;
-//            std::vector<std::string> header_lines;
-//            if (!split_request__(raw__, request_line, header_lines, body__))
-//                return false;
-//            if (!parse_request_line(request_line, request_line__))
-//                return false;
-//            if (!parse_header(header_lines, header__))
-//                return false;
-//            auto content_len = header__.get_header_value("Content-Length", "0");
-//            char *_;
-//            if (std::strtoll(content_len.c_str(), &_, 10) != body__.size())
-//                return false;
-//            if (header__.get_header_value("Content-Encoding", "") == "gzip")
-//                sf_gzip_uncompress(body__, body__);
-//            return true;
+            // TODO 暂不支持压缩请求
         }
 
     public:

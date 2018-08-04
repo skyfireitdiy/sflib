@@ -44,6 +44,7 @@ namespace skyfire {
             {
                 std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
                 if (websocket_context__.count(sock) != 0) {
+                    sf_debug("检测为websocket连接");
                     websocket_data_coming__(sock, data);
                     return;
                 }
@@ -53,7 +54,7 @@ namespace skyfire {
                 std::unique_lock<std::mutex> lck(mu_request_context__);
                 sf_debug("Request",to_string(data));
                 if (request_context__.count(sock) == 0) {
-                    sf_debug("检测为websocket连接");
+                    sf_debug("检测为http连接");
                     request_context__[sock] = request_context_t();
                 }
                 request_context__[sock].buffer += data;
@@ -122,7 +123,7 @@ namespace skyfire {
                         keep_alive = false;
                     }
                     res.get_header().set_header("Connection",keep_alive?"Keep-Alive":"Close");
-                    cout<<"回应:\n"<<to_string(res.to_package())<<endl;
+                    sf_debug("回应",to_string(res.to_package()));
                     server__->send(sock,res.to_package());
                     if(!keep_alive)
                     {
@@ -355,6 +356,17 @@ namespace skyfire {
             }
             return server__->send(sock, make_server_websocket_data_pkg(data));
         }
+
+        template <typename T>
+        void send_websocket_data(const T& data){
+            if constexpr (std::is_same_v<T,std::string>) {
+                sf_debug("send websocket message", data);
+            }
+            for(auto &p:websocket_context__) {
+                server__->send(p.first, make_server_websocket_data_pkg(data));
+            }
+        }
+
 
         void close_websocket(SOCKET sock){
             server__->close(sock);

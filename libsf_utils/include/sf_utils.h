@@ -7,16 +7,12 @@
 #include <openssl/sha.h>
 #include <zlib.h>
 #include <zconf.h>
-
+#include <fstream>
 #include <cstring>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #include "sf_type.h"
-
-
-#include <iostream>
-
-using namespace std;
-
 
 namespace skyfire
 {
@@ -125,119 +121,23 @@ namespace skyfire
 
 
 
-    inline bool sf_gzip_uncompress( const byte_array & input_buffer, byte_array & output_buffer ) {
-        if ( input_buffer.size() == 0 ) {
-            output_buffer = input_buffer ;
-            return true ;
-        }
-
-        output_buffer.clear() ;
-
-        auto full_length = input_buffer.size();
-        auto half_length = input_buffer.size() / 2;
-
-        auto uncomp_length = full_length ;
-        byte_array uncomp(uncomp_length, '\0');
-
-        z_stream strm;
-        strm.next_in = (Bytef *) input_buffer.data();
-        strm.avail_in = static_cast<uInt>(input_buffer.size());
-        strm.total_out = 0;
-        strm.zalloc = Z_NULL;
-        strm.zfree = Z_NULL;
-
-        bool done = false ;
-
-        if (inflateInit2(&strm, MAX_WBITS) != Z_OK) {
-            return false;
-        }
-
-        while (!done) {
-            // If our output buffer is too small
-            if (strm.total_out >= uncomp_length ) {
-                // Increase size of output buffer
-                byte_array uncomp2(uncomp_length + half_length , '\0');
-                memcpy( uncomp2.data(), uncomp.data(), uncomp_length );
-                uncomp_length += half_length ;
-                uncomp = uncomp2 ;
-            }
-
-            strm.next_out = (Bytef *) (uncomp.data() + strm.total_out);
-            strm.avail_out = static_cast<uInt>(uncomp_length - strm.total_out);
-
-            // Inflate another chunk.
-            int err = inflate (&strm, Z_SYNC_FLUSH);
-            if (err == Z_STREAM_END) {
-                done = true;
-            } else if (err != Z_OK)  {
-                break;
-            }
-        }
-
-        if (inflateEnd (&strm) != Z_OK) {
-            return false;
-        }
-
-        for ( size_t i=0; i<strm.total_out; ++i ) {
-            output_buffer.push_back(uncomp[i]);
-        }
-        return true ;
+    inline byte_array sf_deflate_compress(const byte_array &input_buffer)
+    {
+        auto max_len = compressBound(input_buffer.size());
+        byte_array ret(max_len);
+        uLong size = max_len;
+        compress (reinterpret_cast<Bytef*>(ret.data()),&size,
+                  reinterpret_cast<const Bytef*>(input_buffer.data()),
+                  input_buffer.size());
+        ret.resize(size);
+        return  ret;
     }
 
 
-    inline bool sf_gzip_compress(const byte_array & input_buffer, byte_array &output_buffer)
-    {
-        size_t in_data_size = input_buffer.size();
-        byte_array buffer;
-
-        const size_t buf_size = 128 * 1024;
-        uint8_t temp_buffer[buf_size];
-
-        z_stream strm;
-        strm.zalloc = nullptr;
-        strm.zfree = nullptr;
-        strm.next_in = (Bytef *)(input_buffer.data());
-        strm.avail_in = in_data_size;
-        strm.next_out = temp_buffer;
-        strm.avail_out = buf_size;
-
-        deflateInit(&strm, Z_BEST_COMPRESSION);
-
-        while (strm.avail_in != 0)
-        {
-            int res = deflate(&strm, Z_NO_FLUSH);
-            if(res != Z_OK)
-            {
-                return false;
-            }
-            if (strm.avail_out == 0)
-            {
-                buffer.insert(buffer.end(), temp_buffer, temp_buffer + buf_size);
-                strm.next_out = temp_buffer;
-                strm.avail_out = buf_size;
-            }
-        }
-
-        int deflate_res = Z_OK;
-        while (deflate_res == Z_OK)
-        {
-            if (strm.avail_out == 0)
-            {
-                buffer.insert(buffer.end(), temp_buffer, temp_buffer + buf_size);
-                strm.next_out = temp_buffer;
-                strm.avail_out = buf_size;
-            }
-            deflate_res = deflate(&strm, Z_FINISH);
-        }
-
-        if(deflate_res != Z_STREAM_END){
-            return false;
-        }
-        buffer.insert(buffer.end(), temp_buffer, temp_buffer + buf_size - strm.avail_out);
-        deflateEnd(&strm);
-
-        output_buffer.swap(buffer);
-        return true;
+    bool sf_is_dir(const std::string& path) {
+        struct stat buf = {0};
+        stat(path.c_str(), &buf);
+        return static_cast<bool>(buf.st_mode & S_IFDIR);
     }
 
 }
