@@ -27,6 +27,7 @@ void websocket_route(const websocket_param_t& param)
     }
 }
 
+
 int main() {
     g_logger->add_level_stream(SF_LOG_LEVEL::SF_INFO_LEVEL, &cout);
     sf_http_server_config config;
@@ -48,7 +49,8 @@ int main() {
             vector<string>{{"*"s}}
     ));
 
-    server->add_router(std::make_shared<sf_websocket_router>("/ws", websocket_route));
+
+    server->add_router(make_websocket_router("/ws", websocket_route));
 
     server->add_router(make_static_router("/home/skyfire/code/hhjr-python/public", {{"*"s}}, "utf-8", true));
     server->start();
