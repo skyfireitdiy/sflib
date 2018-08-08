@@ -83,6 +83,7 @@ namespace skyfire{
 
 
             if(std::atoll(content_len.c_str()) != body__.size()){
+                sf_debug("content-length error");
                 return false;
             }
 
