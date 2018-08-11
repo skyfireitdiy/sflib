@@ -224,8 +224,8 @@ namespace skyfire
 
         std::map<SF_LOG_LEVEL, std::string> logger_level_str__{
                 {SF_DEBUG_LEVEL, "DEBUG"},
-                {SF_INFO_LEVEL,  "INFO"},
-                {SF_WARN_LEVEL,  "WARN"},
+                {SF_INFO_LEVEL,  "INFO "},
+                {SF_WARN_LEVEL,  "WARN "},
                 {SF_ERROR_LEVEL, "ERROR"},
                 {SF_FATAL_LEVEL, "FATAL"},
         };
