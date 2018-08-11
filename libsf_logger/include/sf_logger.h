@@ -149,13 +149,13 @@ namespace skyfire
             {
                 p_os__ = std::make_shared<std::ostringstream>();
             }
-            *p_os__ << "[" << make_time_str__() << "]"
+            *p_os__ << "[time:" << make_time_str__() << "]"
                     #ifdef SF_LOG_OUTPUT_THREAD_ID
-                    <<"[" << std::this_thread::get_id() << "]"
+                    <<"[thread:" << std::this_thread::get_id() << "]"
                     #endif
-                    << "[" << file << "]["
+                    << "[file:" << file << " ("
                     << line
-                    << "][" << func << "]";
+                    << ") -> " << func << "]";
             logout__(level, dt);
         }
 
@@ -166,13 +166,13 @@ namespace skyfire
             {
                 p_os__ = std::make_shared<std::ostringstream>();
             }
-            *p_os__ << "[" << make_time_str__() << "]"
+            *p_os__ << "[time:" << make_time_str__() << "]"
                     #ifdef SF_LOG_OUTPUT_THREAD_ID
-                    <<"[" << std::this_thread::get_id() << "]"
+                    <<"[thread:" << std::this_thread::get_id() << "]"
                     #endif
-                    << "[" << file << "]["
+                    << "[file:" << file << " ("
                     << line
-                    << "][" << func << "]";
+                    << ") -> " << func << "]";
             logout__(level, dt...);
         }
 
