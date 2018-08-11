@@ -3,6 +3,7 @@
  */
 
 #pragma once
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -18,6 +19,11 @@
 #include <unordered_map>
 #include <climits>
 #include <shared_mutex>
+
+
+#ifdef QT_CORE_LIB
+#include <QString>
+#endif
 
 // 独立使用
 
@@ -266,6 +272,16 @@ namespace skyfire
             logout__(level, tmp2...);
         }
 
+#ifdef QT_CORE_LIB
+        template<typename...U>
+        void logout__(SF_LOG_LEVEL level, const QString &tmp, const U &...tmp2)
+        {
+            *p_os__ << "[" << tmp.toStdString() << "]";
+            logout__(level, tmp2...);
+        }
+
+#endif
+
         template<typename T>
         void logout__(SF_LOG_LEVEL level, const T &tmp)
         {
@@ -276,6 +292,20 @@ namespace skyfire
             log_deque__.push_back(info);
             cond__.notify_one();
         }
+
+#ifdef QT_CORE_LIB
+
+        //template<>
+        void logout__(SF_LOG_LEVEL level, const QString &tmp)
+        {
+            *p_os__ << "[" <<  tmp.toStdString() << "]";
+            logger_info_t__ info{level, "[" + logger_level_str__[level] + "]" + p_os__->str() + "\n"};
+            p_os__ = std::make_shared<std::ostringstream>();
+            std::unique_lock<std::mutex> lck(deque_mu__);
+            log_deque__.push_back(info);
+            cond__.notify_one();
+        }
+#endif
 
         static std::string make_time_str__()
         {
@@ -322,15 +352,15 @@ namespace skyfire
     }
 
 #ifdef SF_DEBUG
-#define sf_debug(...) g_logger->logout(SF_DEBUG_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_debug(...) skyfire::g_logger->logout(skyfire::SF_DEBUG_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 #else
-#define sf_debug(...) g_logger->empty_func__()
+#define sf_debug(...) skyfire::g_logger->empty_func__()
 #endif
 
-#define sf_info(...) g_logger->logout(SF_INFO_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
-#define sf_warn(...) g_logger->logout(SF_WARN_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
-#define sf_error(...) g_logger->logout(SF_ERROR_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
-#define sf_fatal(...) g_logger->logout(SF_FATAL_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_info(...) skyfire::g_logger->logout(skyfire::SF_INFO_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_warn(...) skyfire::g_logger->logout(skyfire::SF_WARN_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_error(...) skyfire::g_logger->logout(skyfire::SF_ERROR_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
+#define sf_fatal(...) skyfire::g_logger->logout(skyfire::SF_FATAL_LEVEL,__FILE__,__LINE__,__FUNCTION__,__VA_ARGS__)
 
 
 
