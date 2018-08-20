@@ -62,7 +62,7 @@ namespace skyfire
         {
             {
                 std::unique_lock<std::recursive_mutex> lck(methods_mu__);
-                for (auto &p:methods__)cout << p << &p << endl;
+                using namespace std::literals;
                 if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
                     if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method)) {
                         return false;

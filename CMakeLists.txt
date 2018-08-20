@@ -38,7 +38,14 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
+find_package(OpenSSL REQUIRED)
+find_package(ZLIB REQUIRED)
+
+
+
 include_directories(
+        ${OPENSSL_INCLUDE_DIRS}
+        ${ZLIB_INCLUDE_DIRS}
         libsf_any/include
         libsf_logger/include
         libsf_empty_class/include
@@ -65,7 +72,15 @@ include_directories(
         libsf_random/include
         libsf_http/include
         libsf_utils/include
+
 )
+
+link_directories(
+        ${OPENSSL_LIBRARIES}
+        ${ZLIB_LIBRARUES}
+)
+
+
 
 file(GLOB headers
         libsf_any/include/*.h
@@ -117,38 +132,22 @@ add_executable(test_timer test/test_timer/test_timer.cpp ${headers})
 add_executable(test_tcp_nat_traversal_server test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp ${headers})
 add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp ${headers})
 add_executable(test_event_waiter test/test_event_waiter/test_event_waiter.cpp ${headers})
-add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${header})
-
-add_executable(test_encrypt test/test_encrypt/test_encrypt.cpp ${header})
-
-find_package(OpenSSL REQUIRED)
-
-if( OpenSSL_FOUND )
-    include_directories(${OPENSSL_INCLUDE_DIRS})
-    link_directories(${OPENSSL_LIBRARIES})
-    message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
-    target_link_libraries(test_httpserver crypto)
-    target_link_libraries(test_encrypt crypto)
-endif()
-
-find_package(ZLIB REQUIRED)
-
-if(ZLIB_FOUND)
-    include_directories(${ZLIB_INCLUDE_DIRS})
-    link_directories(${ZLIB_LIBRARIES})
-    message(STATUS "Using zlib ${ZLIB_VERSION_STRING}")
-    target_link_libraries(test_httpserver z)
-endif()
+add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${headers})
+add_executable(test_encrypt test/test_encrypt/test_encrypt.cpp ${headers})
 
 
-    IF (WIN32)
+
+
+target_link_libraries(test_encrypt PRIVATE ssl crypto z)
+
+IF (WIN32)
     target_link_libraries(test_rpc_server ws2_32)
     target_link_libraries(test_rpc_client ws2_32)
     target_link_libraries(test_msg_bus_server ws2_32)
     target_link_libraries(test_msg_bus_client ws2_32)
     target_link_libraries(test_tcp_nat_traversal_server ws2_32)
     target_link_libraries(test_tcp_nat_traversal_client ws2_32)
-    target_link_libraries(test_httpserver ws2_32)
+    target_link_libraries(test_httpserver ws2_32 ssl crypto z)
 ELSE()
     target_link_libraries(test_meta pthread)
     target_link_libraries(test_rpc_server pthread)
@@ -163,7 +162,7 @@ ELSE()
     target_link_libraries(test_tcp_nat_traversal_client pthread)
     target_link_libraries(test_sf_logger pthread)
     target_link_libraries(test_event_waiter pthread)
-    target_link_libraries(test_httpserver pthread)
+    target_link_libraries(test_httpserver pthread ssl crypto z)
 ENDIF ()
 
 

@@ -9,6 +9,8 @@
 
 
 namespace skyfire {
+    using namespace std::literals;
+
     inline std::shared_ptr<sf_http_router>
     make_static_router(std::string path, const std::vector<std::string> &methods = {{"*"s}},
                        std::string charset = "utf-8",
@@ -45,7 +47,7 @@ namespace skyfire {
                         header.set_header("Content-Type", "text/html; charset=" + charset);
                     } else {
 
-                        ifstream fi(abspath);
+                        std::ifstream fi(abspath);
                         if (!fi) {
                             res.set_status(404);
                             res.set_reason("NOT FOUND");
@@ -53,7 +55,7 @@ namespace skyfire {
                             header.set_header("Content-Type", "text/html; charset=" + charset);
                         } else {
 
-                            fi.seekg(0, ios::end);
+                            fi.seekg(0, std::ios::end);
                             auto file_size = static_cast<unsigned long long int>(fi.tellg());
                             sf_debug("File Size:", file_size);
                             if (file_size > max_file_size) {
@@ -65,7 +67,7 @@ namespace skyfire {
                                         ")</p>");
                                 fi.close();
                             }else {
-                                fi.seekg(ios::beg);
+                                fi.seekg(std::ios::beg);
                                 body_data.resize(file_size);
                                 fi.read(body_data.data(), file_size);
                                 fi.close();

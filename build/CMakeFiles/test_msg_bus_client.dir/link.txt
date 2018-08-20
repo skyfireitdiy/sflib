@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/test_msg_bus_client.dir/test/test_msg_bus/test_msg_bus_client.cpp.o  -o test_msg_bus_client -lpthread 

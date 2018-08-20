@@ -2,7 +2,6 @@
 #include <typeinfo>
 #include <iostream>
 
-using namespace std;
 using namespace skyfire;
 
 int func(const int&)
@@ -13,10 +12,10 @@ int func(const int&)
 
 int main()
 {
-    using ret = typename sf_function_type_helper<decltype(function(func))>::return_type ;
-    using param = typename sf_function_type_helper<decltype(function(func))>::param_type ;
+    using ret = typename sf_function_type_helper<decltype(std::function(func))>::return_type ;
+    using param = typename sf_function_type_helper<decltype(std::function(func))>::param_type ;
 
-    cout<< typeid(ret).name()<<endl;
-    cout<< typeid(param).name()<<endl;
+    std::cout<< typeid(ret).name()<<std::endl;
+    std::cout<< typeid(param).name()<<std::endl;
 
 }

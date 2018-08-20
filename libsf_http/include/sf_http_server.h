@@ -7,7 +7,7 @@
 
 namespace skyfire
 {
-    class sf_http_server: public sf_http_base_server,  public enable_shared_from_this<sf_http_server>
+class sf_http_server: public sf_http_base_server,  public std::enable_shared_from_this<sf_http_server>
     {
     private:
         std::set<std::shared_ptr<sf_http_router>> http_routers__;

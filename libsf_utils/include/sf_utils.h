@@ -82,7 +82,7 @@ namespace skyfire
         int size = 0;
         b64 = BIO_new(BIO_f_base64());
         BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
-        bio = BIO_new_mem_buf(data.data(), static_cast<int>(data.size()));
+        bio = BIO_new_mem_buf(const_cast<char*>(data.data()), static_cast<int>(data.size()));
         bio = BIO_push(b64, bio);
         byte_array out_str(data.size(),'\0');
         size = BIO_read(bio, out_str.data(), static_cast<int>(data.size()));

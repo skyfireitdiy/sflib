@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/test_encrypt.dir/test/test_encrypt/test_encrypt.cpp.o  -o test_encrypt -lcrypto 

@@ -3,23 +3,22 @@
 
 
 using namespace skyfire;
-using namespace std;
 
 int sum(int a, int b)
 {
-    cout<<a<<" "<<b<<endl;
+    std::cout<<a<<" "<<b<<std::endl;
     return a+b;
 }
 
 int append(int a)
 {
-    cout<<a<<endl;
+    std::cout<<a<<std::endl;
     return a+1;
 }
 
 void append_n(int a, int n)
 {
-    cout<<"append "<<n<<endl;
+    std::cout<<"append "<<n<<std::endl;
 }
 
 
@@ -30,5 +29,5 @@ int main()
 
     make_chain_async_call(sum,1,1).then(append).then(append).then(append_n, 25);
 
-    cout<<"hello world"<<endl;
+    std::cout<<"hello world"<<std::endl;
 }

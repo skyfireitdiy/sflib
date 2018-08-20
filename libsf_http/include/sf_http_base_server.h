@@ -1,5 +1,4 @@
 #pragma once
-
 #include <functional>
 #include "sf_http_server_config.h"
 #include "sf_eventloop.h"
@@ -339,7 +338,7 @@ namespace skyfire {
             std::vector<std::thread> thread_vec;
             for(auto i=0;i<config__.thread_count;++i)
             {
-                thread_vec.emplace_back(thread([=]{
+                thread_vec.emplace_back(std::thread([=]{
                     sf_eventloop loop;
                     loop.exec();
                 }));

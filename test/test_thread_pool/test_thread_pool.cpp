@@ -4,15 +4,14 @@
 #include <functional>
 
 using namespace skyfire;
-using namespace std;
 
 
 void func()
 {
     for(int i=0;i<10;++i)
     {
-        this_thread::sleep_for(chrono::seconds(1));
-        cout<<this_thread::get_id()<<" "<<i<<endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout<<std::this_thread::get_id()<<" "<<i<<std::endl;
     }
 }
 
@@ -20,7 +19,7 @@ void func2(int a)
 {
     for(int i=0;i<a;++i)
     {
-        cout<<i<<endl;
+        std::cout<<i<<std::endl;
     }
 }
 
@@ -28,7 +27,7 @@ void func2(int a)
 int main()
 {
     sf_thread_pool pool4(4);
-    pool4.add_task(bind(func2, 10));
+    pool4.add_task(std::bind(func2, 10));
     pool4.wait_all_task_finished();
     pool4.add_task(func2, 7);
     pool4.add_task(func);
@@ -37,7 +36,7 @@ int main()
                    {
                        for (auto i = 0; i < 5; ++i)
                        {
-                           cout << "hello world" << endl;
+                           std::cout << "hello world" << std::endl;
                        }
                    }, 5);
     pool4.wait_all_task_finished();

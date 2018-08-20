@@ -4,6 +4,7 @@
 #include <ctime>
 #include <map>
 
+#include "sf_tcputils.h"
 #include "sf_type.h"
 #include "sf_serialize_binary.h"
 

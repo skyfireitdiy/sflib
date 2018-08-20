@@ -2,7 +2,6 @@
 #include <iostream>
 #include <thread>
 
-using namespace std;
 using namespace skyfire;
 
 class A: public sf_object
@@ -12,13 +11,13 @@ class A: public sf_object
 
 void slot1(int a)
 {
-    cout<<this_thread::get_id()<<" "<<a<<endl;
+    std::cout<<std::this_thread::get_id()<<" "<<a<<std::endl;
 }
 
 int main()
 {
     A a;
-    cout<<this_thread::get_id()<<endl;
+    std::cout<<std::this_thread::get_id()<<std::endl;
     sf_bind_signal(&a, s1, slot1, false);
     sf_bind_signal(&a, s1, slot1, true);
     a.s1(56);

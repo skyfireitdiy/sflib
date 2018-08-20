@@ -4,20 +4,19 @@
 
 #include <iostream>
 
-using namespace std;
 using namespace skyfire;
 
 int main(){
-    g_logger->add_level_stream(SF_DEBUG_LEVEL,&cout);
+    g_logger->add_level_stream(SF_DEBUG_LEVEL,&std::cout);
     auto pserver = sf_tcp_nat_traversal_server::make_server();
-    cout<<"port:"<<flush;
+    std::cout<<"port:"<<std::flush;
     unsigned short port;
-    cin>>port;
+    std::cin>>port;
     auto ret = pserver->listen("0.0.0.0",port);
     if(ret){
-        cout<<"监听成功"<<endl;
+        std::cout<<"监听成功"<<endl;
     }else{
-        cout<<"监听失败"<<endl;
+        std::cout<<"监听失败"<<endl;
     }
 
     sf_eventloop loop;

@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/test_event_waiter.dir/test/test_event_waiter/test_event_waiter.cpp.o  -o test_event_waiter -lpthread 

@@ -2,8 +2,6 @@
 #include "sf_eventloop.h"
 #include <iostream>
 
-
-using namespace std;
 using namespace skyfire;
 
 sf_eventloop loop;
@@ -15,7 +13,7 @@ void func(){
         timer.stop();
         loop.quit();
     }else{
-        cout<<t++<<endl;
+        std::cout<<t++<<std::endl;
     }
 }
 

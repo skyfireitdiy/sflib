@@ -7,17 +7,17 @@
 #include <sf_finally.h>
 
 using namespace skyfire;
-using namespace std;
+
 
 void output(const std::string& str)
 {
-    cout<<"--->"<<str<<flush;
+    std::cout<<"--->"<<str<<std::flush;
 }
 
 int main()
 {
     auto logger = sf_logger::get_instance();
-    int a = logger->add_level_stream(SF_DEBUG_LEVEL, &cout);
+    int a = logger->add_level_stream(SF_DEBUG_LEVEL, &std::cout);
     int b = logger->add_level_func(SF_ERROR_LEVEL, output);
     int c = logger->add_level_file(SF_WARN_LEVEL, "runlog.log");
     getchar();

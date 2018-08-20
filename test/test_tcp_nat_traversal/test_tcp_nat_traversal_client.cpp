@@ -7,70 +7,69 @@
 #include "sf_range.h"
 
 using namespace skyfire;
-using namespace std;
 
-void connect(shared_ptr<sf_tcp_nat_traversal_client> client){
-    string ip;
+void connect(std::shared_ptr<sf_tcp_nat_traversal_client> client){
+    std::string ip;
     unsigned short port;
-    cout<<"ip:"<<flush;
-    getline(cin,ip);
-    cout<<"port:"<<flush;
-    cin>>port;
-    cin.clear();
+    std::cout<<"ip:"<<std::flush;
+    getline(std::cin,ip);
+    std::cout<<"port:"<<std::flush;
+    std::cin>>port;
+    std::cin.clear();
     if(client->connect(ip,port)){
-        cout<<"连接成功"<<endl;
+        std::cout<<"连接成功"<<std::endl;
     }else{
-        cout<<"连接失败"<<endl;
+        std::cout<<"连接失败"<<std::endl;
     }
 }
 
-void ls(shared_ptr<sf_tcp_nat_traversal_client> client){
+void ls(std::shared_ptr<sf_tcp_nat_traversal_client> client){
     auto clients = client->get_clients();
     for(auto &p:clients){
-        cout<<p<<endl;
+        std::cout<<p<<std::endl;
     }
 }
 
-void nat_conn(shared_ptr<sf_tcp_nat_traversal_client> client){
+void nat_conn(std::shared_ptr<sf_tcp_nat_traversal_client> client){
     unsigned long long id;
-    cout<<"id:"<<flush;
-    cin>>id;
-    cin.clear();
+    std::cout<<"id:"<<std::flush;
+    std::cin>>id;
+    std::cin.clear();
     client->connect_to_peer(id, false);
 }
 
 void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
     if(!conn){
-        cout<<"连接未建立"<<endl;
+        std::cout<<"连接未建立"<<std::endl;
         return;
     }
-    cout<<"msg:"<<flush;
-    string msg;
-    getline(cin,msg);
+    std::cout<<"msg:"<<std::flush;
+    std::string msg;
+    getline(std::cin,msg);
     conn->send(TCP_PKG_TYPE_USER + 1,sf_serialize_binary(msg));
 }
 
 
 int main() {
 
-    g_logger->add_level_stream(SF_DEBUG_LEVEL,&cout);
+    g_logger->add_level_stream(SF_DEBUG_LEVEL,&std::cout);
     auto pclient = sf_tcp_nat_traversal_client::make_client();
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 
     sf_bind_signal(pclient, new_nat_connection, [&](std::shared_ptr<sf_tcp_nat_traversal_connection> conn_t, int){
-        cout<<"new connection!"<<endl;
+        std::cout<<"new connection!"<<std::endl;
         conn = conn_t;
         sf_bind_signal(conn, data_coming, [](const pkg_header_t &header, const byte_array &data){
-            string msg;
+            std::string msg;
             sf_deserialize_binary(data,msg,0);
-            cout<<"Recv:"<<msg<<endl;
+            std::cout<<"Recv:"<<msg<<std::endl;
         }, true);
     },true);
 
     while(true){
-        string cmd;
-        cout<<">"<<flush;
-        getline(cin,cmd);
+        std::string cmd;
+        std::cout<<">"<<std::flush;
+        getline(std::cin,cmd);
         if(cmd == "exit"){
             break;
         }
@@ -81,7 +80,7 @@ int main() {
         }else if(cmd == "natconn"){
             nat_conn(pclient);
         }else if(cmd == "id"){
-            cout<<pclient->get_id()<<endl;
+            std::cout<<pclient->get_id()<<std::endl;
         }else if(cmd == "send"){
             send(conn);
         }
