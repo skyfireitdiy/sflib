@@ -39,11 +39,11 @@ namespace skyfire {
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
             // 过滤websocket消息
-            sf_debug("socket",sock, "线程", std::this_thread::get_id());
+            // sf_debug("socket",sock, "线程", std::this_thread::get_id());
             {
                 std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
                 if (websocket_context__.count(sock) != 0) {
-                    sf_debug("检测为websocket连接");
+                    // sf_debug("检测为websocket连接");
                     websocket_data_coming__(sock, data);
                     return;
                 }
@@ -51,9 +51,9 @@ namespace skyfire {
 
             {
                 std::unique_lock<std::mutex> lck(mu_request_context__);
-                sf_debug("Request",to_string(data));
+                // sf_debug("Request",to_string(data));
                 if (request_context__.count(sock) == 0) {
-                    sf_debug("检测为http连接");
+                    // sf_debug("检测为http连接");
                     request_context__[sock] = request_context_t();
                 }
                 request_context__[sock].buffer += data;
@@ -123,7 +123,7 @@ namespace skyfire {
                     }
                     res.get_header().set_header("Server","SkyFire HTTP Server");
                     res.get_header().set_header("Connection",keep_alive?"Keep-Alive":"Close");
-                    sf_debug("回应",to_string(res.to_package()));
+                    // sf_debug("回应",to_string(res.to_package()));
                     server__->send(sock,res.to_package());
                     if(!keep_alive)
                     {
@@ -131,7 +131,7 @@ namespace skyfire {
                         std::unique_lock<std::mutex> lck(mu_request_context__);
                         request_context__.erase(sock);
                     }
-                    sf_debug("此次请求处理完毕");
+                    // sf_debug("此次请求处理完毕");
                 }
             } else{
                 sf_debug("非法请求或请求不完整");

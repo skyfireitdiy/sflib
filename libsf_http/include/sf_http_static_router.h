@@ -28,7 +28,7 @@ namespace skyfire {
         }
         std::function<void(const sf_http_request &, sf_http_response &, const std::string &)> callback =
                 [=](const sf_http_request &req, sf_http_response &res, const std::string &raw_url) {
-                    sf_debug(raw_url);
+                    // sf_debug(raw_url);
                     std::string url;
                     std::map<std::string, std::string> param;
                     std::string frame;

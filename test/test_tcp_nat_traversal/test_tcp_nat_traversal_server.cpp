@@ -14,9 +14,9 @@ int main(){
     std::cin>>port;
     auto ret = pserver->listen("0.0.0.0",port);
     if(ret){
-        std::cout<<"监听成功"<<endl;
+        std::cout<<"监听成功"<<std::endl;
     }else{
-        std::cout<<"监听失败"<<endl;
+        std::cout<<"监听失败"<<std::endl;
     }
 
     sf_eventloop loop;

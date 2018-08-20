@@ -15,6 +15,7 @@
 #include "sf_type.h"
 #include "sf_range.h"
 #include "sf_serialize_binary.h"
+#include "sf_logger.h"
 
 
 namespace skyfire
@@ -124,12 +125,13 @@ namespace skyfire
                                         ev.data.fd = conn_fd;
                                         if (epoll_ctl(epoll_fd__, EPOLL_CTL_ADD, conn_fd, &ev) < 0)
                                         {
-                                            ::close(conn_fd);
+                                            close(conn_fd);
                                             continue;
                                         }
                                         ++cur_fd_count__;
                                         std::thread([=]
                                                     {
+                                                        sf_debug("新连接");
                                                         new_connection(conn_fd);
                                                     }).detach();
                                         continue;
@@ -139,12 +141,13 @@ namespace skyfire
                                     if (count_read <= 0)
                                     {
                                         closed(static_cast<SOCKET>(evs[i].data.fd));
-                                        ::close(evs[i].data.fd);
+                                        close(evs[i].data.fd);
                                         epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev);
                                         --cur_fd_count__;
                                         std::thread([=]()
                                                     {
-                                                        ::close(evs[i].data.fd);
+                                                        sf_debug("关闭连接");
+                                                        close(evs[i].data.fd);
                                                     }).detach();
                                         continue;
                                     }

@@ -52,6 +52,6 @@ int main() {
 
     server->add_router(make_websocket_router("/ws", websocket_route));
 
-    server->add_router(make_static_router(R"(C:\code\hhjr-python\public)", {{"*"s}}, "utf-8", true));
+    server->add_router(make_static_router(R"(/home/skyfire/Desktop/test_html)", {{"*"s}}, "utf-8", true));
     server->start();
 }
