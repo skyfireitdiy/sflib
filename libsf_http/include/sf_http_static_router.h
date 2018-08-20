@@ -57,7 +57,7 @@ namespace skyfire {
 
                             fi.seekg(0, std::ios::end);
                             auto file_size = static_cast<unsigned long long int>(fi.tellg());
-                            sf_debug("File Size:", file_size);
+                            // sf_debug("File Size:", file_size);
                             if (file_size > max_file_size) {
                                 res.set_status(403);
                                 res.set_reason("FORBIDDEN");
