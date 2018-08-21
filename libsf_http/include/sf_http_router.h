@@ -3,12 +3,13 @@
 #include <vector>
 #include <regex>
 #include <mutex>
+#include "sf_router.h"
 #include "sf_http_response.h"
 #include "sf_http_request.h"
 
 namespace skyfire
 {
-    class sf_http_router
+    class sf_http_router : public sf_router
     {
     private:
         std::function<bool(const sf_http_request &,sf_http_response&,const std::string &)> route_callback__;
@@ -20,6 +21,7 @@ namespace skyfire
         typename std::enable_if<sizeof...(Args) == N, void>::type
         callback_call_helper__(const sf_http_request &req,sf_http_response& res,FuncType func,const std::smatch &sm, Args ... args)
         {
+            sf_debug("调用callback_call_helper__");
             func(req,res,args...);
         };
 
@@ -27,6 +29,7 @@ namespace skyfire
         typename std::enable_if<sizeof...(Args) != N, void>::type
         callback_call_helper__(const sf_http_request &req,sf_http_response& res,FuncType func,const std::smatch &sm, Args ... args)
         {
+            sf_debug("调用callback_call_helper__");
             callback_call_helper__<FuncType,N,Args...,std::string>(req,res,func,sm,args..., sm[sizeof...(args)].str());
         };
     public:
@@ -46,10 +49,12 @@ namespace skyfire
         {
             route_callback__ = [=](const sf_http_request &req,sf_http_response& res,const std::string &url)
             {
+                sf_debug("调用route");
                 std::regex re(pattern);
                 std::smatch sm;
                 if(!std::regex_match(url, sm, re))
                 {
+                    sf_debug("match失败");
                     return false;
                 }
                 callback_call_helper__<decltype(callback),sizeof...(StringType)>(req,res,callback,sm);
@@ -61,10 +66,12 @@ namespace skyfire
         bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method)
         {
             {
+                sf_debug("开始对比method");
                 std::unique_lock<std::recursive_mutex> lck(methods_mu__);
                 using namespace std::literals;
                 if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
                     if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method)) {
+                        sf_debug("method对比失败");
                         return false;
                     }
                 }
@@ -76,7 +83,7 @@ namespace skyfire
             return priority__ < router.priority__;
         }
 
-        int get_priority() const
+        int get_priority() const override
         {
             return priority__;
         }

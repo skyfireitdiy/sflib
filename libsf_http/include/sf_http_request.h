@@ -82,21 +82,13 @@ namespace skyfire{
             auto content_len = header__.get_header_value("Content-Length","0");
 
 
-            if(std::atoll(content_len.c_str()) != body__.size()){
-                sf_debug("content-length error");
+            char *pos;
+            if(std::strtoll(content_len.c_str(), &pos, 10) != body__.size()){
+                sf_debug("body size error", content_len.c_str(), body__.size());
                 return false;
             }
 
-            // TODO 为何不能使用strtoll
-//            char *pos;
-//            if(std::strtoll(content_len.c_str(), &pos, 10) != body__.size()){
-//                sf_debug("body size error");
-//                return false;
-//            }
-
             return true;
-
-            // TODO 暂不支持压缩请求
         }
 
     public:

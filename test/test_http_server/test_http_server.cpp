@@ -9,12 +9,19 @@ using namespace std::literals;
 
 using namespace skyfire;
 
-void root_route(const sf_http_request &req,sf_http_response& res,const std::string& root) {
-    sf_debug(root);
-    sf_http_header header;
-    header.set_header("Content-Type", "text/html;charset=utf-8");
-    res.set_header(header);
-    res.set_body(to_byte_array(root  + " hello world"));
+void upload_file_route(const sf_http_request &req,sf_http_response& res) {
+    sf_debug(req.get_request_line().http_version);
+    sf_debug(req.get_request_line().method);
+    sf_debug(req.get_request_line().url);
+    auto header = req.get_header();
+    for(auto &p:header.get_key_list()){
+        sf_debug(p,header.get_header_value(p));
+    }
+
+    sf_debug(to_string(req.get_body()));
+
+    res.set_body(to_byte_array("upload ok"s));
+    res.set_status(200);
 }
 
 void websocket_route(const websocket_param_t& param)
@@ -38,14 +45,8 @@ int main() {
     auto server = sf_http_server::make_server(config);
 
     server->add_router(std::make_shared<sf_http_router>(
-            "/"s,
-            root_route,
-            std::vector<std::string>{{"*"s}}
-    ));
-
-    server->add_router(std::make_shared<sf_http_router>(
-            "/hello"s,
-            root_route,
+            "/upload_file"s,
+            upload_file_route,
             std::vector<std::string>{{"*"s}}
     ));
 

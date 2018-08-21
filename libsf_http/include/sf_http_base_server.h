@@ -39,7 +39,6 @@ namespace skyfire {
         void raw_data_coming__(SOCKET sock, const byte_array &data)
         {
             // 过滤websocket消息
-            // sf_debug("socket",sock, "线程", std::this_thread::get_id());
             {
                 std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
                 if (websocket_context__.count(sock) != 0) {
@@ -48,7 +47,6 @@ namespace skyfire {
                     return;
                 }
             }
-
             {
                 std::unique_lock<std::mutex> lck(mu_request_context__);
                 // sf_debug("Request",to_string(data));

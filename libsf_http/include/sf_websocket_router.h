@@ -3,12 +3,13 @@
 #include <string>
 #include <functional>
 
+#include "sf_router.h"
 #include "sf_websocket_utils.h"
 #include "sf_type.h"
 
 
 namespace skyfire {
-    class sf_websocket_router {
+    class sf_websocket_router : public sf_router {
 
     private:
         explicit sf_websocket_router(const std::string &url, std::function<void(const websocket_param_t &)> callback) :
