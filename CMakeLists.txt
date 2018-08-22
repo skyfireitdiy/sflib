@@ -38,6 +38,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
+
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 
@@ -76,7 +77,7 @@ include_directories(
 )
 
 link_directories(
-        ${OPENSSL_LIBRARIES}
+        
         ${ZLIB_LIBRARUES}
 )
 
@@ -138,8 +139,6 @@ add_executable(test_encrypt test/test_encrypt/test_encrypt.cpp ${headers})
 
 
 
-target_link_libraries(test_encrypt PRIVATE ssl crypto z)
-
 IF (WIN32)
     target_link_libraries(test_rpc_server ws2_32)
     target_link_libraries(test_rpc_client ws2_32)
@@ -147,7 +146,8 @@ IF (WIN32)
     target_link_libraries(test_msg_bus_client ws2_32)
     target_link_libraries(test_tcp_nat_traversal_server ws2_32)
     target_link_libraries(test_tcp_nat_traversal_client ws2_32)
-    target_link_libraries(test_httpserver ws2_32 ssl crypto z)
+    target_link_libraries(test_httpserver ws2_32 ${OPENSSL_LIBRARIES} z)
+	target_link_libraries(test_encrypt PRIVATE ${OPENSSL_LIBRARIES} z)
 ELSE()
     target_link_libraries(test_meta pthread)
     target_link_libraries(test_rpc_server pthread)
@@ -163,6 +163,7 @@ ELSE()
     target_link_libraries(test_sf_logger pthread)
     target_link_libraries(test_event_waiter pthread)
     target_link_libraries(test_httpserver pthread ssl crypto z)
+	target_link_libraries(test_encrypt PRIVATE ssl crypto z)
 ENDIF ()
 
 
