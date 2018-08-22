@@ -13,13 +13,10 @@ namespace skyfire
          * @brief sf_finally 构造一个清理过程对象
          * @param func 作用域结束后会调用的函数
          */
-        sf_finally(std::function<void()> func):func__(func)
-        {
-        }
-        ~sf_finally(){
-            func__();
-        }
+        sf_finally(std::function<void()> func);
+        ~sf_finally();
     private:
         std::function<void()> func__;
     };
+
 }

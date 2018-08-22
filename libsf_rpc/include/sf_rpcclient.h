@@ -6,10 +6,10 @@
 
 #include "sf_tcpclient.h"
 #include "sf_nocopy.h"
-#include "sf_serialize_binary.h"
+#include "sf_serialize_binary.hpp"
 #include "sf_timer.h"
 #include "sf_tri_type.h"
-#include "sf_define.h"
+#include "sf_define.hpp"
 #include <string>
 #include <functional>
 #include <tuple>

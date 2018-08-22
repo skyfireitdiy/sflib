@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "sf_tcpserver.h"
+#include "sf_tcpserver.hpp"
 #include "sf_nocopy.h"
-#include "sf_serialize_binary.h"
+#include "sf_serialize_binary.hpp"
 #include "sf_meta.h"
 #include <string>
 #include <functional>

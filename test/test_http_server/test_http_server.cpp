@@ -1,9 +1,9 @@
 #define SF_DEBUG
-#include "sf_http_base_server.h"
-#include "sf_http_static_router.h"
-#include "sf_logger.h"
+#include "sf_http_base_server.hpp"
+#include "sf_http_static_router.hpp"
+#include "sf_logger.hpp"
 #include <iostream>
-#include <sf_http_server.h>
+#include <sf_http_server.hpp>
 
 using namespace std::literals;
 

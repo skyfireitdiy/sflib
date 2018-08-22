@@ -9,9 +9,9 @@
 #include <vector>
 #include <thread>
 #include <functional>
-#include "sf_empty_class.h"
+#include "sf_empty_class.hpp"
 #include "sf_msg_queue.h"
-#include "sf_eventloop.h"
+#include "sf_eventloop.hpp"
 
 /*
  * SF_REG_SIGNAL 注册信号的宏

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sf_serialize_binary.h"
+#include "sf_serialize_binary.hpp"
 
 #ifdef _WIN32
 #include <winsock2.h>

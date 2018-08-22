@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sf_timer.h>
 
-#include "sf_random.h"
+#include "sf_random.hpp"
 #include "sf_range.h"
 
 using namespace skyfire;

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "sf_empty_class.h"
+#include "sf_empty_class.hpp"
 
 namespace skyfire
 {

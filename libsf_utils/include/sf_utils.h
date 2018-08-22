@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "sf_type.h"
+#include "sf_type.hpp"
 
 namespace skyfire
 {

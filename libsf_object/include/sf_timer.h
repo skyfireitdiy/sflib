@@ -5,7 +5,7 @@
 #pragma once
 
 #include "sf_nocopy.h"
-#include "sf_object.h"
+#include "sf_object.hpp"
 #include <atomic>
 
 namespace skyfire

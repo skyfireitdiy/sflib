@@ -15,8 +15,8 @@
 #include <cassert>
 #include <cstring>
 #include <string>
-#include "sf_type.h"
-#include "sf_define.h"
+#include "sf_type.hpp"
+#include "sf_define.hpp"
 
 namespace skyfire
 {

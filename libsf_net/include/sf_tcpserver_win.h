@@ -6,12 +6,12 @@
 #include <functional>
 #include <memory>
 #include <map>
-#include "sf_tcputils.h"
+#include "sf_tcputils.hpp"
 #include "sf_nocopy.h"
-#include "sf_object.h"
-#include "sf_type.h"
+#include "sf_object.hpp"
+#include "sf_type.hpp"
 #include "sf_range.h"
-#include "sf_serialize_binary.h"
+#include "sf_serialize_binary.hpp"
 
 
 namespace skyfire {

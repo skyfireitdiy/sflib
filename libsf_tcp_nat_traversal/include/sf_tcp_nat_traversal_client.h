@@ -1,13 +1,13 @@
 #pragma once
 
 #include "sf_nocopy.h"
-#include "sf_object.h"
+#include "sf_object.hpp"
 #include "sf_tcpclient.h"
-#include "sf_tcpserver.h"
-#include "sf_serialize_binary.h"
-#include "sf_define.h"
+#include "sf_tcpserver.hpp"
+#include "sf_serialize_binary.hpp"
+#include "sf_define.hpp"
 #include "sf_tcp_nat_traversal_utils.h"
-#include "sf_random.h"
+#include "sf_random.hpp"
 #include <climits>
 
 

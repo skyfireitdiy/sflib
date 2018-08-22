@@ -1,5 +1,5 @@
 #include <iostream>
-#include "sf_chain.h"
+#include "sf_chain.hpp"
 
 
 using namespace skyfire;

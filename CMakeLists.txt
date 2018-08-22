@@ -110,6 +110,33 @@ file(GLOB headers
         libsf_random/include/*.h
         libsf_http/include/*.h
         libsf_utils/include/*.h
+
+        libsf_any/include/*.hpp
+        libsf_logger/include/*.hpp
+        libsf_empty_class/include/*.hpp
+        libsf_finally/include/*.hpp
+        libsf_nocopy/include/*.hpp
+        libsf_object/include/*.hpp
+        libsf_range/include/*.hpp
+        libsf_rpc/include/*.hpp
+        libsf_serialize/include/*.hpp
+        libsf_single_instance/include/*.hpp
+        libsf_net/include/*.hpp
+        libsf_thread_pool/include/*.hpp
+        libsf_tri_type/include/*.hpp
+        libsf_watch_time/include/*.hpp
+        libsf_type/include/*.hpp
+        libsf_meta/include/*.hpp
+        libsf_meta_object/include/*.hpp
+        libsf_type_list/include/*.hpp
+        libsf_msg_bus/include/*.hpp
+        libsf_chain/include/*.hpp
+        libsf_tcp_nat_traversal/include/*.hpp
+        libsf_tl/include/*.hpp
+        libsf_define/include/*.hpp
+        libsf_random/include/*.hpp
+        libsf_http/include/*.hpp
+        libsf_utils/include/*.hpp
         )
 
 install(FILES ${headers} DESTINATION include)

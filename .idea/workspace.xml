@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
-    <generated />
+    <generated>
+      <config projectName="sflib" targetName="test_object" />
+      <config projectName="sflib" targetName="test_tcp_nat_traversal_client" />
+      <config projectName="sflib" targetName="test_rpc_server" />
+      <config projectName="sflib" targetName="test_httpserver" />
+      <config projectName="sflib" targetName="test_thread_pool" />
+      <config projectName="sflib" targetName="test_tcp_nat_traversal_server" />
+      <config projectName="sflib" targetName="sf_meta_object_test" />
+      <config projectName="sflib" targetName="test_encrypt" />
+      <config projectName="sflib" targetName="test_rpc_client" />
+      <config projectName="sflib" targetName="test_chain_call" />
+      <config projectName="sflib" targetName="test_meta" />
+      <config projectName="sflib" targetName="test_aop" />
+      <config projectName="sflib" targetName="test_sf_logger" />
+      <config projectName="sflib" targetName="test_event_waiter" />
+      <config projectName="sflib" targetName="test_msg_bus_client" />
+      <config projectName="sflib" targetName="test_msg_bus_server" />
+      <config projectName="sflib" targetName="test_timer" />
+      <config projectName="sflib" targetName="test_type_list" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -9,265 +28,90 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d51f7908-2c6e-4988-af8b-7fb3fad028c1" name="Default" comment="为websocket路由创建提供接口">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="0c2fdb0f-2ec1-432b-8545-a4cadfc78989" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/libsf_chain/include/sf_chain.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_finally/include/sf_finally.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_header.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_response.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_router.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_server.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_static_router.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_utils.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_router.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_router_shared_ptr_compare.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_websocket_router.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/libsf_logger/include/sf_logger.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeCache.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CMakeCCompiler.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CMakeCXXCompiler.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CMakeSystem.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CompilerIdC/a.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/3.11.4/CompilerIdCXX/a.out" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/CMakeDirectoryInformation.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/CMakeOutput.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/Makefile.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/Makefile2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/cmake.check_cache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/feature_tests.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/feature_tests.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/feature_tests.cxx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/progress.marks" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/sf_meta_object_test.dir/test/test_meta_object/test_meta_object.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_aop.dir/test/test_aop/test_aop.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_chain_call.dir/test/test_chain_call/test_chain_call.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_encrypt.dir/test/test_encrypt/test_encrypt.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_event_waiter.dir/test/test_event_waiter/test_event_waiter.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_httpserver.dir/test/test_http_server/test_http_server.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_meta.dir/test/test_meta/test_meta.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_client.dir/test/test_msg_bus/test_msg_bus_client.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_msg_bus_server.dir/test/test_msg_bus/test_msg_bus_server.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_object.dir/test/test_object/test_object.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_client.dir/test/test_rpc/test_rpc_client.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_rpc_server.dir/test/test_rpc/test_rpc_server.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_sf_logger.dir/test/test_sf_logger/test_sf_logger.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_client.dir/test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_tcp_nat_traversal_server.dir/test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_thread_pool.dir/test/test_thread_pool/test_thread_pool.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_timer.dir/test/test_timer/test_timer.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/CXX.includecache" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/DependInfo.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/build.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/cmake_clean.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/depend.internal" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/depend.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/flags.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/link.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/progress.make" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/CMakeFiles/test_type_list.dir/test/test_type_list/test_type_list.cpp.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/cmake_install.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/sf_meta_object_test" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_aop" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_chain_call" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_encrypt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_event_waiter" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_httpserver" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_msg_bus_client" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_msg_bus_server" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_object" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_rpc_client" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_rpc_server" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_sf_logger" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_tcp_nat_traversal_client" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_tcp_nat_traversal_server" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_thread_pool" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_timer" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/test_type_list" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_chain/include/sf_chain.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_chain/include/sf_chain.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_define/include/sf_define.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_define/include/sf_define.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_empty_class/include/sf_empty_class.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_empty_class/include/sf_empty_class.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_finally/include/sf_finally.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_finally/include/sf_finally.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_content_type.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_content_type.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_header.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_header.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_request.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_request.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_request_line.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_request_line.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_response.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_response.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_router.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_router.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_server.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_server.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_static_router.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_static_router.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_utils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_tcputils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_tcputils.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libsf_type/include/sf_type.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_type/include/sf_type.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_router.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_router.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_router_shared_ptr_compare.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_router_shared_ptr_compare.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_websocket_router.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_websocket_router.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_logger/include/sf_logger.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_logger/include/sf_logger.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_meta_object/include/sf_meta_object.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_meta_object/include/sf_meta_object.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_msg_bus/include/sf_msg_bus_client.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_msg_bus/include/sf_msg_bus_client.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_msg_bus/include/sf_msg_bus_server.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_msg_bus/include/sf_msg_bus_server.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_msg_bus/include/sf_msg_bus_utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_msg_bus/include/sf_msg_bus_utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_netutils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_netutils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_tcpclient_linux.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_tcpclient_linux.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_tcpclient_win.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_tcpclient_win.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_tcpserver.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_tcpserver.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_tcpserver_linux.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_tcpserver_linux.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_tcpserver_win.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_tcpserver_win.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_net/include/sf_tcputils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_net/include/sf_tcputils.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_nocopy/include/sf_nocopy.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_nocopy/include/sf_nocopy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_object/include/sf_event_waiter.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_object/include/sf_event_waiter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_object/include/sf_eventloop.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_object/include/sf_eventloop.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_object/include/sf_msg_queue.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_object/include/sf_msg_queue.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_object/include/sf_object.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_object/include/sf_object.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_object/include/sf_timer.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_object/include/sf_timer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_random/include/sf_random.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_random/include/sf_random.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_rpc/include/sf_rpcclient.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_rpc/include/sf_rpcclient.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_rpc/include/sf_rpcserver.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_rpc/include/sf_rpcserver.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_serialize/include/sf_serialize_binary.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_serialize/include/sf_serialize_binary.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_single_instance/include/sf_single_instance.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_single_instance/include/sf_single_instance.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_client.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_client.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_server.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_server.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_utils.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libsf_type/include/sf_type.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_type/include/sf_type.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/libsf_utils/include/sf_utils.h" beforeDir="false" afterPath="$PROJECT_DIR$/libsf_utils/include/sf_utils.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_aop/test_aop.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_aop/test_aop.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_chain_call/test_chain_call.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_chain_call/test_chain_call.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_encrypt/test_encrypt.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_encrypt/test_encrypt.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_event_waiter/test_event_waiter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_event_waiter/test_event_waiter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_meta/test_meta.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_meta/test_meta.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_meta_object/test_meta_object.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_meta_object/test_meta_object.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_msg_bus/test_msg_bus_client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_msg_bus/test_msg_bus_client.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_msg_bus/test_msg_bus_server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_msg_bus/test_msg_bus_server.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_object/test_object.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_object/test_object.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_rpc/test_rpc_client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_rpc/test_rpc_client.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_rpc/test_rpc_server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_rpc/test_rpc_server.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_sf_logger/test_sf_logger.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_sf_logger/test_sf_logger.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_thread_pool/test_thread_pool.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_thread_pool/test_thread_pool.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test_timer/test_timer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_timer/test_timer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_type_list/test_type_list.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_type_list/test_type_list.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FUSProjectUsageTrigger">
     <session id="286425404">
       <usages-collector id="statistics.lifecycle.project">
@@ -349,104 +193,140 @@
       </usages-collector>
     </session>
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="sflib" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/test_meta_object/test_meta_object.cpp">
+      <file leaf-file-name="sf_http_server_config.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server_config.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="720">
-              <caret line="45" column="9" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
+            <state relative-caret-position="126">
+              <caret line="7" column="11" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
               <folding>
-                <element signature="e#0#27#0" expanded="true" />
+                <element signature="e#14#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="13" column="56" selection-start-line="13" selection-start-column="56" selection-end-line="13" selection-end-column="56" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/test_encrypt/test_encrypt.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="6" column="30" selection-start-line="6" selection-start-column="30" selection-end-line="6" selection-end-column="30" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file leaf-file-name="sf_http_base_server.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="12" selection-start-column="12" selection-end-column="12" />
+            <state relative-caret-position="180">
+              <caret line="10" selection-start-line="10" selection-end-line="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_http_server.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/test_http_server/test_http_server.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_http_server.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="108">
+              <caret line="6" column="17" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_http_server.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="25" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_http_base_server.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="24" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_logger.hpp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="225" column="64" selection-start-line="225" selection-start-column="53" selection-end-line="225" selection-end-column="64" />
               <folding>
-                <element signature="e#13#34#0" expanded="true" />
+                <element signature="e#10050#10066#0" expanded="true" />
+                <element signature="e#10054#10070#0" expanded="true" />
+                <element signature="e#9880#9896#0" expanded="true" />
+                <element signature="e#10482#10498#0" expanded="true" />
+                <element signature="e#10411#10427#0" expanded="true" />
+                <element signature="e#10395#10411#0" expanded="true" />
+                <element signature="e#10538#10552#0" expanded="true" />
+                <element signature="e#10323#10339#0" expanded="true" />
+                <element signature="e#10352#10364#0" expanded="true" />
+                <element signature="e#10758#10800#0" expanded="true" />
+                <element signature="e#9499#9515#0" expanded="true" />
+                <element signature="e#10825#10841#0" expanded="true" />
+                <element signature="e#10854#10881#0" expanded="true" />
+                <element signature="e#10709#10725#0" expanded="true" />
+                <element signature="e#10738#10750#0" expanded="true" />
+                <element signature="e#10297#10313#0" expanded="true" />
+                <element signature="e#10526#10548#0" expanded="true" />
+                <element signature="e#10606#11051#0" expanded="true" />
+                <element signature="e#10690#10706#0" expanded="true" />
+                <element signature="e#10719#10734#0" expanded="true" />
+                <element signature="e#11132#11174#0" expanded="true" />
+                <element signature="e#9443#9459#0" expanded="true" />
+                <element signature="e#7568#7584#0" expanded="true" />
+                <element signature="e#10637#11266#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_utils/include/sf_utils.h">
+      <file leaf-file-name="sf_logger.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="9" column="18" selection-start-line="9" selection-start-column="18" selection-end-line="9" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="159" column="54" selection-start-line="159" selection-start-column="54" selection-end-line="159" selection-end-column="54" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/windows.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1504">
-              <caret line="94" column="14" selection-start-line="94" selection-start-column="14" selection-end-line="94" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/wincrypt.h">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_router.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1024">
-              <caret line="64" column="46" selection-start-line="64" selection-start-column="46" selection-end-line="64" selection-end-column="46" />
+            <state relative-caret-position="153">
+              <caret line="111" column="70" selection-start-line="111" selection-start-column="64" selection-end-line="111" selection-end-column="70" />
               <folding>
-                <element signature="e#13#27#0" expanded="true" />
+                <element signature="e#39#57#0" expanded="true" />
+                <element signature="e#359#377#0" expanded="true" />
+                <element signature="e#423#1079#0" expanded="true" />
+                <element signature="e#1086#1108#0" expanded="true" />
+                <element signature="e#3218#3405#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_static_router.h">
+      <file leaf-file-name="sf_empty_class.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_empty_class/include/sf_empty_class.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1200">
-              <caret line="75" column="33" selection-start-line="75" selection-start-column="33" selection-end-line="75" selection-end-column="33" />
+            <state relative-caret-position="180">
+              <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_websocket_utils.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="143" column="23" selection-start-line="143" selection-start-column="23" selection-end-line="143" selection-end-column="23" />
               <folding>
-                <element signature="e#14#41#0" expanded="true" />
+                <element signature="e#14#31#0" expanded="true" />
+                <element signature="e#162#184#0" expanded="true" />
+                <element signature="e#2901#2913#0" expanded="true" />
+                <element signature="e#4466#4478#0" expanded="true" />
+                <element signature="e#4602#4614#0" expanded="true" />
+                <element signature="e#5571#5583#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -456,7 +336,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>methods</find>
       <find>callback_call_helper__</find>
       <find>run_route</find>
       <find>alignas</find>
@@ -482,11 +361,17 @@
       <find>0</find>
       <find>ocsp_response_st</find>
       <find>test_httpserver</find>
+      <find>*.h</find>
+      <find>param</find>
+      <find>p_os</find>
+      <find>sf_empty_class</find>
+      <find>p_os__</find>
     </findStrings>
     <replaceStrings>
       <replace>std::endl</replace>
       <replace>std::shared_ptr</replace>
       <replace>std::cin</replace>
+      <replace>*.hpp</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -495,16 +380,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_httpserver.h" />
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_httprequest.h" />
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_httprequestline.h" />
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_http_request_line.h" />
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_httpheader.h" />
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_http_header.h" />
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_http_server.h" />
-        <option value="$PROJECT_DIR$/libsf_httpserver/include/sf_http_request.h" />
-        <option value="$PROJECT_DIR$/libsf_http_server/include/sf_http_server_config.h" />
-        <option value="$PROJECT_DIR$/libsf_http_server/include/sf_content_type.h" />
         <option value="$PROJECT_DIR$/libsf_http_server/include/sf_http_server.h" />
         <option value="$PROJECT_DIR$/libsf_http_server/sf_http_response.h" />
         <option value="$PROJECT_DIR$/libsf_http_server/include/sf_http_request.h" />
@@ -514,28 +389,48 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/libsf_http/include/sf_http_route.h" />
         <option value="$PROJECT_DIR$/libsf_define/include/sf_define.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h" />
         <option value="$PROJECT_DIR$/libsf_type/include/sf_type.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_header.h" />
         <option value="$PROJECT_DIR$/libsf_net/include/sf_tcpserver_linux.h" />
-        <option value="$PROJECT_DIR$/libsf_chain/include/sf_chain.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_response.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_request.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_websocket_router.h" />
         <option value="$PROJECT_DIR$/libsf_net/include/sf_tcputils.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_utils.h" />
         <option value="$PROJECT_DIR$/libsf_net/include/sf_tcpserver.h" />
         <option value="$PROJECT_DIR$/test/test_sf_logger/test_sf_logger.cpp" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_router.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_static_router.h" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_server.h" />
         <option value="$PROJECT_DIR$/test/test_encrypt/test_encrypt.cpp" />
         <option value="$PROJECT_DIR$/test/test_meta_object/test_meta_object.cpp" />
-        <option value="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h" />
         <option value="$PROJECT_DIR$/libsf_utils/include/sf_utils.h" />
+        <option value="$PROJECT_DIR$/libsf_chain/include/sf_chain.h" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/test/test_chain_call/test_chain_call.cpp" />
+        <option value="$PROJECT_DIR$/libsf_chain/include/sf_chain.hpp" />
+        <option value="$PROJECT_DIR$/libsf_finally/include/sf_finally.h" />
+        <option value="$PROJECT_DIR$/libsf_finally/include/sf_finally.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_header.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_header.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_request.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_response.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_response.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_router.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_router.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_static_router.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_static_router.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_utils.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_utils.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_router.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_router_shared_ptr_compare.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_websocket_router.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_websocket_router.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_router_shared_ptr_compare.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_router.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_server.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_server.h" />
+        <option value="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" />
+        <option value="$PROJECT_DIR$/libsf_logger/include/sf_logger.h" />
+        <option value="$PROJECT_DIR$/libsf_logger/include/sf_logger.hpp" />
       </list>
     </option>
   </component>
@@ -545,19 +440,33 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="376" />
-    <option name="y" value="-6" />
-    <option name="width" value="923" />
-    <option name="height" value="856" />
+    <option name="x" value="52" />
+    <option name="y" value="242" />
+    <option name="width" value="1400" />
+    <option name="height" value="1000" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator currentView="Scope" currentSubView="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope" proportions="" version="1">
+    <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="sflib" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -568,68 +477,29 @@
             <path>
               <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
               <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_define" type="462c0819:PsiDirectoryNode" />
+              <item name="libsf_logger" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
               <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_define" type="462c0819:PsiDirectoryNode" />
+              <item name="libsf_logger" type="462c0819:PsiDirectoryNode" />
               <item name="include" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
               <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_http" type="462c0819:PsiDirectoryNode" />
+              <item name="libsf_single_instance" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
               <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_http" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_net" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_net" type="462c0819:PsiDirectoryNode" />
-              <item name="include" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="libsf_utils" type="462c0819:PsiDirectoryNode" />
+              <item name="libsf_single_instance" type="462c0819:PsiDirectoryNode" />
               <item name="include" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
               <item name="sflib" type="462c0819:PsiDirectoryNode" />
               <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="test_encrypt" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="sflib" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
             </path>
           </expand>
           <select />
@@ -643,6 +513,10 @@
     <property name="settings.editor.selected.configurable" value="CPPToolchains" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\skyfire\Documents\code\sflib\libsf_logger\include" />
+      <recent name="C:\Users\skyfire\Documents\code\sflib\libsf_http\include" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/libsf_http_server/include" />
       <recent name="$PROJECT_DIR$/test/test_httpserver" />
@@ -660,12 +534,47 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
-    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="Application.test_httpserver">
+    <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all" />
+    <configuration name="sf_meta_object_test" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="sf_meta_object_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="sf_meta_object_test" />
+    <configuration name="test_aop" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_aop" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_aop" />
+    <configuration name="test_chain_call" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_chain_call" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_chain_call" />
+    <configuration name="test_encrypt" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_encrypt" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_encrypt" />
+    <configuration name="test_event_waiter" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_event_waiter" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_event_waiter" />
+    <configuration name="test_httpserver" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_httpserver" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_httpserver" />
+    <configuration name="test_meta" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_meta" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_meta" />
+    <configuration name="test_msg_bus_client" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_msg_bus_client" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_msg_bus_client" />
+    <configuration name="test_msg_bus_server" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_msg_bus_server" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_msg_bus_server" />
+    <configuration name="test_object" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_object" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_object" />
+    <configuration name="test_rpc_client" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_rpc_client" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_rpc_client" />
+    <configuration name="test_rpc_server" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_rpc_server" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_rpc_server" />
+    <configuration name="test_sf_logger" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_sf_logger" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_sf_logger" />
+    <configuration name="test_tcp_nat_traversal_client" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_tcp_nat_traversal_client" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_tcp_nat_traversal_client" />
+    <configuration name="test_tcp_nat_traversal_server" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_tcp_nat_traversal_server" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_tcp_nat_traversal_server" />
+    <configuration name="test_thread_pool" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_thread_pool" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_thread_pool" />
+    <configuration name="test_timer" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_timer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_timer" />
+    <configuration name="test_type_list" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_type_list" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_type_list" />
+    <list>
+      <item itemvalue="Application.Build All" />
+      <item itemvalue="Application.sf_meta_object_test" />
+      <item itemvalue="Application.test_aop" />
+      <item itemvalue="Application.test_chain_call" />
+      <item itemvalue="Application.test_encrypt" />
+      <item itemvalue="Application.test_event_waiter" />
+      <item itemvalue="Application.test_httpserver" />
+      <item itemvalue="Application.test_meta" />
+      <item itemvalue="Application.test_msg_bus_client" />
+      <item itemvalue="Application.test_msg_bus_server" />
+      <item itemvalue="Application.test_object" />
+      <item itemvalue="Application.test_rpc_client" />
+      <item itemvalue="Application.test_rpc_server" />
+      <item itemvalue="Application.test_sf_logger" />
+      <item itemvalue="Application.test_tcp_nat_traversal_client" />
+      <item itemvalue="Application.test_tcp_nat_traversal_server" />
+      <item itemvalue="Application.test_thread_pool" />
+      <item itemvalue="Application.test_timer" />
+      <item itemvalue="Application.test_type_list" />
+    </list>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -772,56 +681,93 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="86452000" />
+    <option name="totallyTimeSpent" value="93918000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49481866" visible="true" weight="0.16491044" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32938644" />
+      <window_info active="true" anchor="bottom" id="Messages" order="7" sideWeight="0.4993565" visible="true" weight="0.3827699" />
+      <window_info anchor="bottom" id="CMake" order="7" weight="0.33799785" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5005208" side_tool="true" weight="0.4027484" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.28135222" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.18538713" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.33587787" />
+      <window_info id="Favorites" order="2" sideWeight="0.5051814" side_tool="true" weight="0.18229716" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.32875264" />
+      <window_info active="true" anchor="bottom" id="CMake" order="11" visible="true" weight="0.32756326" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.30784062" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32827586" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.30068967" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39933628" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.4993565" weight="0.38348868" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32965517" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5006435" side_tool="true" weight="0.26344827" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32827586" />
-      <window_info active="true" anchor="bottom" id="CMake" order="11" visible="true" weight="0.32756326" />
-      <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32827586" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.30068967" />
       <window_info anchor="right" id="LuaJ" order="4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39933628" />
+      <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5006435" side_tool="true" weight="0.26344827" />
+      <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32827586" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32965517" />
+      <window_info id="Favorites" order="2" side_tool="true" />
     </layout>
     <layout-to-restore>
+      <window_info anchor="bottom" id="CMake" order="11" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21510416" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3078579" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39935413" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="7" weight="0.23573735" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3078579" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39935413" />
       <window_info anchor="bottom" id="Terminal" order="8" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="bottom" id="CMake" order="11" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Messages" order="7" weight="0.23573735" />
+      <window_info id="Favorites" order="2" side_tool="true" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -838,199 +784,15 @@
     <MESSAGE value="为websocket路由创建提供接口" />
     <option name="LAST_COMMIT_MESSAGE" value="为websocket路由创建提供接口" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/libsf_http/include/sf_http_router.h</url>
-          <line>48</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/libsf_nocopy/include/sf_nocopy.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="10" selection-start-line="11" selection-start-column="10" selection-end-line="11" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request_line.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_define/include/sf_define.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" selection-start-line="2" selection-end-line="6" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/tclDecls.h" />
-    <entry file="file:///usr/include/ecryptfs.h" />
-    <entry file="file:///usr/include/c++/8.1.1/bits/stringfwd.h" />
-    <entry file="file:///usr/include/netinet/in.h" />
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_header.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/bits/typesizes.h" />
-    <entry file="file:///usr/include/bits/types.h" />
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="141" column="60" selection-start-line="141" selection-start-column="60" selection-end-line="141" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/bits/stat.h" />
-    <entry file="file:///usr/include/sys/stat.h" />
-    <entry file="file://$PROJECT_DIR$/libsf_type/include/sf_type.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="23" column="10" selection-start-line="23" selection-start-column="10" selection-end-line="23" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/include/c++/8.1.1/iostream" />
-    <entry file="file:///usr/include/c++/8.1.1/bits/range_access.h" />
-    <entry file="file:///usr/include/zlib.h" />
-    <entry file="file:///usr/include/c++/8.1.1/bits/basic_string.h" />
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="28" selection-start-line="11" selection-start-column="28" selection-end-line="11" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_content_type.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5295">
-          <caret line="353" column="5" selection-start-line="353" selection-start-column="5" selection-end-line="353" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1350">
-          <caret line="90" column="29" selection-start-line="90" selection-start-column="22" selection-end-line="90" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_websocket_router.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver_linux.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3225">
-          <caret line="215" column="20" selection-start-line="215" selection-start-column="12" selection-end-line="215" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_rpc/include/sf_rpcclient.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="82" column="19" selection-start-line="82" selection-start-column="19" selection-end-line="82" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_thread_pool/include/sf_thread_pool.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="43" column="4" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_response.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="59" column="63" selection-start-line="59" selection-start-column="63" selection-end-line="59" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_object.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-8">
-          <caret line="105" column="8" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_chain/include/sf_chain.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="36" column="42" selection-start-line="36" selection-start-column="42" selection-end-line="36" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/wtypes.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/lib/gcc/i686-w64-mingw32/8.1.0/include/c++/functional">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="725">
-          <caret line="894" column="17" selection-start-line="894" selection-start-column="13" selection-end-line="894" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/rpcndr.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="63" column="22" selection-start-line="63" selection-start-column="15" selection-end-line="63" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpclient.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpclient_win.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32">
-          <caret line="2" column="9" selection-start-line="2" selection-start-column="9" selection-end-line="2" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpclient_linux.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcputils.h">
+    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcputils.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="32">
           <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_utils.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver.h">
+    <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="96">
           <caret line="6" column="6" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
@@ -1039,40 +801,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test/test_sf_logger/test_sf_logger.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="8" column="5" selection-start-line="8" selection-end-line="8" selection-end-column="5" />
+        <state relative-caret-position="486">
+          <caret line="27" column="17" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver_win.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        <state relative-caret-position="3132">
+          <caret line="174" selection-start-line="174" selection-end-line="174" />
         </state>
       </provider>
     </entry>
     <entry file="file://C:/Program Files (x86)/GnuWin32/include/openssl/ossl_typ.h" />
-    <entry file="file://$PROJECT_DIR$/test/test_http_server/test_http_server.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16">
-          <caret line="1" column="23" selection-start-line="1" selection-start-column="23" selection-end-line="1" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/test_meta_object/test_meta_object.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="720">
           <caret line="45" column="9" selection-start-line="45" selection-start-column="9" selection-end-line="45" selection-end-column="9" />
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="13" column="56" selection-start-line="13" selection-start-column="56" selection-end-line="13" selection-end-column="56" />
         </state>
       </provider>
     </entry>
@@ -1080,19 +825,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="96">
           <caret line="6" column="30" selection-start-line="6" selection-start-column="30" selection-end-line="6" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="12" selection-start-column="12" selection-end-column="12" />
-          <folding>
-            <element signature="e#13#34#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1103,40 +835,381 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/windows.h">
+    <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/windows.h" />
+    <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/wincrypt.h" />
+    <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_client.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1504">
-          <caret line="94" column="14" selection-start-line="94" selection-start-column="14" selection-end-line="94" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Program Files (x86)/mingw-w64/i686-8.1.0-posix-dwarf-rt_v6-rev0/mingw32/i686-w64-mingw32/include/wincrypt.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_router.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1024">
-          <caret line="64" column="46" selection-start-line="64" selection-start-column="46" selection-end-line="64" selection-end-column="46" />
+        <state relative-caret-position="2862">
+          <caret line="159" column="55" selection-start-line="159" selection-start-column="55" selection-end-line="159" selection-end-column="55" />
           <folding>
-            <element signature="e#13#27#0" expanded="true" />
+            <element signature="e#14#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_static_router.h">
+    <entry file="file://$PROJECT_DIR$/libsf_single_instance/include/sf_single_instance.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1200">
-          <caret line="75" column="33" selection-start-line="75" selection-start-column="33" selection-end-line="75" selection-end-column="33" />
+        <state relative-caret-position="198">
+          <caret line="12" column="4" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
           <folding>
-            <element signature="e#14#41#0" expanded="true" />
+            <element signature="e#124#178#0" expanded="true" />
+            <element signature="e#513#553#0" expanded="true" />
+            <element signature="e#804#844#0" expanded="true" />
+            <element signature="e#973#1013#0" expanded="true" />
+            <element signature="e#1097#1137#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_utils.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1674">
+          <caret line="93" column="39" selection-start-line="93" selection-start-column="39" selection-end-line="93" selection-end-column="39" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="159" column="54" selection-start-line="159" selection-start-column="54" selection-end-line="159" selection-end-column="54" />
+        <state relative-caret-position="176">
+          <caret line="119" column="33" selection-start-line="119" selection-start-column="33" selection-end-line="119" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_chain_call/test_chain_call.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="26" column="21" selection-start-line="26" selection-start-column="21" selection-end-line="26" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_chain/include/sf_chain.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="361">
+          <caret line="141" selection-start-line="141" selection-end-line="141" />
+          <folding>
+            <element signature="e#158#173#0" expanded="true" />
+            <element signature="e#293#308#0" expanded="true" />
+            <element signature="e#297#332#0" expanded="true" />
+            <element signature="e#669#684#0" expanded="true" />
+            <element signature="e#673#708#0" expanded="true" />
+            <element signature="e#1038#1053#0" expanded="true" />
+            <element signature="e#1256#1290#0" expanded="true" />
+            <element signature="e#1609#1643#0" expanded="true" />
+            <element signature="e#2042#2057#0" expanded="true" />
+            <element signature="e#2304#2319#0" expanded="true" />
+            <element signature="e#2332#2366#0" expanded="true" />
+            <element signature="e#3039#3073#0" expanded="true" />
+            <element signature="e#3381#3415#0" expanded="true" />
+            <element signature="e#3895#3929#0" expanded="true" />
+            <element signature="e#4166#4200#0" expanded="true" />
+            <element signature="e#4424#4458#0" expanded="true" />
+            <element signature="e#4758#4792#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_finally/include/sf_finally.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_header.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="21" column="6" selection-start-line="21" selection-start-column="6" selection-end-line="21" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="5" column="15" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_chain/include/sf_chain.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2052">
+          <caret line="114" column="33" selection-start-line="114" selection-start-column="33" selection-end-line="114" selection-end-column="33" />
+          <folding>
+            <element signature="e#34#55#0" expanded="true" />
+            <element signature="e#125#140#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_define/include/sf_define.hpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_finally/include/sf_finally.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_content_type.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1368">
+          <caret line="353" column="5" selection-start-line="353" selection-start-column="5" selection-end-line="353" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_response.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="29" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_router.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="42" column="6" selection-start-line="42" selection-start-column="6" selection-end-line="42" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_router.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
+          <folding>
+            <element signature="e#3372#3416#0" expanded="true" />
+            <element signature="e#3474#3498#0" expanded="true" />
+            <element signature="e#2591#2615#0" expanded="true" />
+            <element signature="e#3576#3620#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_response.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="28" selection-start-line="2" selection-start-column="28" selection-end-line="2" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request_line.hpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="27" selection-start-line="3" selection-start-column="27" selection-end-line="3" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_header.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="2" column="26" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_static_router.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="6" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
+          <folding>
+            <element signature="e#14#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_static_router.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="33" selection-start-line="2" selection-start-column="33" selection-end-line="2" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_utils.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="666">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_router.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_router_shared_ptr_compare.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="14" column="6" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_websocket_router.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="344">
+          <caret line="31" column="6" selection-start-line="31" selection-start-column="6" selection-end-line="31" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_router_shared_ptr_compare.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="40" selection-start-line="2" selection-start-column="40" selection-end-line="2" selection-end-column="40" />
+          <folding>
+            <element signature="e#340#361#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_utils.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="25" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_router.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_websocket_router.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="31" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="69" column="29" selection-start-line="69" selection-start-column="29" selection-end-line="69" selection-end-column="29" />
+          <folding>
+            <element signature="e#3252#3264#0" expanded="true" />
+            <element signature="e#4470#4482#0" expanded="true" />
+            <element signature="e#4606#4618#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_websocket_utils.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="143" column="23" selection-start-line="143" selection-start-column="23" selection-end-line="143" selection-end-column="23" />
+          <folding>
+            <element signature="e#14#31#0" expanded="true" />
+            <element signature="e#162#184#0" expanded="true" />
+            <element signature="e#2901#2913#0" expanded="true" />
+            <element signature="e#4466#4478#0" expanded="true" />
+            <element signature="e#4602#4614#0" expanded="true" />
+            <element signature="e#5571#5583#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server_config.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="11" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="11" />
+          <folding>
+            <element signature="e#14#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_http_server/test_http_server.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="17" selection-start-line="6" selection-start-column="17" selection-end-line="6" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="25" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="24" selection-start-line="2" selection-start-column="24" selection-end-line="2" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_empty_class/include/sf_empty_class.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="111" column="70" selection-start-line="111" selection-start-column="64" selection-end-line="111" selection-end-column="70" />
+          <folding>
+            <element signature="e#39#57#0" expanded="true" />
+            <element signature="e#359#377#0" expanded="true" />
+            <element signature="e#423#1079#0" expanded="true" />
+            <element signature="e#1086#1108#0" expanded="true" />
+            <element signature="e#3218#3405#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="225" column="64" selection-start-line="225" selection-start-column="53" selection-end-line="225" selection-end-column="64" />
+          <folding>
+            <element signature="e#10050#10066#0" expanded="true" />
+            <element signature="e#10054#10070#0" expanded="true" />
+            <element signature="e#9880#9896#0" expanded="true" />
+            <element signature="e#10482#10498#0" expanded="true" />
+            <element signature="e#10411#10427#0" expanded="true" />
+            <element signature="e#10395#10411#0" expanded="true" />
+            <element signature="e#10538#10552#0" expanded="true" />
+            <element signature="e#10323#10339#0" expanded="true" />
+            <element signature="e#10352#10364#0" expanded="true" />
+            <element signature="e#10758#10800#0" expanded="true" />
+            <element signature="e#9499#9515#0" expanded="true" />
+            <element signature="e#10825#10841#0" expanded="true" />
+            <element signature="e#10854#10881#0" expanded="true" />
+            <element signature="e#10709#10725#0" expanded="true" />
+            <element signature="e#10738#10750#0" expanded="true" />
+            <element signature="e#10297#10313#0" expanded="true" />
+            <element signature="e#10526#10548#0" expanded="true" />
+            <element signature="e#10606#11051#0" expanded="true" />
+            <element signature="e#10690#10706#0" expanded="true" />
+            <element signature="e#10719#10734#0" expanded="true" />
+            <element signature="e#11132#11174#0" expanded="true" />
+            <element signature="e#9443#9459#0" expanded="true" />
+            <element signature="e#7568#7584#0" expanded="true" />
+            <element signature="e#10637#11266#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -14,8 +14,8 @@
 #include <memory>
 #include <cstring>
 #include <thread>
-#include "sf_tcputils.h"
-#include "sf_object.h"
+#include "sf_tcputils.hpp"
+#include "sf_object.hpp"
 #include "sf_nocopy.h"
 
 namespace skyfire

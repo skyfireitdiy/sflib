@@ -1,0 +1,97 @@
+
+#pragma once
+
+#include "sf_http_request.h"
+
+namespace skyfire{
+
+    bool sf_http_request::split_request__(const byte_array &raw, std::string &request_line,
+                                          std::vector<std::string> &header_lines, byte_array &body) {
+        auto raw_string = to_string(raw);
+        auto pos = raw_string.find("\r\n\r\n");
+        if(pos == std::string::npos)
+            return false;
+        body = byte_array(raw.begin()+pos+4, raw.end());
+        std::istringstream si(std::string(raw_string.begin(), raw_string.begin()+pos));
+        getline(si, request_line);
+        std::string tmp_str;
+        header_lines.clear();
+        while(!si.eof()){
+            getline(si,tmp_str);
+            header_lines.push_back(tmp_str);
+        }
+        return true;
+    }
+
+    byte_array sf_http_request::get_body() const {
+        return body__;
+    }
+
+    sf_http_header sf_http_request::get_header() const {
+        return header__;
+    }
+
+    sf_http_request_line sf_http_request::get_request_line() const {
+        return request_line__;
+    }
+
+    bool sf_http_request::is_valid() const {
+        return valid__;
+    }
+
+    sf_http_request::sf_http_request(byte_array raw) : raw__(std::move(raw))
+    {
+        valid__ = parse_request__();
+    }
+
+    bool sf_http_request::parse_request__() {
+        std::string request_line;
+        std::vector<std::string> header_lines;
+        if(!split_request__(raw__,request_line, header_lines, body__)) {
+            sf_debug("split request error");
+            return false;
+        }
+        if(!parse_request_line(request_line,request_line__)) {
+            sf_debug("parse request line error");
+            return false;
+        }
+        if(!parse_header(header_lines, header__)) {
+            sf_debug("parse header error");
+            return false;
+        }
+        auto content_len = header__.get_header_value("Content-Length","0");
+
+
+        char *pos;
+        if(std::strtoll(content_len.c_str(), &pos, 10) != body__.size()){
+            sf_debug("body size error", content_len.c_str(), body__.size());
+            return false;
+        }
+
+        return true;
+    }
+
+    bool sf_http_request::parse_header(const std::vector<std::string> header_lines, sf_http_header &header) {
+
+        for(auto &line:header_lines)
+        {
+            auto pos = line.find(':');
+            if(pos==std::string::npos)
+                return false;
+            std::string key(line.begin(),line.begin()+pos);
+            std::string value(line.begin()+pos+1, line.end());
+            value = sf_string_trim(value);
+            header.set_header(key,value);
+        }
+        return true;
+    }
+
+    bool sf_http_request::parse_request_line(const std::string &request_line, sf_http_request_line &request_line_para) {
+        std::istringstream si(request_line);
+        if(!(si>>request_line_para.method))
+            return false;
+        if(!(si>>request_line_para.url))
+            return false;
+        return !!(si >> request_line_para.http_version);
+    }
+}

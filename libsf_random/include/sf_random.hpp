@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "sf_nocopy.h"
-#include "sf_single_instance.h"
+#include "sf_single_instance.hpp"
 
 namespace skyfire {
     class sf_random : public sf_nocopy<> {

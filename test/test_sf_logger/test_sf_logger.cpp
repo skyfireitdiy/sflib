@@ -1,7 +1,7 @@
 #include <iostream>
 #define SF_LOG_OUTPUT_THREAD_ID
 #define SF_LOGGER_STANDALONE
-#include "sf_logger.h"
+#include "sf_logger.hpp"
 
 #include <iostream>
 #include <sf_finally.h>

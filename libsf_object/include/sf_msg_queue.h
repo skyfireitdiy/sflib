@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "sf_single_instance.h"
+#include "sf_single_instance.hpp"
 #include <functional>
 #include <list>
 #include <map>

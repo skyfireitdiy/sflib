@@ -8,7 +8,7 @@
 #include <mutex>
 #include <atomic>
 
-#include "sf_single_instance.h"
+#include "sf_single_instance.hpp"
 #include "sf_msg_queue.h"
 #include "sf_nocopy.h"
 

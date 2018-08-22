@@ -7,10 +7,10 @@
 #include <string>
 
 #include "sf_msg_bus_utils.h"
-#include "sf_type.h"
-#include "sf_object.h"
-#include "sf_tcpserver.h"
-#include "sf_serialize_binary.h"
+#include "sf_type.hpp"
+#include "sf_object.hpp"
+#include "sf_tcpserver.hpp"
+#include "sf_serialize_binary.hpp"
 
 namespace skyfire {
 

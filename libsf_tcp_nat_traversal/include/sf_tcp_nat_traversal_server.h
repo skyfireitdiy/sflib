@@ -2,10 +2,10 @@
 
 #include <set>
 #include "sf_nocopy.h"
-#include "sf_object.h"
+#include "sf_object.hpp"
 #include "sf_tcpclient.h"
-#include "sf_tcpserver.h"
-#include "sf_define.h"
+#include "sf_tcpserver.hpp"
+#include "sf_define.hpp"
 #include "sf_tcp_nat_traversal_utils.h"
 
 namespace skyfire {

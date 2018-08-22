@@ -1,4 +1,4 @@
-#include "sf_object.h"
+#include "sf_object.hpp"
 #include <iostream>
 using namespace skyfire;
 

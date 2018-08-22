@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "sf_type.h"
-#include "sf_tcputils.h"
-#include "sf_serialize_binary.h"
+#include "sf_type.hpp"
+#include "sf_tcputils.hpp"
+#include "sf_serialize_binary.hpp"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -100,9 +100,20 @@ namespace skyfire {
 
 #pragma pack()
 
+    class sf_http_server;
+
     enum class websocket_data_type{
         TextData,
         BinaryData
+    };
+
+    struct websocket_param_t {
+        SOCKET sock;
+        std::string url;
+        websocket_data_type type;
+        std::string text_msg;
+        byte_array binary_data;
+        std::shared_ptr<sf_http_server> p_server;
     };
 
     constexpr int WEBSOCKET_OP_MIDDLE_PKG = 0x0;
@@ -117,102 +128,33 @@ namespace skyfire {
 
     constexpr int WEBSOCKET_OP_PONG_PKG = 0x0A;
 
-    template <typename T>
-    byte_array make_server_websocket_data_pkg(const T &data) {
-        byte_array ret;
-        int type;
-        if constexpr (std::is_same_v<T,std::string>){
-            type = WEBSOCKET_OP_TEXT_PKG;
-        }else{
-            type = WEBSOCKET_OP_BINARY_PKG;
-        }
-        if(data.size() < 126){
-            websocket_server_data_1_header_t header;
-            memset(&header, 0, sizeof(header));
-            header.fin_rsv_oc = 0b10000000;
-            header.fin_rsv_oc |= type;
-            header.mask_len = data.size();
-            ret += to_byte_array(header);
-        }else if(data.size()>=126 && data.size() <= 0xffffffffffffffffUL){
-            websocket_server_data_2_header_t header;
-            memset(&header,0,sizeof(header));
-            header.mask_len = 126;
-            header.fin_rsv_oc = 0b10000000;
-            header.fin_rsv_oc |= type;
-            *reinterpret_cast<unsigned short*>(header.extend_len) = htons(data.size());
-            ret += to_byte_array(header);
-        }else{
-            websocket_server_data_2_header_t header;
-            memset(&header,0,sizeof(header));
-            header.mask_len = 127;
-            header.fin_rsv_oc = 0b10000000;
-            header.fin_rsv_oc |= type;
-            *reinterpret_cast<unsigned short*>(header.extend_len) = sf_hton64(data.size());
-            ret += to_byte_array(header);
-        }
-        if constexpr (std::is_same_v<T,std::string>) {
-            ret += to_byte_array(data);
-        }else{
-            ret += data;
-        }
-        return ret;
-    }
+    template<typename T>
+    byte_array make_server_websocket_data_pkg(const T &data) ;
 
+    template<typename T>
+    bool sf_is_fin(const T &header) ;
 
+    template<typename T>
+    bool sf_with_mask(const T &header) ;
 
+    unsigned long long sf_get_size(const websocket_client_data_1_header_t &header) ;
 
-    class sf_http_server;
+    void sf_decode_websocket_pkg(byte_array &data, const unsigned char *mask_key) ;
 
-    struct websocket_param_t {
-        SOCKET sock;
-        std::string url;
-        websocket_data_type type;
-        std::string text_msg;
-        byte_array binary_data;
-        std::shared_ptr<sf_http_server> p_server;
-    };
+    unsigned long long sf_get_size(const websocket_client_data_2_header_t &header) ;
+
 
 
 
     template <typename T>
-    bool sf_is_fin(const T& header){
-        return static_cast<bool>(header.fin_rsv_oc & 0b10000000);
-    }
-
+    bool sf_is_fin(const T& header);
     template <typename T>
-    inline bool sf_with_mask(const T& header){
-        return static_cast<bool>(header.mask_len & 0b10000000);
-    }
-
+    inline bool sf_with_mask(const T& header);
     template <typename T>
-    inline int sf_get_op_code(const T&header){
-        return header.fin_rsv_oc & 0b00001111;
-    }
+    inline int sf_get_op_code(const T&header);
 
-
-    inline unsigned long long sf_get_size(const websocket_client_data_1_header_t &header)
-    {
-        return static_cast<unsigned long long int>(header.mask_len & 0b01111111);;
-    }
-
-    inline unsigned long long sf_get_size(const websocket_client_data_2_header_t &header)
-    {
-        return ntohs(*reinterpret_cast<const unsigned short *>(header.extend_len));
-    }
-
-    inline unsigned long long sf_get_size(const websocket_client_data_3_header_t &header)
-    {
-        return sf_ntoh64(*reinterpret_cast<const unsigned long long *>(header.extend_len));
-    }
-
-
-
-    inline void sf_decode_websocket_pkg(byte_array &data, const unsigned char* mask_key){
-        auto size = data.size();
-        for(size_t i = 0;i<size;++i){
-            data[i] ^= mask_key[i%4];
-        }
-    }
+    inline unsigned long long sf_get_size(const websocket_client_data_1_header_t &header);
+    inline void sf_decode_websocket_pkg(byte_array &data, const unsigned char* mask_key);
 
 }
 

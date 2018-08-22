@@ -8,8 +8,8 @@
 #include <string>
 #include <functional>
 #include <tuple>
-#include "sf_type.h"
-#include "sf_serialize_binary.h"
+#include "sf_type.hpp"
+#include "sf_serialize_binary.hpp"
 #include "sf_meta.h"
 
 

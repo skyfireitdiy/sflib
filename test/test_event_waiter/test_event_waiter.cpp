@@ -6,7 +6,7 @@
 
 #include "sf_event_waiter.h"
 #include "sf_timer.h"
-#include "sf_logger.h"
+#include "sf_logger.hpp"
 #include <iostream>
 
 using namespace skyfire;

@@ -1,5 +1,5 @@
 #include "sf_timer.h"
-#include "sf_eventloop.h"
+#include "sf_eventloop.hpp"
 #include <iostream>
 
 using namespace skyfire;

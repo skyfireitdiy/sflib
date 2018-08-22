@@ -1,6 +1,6 @@
 #include "sf_utils.h"
-#include "sf_type.h"
-#include "sf_http_utils.h"
+#include "sf_type.hpp"
+#include "sf_http_utils.hpp"
 
 
 using namespace skyfire;

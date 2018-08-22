@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "sf_object.h"
-#include "sf_type.h"
+#include "sf_object.hpp"
+#include "sf_type.hpp"
 #include "sf_tcpclient.h"
 #include "sf_msg_bus_utils.h"
 
