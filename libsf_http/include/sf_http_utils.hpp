@@ -62,7 +62,7 @@ namespace skyfire
     }
 
 
-    void sf_parse_param(std::map<std::string, std::string> param,std::string &param_str) {
+    inline void sf_parse_param(std::map<std::string, std::string> param,std::string &param_str) {
         param.clear();
         unsigned long url_pos;
         while((url_pos = param_str.find('&')) != std::string::npos)

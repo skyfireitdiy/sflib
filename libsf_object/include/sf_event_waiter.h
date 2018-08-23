@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "sf_nocopy.h"
+#include "sf_nocopy.hpp"
 #include "sf_object.hpp"
-#include "sf_meta.h"
+#include "sf_meta.hpp"
 #include <condition_variable>
 #include <mutex>
 
@@ -36,41 +36,26 @@ namespace skyfire {
         /**
          * @brief sf_event_waiter 构造一个事件等待对象
          */
-        sf_event_waiter() {
-        }
+        sf_event_waiter();
 
         /**
          * @brief wait 等待
          */
-        void wait() {
-            std::unique_lock<std::mutex> lck(mu_cond__);
-            cond__.wait(lck);
-        }
+        void wait();
 
         template<std::size_t... Index>
-        auto __make_quit_func_helper(std::index_sequence<Index...>) {
-            // WARNING _Placeholder不是标准类型
-            return [=]() {
-                quit(make_placeholders<Index + 1>()...);
-            };
-        }
+        auto __make_quit_func_helper(std::index_sequence<Index...>);
 
-        auto __make_quit_func() {
-            return __make_quit_func_helper(std::make_index_sequence<sizeof...(ARGS)>{});
-        }
+        auto __make_quit_func();
 
         /**
          * @brief quit 退出等待
          */
-        void quit(ARGS ...) {
-            cond__.notify_one();
-        }
+        void quit(ARGS ...);
     };
-
 
     template<typename...ARGS>
     std::shared_ptr<sf_event_waiter<ARGS...>>
-    sf_make_waiter(const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>> &) {
-        return std::make_shared<sf_event_waiter<ARGS...>>();
-    }
+    sf_make_waiter(const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>> &);
+
 }

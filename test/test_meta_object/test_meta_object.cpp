@@ -1,4 +1,4 @@
-#include "sf_meta_object.h"
+#include "sf_meta_object.hpp"
 #include <string>
 #include <iostream>
 using namespace skyfire;

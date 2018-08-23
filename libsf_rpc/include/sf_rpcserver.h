@@ -5,9 +5,9 @@
 #pragma once
 
 #include "sf_tcpserver.hpp"
-#include "sf_nocopy.h"
+#include "sf_nocopy.hpp"
 #include "sf_serialize_binary.hpp"
-#include "sf_meta.h"
+#include "sf_meta.hpp"
 #include <string>
 #include <functional>
 #include <tuple>
@@ -25,19 +25,10 @@ namespace skyfire {
         std::vector<std::function<void(SOCKET, int, const std::string &, const byte_array &)>> __func__vec__;
 
         template<typename _Type>
-        void __send_back(SOCKET sock, int id_code, const std::string &id_str, _Type data) {
-            __tcp_server__->send(sock, id_code, sf_serialize_binary(id_str) + sf_serialize_binary(data));
-        }
+        void __send_back(SOCKET sock, int id_code, const std::string &id_str, _Type data);
 
 
-        void __on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data) {
-            std::string id;
-            byte_array param;
-            size_t pos = sf_deserialize_binary(data, id, 0);
-            for (auto &p : __func__vec__) {
-                p(sock, header.type, id, byte_array(data.begin() + pos, data.end()));
-            }
-        }
+        void __on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data);
 
 
     public:
@@ -48,77 +39,18 @@ namespace skyfire {
          * @param func 函数
          */
         template<typename _Func>
-        void reg_rpc_func(const std::string &id, _Func func) {
-            if constexpr (std::is_bind_expression<_Func>::value) {
-                static_assert(!sf_check_param_reference<_Func>::value, "Param can't be reference");
-                static_assert(!sf_check_param_pointer<_Func>::value, "Param can't be pointer");
-                static_assert(!sf_check_return_reference<_Func>::value, "Return can't be reference");
-                static_assert(!sf_check_return_pointer<_Func>::value, "Return can't be pointer");
-
-
-                using _Ret = typename sf_function_type_helper<_Func>::return_type;
-                using _Param = typename sf_function_type_helper<_Func>::param_type;
-
-                auto f = [=](SOCKET s, int id_code, const std::string &id_str, const byte_array &data) {
-                    if (id == id_str) {
-                        _Param param;
-                        sf_deserialize_binary(data, param, 0);
-                        _Ret ret = sf_invoke(func, param);
-                        __send_back(s, id_code, id_str, ret);
-                    }
-                };
-                __func__vec__.push_back(f);
-
-            } else {
-                static_assert(!sf_check_param_reference<decltype(std::function(func))>::value,
-                              "Param can't be reference");
-                static_assert(!sf_check_param_pointer<decltype(std::function(func))>::value, "Param can't be pointer");
-                static_assert(!sf_check_return_reference<decltype(std::function(func))>::value,
-                              "Return can't be reference");
-                static_assert(!sf_check_return_pointer<decltype(std::function(func))>::value,
-                              "Return can't be pointer");
-
-
-                using _Ret = typename sf_function_type_helper<decltype(std::function(func))>::return_type;
-                using _Param = typename sf_function_type_helper<decltype(std::function(func))>::param_type;
-
-                auto f = [=](SOCKET s, int id_code, const std::string &id_str, const byte_array &data) {
-                    if (id == id_str) {
-                        _Param param;
-                        sf_deserialize_binary(data, param, 0);
-                        if constexpr (std::is_same<_Ret, void>::value) {
-                            sf_invoke(func, param);
-                            __send_back(s, id_code, id_str, '\0');
-                        } else {
-                            _Ret ret = sf_invoke(func, param);
-                            __send_back(s, id_code, id_str, ret);
-                        }
-                    }
-                };
-                __func__vec__.push_back(f);
-            }
-
-        }
+        void reg_rpc_func(const std::string &id, _Func func);
 
         /**
          * @brief make_server 创建RPC服务器
          * @return 服务器对象
          */
-        static std::shared_ptr<sf_rpcserver> make_server() {
-            return std::make_shared<sf_rpcserver>();
-        }
+        static std::shared_ptr<sf_rpcserver> make_server();
 
         /**
          * @brief sf_rpcserver 构造函数
          */
-        sf_rpcserver() {
-            sf_bind_signal(sf_rpcserver::__tcp_server__,
-                           data_coming,
-                           [=](SOCKET sock, const pkg_header_t &header, const byte_array &data) {
-                               __on_data_coming(sock, header, data);
-                           },
-                           true);
-        }
+        sf_rpcserver();
 
         /**
          * @brief listen 监听
@@ -126,16 +58,13 @@ namespace skyfire {
          * @param port 端口
          * @return 是否成功
          */
-        bool listen(const std::string &ip, unsigned short port) {
-            return __tcp_server__->listen(ip, port);
-        }
+        bool listen(const std::string &ip, unsigned short port);
 
         /**
          * @brief close 关闭RPC服务器
          */
-        void close() {
-            __tcp_server__->close();
-        }
+        void close();
 
     };
+
 }

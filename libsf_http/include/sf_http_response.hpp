@@ -5,35 +5,35 @@
 namespace skyfire
 {
 
-    void sf_http_response::set_status(int status) {
+    inline void sf_http_response::set_status(int status) {
         status__ = status;
     }
 
-    void sf_http_response::set_http_version(const std::string &http_version) {
+    inline void sf_http_response::set_http_version(const std::string &http_version) {
         http_version__ = http_version;
     }
 
-    void sf_http_response::set_reason(const std::string &reason) {
+    inline void sf_http_response::set_reason(const std::string &reason) {
         reason__ = reason;
     }
 
-    void sf_http_response::set_header(const sf_http_header &header) {
+    inline void sf_http_response::set_header(const sf_http_header &header) {
         header__ = header;
     }
 
-    void sf_http_response::set_body(const byte_array &body) {
+    inline void sf_http_response::set_body(const byte_array &body) {
         body__ = body;
     }
 
-    unsigned long long sf_http_response::get_length() const {
+    inline unsigned long long sf_http_response::get_length() const {
         return body__.size();
     }
 
-    sf_http_header &sf_http_response::get_header() {
+    inline sf_http_header &sf_http_response::get_header() {
         return header__;
     }
 
-    byte_array sf_http_response::to_package() const {
+    inline byte_array sf_http_response::to_package() const {
         std::string response_head;
         response_head += http_version__ + " " + std::to_string(status__) + " " + reason__ + "\r\n";
         for(auto &p:header__.get_key_list())

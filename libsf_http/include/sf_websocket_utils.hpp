@@ -56,18 +56,18 @@ namespace skyfire {
         return static_cast<bool>(header.mask_len & 0b10000000);
     }
 
-    unsigned long long sf_get_size(const websocket_client_data_1_header_t &header) {
+    inline unsigned long long sf_get_size(const websocket_client_data_1_header_t &header) {
         return static_cast<unsigned long long int>(header.mask_len & 0b01111111);;
     }
 
-    void sf_decode_websocket_pkg(byte_array &data, const unsigned char *mask_key) {
+    inline void sf_decode_websocket_pkg(byte_array &data, const unsigned char *mask_key) {
         auto size = data.size();
         for(size_t i = 0;i<size;++i){
             data[i] ^= mask_key[i%4];
         }
     }
 
-    unsigned long long sf_get_size(const websocket_client_data_2_header_t &header) {
+    inline unsigned long long sf_get_size(const websocket_client_data_2_header_t &header) {
         return ntohs(*reinterpret_cast<const unsigned short *>(header.extend_len));
     }
 

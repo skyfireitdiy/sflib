@@ -19,29 +19,15 @@ namespace skyfire
 		const value_type step__;
 		value_type value__;
 	public:
-		sf_range_iteator__(size_type start,const value_type& value,const value_type& step):
-		cursor__(start),value__(value),step__(step)
-		{
-			value__ += (step__*cursor__);
-		}
+		sf_range_iteator__(size_type start,const value_type& value,const value_type& step);
 
-		value_type operator*()const
-		{
-			return value__;
-		}
+		value_type operator*()const;
 
-		bool operator!=(const sf_range_iteator__<T>& other) const
-		{
-			return cursor__ != other.cursor__;
-		}
+		bool operator!=(const sf_range_iteator__<T>& other) const;
 
-		sf_range_iteator__<T> & operator ++()
-		{
-			value__ += step__;
-			++cursor__;
-			return *this;
-		}
+		sf_range_iteator__<T> & operator ++();
 	};
+
 
 	template<typename T>
 	class sf_range_impl__
@@ -60,68 +46,25 @@ namespace skyfire
 		const value_type step__;
 		const size_type max_count__;
 
-		size_type get_max_count__() const
-		{
-			if(step__>0&&begin__>=end__)
-			{
-				throw std::logic_error("End value must be greater than begin value");
-			}
-			if(step__<0&&begin__<=end__)
-			{
-				throw std::logic_error("End value must be less than begin value");
-			}
-			if(step__==0)
-			{
-				throw std::logic_error("Step can't be zero");
-			}
-			auto x = static_cast<size_type>((end__ - begin__) / step__);
-			if(begin__+(x*step__)!=end__)
-			{
-				++x;
-			}
-			return x;
-		}
+		size_type get_max_count__() const;
 
 	public:
-		sf_range_impl__(const value_type vbegin, const value_type vend, const value_type vstep):
-		begin__(vbegin),end__(vend),step__(vstep),max_count__(get_max_count__())
-		{
-			
-		}
+		sf_range_impl__(const value_type vbegin, const value_type vend, const value_type vstep);
 
-		size_type size()const
-		{
-			return max_count__;
-		}
+		size_type size()const;
 
-		const_iterator begin()const
-		{
-			return { 0, begin__, step__};
-		}
+		const_iterator begin()const;
 
-		const_iterator end()const
-		{
-			return { max_count__,begin__,step__ };
-		}
+		const_iterator end()const;
 	};
 
 	template<typename T>
-	sf_range_impl__<T> sf_range(const T &end)
-	{
-		return { {},end,1 };
-	}
+	sf_range_impl__<T> sf_range(const T &end);
 
 	template<typename T>
-	sf_range_impl__<T> sf_range(const T &begin, const T &end)
-	{
-		return { begin,end,1 };
-	}
+	sf_range_impl__<T> sf_range(const T &begin, const T &end);
 
 	template<typename T>
-	auto sf_range(const T &begin, const T &end, const T &step)
-	{
-		return sf_range_impl__<decltype(begin + step)>{begin, end, step};
-	}
-
+	auto sf_range(const T &begin, const T &end, const T &step);
 
 }

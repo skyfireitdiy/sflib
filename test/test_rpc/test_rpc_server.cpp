@@ -1,4 +1,4 @@
-#include "sf_rpcserver.h"
+#include "sf_rpcserver.hpp"
 #include <iostream>
 
 using namespace skyfire;

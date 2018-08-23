@@ -61,15 +61,9 @@ namespace skyfire {
         sf_chain_async_call__<_R> then(std::function<_R(_Ret, _Params...)> func, _Params &&... param);
 
         template<typename _R, typename ... _Params>
-        sf_chain_async_call__<_R> then(_R(func)(_Ret, _Params...), _Params &&... param) {
-            auto task = std::make_shared<std::packaged_task<_R()>>(
-                    std::bind(func, ret__.get(), std::forward<_Params>(param) ...));
-            return sf_chain_async_call__<_R>(task);
-        }
+        sf_chain_async_call__<_R> then(_R(func)(_Ret, _Params...), _Params &&... param);
 
-        std::future<_Ret> get_future() {
-            return ret__;
-        }
+        std::future<_Ret> get_future();
     };
 
 

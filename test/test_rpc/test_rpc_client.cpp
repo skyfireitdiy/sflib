@@ -1,5 +1,5 @@
 #include <iostream>
-#include "sf_rpcclient.h"
+#include "sf_rpcclient.hpp"
 
 using namespace skyfire;
 using namespace std::literals;

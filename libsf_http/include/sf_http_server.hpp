@@ -4,7 +4,7 @@
 
 namespace skyfire
 {
-    void sf_http_server::default_request_callback__(const sf_http_request &req, sf_http_response &res) {
+    inline void sf_http_server::default_request_callback__(const sf_http_request &req, sf_http_response &res) {
         auto req_line = req.get_request_line();
         for(auto &p:http_routers__)
         {
@@ -13,19 +13,19 @@ namespace skyfire
         }
     }
 
-    void sf_http_server::add_router(const std::shared_ptr<sf_http_router> &router) {
+    inline void sf_http_server::add_router(const std::shared_ptr<sf_http_router> &router) {
         http_routers__.insert(router);
     }
 
-    void sf_http_server::add_router(const std::shared_ptr<sf_websocket_router> &router) {
+    inline void sf_http_server::add_router(const std::shared_ptr<sf_websocket_router> &router) {
         websocket_routers__.insert(router);
     }
 
-    std::shared_ptr<sf_http_server> sf_http_server::make_server(const sf_http_server_config &config) {
+    inline std::shared_ptr<sf_http_server> sf_http_server::make_server(const sf_http_server_config &config) {
         return std::shared_ptr<sf_http_server>(new sf_http_server(config));
     }
 
-    sf_http_server::sf_http_server(const sf_http_server_config &config) :sf_http_base_server(config)
+    inline sf_http_server::sf_http_server(const sf_http_server_config &config) :sf_http_base_server(config)
     {
         // NOTE 普通http回调函数
         set_request_callback([=](const sf_http_request& req,sf_http_response& res){
@@ -54,15 +54,15 @@ namespace skyfire
         });
     }
 
-    void sf_http_server::default_websocket_close_callback(SOCKET sock, const std::string &url) {
+    inline void sf_http_server::default_websocket_close_callback(SOCKET sock, const std::string &url) {
         // TODO websocket 关闭事件响应
     }
 
-    void sf_http_server::default_websocket_open_callback__(SOCKET sock, const std::string &url) {
+    inline void sf_http_server::default_websocket_open_callback__(SOCKET sock, const std::string &url) {
         // TODO websocket 打开事件响应
     }
 
-    void
+    inline void
     sf_http_server::default_websocket_text_data_callback__(SOCKET sock, const std::string &url, const std::string &data) {
         // TODO 默认Websocket文本数据回调函数
         websocket_param_t param;
@@ -78,7 +78,7 @@ namespace skyfire
         }
     }
 
-    void sf_http_server::default_websocket_binary_data_callback__(SOCKET sock, const std::string &url,
+    inline void sf_http_server::default_websocket_binary_data_callback__(SOCKET sock, const std::string &url,
                                                                   const byte_array &data) {
         // TODO 默认Websocket二进制数据回调函数
         websocket_param_t param;
@@ -94,7 +94,7 @@ namespace skyfire
         }
     }
 
-    void sf_http_server::default_websocket_request_callback__(const sf_http_request &req, sf_http_response &res) {
+    inline void sf_http_server::default_websocket_request_callback__(const sf_http_request &req, sf_http_response &res) {
         auto headers = req.get_header();
         auto header_key = headers.get_key_list();
         // 基于sha加密方式的握手协议

@@ -3,8 +3,5 @@
  */
 
 #pragma once
-namespace skyfire
-{
-	class sf_empty_class
-	{};
-}
+
+#include "sf_empty_class.h"

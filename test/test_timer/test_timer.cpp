@@ -1,4 +1,4 @@
-#include "sf_timer.h"
+#include "sf_timer.hpp"
 #include "sf_eventloop.hpp"
 #include <iostream>
 

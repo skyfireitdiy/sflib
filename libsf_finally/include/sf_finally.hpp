@@ -7,11 +7,11 @@
 
 namespace skyfire
 {
-    sf_finally::sf_finally(std::function<void()> func) :func__(func)
+    inline sf_finally::sf_finally(std::function<void()> func) :func__(func)
     {
     }
 
-    sf_finally::~sf_finally()
+    inline sf_finally::~sf_finally()
     {
         func__();
     }

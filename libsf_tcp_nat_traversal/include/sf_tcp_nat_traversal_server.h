@@ -1,9 +1,9 @@
 #pragma once
 
 #include <set>
-#include "sf_nocopy.h"
+#include "sf_nocopy.hpp"
 #include "sf_object.hpp"
-#include "sf_tcpclient.h"
+#include "sf_tcpclient.hpp"
 #include "sf_tcpserver.hpp"
 #include "sf_define.hpp"
 #include "sf_tcp_nat_traversal_utils.h"

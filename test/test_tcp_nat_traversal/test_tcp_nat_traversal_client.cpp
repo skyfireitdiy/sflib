@@ -1,10 +1,10 @@
 #define SF_DEBUG
 #include "sf_tcp_nat_traversal_client.h"
 #include <iostream>
-#include <sf_timer.h>
+#include <sf_timer.hpp>
 
 #include "sf_random.hpp"
-#include "sf_range.h"
+#include "sf_range.hpp"
 
 using namespace skyfire;
 

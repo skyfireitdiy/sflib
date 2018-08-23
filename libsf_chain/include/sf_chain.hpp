@@ -39,7 +39,7 @@ namespace skyfire
 
     /////////////////////////////////////////////////////////
 
-    sf_chain_call__<void>::sf_chain_call__(std::function<void()> func) :
+    inline sf_chain_call__<void>::sf_chain_call__(std::function<void()> func) :
             func__(func) {
     }
 
@@ -61,7 +61,7 @@ namespace skyfire
         return sf_chain_call__<_R>(f);
     }
 
-    void sf_chain_call__<void>::call() const {
+    inline void sf_chain_call__<void>::call() const {
         func__();
     }
 
@@ -84,10 +84,23 @@ namespace skyfire
         return sf_chain_async_call__<_R>(task);
     }
 
+    template<typename _Ret>
+    template<typename _R, typename... _Params>
+    sf_chain_async_call__<_R> sf_chain_async_call__<_Ret>::then(_R (*func)(_Ret, _Params...), _Params &&... param) {
+        auto task = std::make_shared<std::packaged_task<_R()>>(
+                std::bind(func, ret__.get(), std::forward<_Params>(param) ...));
+        return sf_chain_async_call__<_R>(task);
+    }
+
+    template<typename _Ret>
+    std::future<_Ret> sf_chain_async_call__<_Ret>::get_future() {
+        return ret__;
+    }
+
 
     //////////////////////////////////////////////////////
 
-    sf_chain_async_call__<void>::sf_chain_async_call__(std::shared_ptr<std::packaged_task<void()>> task) {
+    inline sf_chain_async_call__<void>::sf_chain_async_call__(std::shared_ptr<std::packaged_task<void()>> task) {
         task->get_future();
         std::thread(std::move(*task)).detach();
     }
@@ -104,7 +117,7 @@ namespace skyfire
         return sf_chain_async_call__<_R>(task);
     }
 
-    std::future<void> sf_chain_async_call__<void>::get_future() {
+    inline std::future<void> sf_chain_async_call__<void>::get_future() {
         return std::future<void>();
     }
 

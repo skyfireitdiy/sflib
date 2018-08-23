@@ -2,13 +2,13 @@
 
 #include <memory>
 #include <utility>
-#include "sf_tcpclient.h"
+#include "sf_tcpclient.hpp"
 #include "sf_tcpserver.hpp"
 #include "sf_type.hpp"
 #include "sf_serialize_binary.hpp"
-#include "sf_netutils.h"
+#include "sf_netutils.hpp"
 #include "sf_object.hpp"
-#include "sf_nocopy.h"
+#include "sf_nocopy.hpp"
 #include "sf_logger.hpp"
 
 namespace skyfire {

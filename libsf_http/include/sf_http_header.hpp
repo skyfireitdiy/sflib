@@ -4,11 +4,11 @@
 
 namespace skyfire{
 
-    void sf_http_header::clear() {
+    inline void sf_http_header::clear() {
         header_data__.clear();
     }
 
-    std::vector<std::string> sf_http_header::get_key_list() const {
+    inline std::vector<std::string> sf_http_header::get_key_list() const {
         std::vector<std::string> keys;
         for(auto &p:header_data__)
         {
@@ -17,19 +17,19 @@ namespace skyfire{
         return keys;
     }
 
-    void sf_http_header::remove_header(std::string key) {
+    inline void sf_http_header::remove_header(std::string key) {
         key = sf_to_header_key_format(key);
         header_data__.erase(key);
     }
 
-    std::string sf_http_header::get_header_value(std::string key, const std::string &default_value) const {
+    inline std::string sf_http_header::get_header_value(std::string key, const std::string &default_value) const {
         key = sf_to_header_key_format(key);
         if(header_data__.count(key) == 0)
             return default_value;
         return header_data__.at(key);
     }
 
-    void sf_http_header::set_header(std::string key, const std::string &value) {
+    inline void sf_http_header::set_header(std::string key, const std::string &value) {
         key = sf_to_header_key_format(key);
         header_data__[key] = value;
     }

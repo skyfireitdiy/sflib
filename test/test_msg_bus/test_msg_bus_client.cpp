@@ -1,5 +1,5 @@
 #include <iostream>
-#include "sf_msg_bus_client.h"
+#include "sf_msg_bus_client.hpp"
 
 using namespace skyfire;
 

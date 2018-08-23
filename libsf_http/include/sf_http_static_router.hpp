@@ -5,7 +5,7 @@
 namespace skyfire {
     using namespace std::literals;
 
-    std::shared_ptr<sf_http_router>
+    inline std::shared_ptr<sf_http_router>
     make_static_router(std::string path, const std::vector<std::string> &methods, std::string charset, bool deflate,
                        unsigned long long int max_file_size, int priority) {
         std::string pattern = ".+";

@@ -42,7 +42,7 @@ namespace skyfire
         };
     }
 
-    bool sf_http_router::run_route(const sf_http_request &req, sf_http_response &res, const std::string &url,
+    inline bool sf_http_router::run_route(const sf_http_request &req, sf_http_response &res, const std::string &url,
                                    const std::string &method) {
         {
             sf_debug("开始对比method");
@@ -58,11 +58,11 @@ namespace skyfire
         return route_callback__(req, res, url);
     }
 
-    int sf_http_router::get_priority() const {
+    inline int sf_http_router::get_priority() const {
         return priority__;
     }
 
-    bool sf_http_router::operator<(const sf_http_router &router) const {
+    inline bool sf_http_router::operator<(const sf_http_router &router) const {
         return priority__ < router.priority__;
     }
 

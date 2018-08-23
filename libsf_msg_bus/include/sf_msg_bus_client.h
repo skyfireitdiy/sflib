@@ -6,8 +6,8 @@
 
 #include "sf_object.hpp"
 #include "sf_type.hpp"
-#include "sf_tcpclient.h"
-#include "sf_msg_bus_utils.h"
+#include "sf_tcpclient.hpp"
+#include "sf_msg_bus_utils.hpp"
 
 
 namespace skyfire
@@ -24,68 +24,37 @@ namespace skyfire
          * @brief make_client 创建客户端
          * @return 客户端对象
          */
-        static std::shared_ptr<sf_msg_bus_client> make_client()
-        {
-            return std::make_shared<sf_msg_bus_client>();
-        }
+        static std::shared_ptr<sf_msg_bus_client> make_client();
 
         /**
          * @brief sf_msg_bus_client 构造函数
          */
-        sf_msg_bus_client()
-        {
-            sf_bind_signal(
-                    p_client__,
-                    data_coming,
-                    std::bind(
-                            &sf_msg_bus_client::on_reg_data__,
-                            this,
-                            std::placeholders::_1,
-                            std::placeholders::_2
-                            ),
-                    true
-            );
-        }
+        sf_msg_bus_client();
 
-        ~sf_msg_bus_client()
-        {
-            close();
-        }
+        ~sf_msg_bus_client();
 
         /**
          * @brief reg_msg_to_bus 向消息总线注册消息
          * @param type 消息类型
          */
-        void reg_msg_to_bus(const std::string& type)
-        {
-            p_client__->send(msg_bus_reg_type_single, sf_serialize_binary(type));
-        }
+        void reg_msg_to_bus(const std::string& type);
 
         /**
          * @brief reg_msg_to_bus 向消息总线批量注册消息
          * @param types 消息类型集合
          */
-        void reg_msg_to_bus(const std::vector<std::string> &types)
-        {
-            p_client__->send(msg_bus_reg_type_multi, sf_serialize_binary(types));
-        }
+        void reg_msg_to_bus(const std::vector<std::string> &types);
         /**
          * @brief unreg_msg_to_bus 向消息总线反注册消息
          * @param type 消息类型
          */
-        void unreg_msg_to_bus(const std::string& type)
-        {
-            p_client__->send(msg_bus_unreg_single, sf_serialize_binary(type));
-        }
+        void unreg_msg_to_bus(const std::string& type);
 
         /**
          * @brief unreg_msg_to_bus 向消息总线批量反注册消息
          * @param types 消息类型集合
          */
-        void unreg_msg_to_bus(const std::vector<std::string> &types)
-        {
-            p_client__->send(msg_bus_unreg_multi, sf_serialize_binary(types));
-        }
+        void unreg_msg_to_bus(const std::vector<std::string> &types);
 
         /**
          * @brief connect_to_bus 连接消息总线
@@ -93,46 +62,26 @@ namespace skyfire
          * @param port 端口
          * @return 连接结果
          */
-        bool connect_to_bus(const std::string &ip, unsigned short port)
-        {
-            return p_client__->connect(ip,port);
-        }
+        bool connect_to_bus(const std::string &ip, unsigned short port);
 
         /**
          * @brief send_msg 向消息总线发送消息
          * @param type 类型
          * @param data 内容
          */
-        void send_msg(const std::string& type, const byte_array& data)
-        {
-            msg_bus_t msg;
-            msg.type = type;
-            msg.data = data;
-            auto send_data = sf_serialize_binary(msg);
-            p_client__->send(msg_bus_new_msg, send_data);
-        }
+        void send_msg(const std::string& type, const byte_array& data);
 
         /**
          * @brief close 关闭总线客户端
          */
-        void close()
-        {
-            p_client__->close();
-        }
+        void close();
 
     private:
         std::shared_ptr<sf_tcpclient> p_client__ = sf_tcpclient::make_client();
 
-        void on_reg_data__(const pkg_header_t& header, const byte_array& data)
-        {
-            if(header.type == msg_bus_new_msg)
-            {
-                msg_bus_t msg_data;
-                sf_deserialize_binary(data, msg_data, 0);
-                msg_come(msg_data.type, msg_data.data);
-            }
-        }
+        void on_reg_data__(const pkg_header_t& header, const byte_array& data);
 
     };
+
 }
 

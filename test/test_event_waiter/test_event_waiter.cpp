@@ -4,8 +4,8 @@
 
 #define SF_DEBUG
 
-#include "sf_event_waiter.h"
-#include "sf_timer.h"
+#include "sf_event_waiter.hpp"
+#include "sf_timer.hpp"
 #include "sf_logger.hpp"
 #include <iostream>
 
