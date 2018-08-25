@@ -6,7 +6,7 @@
 #include "sf_type.hpp"
 #include "sf_http_request_line.hpp"
 #include "sf_http_header.hpp"
-#include "sf_utils.h"
+#include "sf_utils.hpp"
 #include "sf_logger.hpp"
 
 namespace skyfire{

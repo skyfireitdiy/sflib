@@ -8,7 +8,7 @@
 #include "sf_nocopy.hpp"
 #include "sf_serialize_binary.hpp"
 #include "sf_timer.hpp"
-#include "sf_tri_type.h"
+#include "sf_tri_type.hpp"
 #include "sf_define.hpp"
 #include <string>
 #include <functional>

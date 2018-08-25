@@ -13,65 +13,47 @@ namespace skyfire
         /**
          * @brief sf_tri_type 创建tri类型
          */
-		sf_tri_type(){}
+		sf_tri_type();
 
         /**
          * @brief sf_tri_type 构造函数
          * @param a 要保存的对象
          */
 		template<typename ... Args>
-		explicit sf_tri_type(Args...a):data__(a...)
-		{
-
-		}
+		explicit sf_tri_type(Args...a);
 
         /**
          * @brief operator = 赋值运算符
          * @param other 其他类型
          * @return sf_tri_type对象
          */
-		sf_tri_type& operator=(const T &other)
-		{
-			if (&other == &data__)
-				return *this;
-			init__ = true;
-			data__ = other;
-			return *this;
-		}
+		sf_tri_type& operator=(const T &other);
 
         /**
          * @brief operator * 解引用操作符
          * @return 类型对象
          */
-		T& operator*()
-		{
-			return data__;
-		}
+		T& operator*();
         /**
          * @brief operator bool 判断是否赋值
          */
-		operator bool() const
-		{
-			return init__;
-		}
+		operator bool() const;
 	private:
 		T data__;
 		bool init__{ false };
 	};
 
+
 	template <>
 	class sf_tri_type<void>
 	{
 	public:
-		sf_tri_type(bool init = false): init__(init)
-		{}
-		operator bool() const
-		{
-			return true;
-		}
+		sf_tri_type(bool init = false);
+		operator bool() const;
 
 	private:
 		bool init__{false};
 	};
+
 
 }

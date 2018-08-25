@@ -1,6 +1,6 @@
 #define SF_DEBUG
 
-#include "sf_tcp_nat_traversal_server.h"
+#include "sf_tcp_nat_traversal_server.hpp"
 
 #include <iostream>
 
