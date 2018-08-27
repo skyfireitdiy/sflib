@@ -31,7 +31,6 @@ namespace skyfire
     template <typename T>
     inline byte_array to_byte_array(const T& t);
 
-    template <>
     inline byte_array to_byte_array(const std::string& str);
 
     inline bool dump_byte_array(const byte_array& data, const std::string &filename,bool app = false);

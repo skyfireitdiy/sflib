@@ -30,8 +30,8 @@ namespace skyfire
         return ret;
     }
 
-    template<>
-    inline byte_array skyfire::to_byte_array(const std::string &str) {
+
+    inline byte_array to_byte_array(const std::string &str) {
         byte_array ret(str.length());
         std::memcpy(ret.data(),str.data(),str.length());
         return ret;

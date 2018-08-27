@@ -162,6 +162,7 @@ add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tc
 add_executable(test_event_waiter test/test_event_waiter/test_event_waiter.cpp ${headers})
 add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${headers})
 add_executable(test_encrypt test/test_encrypt/test_encrypt.cpp ${headers})
+add_executable(test_tcpserver test/test_tcpserver/test_tcpserver.cpp ${headers})
 
 
 
@@ -173,6 +174,7 @@ IF (WIN32)
     target_link_libraries(test_msg_bus_client ws2_32)
     target_link_libraries(test_tcp_nat_traversal_server ws2_32)
     target_link_libraries(test_tcp_nat_traversal_client ws2_32)
+    target_link_libraries(test_tcpserver ws2_32)
     target_link_libraries(test_httpserver ws2_32 ${OPENSSL_LIBRARIES} z)
 	target_link_libraries(test_encrypt PRIVATE ${OPENSSL_LIBRARIES} z)
 ELSE()
@@ -187,6 +189,7 @@ ELSE()
     target_link_libraries(test_timer pthread)
     target_link_libraries(test_tcp_nat_traversal_server pthread)
     target_link_libraries(test_tcp_nat_traversal_client pthread)
+    target_link_libraries(test_tcpserver pthread)
     target_link_libraries(test_sf_logger pthread)
     target_link_libraries(test_event_waiter pthread)
     target_link_libraries(test_httpserver pthread ssl crypto z)
