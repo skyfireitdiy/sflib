@@ -88,6 +88,11 @@ namespace skyfire {
                         }
                     }
                 }
+                else
+                {
+                    // 释放资源，否则会有内存泄露
+                    delete p_io_data;
+                }
             } else {
                 p_io_data->data_trans_count = bytesTransferred;
                 p_io_data->buffer.resize(bytesTransferred);
