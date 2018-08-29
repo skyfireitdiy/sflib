@@ -1,0 +1,28 @@
+{
+    "name": "sflib",
+    "version": "1.0.1",
+    "build": {
+        "depend": [
+        ],
+        "step": [
+            {
+                "command": [
+                    "cd {{project_dir}}/..",
+                    "mkdir build",
+                    "cd build",
+                    "cmake ../sflib",
+                    "make"
+                ]
+            }
+        ]
+    },
+    "install": {
+        "step": [
+            {
+                "command": [
+                    "make install"
+                ]
+            }
+        ]
+    }
+}
