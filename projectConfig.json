@@ -7,10 +7,7 @@
         "step": [
             {
                 "command": [
-                    "cd {{project_dir}}/..",
-                    "mkdir build",
-                    "cd build",
-                    "cmake ../sflib",
+                    "cmake {{project_dir}}",
                     "make"
                 ]
             }
