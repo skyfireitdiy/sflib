@@ -5,7 +5,7 @@
     "depend": [
     ],
     "command": [
-      "cmake",
+      "cmake .",
       "make"
     ]
   },
