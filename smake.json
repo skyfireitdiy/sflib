@@ -4,21 +4,16 @@
   "build": {
     "depend": [
     ],
-    "step": [
-      {
-        "command": [
-          "cmake",
-          "make"
-        ]
-      }
+    "command": [
+      "cmake",
+      "make"
     ]
   },
   "install": {
     "command": [
       "make install"
     ],
-    "export":{
-
+    "export": {
     }
   }
 }

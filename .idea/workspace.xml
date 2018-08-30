@@ -29,7 +29,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c2fdb0f-2ec1-432b-8545-a4cadfc78989" name="Default" comment="">
+    <list default="true" id="0c2fdb0f-2ec1-432b-8545-a4cadfc78989" name="Default" comment="完善smake.json">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/smake.json" beforeDir="false" afterPath="$PROJECT_DIR$/smake.json" afterDir="false" />
     </list>
@@ -60,16 +60,16 @@
           <entry key="cpp" value="117" />
           <entry key="h" value="1598" />
           <entry key="hpp" value="158" />
-          <entry key="json" value="20" />
-          <entry key="txt" value="73" />
+          <entry key="json" value="21" />
+          <entry key="txt" value="89" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CMakeLists.txt" value="6" />
-          <entry key="JSON" value="20" />
+          <entry key="JSON" value="21" />
           <entry key="ObjectiveC" value="1873" />
-          <entry key="PLAIN_TEXT" value="67" />
+          <entry key="PLAIN_TEXT" value="83" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -220,8 +220,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/smake.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="270">
+              <caret line="18" column="1" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -682,15 +682,21 @@
       <option name="project" value="LOCAL" />
       <updated>1535039417013</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="完善smake.json">
+      <created>1535621576245</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1535621576245</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="116852000" />
+    <option name="totallyTimeSpent" value="117709000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-8" width="1600" height="858" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.33075932" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -778,7 +784,8 @@
     <MESSAGE value="解决静态网页压缩问题" />
     <MESSAGE value="为websocket路由创建提供接口" />
     <MESSAGE value="分离接口与实现（部分完成）" />
-    <option name="LAST_COMMIT_MESSAGE" value="分离接口与实现（部分完成）" />
+    <MESSAGE value="完善smake.json" />
+    <option name="LAST_COMMIT_MESSAGE" value="完善smake.json" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_msg_queue.hpp">
@@ -1119,8 +1126,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/smake.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+        <state relative-caret-position="270">
+          <caret line="18" column="1" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
         </state>
       </provider>
     </entry>
