@@ -6,14 +6,12 @@
       "depend": [],
       "command": [
         "cmake . -G \"MinGW Makefiles\" -DCMAKE_INSTALL_PREFIX=\"{{APPDATA}}\\sflib\"",
-        "mingw32-make"
       ]
     },
     "Linux":{
       "depend":[],
       "command":[
-        "cmake .",
-        "make"
+        "cmake ."
       ]
     }
   },
