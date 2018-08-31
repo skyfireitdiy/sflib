@@ -2,18 +2,34 @@
   "name": "sflib",
   "version": "1.0.1",
   "build": {
-    "depend": [
-    ],
-    "command": [
-      "cmake .",
-      "make"
-    ]
+    "Windows": {
+      "depend": [],
+      "command": [
+        "cmake .. -G \"MinGW Makefiles\" -DCMAKE_INSTALL_PREFIX=\"{{APPDATA}}\\sflib\"",
+        "mingw32-make"
+      ]
+    },
+    "Linux":{
+      "depend":[],
+      "command":[
+        "cmake .",
+        "make"
+      ]
+    }
   },
   "install": {
-    "command": [
-      "sudo make install"
-    ],
-    "export": {
+    "Linux": {
+      "command": [
+        "sudo make install"
+      ]
+    },
+    "Windows":{
+      "command":[
+        "mingw32-make install"
+      ],
+      "export":{
+        "SFLIB_INCLUDE":"{{APPDATA}}\\sflib"
+      }
     }
   }
 }
