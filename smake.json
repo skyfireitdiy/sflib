@@ -5,7 +5,7 @@
     "Windows": {
       "depend": [],
       "command": [
-        "cmake .. -G \"MinGW Makefiles\" -DCMAKE_INSTALL_PREFIX=\"{{APPDATA}}\\sflib\"",
+        "cmake . -G \"MinGW Makefiles\" -DCMAKE_INSTALL_PREFIX=\"{{APPDATA}}\\sflib\"",
         "mingw32-make"
       ]
     },
