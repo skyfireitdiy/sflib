@@ -8,7 +8,7 @@ namespace skyfire
     typename std::enable_if<sizeof...(Args) == N, void>::type
     sf_http_router::callback_call_helper__(const sf_http_request &req, sf_http_response &res, FuncType func,
                                            const std::smatch &sm, Args... args) {
-        sf_debug("调用callback_call_helper__");
+        sf_debug("call callback_call_helper__");
         func(req,res,args...);
     }
 
@@ -29,12 +29,12 @@ namespace skyfire
     {
         route_callback__ = [=](const sf_http_request &req,sf_http_response& res,const std::string &url)
         {
-            sf_debug("调用route");
+            sf_debug("call route");
             std::regex re(pattern);
             std::smatch sm;
             if(!std::regex_match(url, sm, re))
             {
-                sf_debug("match失败");
+                sf_debug("match error");
                 return false;
             }
             callback_call_helper__<decltype(callback),sizeof...(StringType)>(req,res,callback,sm);
@@ -45,12 +45,12 @@ namespace skyfire
     inline bool sf_http_router::run_route(const sf_http_request &req, sf_http_response &res, const std::string &url,
                                    const std::string &method) {
         {
-            sf_debug("开始对比method");
+            sf_debug("compare method");
             std::unique_lock<std::recursive_mutex> lck(methods_mu__);
             using namespace std::literals;
             if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
                 if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method)) {
-                    sf_debug("method对比失败");
+                    sf_debug("method compare error");
                     return false;
                 }
             }
@@ -70,7 +70,7 @@ namespace skyfire
     typename std::enable_if<sizeof...(Args) != N, void>::type
     sf_http_router::callback_call_helper__(const sf_http_request &req, sf_http_response &res, FuncType func,
                                            const std::smatch &sm, Args... args) {
-        sf_debug("调用callback_call_helper__");
+        sf_debug("call callback_call_helper__");
         callback_call_helper__<FuncType,N,Args...,std::string>(req,res,func,sm,args..., sm[sizeof...(args)].str());
     }
 }

@@ -18,7 +18,7 @@ int main()
         return -1;
     }
     sf_bind_signal(server,raw_data_coming,[=](SOCKET sock, const byte_array& data){
-        server->send(sock, data);
+        //sf_debug("recv",to_string(data));
     },true);
     sf_eventloop loop;
     loop.exec();

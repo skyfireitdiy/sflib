@@ -29,7 +29,7 @@ namespace skyfire
     {
         // NOTE 普通http回调函数
         set_request_callback([=](const sf_http_request& req,sf_http_response& res){
-            sf_debug("http回调");
+            sf_debug("http callback");
             default_request_callback__(req, res);
         });
 
@@ -43,7 +43,7 @@ namespace skyfire
             default_websocket_binary_data_callback__(sock, url, data);
         });
         set_websocket_text_data_callback([=](SOCKET sock, const std::string& url,const std::string& data){
-            sf_debug("收到消息",data);
+            sf_debug("recv",data);
             default_websocket_text_data_callback__(sock, url, data);
         });
         set_websocket_open_callback([=](SOCKET sock,const std::string& url){

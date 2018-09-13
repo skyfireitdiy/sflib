@@ -7,7 +7,7 @@ namespace skyfire {
 
     inline void sf_tcp_nat_traversal_server::on_new_connnection__(SOCKET sock) {
         // TODO 做一些处理
-        sf_debug("新连接到来", sock);
+        sf_debug("new connection", sock);
     }
 
     inline void sf_tcp_nat_traversal_server::close() {
@@ -59,7 +59,7 @@ namespace skyfire {
             server__->send(context.src_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize_binary(context));
             return;
         }
-        sf_debug("通知目的地址");
+        sf_debug("notify target addr");
         // 将来源的外网ip端口通知给目的
         if (!server__->send(context.dest_id, TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED, sf_serialize_binary(context))) {
             context.error_code = SF_ERR_REMOTE_ERR;
@@ -78,14 +78,14 @@ namespace skyfire {
                 on_client_reg__(sock);
                 break;
             case TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER: {
-                sf_debug("收到连接请求");
+                sf_debug("recv connection request");
                 sf_tcp_nat_traversal_context_t__ context;
                 sf_deserialize_binary(data, context, 0);
                 on_client_require_connect_to_peer_client__(context);
             }
                 break;
             case TYPE_NAT_TRAVERSAL_B_REPLY_ADDR: {
-                sf_debug("收到B的回复");
+                sf_debug("recv reply from B");
                 sf_tcp_nat_traversal_context_t__ context;
                 sf_deserialize_binary(data, context, 0);
                 on_nat_traversal_b_reply_addr(context, sock);
@@ -118,7 +118,7 @@ namespace skyfire {
             server__->send(context.dest_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize_binary(context));
             return;
         }
-        sf_debug("给A回复B的地址");
+        sf_debug("reply addr of B to A");
         if (!server__->send(context.src_id, TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR, sf_serialize_binary(context))) {
             context.error_code = SF_ERR_REMOTE_ERR;
             server__->send(context.dest_id, TYPE_NAT_TRAVERSAL_ERROR, sf_serialize_binary(context));

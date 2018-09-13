@@ -6,20 +6,24 @@
 
 namespace skyfire
 {
-    inline sf_tcpserver::sf_tcpserver(bool raw) {
+    inline sf_tcpserver::sf_tcpserver(bool raw)
+    {
         raw__ = raw;
     }
 
-    inline SOCKET sf_tcpserver::get_raw_socket() {
+    inline SOCKET sf_tcpserver::get_raw_socket()
+    {
         return listen_fd__;
     }
 
-    inline bool sf_tcpserver::send(int sock, const byte_array &data) {
+    inline bool sf_tcpserver::send(int sock, const byte_array &data)
+    {
         auto send_data = data;
         return write(sock, send_data.data(), send_data.size()) == send_data.size();
     }
 
-    inline bool sf_tcpserver::send(int sock, int type, const byte_array &data) {
+    inline bool sf_tcpserver::send(int sock, int type, const byte_array &data)
+    {
         pkg_header_t header{};
         header.type = type;
         header.length = data.size();
@@ -28,19 +32,22 @@ namespace skyfire
         return write(sock, send_data.data(), send_data.size()) == send_data.size();
     }
 
-    inline void sf_tcpserver::close(SOCKET sock) {
-        ::shutdown(sock,SHUT_RDWR);
+    inline void sf_tcpserver::close(SOCKET sock)
+    {
+        ::shutdown(sock, SHUT_RDWR);
         ::close(sock);
     }
 
-    inline void sf_tcpserver::close() {
+    inline void sf_tcpserver::close()
+    {
         shutdown(listen_fd__, SHUT_RDWR);
         ::close(listen_fd__);
         listen_fd__ = -1;
         sock_data_buffer__.clear();
     }
 
-    inline bool sf_tcpserver::listen(const std::string &ip, unsigned short port) {
+    inline bool sf_tcpserver::listen(const std::string &ip, unsigned short port)
+    {
         listen_fd__ = socket(AF_INET, SOCK_STREAM, 0);
         if (listen_fd__ == -1)
         {
@@ -52,8 +59,9 @@ namespace skyfire
         }
 
         int opt = 1;
-        if (-1 == setsockopt( listen_fd__, SOL_SOCKET,SO_REUSEADDR,
-                              reinterpret_cast<const void *>(&opt), sizeof(opt))){
+        if (-1 == setsockopt(listen_fd__, SOL_SOCKET, SO_REUSEADDR,
+                             reinterpret_cast<const void *>(&opt), sizeof(opt)))
+        {
             return false;
         }
 
@@ -115,36 +123,32 @@ namespace skyfire
                                         continue;
                                     }
                                     ++cur_fd_count__;
-                                    std::thread([=]
-                                                {
-                                                    sf_debug("新连接");
-                                                    new_connection(conn_fd);
-                                                }).detach();
+
+                                    sf_debug("new connection");
+                                    new_connection(conn_fd);
                                     continue;
                                 }
                                 recv_buf.resize(SF_NET_BUFFER_SIZE);
-                                auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(), SF_NET_BUFFER_SIZE));
+                                auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(),
+                                                                        SF_NET_BUFFER_SIZE));
                                 if (count_read <= 0)
                                 {
                                     closed(static_cast<SOCKET>(evs[i].data.fd));
                                     close(evs[i].data.fd);
                                     epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev);
                                     --cur_fd_count__;
-                                    std::thread([=]()
-                                                {
-                                                    sf_debug("关闭连接");
-                                                    close(evs[i].data.fd);
-                                                }).detach();
+
+                                    sf_debug("close connection");
+                                    close(evs[i].data.fd);
                                     continue;
                                 }
 
 
                                 recv_buf.resize(static_cast<unsigned long>(count_read));
-                                if(raw__)
+                                if (raw__)
                                 {
                                     raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
-                                }
-                                else
+                                } else
                                 {
                                     sock_data_buffer__[evs[i].data.fd].insert(
                                             sock_data_buffer__[evs[i].data.fd].end(),
@@ -157,7 +161,7 @@ namespace skyfire
                                         memmove(&header,
                                                 sock_data_buffer__[evs[i].data.fd].data() + read_pos,
                                                 sizeof(header));
-                                        if(!check_header_checksum(header))
+                                        if (!check_header_checksum(header))
                                         {
                                             close(evs[i].data.fd);
                                             closed(static_cast<SOCKET>(evs[i].data.fd));
@@ -166,19 +170,16 @@ namespace skyfire
                                         if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
                                             header.length)
                                         {
-                                            std::thread([=](SOCKET sock, const pkg_header_t& tmp_header, const byte_array& pkg_data)
-                                                        {
-                                                            data_coming(sock, tmp_header, pkg_data);
-                                                        },
-                                                        static_cast<SOCKET>(evs[i].data.fd), header,
-                                                        byte_array(
-                                                                sock_data_buffer__[evs[i].data.fd].begin() +
-                                                                read_pos +
-                                                                sizeof(header),
-                                                                sock_data_buffer__[evs[i].data.fd].begin() +
-                                                                read_pos +
-                                                                sizeof(header) + header.length)
-                                            ).detach();
+                                            data_coming(
+                                                    static_cast<SOCKET>(evs[i].data.fd), header,
+                                                    byte_array(
+                                                            sock_data_buffer__[evs[i].data.fd].begin() +
+                                                            read_pos +
+                                                            sizeof(header),
+                                                            sock_data_buffer__[evs[i].data.fd].begin() +
+                                                            read_pos +
+                                                            sizeof(header) + header.length)
+                                            );
                                             read_pos += sizeof(header) + header.length;
                                         } else
                                         {
@@ -199,11 +200,13 @@ namespace skyfire
         return true;
     }
 
-    inline std::shared_ptr<sf_tcpserver> sf_tcpserver::make_server(bool raw) {
+    inline std::shared_ptr<sf_tcpserver> sf_tcpserver::make_server(bool raw)
+    {
         return std::make_shared<sf_tcpserver>(raw);
     }
 
-    inline sf_tcpserver::~sf_tcpserver() {
+    inline sf_tcpserver::~sf_tcpserver()
+    {
         close();
     }
 }

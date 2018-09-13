@@ -22,31 +22,31 @@ namespace skyfire {
             }
             res.get_header().set_header("Server", "SkyFire HTTP Server");
             res.get_header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
-            // sf_debug("回应",to_string(res.to_package()));
+            // sf_debug("reply",to_string(res.to_package()));
             server__->send(sock, res.to_package());
             if (!keep_alive)
             {
                 server__->close(sock);
-                std::unique_lock<std::mutex> lck(mu_request_context__);
+                std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
                 request_context__.erase(sock);
             }
-            sf_debug("此次请求处理完毕");
+            sf_debug("request finished");
         };
 
         // 过滤websocket消息
         {
             std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
             if (websocket_context__.count(sock) != 0) {
-                // sf_debug("检测为websocket连接");
+                // sf_debug("websocket connection");
                 websocket_data_coming__(sock, data);
                 return;
             }
         }
         {
-            std::unique_lock<std::mutex> lck(mu_request_context__);
+            std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
             // sf_debug("Request",to_string(data));
             if (request_context__.count(sock) == 0) {
-                // sf_debug("检测为http连接");
+                // sf_debug("http connection");
                 request_context__[sock] = request_context_t();
             }
             request_context__[sock].buffer += data;
@@ -54,14 +54,19 @@ namespace skyfire {
                 return;
             }
         }
-        sf_debug(to_string(request_context__[sock].buffer));
+        //sf_debug(to_string(request_context__[sock].buffer));
         {
-            std::unique_lock<std::mutex> lck(mu_boundary_data_context__);
+            std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
             if (boundary_data_context__.count(sock) != 0)
             {
-                sf_debug("boundary data append");
+                std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+                sf_debug("boundary data append",request_context__[sock].buffer.size());
                 boundary_data_context__[sock].fp__->write(request_context__[sock].buffer.data(),
                                                           request_context__[sock].buffer.size());
+                if(request_context__[sock].buffer.size()<4096){
+                    sf_debug("content",to_string(request_context__[sock].buffer));
+                    sf_debug("boundary str",boundary_data_context__[sock].boundary_str + "--");
+                }
                 if (to_string(request_context__[sock].buffer).find(boundary_data_context__[sock].boundary_str + "--") !=
                     std::string::npos)
                 {
@@ -75,6 +80,7 @@ namespace skyfire {
             }
         }
         // TODO 会不会存在两个请求同时到来导致的粘包现象？
+        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
         sf_http_request request(request_context__[sock].buffer);
         if(request.is_valid())
         {
@@ -88,16 +94,17 @@ namespace skyfire {
                 sf_debug("is boundary data");
                 // 初始化boundary数据
                 auto boundary_data = request.get_boundary_data_context();
-                boundary_data.fp__ = std::make_shared<std::ofstream>(sf_path_join(config__.tmp_file_path, boundary_data.tmp_file_name), std::ios::out | std::ios::binary);
+                auto tmp_file_path = sf_path_join(config__.tmp_file_path, boundary_data.tmp_file_name);
+                boundary_data.tmp_file_name = tmp_file_path;
+                boundary_data.fp__ = std::make_shared<std::ofstream>(boundary_data.tmp_file_name, std::ios::out | std::ios::binary);
                 if(!*boundary_data.fp__)
                 {
                     sf_error("临时文件生成失败");
                     server__->close(sock);
-                    std::unique_lock<std::mutex> lck(mu_request_context__);
+                    std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
                     request_context__.erase(sock);
                     return;
                 }
-                // TODO 写文件
                 boundary_data.fp__->write(request.get_body().data(),request.get_body().size());
                 if(to_string(request.get_body()).find(boundary_data.boundary_str+"--") != std::string::npos)
                 {
@@ -108,7 +115,7 @@ namespace skyfire {
                 else
                 {
                     sf_debug("boundary data prepare");
-                    std::unique_lock<std::mutex> lck(mu_boundary_data_context__);
+                    std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
                     boundary_data_context__[sock] = boundary_data;
                 }
                 return;
@@ -161,7 +168,7 @@ namespace skyfire {
                 }
             }
         } else{
-            sf_debug("非法请求或请求不完整");
+            sf_debug("invalid request");
         }
     }
 
@@ -275,11 +282,11 @@ namespace skyfire {
     }
 
     inline void sf_http_base_server::build_new_request__(SOCKET sock) {
-        std::unique_lock<std::mutex> lck(mu_request_context__);
+        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
         std::thread([=]() {
             while(true) {
                 std::this_thread::sleep_for(std::chrono::seconds(config__.request_timeout));
-                std::unique_lock<std::mutex> lck(mu_request_context__);
+                std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
                 if (request_context__.count(sock) != 0) {
                     if (!request_context__[sock].new_req) {
                         server__->close(sock);
@@ -309,7 +316,7 @@ namespace skyfire {
             }
         }
         {
-            std::lock_guard<std::mutex> lck(mu_boundary_data_context__);
+            std::lock_guard<std::recursive_mutex> lck(mu_boundary_data_context__);
             if(boundary_data_context__.count(sock) != 0)
             {
                 if(boundary_data_context__[sock].fp__)

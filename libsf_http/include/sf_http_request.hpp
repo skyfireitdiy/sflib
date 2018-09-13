@@ -88,8 +88,12 @@ namespace skyfire
                         return false;
                     }
                     boundary_data_context__.request_line = request_line__;
-
-                    boundary_data_context__.boundary_str = boundary_str_list[1];
+                    if(boundary_str_list[1].size()<=2)
+                    {
+                        sf_error("boundary is too short");
+                        return false;
+                    }
+                    boundary_data_context__.boundary_str = {boundary_str_list[1].begin()+2, boundary_str_list[1].end()};
                     sf_debug("boundary_str", boundary_data_context__.boundary_str);
                     boundary_data_context__.tmp_file_name = std::to_string(sf_random::get_instance()->get_int(INT_MIN,INT_MAX));
                     sf_debug("filename:", boundary_data_context__.tmp_file_name);

@@ -62,10 +62,8 @@ namespace skyfire
                             auto len = read(sock__, recv_buffer.data(), SF_NET_BUFFER_SIZE);
                             if (len <= 0)
                             {
-                                std::thread([=]
-                                            {
-                                                closed();
-                                            }).detach();
+
+                                closed();
                                 break;
                             }
                             if(raw__)
@@ -79,24 +77,22 @@ namespace skyfire
                                 while (data.size() - read_pos >= sizeof(pkg_header_t))
                                 {
                                     std::memmove(&header, data.data() + read_pos, sizeof(header));
-                                    if(!check_header_checksum(header))
+                                    if (!check_header_checksum(header))
                                     {
                                         close();
                                         return;
                                     }
                                     if (data.size() - read_pos - sizeof(header) >= header.length)
                                     {
-                                        std::thread([=](const pkg_header_t &header_tmp, const byte_array &pkg_data)
-                                                    {
-                                                        data_coming(header_tmp, pkg_data);
-                                                    },
-                                                    header,
-                                                    byte_array(
-                                                            data.begin() + static_cast<long>(read_pos) + sizeof(header),
-                                                            data.begin() + static_cast<long>(read_pos) + sizeof(header)
-                                                            + static_cast<long>(header.length))).detach();
+                                        data_coming(
+                                                header,
+                                                byte_array(
+                                                        data.begin() + static_cast<long>(read_pos) + sizeof(header),
+                                                        data.begin() + static_cast<long>(read_pos) + sizeof(header)
+                                                        + static_cast<long>(header.length)));
                                         read_pos += sizeof(header) + header.length;
-                                    } else
+                                    }
+                                    else
                                     {
                                         break;
                                     }

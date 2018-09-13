@@ -75,10 +75,7 @@ namespace skyfire
                             auto len = ::recv(sock__, recv_buffer.data(), SF_NET_BUFFER_SIZE, 0);
                             if (len <= 0)
                             {
-                                std::thread([=]
-                                            {
-                                                closed();
-                                            }).detach();
+                                closed();
                                 break;
                             }
                             if(raw__)
@@ -99,15 +96,13 @@ namespace skyfire
                                     }
                                     if (data.size() - read_pos - sizeof(header) >= header.length)
                                     {
-                                        std::thread([=](const pkg_header_t &header, const byte_array &pkg_data)
-                                                    {
-                                                        data_coming(header, pkg_data);
-                                                    },
-                                                    header,
-                                                    byte_array(
-                                                            data.begin() + read_pos + sizeof(header),
-                                                            data.begin() + read_pos + sizeof(header)
-                                                            + header.length)).detach();
+
+                                        data_coming(
+                                                header,
+                                                byte_array(
+                                                        data.begin() + read_pos + sizeof(header),
+                                                        data.begin() + read_pos + sizeof(header)
+                                                        + header.length));
                                         read_pos += sizeof(header) + header.length;
                                     }
                                     else
