@@ -33,4 +33,14 @@ namespace skyfire{
         key = sf_to_header_key_format(key);
         header_data__[key] = value;
     }
+
+    sf_http_header_t sf_http_header::get_header() const
+    {
+        return header_data__;
+    }
+
+    void sf_http_header::set_header(const sf_http_header_t &header)
+    {
+        header_data__ = header;
+    }
 }

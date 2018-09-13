@@ -15,6 +15,8 @@ namespace skyfire
         std::string websocket_sha1_append_str = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     }
 
+    using sf_http_header_t = std::map<std::string,std::string>;
+
     struct request_context_t
     {
         bool new_req = false;
@@ -33,6 +35,18 @@ namespace skyfire
     };
 
     SF_MAKE_SERIALIZABLE_BINARY(websocket_context_t, url, sock, buffer, data_buffer)
+
+    struct boundary_data_context_t{
+        SOCKET sock;
+        std::string boundary_str;
+        std::string tmp_file_name;
+        sf_http_header_t header;
+        sf_http_request_line request_line;
+        std::shared_ptr<std::ofstream> fp__;
+    };
+
+    // WARNING 不会序列化fp__
+    SF_MAKE_SERIALIZABLE_BINARY(boundary_data_context_t, sock, boundary_str, tmp_file_name, header,request_line);
 
     inline unsigned char sf_to_hex(unsigned char x);
 

@@ -140,4 +140,26 @@ namespace skyfire
         return static_cast<bool>(buf.st_mode & S_IFDIR);
     }
 
+    // TODO 后续使用filesystem
+    std::string sf_path_join(std::string path1, const std::string path2)
+    {
+        if(path1.empty())
+            return path2;
+        if(path1.back()=='\\' || path1.back() == '/')
+        {
+            path1.pop_back();
+        }
+#ifdef _WIN32
+        return path1 + "\\" + path2;
+#else
+        return path1 + "/" + path2;
+#endif
+    }
+
+    template<typename ... Str>
+    std::string sf_path_join(std::string str1, Str... str2)
+    {
+        return sf_path_join(str1, sf_path_join(str2...));
+    }
+
 }

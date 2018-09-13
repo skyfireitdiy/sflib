@@ -6,6 +6,33 @@
 namespace skyfire {
 
     inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array &data) {
+
+        auto http_handler = [&](sf_http_request http_request){
+            bool keep_alive = true;
+            sf_http_response res;
+            res.set_status(200);
+            res.set_reason("OK");
+
+            res.set_http_version(http_request.get_request_line().http_version);
+            request_callback__(http_request, res);
+            res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
+            if (sf_equal_nocase_string(http_request.get_header().get_header_value("Connection", "Close"), "Close"))
+            {
+                keep_alive = false;
+            }
+            res.get_header().set_header("Server", "SkyFire HTTP Server");
+            res.get_header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
+            // sf_debug("回应",to_string(res.to_package()));
+            server__->send(sock, res.to_package());
+            if (!keep_alive)
+            {
+                server__->close(sock);
+                std::unique_lock<std::mutex> lck(mu_request_context__);
+                request_context__.erase(sock);
+            }
+            sf_debug("此次请求处理完毕");
+        };
+
         // 过滤websocket消息
         {
             std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
@@ -27,77 +54,111 @@ namespace skyfire {
                 return;
             }
         }
+        sf_debug(to_string(request_context__[sock].buffer));
+        {
+            std::unique_lock<std::mutex> lck(mu_boundary_data_context__);
+            if (boundary_data_context__.count(sock) != 0)
+            {
+                sf_debug("boundary data append");
+                boundary_data_context__[sock].fp__->write(request_context__[sock].buffer.data(),
+                                                          request_context__[sock].buffer.size());
+                if (to_string(request_context__[sock].buffer).find(boundary_data_context__[sock].boundary_str + "--") !=
+                    std::string::npos)
+                {
+                    sf_debug("boundary data finished");
+                    boundary_data_context__[sock].fp__->close();
+                    http_handler(sf_http_request(boundary_data_context__[sock]));
+                    boundary_data_context__.erase(sock);
+                }
+                request_context__[sock].buffer.clear();
+                return;
+            }
+        }
         // TODO 会不会存在两个请求同时到来导致的粘包现象？
         sf_http_request request(request_context__[sock].buffer);
         if(request.is_valid())
         {
             request_context__[sock].new_req = true;
             request_context__[sock].buffer.clear();
-            bool keep_alive = true;
 
             auto req_header = request.get_header();
 
-            auto connection_header = req_header.get_header_value("Connection");
-
-            auto connection_header_list = sf_split_string(connection_header, ",");
-
-            // 过滤Connection为Upgrade的请求
-            if(std::find_if(connection_header_list.begin(),connection_header_list.end(),[](const std::string& str){
-                return sf_equal_nocase_string(sf_string_trim(str),"Upgrade");
-            })!=connection_header_list.end())
+            if(request.is_boundary_data())
             {
-                // 筛选Websocket请求
-                if(sf_equal_nocase_string(req_header.get_header_value("Upgrade"),"websocket"))
+                sf_debug("is boundary data");
+                // 初始化boundary数据
+                auto boundary_data = request.get_boundary_data_context();
+                boundary_data.fp__ = std::make_shared<std::ofstream>(sf_path_join(config__.tmp_file_path, boundary_data.tmp_file_name), std::ios::out | std::ios::binary);
+                if(!*boundary_data.fp__)
                 {
-                    // NOTE 删除记录，防止超时检测线程关闭连接
-                    request_context__.erase(sock);
-                    websocket_context_t ws_data;
-                    ws_data.url = request.get_request_line().url;
-
-                    if(websocket_request_callback__)
-                    {
-                        sf_http_response res;
-                        websocket_request_callback__(request, res);
-                        res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
-                        sf_debug("Response",to_string(res.to_package()));
-                        server__->send(sock,res.to_package());
-                        std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
-                        websocket_context__.insert({sock,ws_data});
-                        websocket_context__[sock].sock = sock;
-                        websocket_context__[sock].buffer = byte_array();
-                        if(websocket_open_callback__){
-                            websocket_open_callback__(sock, ws_data.url);
-                        }
-                        sf_debug("websocket add to context", sock);
-                    }
-                }
-                return;
-            }
-
-            if(request_callback__)
-            {
-                sf_http_response res;
-                res.set_status(200);
-                res.set_reason("OK");
-
-                res.set_http_version(request.get_request_line().http_version);
-                request_callback__(request,res);
-                res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
-                if(sf_equal_nocase_string(req_header.get_header_value("Connection","Close"), "Close"))
-                {
-                    keep_alive = false;
-                }
-                res.get_header().set_header("Server","SkyFire HTTP Server");
-                res.get_header().set_header("Connection",keep_alive?"Keep-Alive":"Close");
-                // sf_debug("回应",to_string(res.to_package()));
-                server__->send(sock,res.to_package());
-                if(!keep_alive)
-                {
+                    sf_error("临时文件生成失败");
                     server__->close(sock);
                     std::unique_lock<std::mutex> lck(mu_request_context__);
                     request_context__.erase(sock);
+                    return;
                 }
-                // sf_debug("此次请求处理完毕");
+                // TODO 写文件
+                boundary_data.fp__->write(request.get_body().data(),request.get_body().size());
+                if(to_string(request.get_body()).find(boundary_data.boundary_str+"--") != std::string::npos)
+                {
+                    sf_debug("boundary data success one time");
+                    boundary_data.fp__->close();
+                    http_handler(sf_http_request(boundary_data));
+                }
+                else
+                {
+                    sf_debug("boundary data prepare");
+                    std::unique_lock<std::mutex> lck(mu_boundary_data_context__);
+                    boundary_data_context__[sock] = boundary_data;
+                }
+                return;
+            }
+            else
+            {
+                auto connection_header = req_header.get_header_value("Connection");
+
+                auto connection_header_list = sf_split_string(connection_header, ",");
+
+                // 过滤Connection为Upgrade的请求
+                if (std::find_if(connection_header_list.begin(), connection_header_list.end(),
+                                 [](const std::string &str)
+                                 {
+                                     return sf_equal_nocase_string(sf_string_trim(str), "Upgrade");
+                                 }) != connection_header_list.end())
+                {
+                    // 筛选Websocket请求
+                    if (sf_equal_nocase_string(req_header.get_header_value("Upgrade"), "websocket"))
+                    {
+                        // NOTE 删除记录，防止超时检测线程关闭连接
+                        request_context__.erase(sock);
+                        websocket_context_t ws_data;
+                        ws_data.url = request.get_request_line().url;
+
+                        if (websocket_request_callback__)
+                        {
+                            sf_http_response res;
+                            websocket_request_callback__(request, res);
+                            res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
+                            sf_debug("Response", to_string(res.to_package()));
+                            server__->send(sock, res.to_package());
+                            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+                            websocket_context__.insert({sock, ws_data});
+                            websocket_context__[sock].sock = sock;
+                            websocket_context__[sock].buffer = byte_array();
+                            if (websocket_open_callback__)
+                            {
+                                websocket_open_callback__(sock, ws_data.url);
+                            }
+                            sf_debug("websocket add to context", sock);
+                        }
+                    }
+                    return;
+                }
+
+                if (request_callback__)
+                {
+                    http_handler(request);
+                }
             }
         } else{
             sf_debug("非法请求或请求不完整");
@@ -236,12 +297,27 @@ namespace skyfire {
     inline void sf_http_base_server::on_socket_closed(SOCKET sock) {
         if(request_context__.count(sock)!=0)
             request_context__.erase(sock);
-        std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
-        if(websocket_context__.count(sock) != 0) {
-            if(websocket_close_callback__){
-                websocket_close_callback__(sock, websocket_context__[sock].url);
+        {
+            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+            if (websocket_context__.count(sock) != 0)
+            {
+                if (websocket_close_callback__)
+                {
+                    websocket_close_callback__(sock, websocket_context__[sock].url);
+                }
+                websocket_context__.erase(sock);
             }
-            websocket_context__.erase(sock);
+        }
+        {
+            std::lock_guard<std::mutex> lck(mu_boundary_data_context__);
+            if(boundary_data_context__.count(sock) != 0)
+            {
+                if(boundary_data_context__[sock].fp__)
+                {
+                    boundary_data_context__[sock].fp__->close();
+                }
+                boundary_data_context__.erase(sock);
+            }
         }
     }
 

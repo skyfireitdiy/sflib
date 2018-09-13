@@ -8,7 +8,7 @@
 
 namespace skyfire{
     class sf_http_header{
-        std::map<std::string,std::string> header_data__;
+        sf_http_header_t header_data__;
     public:
         void clear();
 
@@ -19,5 +19,9 @@ namespace skyfire{
         void remove_header(std::string key);
 
         std::vector<std::string> get_key_list() const;
+
+        sf_http_header_t get_header() const;
+
+        void set_header(const sf_http_header_t& header);
     };
 }

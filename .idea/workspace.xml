@@ -2,45 +2,56 @@
 <project version="4">
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="true">
     <generated>
-      <config projectName="sflib" targetName="test_chain_call" />
-      <config projectName="sflib" targetName="test_aop" />
-      <config projectName="sflib" targetName="test_rpc_server" />
-      <config projectName="sflib" targetName="test_tcp_nat_traversal_client" />
-      <config projectName="sflib" targetName="test_thread_pool" />
-      <config projectName="sflib" targetName="test_encrypt" />
-      <config projectName="sflib" targetName="test_msg_bus_client" />
-      <config projectName="sflib" targetName="test_rpc_client" />
-      <config projectName="sflib" targetName="sf_meta_object_test" />
-      <config projectName="sflib" targetName="test_event_waiter" />
-      <config projectName="sflib" targetName="test_tcp_nat_traversal_server" />
-      <config projectName="sflib" targetName="test_tcpserver" />
       <config projectName="sflib" targetName="test_object" />
-      <config projectName="sflib" targetName="test_sf_logger" />
-      <config projectName="sflib" targetName="test_msg_bus_server" />
-      <config projectName="sflib" targetName="test_type_list" />
+      <config projectName="sflib" targetName="test_tcp_nat_traversal_client" />
+      <config projectName="sflib" targetName="test_tcpserver" />
+      <config projectName="sflib" targetName="test_rpc_server" />
       <config projectName="sflib" targetName="test_httpserver" />
+      <config projectName="sflib" targetName="test_thread_pool" />
+      <config projectName="sflib" targetName="test_tcp_nat_traversal_server" />
+      <config projectName="sflib" targetName="sf_meta_object_test" />
+      <config projectName="sflib" targetName="test_encrypt" />
+      <config projectName="sflib" targetName="test_rpc_client" />
+      <config projectName="sflib" targetName="test_chain_call" />
       <config projectName="sflib" targetName="test_meta" />
+      <config projectName="sflib" targetName="test_aop" />
+      <config projectName="sflib" targetName="test_sf_logger" />
+      <config projectName="sflib" targetName="test_event_waiter" />
+      <config projectName="sflib" targetName="test_msg_bus_client" />
+      <config projectName="sflib" targetName="test_msg_bus_server" />
       <config projectName="sflib" targetName="test_timer" />
+      <config projectName="sflib" targetName="test_type_list" />
     </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
+      <configuration CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0c2fdb0f-2ec1-432b-8545-a4cadfc78989" name="Default" comment="完善smake.json">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/smake.json" beforeDir="false" afterPath="$PROJECT_DIR$/smake.json" afterDir="false" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_header.h" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_header.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_header.hpp" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_header.hpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_request.h" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_request.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_request_line.h" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_request_line.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_http/include/sf_http_utils.h" afterPath="$PROJECT_DIR$/libsf_http/include/sf_http_utils.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_utils/include/sf_utils.h" afterPath="$PROJECT_DIR$/libsf_utils/include/sf_utils.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libsf_utils/include/sf_utils.hpp" afterPath="$PROJECT_DIR$/libsf_utils/include/sf_utils.hpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" afterPath="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="FUSProjectUsageTrigger">
     <session id="286425404">
       <usages-collector id="statistics.lifecycle.project">
@@ -180,91 +191,96 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3132">
-              <caret line="174" column="41" selection-start-line="174" selection-start-column="41" selection-end-line="174" selection-end-column="41" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/test_http_server/test_http_server.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="990">
-              <caret line="55" column="34" selection-start-line="55" selection-start-column="34" selection-end-line="55" selection-end-column="34" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file leaf-file-name="sf_http_base_server.hpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2178">
-              <caret line="121" column="10" selection-start-line="121" selection-start-column="10" selection-end-line="121" selection-end-column="10" />
+            <state relative-caret-position="211">
+              <caret line="107" column="20" lean-forward="true" selection-start-line="107" selection-start-column="20" selection-end-line="107" selection-end-column="20" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/test_tcpserver/test_tcpserver.cpp">
+      <file leaf-file-name="sf_http_request.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="414">
-              <caret line="23" column="16" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
+            <state relative-caret-position="128">
+              <caret line="9" column="33" lean-forward="false" selection-start-line="9" selection-start-column="33" selection-end-line="9" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test_http_server.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/test_http_server/test_http_server.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="384">
+              <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_http_base_server.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="108">
+              <caret line="37" column="19" lean-forward="false" selection-start-line="37" selection-start-column="19" selection-end-line="37" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_random.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_random/include/sf_random.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="80">
+              <caret line="5" column="28" lean-forward="false" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="28" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_random.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_random/include/sf_random.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="112">
+              <caret line="11" column="32" lean-forward="false" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_http_utils.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_utils.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="304">
+              <caret line="37" column="0" lean-forward="true" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sf_utils.hpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_utils/include/sf_utils.hpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="230">
+              <caret line="155" column="6" lean-forward="false" selection-start-line="155" selection-start-column="6" selection-end-line="155" selection-end-column="6" />
               <folding>
-                <element signature="e#64#86#0" expanded="true" />
+                <element signature="e#14#31#0" expanded="true" />
+                <element signature="e#4355#4383#0" expanded="true" />
+                <element signature="e#4452#4470#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver_win.h">
+      <file leaf-file-name="sf_http_server_config.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="465">
-              <caret line="39" column="23" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/smake.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="86" lean-forward="true" selection-start-line="7" selection-start-column="86" selection-end-line="7" selection-end-column="86" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver_win.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5076">
-              <caret line="282" column="14" selection-start-line="282" selection-start-column="14" selection-end-line="282" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.hpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="6" column="16" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2646">
-              <caret line="147" column="39" selection-start-line="147" selection-start-column="31" selection-end-line="147" selection-end-column="39" />
+            <state relative-caret-position="176">
+              <caret line="12" column="34" lean-forward="false" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -273,17 +289,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>size:</find>
-      <find>close</find>
-      <find>gzip</find>
-      <find>boots</find>
-      <find>bootstra</find>
-      <find>54</find>
-      <find>回应</find>
-      <find>set_header</find>
-      <find>res.set_body</find>
-      <find>cout</find>
-      <find>call</find>
       <find>byte</find>
       <find>u</find>
       <find>endl</find>
@@ -303,6 +308,17 @@
       <find>Args &amp;&amp;</find>
       <find>make_placeholders</find>
       <find>keep_alive</find>
+      <find>&quot;,&quot;</find>
+      <find>&quot;=&quot;</find>
+      <find>header</find>
+      <find>sf_http_request</find>
+      <find>boundary_data_context_t</find>
+      <find>request</find>
+      <find>req_header</find>
+      <find>raw_data_coming__</find>
+      <find>parse_request__</find>
+      <find>split request error</find>
+      <find>boundary data prepare</find>
     </findStrings>
     <replaceStrings>
       <replace>std::endl</replace>
@@ -317,16 +333,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/libsf_meta/include/sf_meta.hpp" />
-        <option value="$PROJECT_DIR$/libsf_net/include/sf_netutils.hpp" />
-        <option value="$PROJECT_DIR$/libsf_net/include/sf_netutils.h" />
-        <option value="$PROJECT_DIR$/libsf_define/include/sf_define.hpp" />
-        <option value="$PROJECT_DIR$/libsf_empty_class/include/sf_empty_class.hpp" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_content_type.hpp" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_request_line.hpp" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.hpp" />
-        <option value="$PROJECT_DIR$/libsf_net/include/sf_tcpclient.hpp" />
-        <option value="$PROJECT_DIR$/libsf_net/include/sf_tcpclient.h" />
         <option value="$PROJECT_DIR$/libsf_net/include/sf_tcpclient_linux.hpp" />
         <option value="$PROJECT_DIR$/libsf_net/include/sf_tcpclient_linux.h" />
         <option value="$PROJECT_DIR$/libsf_net/include/sf_tcpclient_win.h" />
@@ -361,13 +367,23 @@
         <option value="$PROJECT_DIR$/libsf_serialize/include/sf_serialize_binary.h" />
         <option value="$PROJECT_DIR$/libsf_serialize/include/sf_serialize_binary.hpp" />
         <option value="$PROJECT_DIR$/test/test_http_server/testWebsite/index.html" />
-        <option value="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" />
         <option value="$PROJECT_DIR$/libsf_type/include/sf_type.h" />
         <option value="$PROJECT_DIR$/libsf_type/include/sf_type.hpp" />
-        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/test/test_tcpserver/test_tcpserver.cpp" />
         <option value="$PROJECT_DIR$/smake.json" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h" />
+        <option value="$PROJECT_DIR$/libsf_utils/include/sf_utils.h" />
+        <option value="$PROJECT_DIR$/libsf_utils/include/sf_utils.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_request.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_utils.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_request_line.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_header.h" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_header.hpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp" />
+        <option value="$PROJECT_DIR$/test/test_http_server/test_http_server.cpp" />
+        <option value="$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp" />
       </list>
     </option>
   </component>
@@ -379,14 +395,22 @@
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="411" />
-    <option name="y" value="-22" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
+    <option name="width" value="1600" />
+    <option name="height" value="850" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
@@ -394,24 +418,8 @@
         <subPane>
           <expand>
             <path>
-              <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sflib" type="dad4c3:CidrFilesViewHelper$MyProjectTreeStructure$1" />
               <item name="sflib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sflib" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sflib" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="sflib" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
             </path>
           </expand>
           <select />
@@ -422,7 +430,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.C/C++" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -449,135 +457,99 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.test_tcpserver">
+  <component name="RunManager" selected="Application.test_httpserver">
     <configuration name="Build All" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="sf_meta_object_test" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="sf_meta_object_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="sf_meta_object_test">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_aop" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_aop" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_aop">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_chain_call" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_chain_call" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_chain_call">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_encrypt" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_encrypt" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_encrypt">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_event_waiter" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_event_waiter" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_event_waiter">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_httpserver" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_httpserver" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_httpserver">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_meta" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_meta" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_meta">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_msg_bus_client" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_msg_bus_client" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_msg_bus_client">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_msg_bus_server" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_msg_bus_server" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_msg_bus_server">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_object" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_object" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_object">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_rpc_client" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_rpc_client" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_rpc_client">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_rpc_server" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_rpc_server" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_rpc_server">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_sf_logger" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_sf_logger" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_sf_logger">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_tcp_nat_traversal_client" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_tcp_nat_traversal_client" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_tcp_nat_traversal_client">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_tcp_nat_traversal_server" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_tcp_nat_traversal_server" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_tcp_nat_traversal_server">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_tcpserver" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_tcpserver" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_tcpserver">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_thread_pool" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_thread_pool" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_thread_pool">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_timer" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_timer" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_timer">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
     <configuration name="test_type_list" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="sflib" TARGET_NAME="test_type_list" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="sflib" RUN_TARGET_NAME="test_type_list">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
+      <envs />
     </configuration>
-    <list>
-      <item itemvalue="Application.Build All" />
-      <item itemvalue="Application.sf_meta_object_test" />
-      <item itemvalue="Application.test_aop" />
-      <item itemvalue="Application.test_chain_call" />
-      <item itemvalue="Application.test_encrypt" />
-      <item itemvalue="Application.test_event_waiter" />
-      <item itemvalue="Application.test_httpserver" />
-      <item itemvalue="Application.test_meta" />
-      <item itemvalue="Application.test_msg_bus_client" />
-      <item itemvalue="Application.test_msg_bus_server" />
-      <item itemvalue="Application.test_object" />
-      <item itemvalue="Application.test_rpc_client" />
-      <item itemvalue="Application.test_rpc_server" />
-      <item itemvalue="Application.test_sf_logger" />
-      <item itemvalue="Application.test_tcp_nat_traversal_client" />
-      <item itemvalue="Application.test_tcp_nat_traversal_server" />
-      <item itemvalue="Application.test_tcpserver" />
-      <item itemvalue="Application.test_thread_pool" />
-      <item itemvalue="Application.test_timer" />
-      <item itemvalue="Application.test_type_list" />
+    <list size="20">
+      <item index="0" class="java.lang.String" itemvalue="Application.Build All" />
+      <item index="1" class="java.lang.String" itemvalue="Application.sf_meta_object_test" />
+      <item index="2" class="java.lang.String" itemvalue="Application.test_aop" />
+      <item index="3" class="java.lang.String" itemvalue="Application.test_chain_call" />
+      <item index="4" class="java.lang.String" itemvalue="Application.test_encrypt" />
+      <item index="5" class="java.lang.String" itemvalue="Application.test_event_waiter" />
+      <item index="6" class="java.lang.String" itemvalue="Application.test_httpserver" />
+      <item index="7" class="java.lang.String" itemvalue="Application.test_meta" />
+      <item index="8" class="java.lang.String" itemvalue="Application.test_msg_bus_client" />
+      <item index="9" class="java.lang.String" itemvalue="Application.test_msg_bus_server" />
+      <item index="10" class="java.lang.String" itemvalue="Application.test_object" />
+      <item index="11" class="java.lang.String" itemvalue="Application.test_rpc_client" />
+      <item index="12" class="java.lang.String" itemvalue="Application.test_rpc_server" />
+      <item index="13" class="java.lang.String" itemvalue="Application.test_sf_logger" />
+      <item index="14" class="java.lang.String" itemvalue="Application.test_tcp_nat_traversal_client" />
+      <item index="15" class="java.lang.String" itemvalue="Application.test_tcp_nat_traversal_server" />
+      <item index="16" class="java.lang.String" itemvalue="Application.test_tcpserver" />
+      <item index="17" class="java.lang.String" itemvalue="Application.test_thread_pool" />
+      <item index="18" class="java.lang.String" itemvalue="Application.test_timer" />
+      <item index="19" class="java.lang.String" itemvalue="Application.test_type_list" />
     </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+      <changelist id="0c2fdb0f-2ec1-432b-8545-a4cadfc78989" name="Default" comment="完善smake.json" />
       <created>1531567007177</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -604,6 +576,8 @@
       <workItem from="1534747715840" duration="48000" />
       <workItem from="1535383134472" duration="266000" />
       <workItem from="1535383468198" duration="3405000" />
+      <workItem from="1536827309767" duration="80000" />
+      <workItem from="1536827446706" duration="12518000" />
     </task>
     <task id="LOCAL-00001" summary="完成基础http服务器">
       <created>1531580404836</created>
@@ -735,54 +709,31 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="120596000" />
+    <option name="totallyTimeSpent" value="133194000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="0" width="1600" height="850" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22654584" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32827586" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.29967427" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3984799" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="7" sideWeight="0.4993565" weight="0.38219327" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32965517" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5006435" side_tool="true" weight="0.26344827" />
-      <window_info anchor="bottom" id="Version Control" order="10" weight="0.32681867" />
-      <window_info anchor="bottom" id="CMake" order="11" weight="0.32599118" />
-      <window_info anchor="bottom" id="Database Changes" order="12" show_stripe_button="false" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="right" id="LuaJ" order="4" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32070366" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882273" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32882273" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.176875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882273" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
-    <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21510416" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3078579" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39935413" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Messages" order="7" weight="0.23573735" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="bottom" id="CMake" order="11" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -830,350 +781,405 @@
     <MESSAGE value="完善smake.json" />
     <option name="LAST_COMMIT_MESSAGE" value="完善smake.json" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_msg_queue.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="51" column="11" selection-start-line="51" selection-start-column="11" selection-end-line="51" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_eventloop.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="28" column="11" selection-start-line="28" selection-start-column="11" selection-end-line="28" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_event_waiter.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="53" column="5" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_object.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="614">
-          <caret line="142" selection-start-line="142" selection-end-line="142" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_object.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-474">
-          <caret line="26" column="11" selection-start-line="26" selection-start-column="11" selection-end-line="26" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_timer.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="738">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_timer.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="51" column="11" selection-start-line="51" selection-start-column="11" selection-end-line="51" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_random/include/sf_random.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" column="11" selection-start-line="14" selection-start-column="11" selection-end-line="14" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_random/include/sf_random.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_range/include/sf_range.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="64" column="27" selection-start-line="64" selection-start-column="27" selection-end-line="64" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_range/include/sf_range.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="79" selection-start-line="79" selection-end-line="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_rpc/include/sf_rpcclient.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="344">
-          <caret line="121" column="6" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_serialize/include/sf_serialize.h" />
-    <entry file="file://$PROJECT_DIR$/libsf_rpc/include/sf_rpcclient.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2970">
-          <caret line="165" column="44" selection-start-line="165" selection-start-column="44" selection-end-line="165" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_client.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3888">
-          <caret line="243" column="11" selection-start-line="243" selection-start-column="11" selection-end-line="243" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_server.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2646">
-          <caret line="147" column="11" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
+          <caret line="147" column="11" lean-forward="false" selection-start-line="147" selection-start-column="11" selection-end-line="147" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_utils.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="960">
-          <caret line="60" column="40" selection-start-line="60" selection-start-column="40" selection-end-line="60" selection-end-column="40" />
+          <caret line="60" column="40" lean-forward="false" selection-start-line="60" selection-start-column="40" selection-end-line="60" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_utils.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1104">
-          <caret line="69" column="6" selection-start-line="69" selection-start-column="6" selection-end-line="69" selection-end-column="6" />
+          <caret line="69" column="6" lean-forward="false" selection-start-line="69" selection-start-column="6" selection-end-line="69" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_server.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1408">
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
+          <caret line="88" column="0" lean-forward="false" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tcp_nat_traversal/include/sf_tcp_nat_traversal_client.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1360">
-          <caret line="85" selection-start-line="85" selection-end-line="85" />
+          <caret line="85" column="0" lean-forward="false" selection-start-line="85" selection-start-column="0" selection-end-line="85" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_rpc/include/sf_rpcserver.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="608">
-          <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
+          <caret line="38" column="25" lean-forward="false" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_thread_pool/include/sf_thread_pool.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
-          <caret line="103" selection-start-line="103" selection-end-line="103" />
+          <caret line="103" column="0" lean-forward="false" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_thread_pool/include/sf_thread_pool.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="593">
-          <caret line="121" column="11" selection-start-line="121" selection-start-column="11" selection-end-line="121" selection-end-column="11" />
+          <caret line="121" column="11" lean-forward="false" selection-start-line="121" selection-start-column="11" selection-end-line="121" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tl/include/sf_bimap.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
-          <caret line="15" column="45" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
+          <caret line="15" column="45" lean-forward="false" selection-start-line="15" selection-start-column="45" selection-end-line="15" selection-end-column="45" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tl/include/sf_bimap.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-127">
-          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <caret line="2" column="20" lean-forward="false" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tri_type/include/sf_tri_type.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="389">
-          <caret line="56" selection-start-line="56" selection-end-line="56" />
+          <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_tri_type/include/sf_tri_type.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="334">
-          <caret line="42" column="11" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
+          <caret line="42" column="11" lean-forward="false" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_type_list/include/sf_type_list.h">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_type_list/include/sf_type_list.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_serialize/include/sf_serialize_binary.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
-          <caret line="15" column="90" selection-start-line="15" selection-start-column="90" selection-end-line="15" selection-end-column="90" />
+          <caret line="15" column="90" lean-forward="false" selection-start-line="15" selection-start-column="90" selection-end-line="15" selection-end-column="90" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_single_instance/include/sf_single_instance.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
-          <caret line="12" column="4" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+          <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_single_instance/include/sf_single_instance.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
-          <caret line="13" column="45" selection-start-line="13" selection-start-column="45" selection-end-line="13" selection-end-column="45" />
+          <caret line="13" column="45" lean-forward="false" selection-start-line="13" selection-start-column="45" selection-end-line="13" selection-end-column="45" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_serialize/include/sf_serialize_binary.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2484">
-          <caret line="138" column="51" selection-start-line="138" selection-start-column="51" selection-end-line="138" selection-end-column="51" />
+          <caret line="138" column="51" lean-forward="false" selection-start-line="138" selection-start-column="51" selection-end-line="138" selection-end-column="51" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_chain/include/sf_chain.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2322">
-          <caret line="129" column="47" selection-start-line="129" selection-start-column="47" selection-end-line="129" selection-end-column="47" />
+          <caret line="129" column="47" lean-forward="false" selection-start-line="129" selection-start-column="47" selection-end-line="129" selection-end-column="47" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_chain/include/sf_chain.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1926">
-          <caret line="107" column="4" selection-start-line="107" selection-start-column="4" selection-end-line="107" selection-end-column="4" />
+          <caret line="107" column="4" lean-forward="false" selection-start-line="107" selection-start-column="4" selection-end-line="107" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_rpc/include/sf_rpcserver.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1476">
-          <caret line="82" column="56" selection-start-line="82" selection-start-column="56" selection-end-line="82" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_http_server/testWebsite/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="37" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
+          <caret line="82" column="56" lean-forward="false" selection-start-line="82" selection-start-column="56" selection-end-line="82" selection-end-column="56" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_type/include/sf_type.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="339">
-          <caret line="33" column="30" selection-start-line="33" selection-start-column="30" selection-end-line="33" selection-end-column="30" />
+          <caret line="33" column="30" lean-forward="false" selection-start-line="33" selection-start-column="30" selection-end-line="33" selection-end-column="30" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_type/include/sf_type.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
-          <caret line="35" column="44" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="56" />
+          <caret line="35" column="44" lean-forward="false" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="56" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_static_router.hpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
-          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2178">
-          <caret line="121" column="10" selection-start-line="121" selection-start-column="10" selection-end-line="121" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3132">
-          <caret line="174" column="41" selection-start-line="174" selection-start-column="41" selection-end-line="174" selection-end-column="41" />
+          <caret line="8" column="4" lean-forward="false" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="16" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
+        <state relative-caret-position="90">
+          <caret line="6" column="16" lean-forward="false" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
+          <folding>
+            <marker date="1536827203600" expanded="true" signature="81:470" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_logger/include/sf_logger.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2646">
-          <caret line="147" column="39" selection-start-line="147" selection-start-column="31" selection-end-line="147" selection-end-column="39" />
+        <state relative-caret-position="1830">
+          <caret line="147" column="39" lean-forward="false" selection-start-line="147" selection-start-column="31" selection-end-line="147" selection-end-column="39" />
+          <folding>
+            <marker date="1536827203600" expanded="true" signature="3612:3727" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_object/include/sf_eventloop.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-198">
-          <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_http_server/test_http_server.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="990">
-          <caret line="55" column="34" selection-start-line="55" selection-start-column="34" selection-end-line="55" selection-end-column="34" />
+          <caret line="16" column="10" lean-forward="false" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver_win.hpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5076">
-          <caret line="282" column="14" selection-start-line="282" selection-start-column="14" selection-end-line="282" selection-end-column="14" />
+        <state relative-caret-position="0">
+          <caret line="282" column="14" lean-forward="false" selection-start-line="282" selection-start-column="14" selection-end-line="282" selection-end-column="14" />
+          <folding>
+            <marker date="1536827203600" expanded="true" signature="64:11952" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libsf_net/include/sf_tcpserver_win.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="39" column="23" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/test_tcpserver/test_tcpserver.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="23" column="16" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
-          <folding>
-            <element signature="e#64#86#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="39" column="23" lean-forward="false" selection-start-line="39" selection-start-column="23" selection-end-line="39" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/smake.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" column="86" lean-forward="true" selection-start-line="7" selection-start-column="86" selection-end-line="7" selection-end-column="86" />
+        <state relative-caret-position="-8">
+          <caret line="7" column="86" lean-forward="false" selection-start-line="7" selection-start-column="86" selection-end-line="7" selection-end-column="86" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_http_server/testWebsite/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="7" column="37" lean-forward="false" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="80" column="24" lean-forward="false" selection-start-line="80" selection-start-column="10" selection-end-line="80" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="23" column="64" lean-forward="false" selection-start-line="23" selection-start-column="64" selection-end-line="23" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="39" column="47" lean-forward="false" selection-start-line="39" selection-start-column="47" selection-end-line="39" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_tcpserver/test_tcpserver.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="23" column="16" lean-forward="false" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/boost/lexical_cast/detail/converter_lexical.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="209" column="12" lean-forward="false" selection-start-line="209" selection-start-column="12" selection-end-line="209" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="119" column="8" lean-forward="false" selection-start-line="119" selection-start-column="8" selection-end-line="119" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_utils/include/sf_utils.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="326">
+          <caret line="36" column="0" lean-forward="true" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding>
+            <element signature="e#14#31#0" expanded="false" />
+            <element signature="e#1015#1033#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_header.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="358">
+          <caret line="43" column="31" lean-forward="false" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_header.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="24" column="17" lean-forward="true" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_utils/include/sf_utils.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="155" column="6" lean-forward="false" selection-start-line="155" selection-start-column="6" selection-end-line="155" selection-end-column="6" />
+          <folding>
+            <element signature="e#14#31#0" expanded="true" />
+            <element signature="e#4355#4383#0" expanded="true" />
+            <element signature="e#4452#4470#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request_line.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="11" column="6" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_utils.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_utils.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="304">
+          <caret line="37" column="0" lean-forward="true" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="29" column="24" lean-forward="false" selection-start-line="29" selection-start-column="24" selection-end-line="29" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="37" column="19" lean-forward="false" selection-start-line="37" selection-start-column="19" selection-end-line="37" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_random/include/sf_random.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="11" column="32" lean-forward="false" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_random/include/sf_random.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="5" column="28" lean-forward="false" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_server_config.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="12" column="34" lean-forward="false" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_request.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="128">
+          <caret line="9" column="33" lean-forward="false" selection-start-line="9" selection-start-column="33" selection-end-line="9" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/test_http_server/test_http_server.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="29" column="0" lean-forward="true" selection-start-line="29" selection-start-column="0" selection-end-line="29" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libsf_http/include/sf_http_base_server.hpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="107" column="20" lean-forward="true" selection-start-line="107" selection-start-column="20" selection-end-line="107" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>

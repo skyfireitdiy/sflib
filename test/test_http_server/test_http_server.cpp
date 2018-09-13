@@ -18,9 +18,16 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
         sf_debug(p,header.get_header_value(p));
     }
 
-    sf_debug(to_string(req.get_body()));
+    if(req.is_boundary_data())
+    {
+        sf_debug("boundary file",req.get_boundary_data_context().tmp_file_name);
+        res.set_body(to_byte_array("upload ok, file save at:"s + req.get_boundary_data_context().tmp_file_name));
+    }
+    else
+    {
+        res.set_body(to_byte_array("upload ok, no file"s));
+    }
 
-    res.set_body(to_byte_array("upload ok"s));
     res.set_status(200);
 }
 
@@ -53,6 +60,6 @@ int main() {
 
     server->add_router(make_websocket_router("/ws", websocket_route));
 
-    server->add_router(make_static_router(R"(C:\Users\skyfire\Documents\code\sflib\test\test_http_server\testWebsite)", {{"*"s}}, "utf-8", true));
+    server->add_router(make_static_router(R"(/home/skyfire/code/sflib/test/test_http_server/testWebsite/)", {{"*"s}}, "utf-8", true));
     server->start();
 }

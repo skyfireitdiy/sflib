@@ -30,4 +30,11 @@ namespace skyfire
     inline std::vector<std::string> sf_split_string(std::string str, const std::string& split_str);
     inline byte_array sf_deflate_compress(const byte_array &input_buffer);
     inline bool sf_is_dir(const std::string& path);
+
+
+    template <typename ... Str>
+    std::string sf_path_join(std::string str1, Str... str2);
+
+    inline std::string sf_path_join(std::string path1, const std::string path2);
+
 }

@@ -10,5 +10,6 @@ namespace skyfire {
         unsigned short port;
         size_t thread_count;
         int request_timeout;
+        std::string tmp_file_path;
     };
 }

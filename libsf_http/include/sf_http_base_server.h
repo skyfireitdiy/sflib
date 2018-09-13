@@ -34,6 +34,8 @@ namespace skyfire {
         std::mutex mu_request_context__;
         std::unordered_map<SOCKET, websocket_context_t> websocket_context__;
         std::recursive_mutex mu_websocket_context__;
+        std::unordered_map<SOCKET, boundary_data_context_t> boundary_data_context__;
+        std::mutex mu_boundary_data_context__;
 
         void raw_data_coming__(SOCKET sock, const byte_array &data);
 
