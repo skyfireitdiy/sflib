@@ -60,6 +60,6 @@ int main() {
 
     server->add_router(make_websocket_router("/ws", websocket_route));
 
-    server->add_router(make_static_router(R"(C:\Users\skyfire\Documents\code\sflib\test\test_http_server\testWebsite)", {{"*"s}}, "utf-8", true));
+    server->add_router(make_static_router(R"(/home/skyfire/code/sflib/test/test_http_server/testWebsite)", {{"*"s}}, "utf-8", true));
     server->start();
 }

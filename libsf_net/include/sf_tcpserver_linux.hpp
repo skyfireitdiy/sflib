@@ -2,6 +2,7 @@
 #pragma once
 
 #include "sf_tcpserver_linux.h"
+#include "sf_define.h"
 
 
 namespace skyfire
@@ -147,8 +148,10 @@ namespace skyfire
                                 recv_buf.resize(static_cast<unsigned long>(count_read));
                                 if (raw__)
                                 {
+                                    sf_debug("raw data",recv_buf.size(),to_string(recv_buf));
                                     raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
-                                } else
+                                }
+                                else
                                 {
                                     sock_data_buffer__[evs[i].data.fd].insert(
                                             sock_data_buffer__[evs[i].data.fd].end(),

@@ -3,10 +3,12 @@
 #include <string>
 #include <ctime>
 #include <map>
+#include <memory>
 
 #include "sf_tcputils.hpp"
 #include "sf_type.hpp"
 #include "sf_serialize_binary.hpp"
+#include "sf_http_request_line.hpp"
 
 namespace skyfire
 {
