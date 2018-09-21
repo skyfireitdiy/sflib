@@ -17,13 +17,13 @@
  * SF_REG_SIGNAL 注册信号的宏
  */
 #define SF_REG_SIGNAL(name,...)                                                                                         \
-public:                                                                                                                 \
-std::recursive_mutex __mu_##name##_signal_;                                                                                       \
-std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>__##name##_signal_func_vec__;                        \
-template<typename...__SF_OBJECT_ARGS__>                                                                                 \
-void name(__SF_OBJECT_ARGS__&&... args) {                                                                               \
-    std::lock_guard<std::recursive_mutex> lck(__mu_##name##_signal_);                                                             \
-    for (auto &p :__##name##_signal_func_vec__)                                                                          \
+public:                                                                                                                \
+std::recursive_mutex __mu_##name##_signal_;                                                                             \
+std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>__##name##_signal_func_vec__;                     \
+template<typename...__SF_OBJECT_ARGS__>                                                                              \
+void name(__SF_OBJECT_ARGS__&&... args) {                                                                              \
+    std::lock_guard<std::recursive_mutex> lck(__mu_##name##_signal_);                                                   \
+    for (auto &p :__##name##_signal_func_vec__)                                                                        \
     {                                                                                                                   \
         if (std::get<1>(p))                                                                                             \
         {                                                                                                               \
@@ -33,9 +33,8 @@ void name(__SF_OBJECT_ARGS__&&... args) {                                       
         {                                                                                                               \
             auto bind_obj = std::bind(std::get<0>(p),                                                                   \
                                          std::forward<__SF_OBJECT_ARGS__>(args)...);                                    \
-            std::thread([=]{                                                                                            \
-                __p_msg_queue__->add_msg(this, bind_obj);                                                               \
-            }).detach();                                                                                                \
+            __p_msg_queue__->add_msg(this, bind_obj);                                                                  \
+                                                                                                                        \
         }                                                                                                               \
     }                                                                                                                   \
 }                                                                                                                       \
@@ -46,18 +45,18 @@ void name(__SF_OBJECT_ARGS__&&... args) {                                       
  */
 #define SF_REG_AOP(name, ...)                                                                                           \
 public:                                                                                                                 \
-    std::recursive_mutex __mu_##name##_aop__;                                                                                     \
+    std::recursive_mutex __mu_##name##_aop__;                                                                            \
     std::vector<std::tuple<std::function<void(__VA_ARGS__)>,int>> __##name##_aop_before_func_vec__;                     \
     std::vector<std::tuple<std::function<void()>,int>> __##name##_aop_after_func_vec__;                                 \
-    template<typename...__SF_OBJECT_ARGS__>                                                                             \
+    template<typename...__SF_OBJECT_ARGS__>                                                                            \
     decltype(auto) aop_##name(__SF_OBJECT_ARGS__&& ... args)                                                            \
     {                                                                                                                   \
-        std::lock_guard<std::recursive_mutex> lck(__mu_##name##_aop__);                                                           \
+        std::lock_guard<std::recursive_mutex> lck(__mu_##name##_aop__);                                                  \
         for(auto &p :  __##name##_aop_before_func_vec__)                                                                \
         {                                                                                                               \
             std::get<0>(p)(std::forward<__SF_OBJECT_ARGS__>(args)...);                                                  \
         }                                                                                                               \
-        if constexpr (std::is_same<decltype(name(std::forward<__SF_OBJECT_ARGS__>(args)...)),void>::value)              \
+        if constexpr (std::is_same<decltype(name(std::forward<__SF_OBJECT_ARGS__>(args)...)),void>::value)           \
         {                                                                                                               \
             name(std::forward<__SF_OBJECT_ARGS__>(args)...);                                                            \
             for(auto &p :  __##name##_aop_after_func_vec__)                                                             \
@@ -67,7 +66,7 @@ public:                                                                         
         }                                                                                                               \
         else                                                                                                            \
         {                                                                                                               \
-            decltype(auto) ret = name(std::forward<__SF_OBJECT_ARGS__>(args)...);                                       \
+            decltype(auto) ret = name(std::forward<__SF_OBJECT_ARGS__>(args)...);                                      \
             for(auto &p :  __##name##_aop_after_func_vec__)                                                             \
             {                                                                                                           \
                 std::get<0>(p)();                                                                                       \

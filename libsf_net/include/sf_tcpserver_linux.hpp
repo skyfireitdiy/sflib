@@ -129,71 +129,80 @@ namespace skyfire
                                     new_connection(conn_fd);
                                     continue;
                                 }
-                                recv_buf.resize(SF_NET_BUFFER_SIZE);
-                                auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(),
-                                                                        SF_NET_BUFFER_SIZE));
-                                if (count_read <= 0)
-                                {
-                                    closed(static_cast<SOCKET>(evs[i].data.fd));
-                                    close(evs[i].data.fd);
-                                    epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev);
-                                    --cur_fd_count__;
 
-                                    sf_debug("close connection");
-                                    close(evs[i].data.fd);
-                                    continue;
-                                }
-
-
-                                recv_buf.resize(static_cast<unsigned long>(count_read));
-                                if (raw__)
+                                while (true)
                                 {
-                                    sf_debug("raw data",recv_buf.size(),to_string(recv_buf));
-                                    raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
-                                }
-                                else
-                                {
-                                    sock_data_buffer__[evs[i].data.fd].insert(
-                                            sock_data_buffer__[evs[i].data.fd].end(),
-                                            recv_buf.begin(),
-                                            recv_buf.end());
-                                    size_t read_pos = 0;
-                                    while (sock_data_buffer__[evs[i].data.fd].size() - read_pos >=
-                                           sizeof(pkg_header_t))
+                                    recv_buf.resize(SF_NET_BUFFER_SIZE);
+                                    auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(),
+                                                                            SF_NET_BUFFER_SIZE));
+                                    if (count_read < 0)
                                     {
-                                        memmove(&header,
-                                                sock_data_buffer__[evs[i].data.fd].data() + read_pos,
-                                                sizeof(header));
-                                        if (!check_header_checksum(header))
-                                        {
-                                            close(evs[i].data.fd);
-                                            closed(static_cast<SOCKET>(evs[i].data.fd));
-                                            break;
-                                        }
-                                        if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
-                                            header.length)
-                                        {
-                                            data_coming(
-                                                    static_cast<SOCKET>(evs[i].data.fd), header,
-                                                    byte_array(
-                                                            sock_data_buffer__[evs[i].data.fd].begin() +
-                                                            read_pos +
-                                                            sizeof(header),
-                                                            sock_data_buffer__[evs[i].data.fd].begin() +
-                                                            read_pos +
-                                                            sizeof(header) + header.length)
-                                            );
-                                            read_pos += sizeof(header) + header.length;
-                                        } else
-                                        {
-                                            break;
-                                        }
+                                        closed(static_cast<SOCKET>(evs[i].data.fd));
+                                        close(evs[i].data.fd);
+                                        epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev);
+                                        --cur_fd_count__;
+
+                                        sf_debug("close connection");
+                                        close(evs[i].data.fd);
+                                        break;
                                     }
-                                    if (read_pos != 0)
+                                    if (count_read == 0)
                                     {
-                                        sock_data_buffer__[evs[i].data.fd].erase(
-                                                sock_data_buffer__[evs[i].data.fd].begin(),
-                                                sock_data_buffer__[evs[i].data.fd].begin() + read_pos);
+                                        sf_debug("read finish");
+                                        break;
+                                    }
+
+
+                                    recv_buf.resize(static_cast<unsigned long>(count_read));
+                                    if (raw__)
+                                    {
+                                        sf_debug("raw data", recv_buf.size());
+                                        raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
+                                    } else
+                                    {
+                                        sock_data_buffer__[evs[i].data.fd].insert(
+                                                sock_data_buffer__[evs[i].data.fd].end(),
+                                                recv_buf.begin(),
+                                                recv_buf.end());
+                                        size_t read_pos = 0;
+                                        while (sock_data_buffer__[evs[i].data.fd].size() - read_pos >=
+                                               sizeof(pkg_header_t))
+                                        {
+                                            memmove(&header,
+                                                    sock_data_buffer__[evs[i].data.fd].data() + read_pos,
+                                                    sizeof(header));
+                                            if (!check_header_checksum(header))
+                                            {
+                                                close(evs[i].data.fd);
+                                                closed(static_cast<SOCKET>(evs[i].data.fd));
+                                                break;
+                                            }
+                                            if (sock_data_buffer__[evs[i].data.fd].size() - read_pos - sizeof(header) >=
+                                                header.length)
+                                            {
+                                                data_coming(
+                                                        static_cast<SOCKET>(evs[i].data.fd), header,
+                                                        byte_array(
+                                                                sock_data_buffer__[evs[i].data.fd].begin() +
+                                                                read_pos +
+                                                                sizeof(header),
+                                                                sock_data_buffer__[evs[i].data.fd].begin() +
+                                                                read_pos +
+                                                                sizeof(header) + header.length)
+                                                );
+                                                read_pos += sizeof(header) + header.length;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                        }
+                                        if (read_pos != 0)
+                                        {
+                                            sock_data_buffer__[evs[i].data.fd].erase(
+                                                    sock_data_buffer__[evs[i].data.fd].begin(),
+                                                    sock_data_buffer__[evs[i].data.fd].begin() + read_pos);
+                                        }
                                     }
                                 }
 
