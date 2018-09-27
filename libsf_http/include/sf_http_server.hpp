@@ -64,7 +64,6 @@ namespace skyfire
 
     inline void
     sf_http_server::default_websocket_text_data_callback__(SOCKET sock, const std::string &url, const std::string &data) {
-        // TODO 默认Websocket文本数据回调函数
         websocket_param_t param;
         param.url = url;
         param.sock = sock;
@@ -80,7 +79,6 @@ namespace skyfire
 
     inline void sf_http_server::default_websocket_binary_data_callback__(SOCKET sock, const std::string &url,
                                                                   const byte_array &data) {
-        // TODO 默认Websocket二进制数据回调函数
         websocket_param_t param;
         param.url = url;
         param.sock = sock;
