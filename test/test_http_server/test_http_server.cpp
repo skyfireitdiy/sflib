@@ -20,7 +20,31 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
 
     if(req.is_boundary_data())
     {
+        std::string ret_str;
         sf_debug("boundary data");
+        auto header = req.get_boundary_data_context().header;
+        for(auto &p:header)
+        {
+            sf_debug(p.first,p.second);
+            ret_str += p.first + ":" + p.second + "\n";
+        }
+
+        ret_str += "-----------header end-------------\n";
+
+        sf_debug("----");
+        auto multipart = req.get_boundary_data_context().multipart;
+        for(auto &p: multipart)
+        {
+            auto tmp_header = p.get_header().get_header();
+            for(auto &q:tmp_header)
+            {
+                sf_debug(q.first,q.second);
+                ret_str += q.first + ":" + q.second + "\n";
+            }
+            ret_str += "temp filename:" + p.get_filename() + "\n--------------------------\n\n";
+            sf_debug(p.get_filename());
+        }
+        res.set_body(to_byte_array(ret_str));
     }
     else
     {

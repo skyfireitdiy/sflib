@@ -366,15 +366,15 @@ namespace skyfire
         sf_bind_signal(server__, raw_data_coming, [=](SOCKET sock, const byte_array &data)
         {
             raw_data_coming__(sock, data);
-        }, true);
+        }, false);
         sf_bind_signal(server__, new_connection, [=](SOCKET sock)
         {
             build_new_request__(sock);
-        }, true);
+        }, false);
         sf_bind_signal(server__, closed, [=](SOCKET sock)
         {
             on_socket_closed(sock);
-        }, true);
+        }, false);
 
     }
 

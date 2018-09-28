@@ -10,9 +10,6 @@
 namespace skyfire
 {
 
-    /////////////////////////////////////////////////////////////////
-
-
     inline unsigned char sf_to_hex(unsigned char x)
     {
         return static_cast<unsigned char>(x > 9 ? x + 55 : x + 48);

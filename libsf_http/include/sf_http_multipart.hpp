@@ -8,7 +8,7 @@
 namespace skyfire
 {
     inline sf_http_multipart::sf_http_multipart(const std::string &boundary_str, const std::string& tmp_path) :
-            boundary_str__(boundary_str), filename__(sf_random::get_instance()->get_uuid_str()), tmp_path__(tmp_path)
+            boundary_str__(boundary_str), filename__(sf_path_join(tmp_path,sf_random::get_instance()->get_uuid_str()))
     {
     }
 
@@ -27,9 +27,13 @@ namespace skyfire
         return finish__;
     }
 
+    inline std::string sf_http_multipart::get_filename() const
+    {
+        return filename__;
+    }
+
     inline bool sf_http_multipart::append_data(const byte_array &data, byte_array &ret)
     {
-        sf_debug("append data", to_string(data));
         std::string new_boundary_str = "----" + boundary_str__;
         if(first_block)
         {
@@ -53,7 +57,7 @@ namespace skyfire
                 return false;
             }
             first_block = false;
-            fp__ = std::make_shared<std::ofstream>(sf_path_join(tmp_path__,filename__),std::ios::binary | std::ios::out);
+            fp__ = std::make_shared<std::ofstream>(filename__,std::ios::binary | std::ios::out);
             // NOTE 暂时忽略掉打开失败的情况
             auto body_str = to_string(body);
             auto finish_pos = body_str.find(new_boundary_str);
@@ -75,7 +79,7 @@ namespace skyfire
                 }
                 else
                 {
-                    ret = {body.begin()+finish_pos+new_boundary_str.size()+2,body.end()};
+                    ret = {body.begin()+finish_pos,body.end()};
                     return true;
                 }
             }
@@ -103,7 +107,7 @@ namespace skyfire
                 }
                 else
                 {
-                    ret = {body.begin()+finish_pos + new_boundary_str.size()+2,body.end()};
+                    ret = {body.begin()+finish_pos,body.end()};
                     return true;
                 }
             }

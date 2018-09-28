@@ -17,12 +17,12 @@ namespace skyfire
         std::shared_ptr<std::ofstream> fp__;
         bool first_block = true;
         std::string filename__;
-        std::string tmp_path__;
     public:
         sf_http_multipart(const std::string& boundary_str, const std::string& tmp_path);
         sf_http_header get_header() const;
         bool is_end() const;
         bool is_finished() const;
+        std::string get_filename() const;
         bool append_data(const byte_array& data, byte_array &ret);
     };
 
