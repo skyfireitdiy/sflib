@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-
-#include "sf_http_header.hpp"
 #include "sf_type.hpp"
 
 namespace skyfire

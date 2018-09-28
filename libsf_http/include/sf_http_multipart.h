@@ -1,30 +1,29 @@
 #pragma once
 
-#include "sf_http_header.hpp"
-#include "sf_type.hpp"
-#include "sf_http_utils.hpp"
+#include "sf_type.h"
+#include "sf_http_utils.h"
+#include <fstream>
 
 namespace skyfire
 {
 
-    enum class sf_http_multipart_type
-    {
-        form,
-        file
-    };
-
     class sf_http_multipart
     {
     protected:
-        sf_http_multipart_type type__;
-        sf_http_header_t header__;
+        sf_http_header header__;
         bool end__ = {false};
+        bool finish__ = {false};
+        std::string  boundary_str__;
+        std::shared_ptr<std::ofstream> fp__;
+        bool first_block = true;
+        std::string filename__;
+        std::string tmp_path__;
     public:
-        sf_http_multipart(sf_http_multipart_type type);
-        sf_http_header_t get_header() const;
+        sf_http_multipart(const std::string& boundary_str, const std::string& tmp_path);
+        sf_http_header get_header() const;
         bool is_end() const;
-        virtual byte_array append_data(byte_array data) = 0;
-        virtual sf_http_multipart_type get_type() = 0;
+        bool is_finished() const;
+        bool append_data(const byte_array& data, byte_array &ret);
     };
 
 

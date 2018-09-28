@@ -1,9 +1,17 @@
 #pragma once
 
 #include "sf_http_utils.h"
+#include "sf_tcputils.hpp"
+#include "sf_type.hpp"
+#include "sf_serialize_binary.hpp"
+#include "sf_http_request_line.hpp"
+#include "sf_http_multipart.hpp"
 
 namespace skyfire
 {
+
+    /////////////////////////////////////////////////////////////////
+
 
     inline unsigned char sf_to_hex(unsigned char x)
     {

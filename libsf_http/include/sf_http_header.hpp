@@ -1,9 +1,10 @@
 #pragma once
 
 #include "sf_http_header.h"
+#include "sf_http_utils.hpp"
 
-namespace skyfire{
-
+namespace skyfire
+{
     inline void sf_http_header::clear() {
         header_data__.clear();
     }

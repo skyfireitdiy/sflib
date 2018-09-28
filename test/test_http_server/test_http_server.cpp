@@ -20,8 +20,7 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
 
     if(req.is_boundary_data())
     {
-        sf_debug("boundary file",req.get_boundary_data_context().tmp_file_name);
-        res.set_body(to_byte_array("upload ok, file save at:"s + req.get_boundary_data_context().tmp_file_name));
+        sf_debug("boundary data");
     }
     else
     {

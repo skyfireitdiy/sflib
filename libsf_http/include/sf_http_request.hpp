@@ -3,11 +3,17 @@
 
 #include "sf_http_request.h"
 #include "sf_random.hpp"
+#include "sf_type.hpp"
+#include "sf_http_request_line.hpp"
+#include "sf_utils.hpp"
+#include "sf_http_utils.hpp"
+#include "sf_logger.hpp"
+#include "sf_http_header.hpp"
 
 namespace skyfire
 {
 
-    inline bool sf_http_request::split_request__(const byte_array &raw, std::string &request_line,
+    inline bool sf_http_request::split_request(const byte_array &raw, std::string &request_line,
                                                  std::vector<std::string> &header_lines, byte_array &body)
     {
         auto raw_string = to_string(raw);
@@ -56,7 +62,7 @@ namespace skyfire
     {
         std::string request_line;
         std::vector<std::string> header_lines;
-        if (!split_request__(raw__, request_line, header_lines, body__))
+        if (!split_request(raw__, request_line, header_lines, body__))
         {
             sf_debug("split request error");
             return false;
@@ -95,8 +101,6 @@ namespace skyfire
                     }
                     boundary_data_context__.boundary_str = {boundary_str_list[1].begin()+2, boundary_str_list[1].end()};
                     sf_debug("boundary_str", boundary_data_context__.boundary_str);
-                    boundary_data_context__.tmp_file_name = std::to_string(sf_random::get_instance()->get_int(INT_MIN,INT_MAX));
-                    sf_debug("filename:", boundary_data_context__.tmp_file_name);
                     boundary_data_context__.header = header__.get_header();
                     return true;
                 }

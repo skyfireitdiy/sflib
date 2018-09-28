@@ -1,12 +1,12 @@
 #pragma once
 
-#include <map>
 #include <string>
-#include <sf_utils.hpp>
-#include "sf_type.hpp"
-#include "sf_http_utils.hpp"
+#include <map>
+#include <vector>
+#include "sf_http_utils.h"
 
-namespace skyfire{
+namespace skyfire
+{
     class sf_http_header{
         sf_http_header_t header_data__;
     public:

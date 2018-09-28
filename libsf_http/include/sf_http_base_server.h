@@ -1,15 +1,16 @@
 #pragma once
 #include <functional>
-#include "sf_http_server_config.hpp"
-#include "sf_eventloop.hpp"
-#include "sf_tcpserver.hpp"
-#include "sf_logger.hpp"
-#include "sf_object.hpp"
-#include "sf_http_request.hpp"
-#include "sf_http_response.hpp"
-#include "sf_http_utils.hpp"
-#include "sf_websocket_utils.hpp"
-#include "sf_logger.hpp"
+#include <vector>
+#include "sf_http_server_config.h"
+#include "sf_eventloop.h"
+#include "sf_tcpserver.h"
+#include "sf_logger.h"
+#include "sf_object.h"
+#include "sf_http_request.h"
+#include "sf_http_response.h"
+#include "sf_http_utils.h"
+#include "sf_websocket_utils.h"
+#include "sf_logger.h"
 #include <utility>
 #include <mutex>
 
@@ -47,6 +48,8 @@ namespace skyfire {
         void build_new_request__(SOCKET sock);
 
         void on_socket_closed(SOCKET sock);
+
+        byte_array append_boundary_data(boundary_data_context_t& boundary_data,const byte_array& data);
 
     protected:
         explicit sf_http_base_server(sf_http_server_config config);

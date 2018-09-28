@@ -1,7 +1,16 @@
 #pragma once
 
 #include "sf_http_base_server.h"
-
+#include "sf_http_server_config.hpp"
+#include "sf_eventloop.hpp"
+#include "sf_tcpserver.hpp"
+#include "sf_logger.hpp"
+#include "sf_object.hpp"
+#include "sf_http_request.hpp"
+#include "sf_http_response.hpp"
+#include "sf_http_utils.hpp"
+#include "sf_websocket_utils.hpp"
+#include "sf_logger.hpp"
 
 namespace skyfire
 {
@@ -67,18 +76,12 @@ namespace skyfire
             {
                 std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
                 sf_debug("boundary data append", request_context__[sock].buffer.size());
-                boundary_data_context__[sock].fp__->write(request_context__[sock].buffer.data(),
-                                                          request_context__[sock].buffer.size());
-                if (request_context__[sock].buffer.size() < 4096)
-                {
-                    sf_debug("content",request_context__[sock].buffer.size() ,to_string(request_context__[sock].buffer));
-                    sf_debug("boundary str", boundary_data_context__[sock].boundary_str + "--");
-                }
-                if (to_string(request_context__[sock].buffer).find(boundary_data_context__[sock].boundary_str + "--") !=
-                    std::string::npos)
+
+                request_context__[sock].buffer = append_boundary_data(boundary_data_context__[sock],request_context__[sock].buffer);
+
+                if (boundary_data_context__[sock].multipart.back().is_end())
                 {
                     sf_debug("boundary data finished");
-                    boundary_data_context__[sock].fp__->close();
                     http_handler(sf_http_request(boundary_data_context__[sock]));
                     boundary_data_context__.erase(sock);
                 }
@@ -101,25 +104,15 @@ namespace skyfire
                 sf_debug("is boundary data");
                 // 初始化boundary数据
                 auto boundary_data = request.get_boundary_data_context();
-                auto tmp_file_path = sf_path_join(config__.tmp_file_path, boundary_data.tmp_file_name);
-                boundary_data.tmp_file_name = tmp_file_path;
-                boundary_data.fp__ = std::make_shared<std::ofstream>(boundary_data.tmp_file_name,
-                                                                     std::ios::out | std::ios::binary);
-                if (!*boundary_data.fp__)
-                {
-                    sf_error("临时文件生成失败");
-                    server__->close(sock);
-                    std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
-                    request_context__.erase(sock);
-                    return;
-                }
-                boundary_data.fp__->write(request.get_body().data(), request.get_body().size());
-                if (to_string(request.get_body()).find(boundary_data.boundary_str + "--") != std::string::npos)
+
+                request_context__[sock].buffer = append_boundary_data(boundary_data,request.get_body());
+
+                if (!boundary_data.multipart.empty() && boundary_data.multipart.back().is_end())
                 {
                     sf_debug("boundary data success one time");
-                    boundary_data.fp__->close();
                     http_handler(sf_http_request(boundary_data));
-                } else
+                }
+                else
                 {
                     sf_debug("boundary data prepare");
                     std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
@@ -362,10 +355,6 @@ namespace skyfire
             std::lock_guard<std::recursive_mutex> lck(mu_boundary_data_context__);
             if (boundary_data_context__.count(sock) != 0)
             {
-                if (boundary_data_context__[sock].fp__)
-                {
-                    boundary_data_context__[sock].fp__->close();
-                }
                 boundary_data_context__.erase(sock);
             }
         }
@@ -484,5 +473,26 @@ namespace skyfire
         }
     }
 
+    inline byte_array sf_http_base_server::append_boundary_data(boundary_data_context_t& boundary_data,const byte_array& data)
+    {
+        auto tmp_data = data;
+        while(!tmp_data.empty())
+        {
+            if(boundary_data.multipart.empty()||boundary_data.multipart.back().is_finished())
+            {
+                boundary_data.multipart.push_back(sf_http_multipart(boundary_data.boundary_str,config__.tmp_file_path));
+            }
+            auto ret = boundary_data.multipart.back().append_data(tmp_data,tmp_data);
+            if(!ret)
+            {
+                return tmp_data;
+            }
+            if(boundary_data.multipart.back().is_end())
+            {
+                return byte_array();
+            }
+        }
+        return byte_array();
+    }
 
 }

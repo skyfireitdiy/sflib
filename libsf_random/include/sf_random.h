@@ -21,6 +21,7 @@ namespace skyfire {
     public:
         int get_int(int min, int max);
         double get_double(double min, double max);
+        std::string get_uuid_str();
     };
 
 }
