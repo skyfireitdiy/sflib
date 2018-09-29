@@ -289,16 +289,20 @@ namespace skyfire
                         websocket_binary_data_callback__(sock, websocket_context__[sock].url,
                                                          websocket_context__[sock].data_buffer);
                     }
-                } else if (WEBSOCKET_OP_PING_PKG == op_code)
+                }
+                else if (WEBSOCKET_OP_PING_PKG == op_code)
                 {
                     // TODO ping消息相应
-                } else if (WEBSOCKET_OP_PONG_PKG == op_code)
+                }
+                else if (WEBSOCKET_OP_PONG_PKG == op_code)
                 {
                     // TODO pong消息相应
-                } else if (WEBSOCKET_OP_MIDDLE_PKG == op_code)
+                }
+                else if (WEBSOCKET_OP_MIDDLE_PKG == op_code)
                 {
                     // TODO middle 消息响应
-                } else
+                }
+                else
                 {
                     // TODO 其他消息响应
                 }

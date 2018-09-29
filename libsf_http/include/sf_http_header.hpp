@@ -44,4 +44,9 @@ namespace skyfire
     {
         header_data__ = header;
     }
+
+    inline bool sf_http_header::has_key(const std::string& key) const
+    {
+        return header_data__.count(sf_to_header_key_format(key)) != 0;
+    }
 }
