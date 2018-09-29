@@ -81,7 +81,7 @@ namespace skyfire
                         } else
                         {
                             fi.seekg(0, std::ios::end);
-                            auto file_size = static_cast<unsigned long long int>(fi.tellg());
+                            auto file_size = static_cast<long long int>(fi.tellg());
                             fi.seekg(std::ios::beg);
                             // sf_debug("File Size:", file_size);
 
@@ -101,78 +101,50 @@ namespace skyfire
                                     }
                                     if (range_list.size() > 1)
                                     {
-                                        // TODO multipart
+                                        std::vector<sf_http_response::multipart_info_t> multipart_info_vec;
+                                        bool error_flag = false;
+                                        for(auto& range_str:range_list)
+                                        {
+                                            long long start=LONG_LONG_MAX, end=-1;
+                                            if (sscanf(range_str.c_str(), "%lld-%lld", &start, &end) < 1)
+                                            {
+                                                error_flag = true;
+                                                _401_res();
+                                                break;
+                                            }
+                                            sf_http_response::multipart_info_t tmp_part;
+                                            tmp_part.type = sf_http_response::multipart_info_t::multipart_info_type ::file;
+                                            tmp_part.file_info = sf_http_response::response_file_info_t{abspath,start,end};
+                                            multipart_info_vec.emplace_back(tmp_part);
+                                        }
+                                        if(!error_flag)
+                                        {
+                                            fi.close();
+                                            res.set_header(header);
+                                            res.set_multipart(multipart_info_vec);
+                                            return;
+                                        }
                                     } else
                                     {
-                                        int start, end;
-                                        if (sscanf(range_list[0].c_str(), "%d-%d", &start, &end) != 2)
+                                        long long start = LONG_LONG_MAX, end=-1;
+                                        if (sscanf(range_list[0].c_str(), "%lld-%lld", &start, &end) < 1)
                                         {
                                             _401_res();
                                         } else
                                         {
-                                            if (start > file_size)
-                                            {
-                                                _416_res();
-                                            } else
-                                            {
-                                                if (end - start > max_file_size)
-                                                {
-                                                    end = start + max_file_size;
-                                                }
-                                                if (end > file_size)
-                                                {
-                                                    end = file_size;
-                                                }
-                                                fi.seekg(start, std::ios::beg);
-                                                body_data.resize(end - start);
-                                                fi.read(body_data.data(), end - start);
-                                                fi.close();
-                                                header.set_header("Content-Range", "bytes " +
-                                                                                   std::to_string(start) + "-" +
-                                                                                   std::to_string(end) + "/" +
-                                                                                   std::to_string(file_size));
-                                                if(end == file_size)
-                                                {
-                                                    res.set_status(200);
-                                                }
-                                                else
-                                                {
-                                                    res.set_status(206);
-                                                    res.set_reason("Partial Content");
-                                                }
-                                            }
+                                            fi.close();
+                                            res.set_header(header);
+                                            res.set_file(sf_http_response::response_file_info_t{abspath,start,end});
+                                            return;
                                         }
                                     }
                                 }
                             } else if (file_size > max_file_size)
                             {
-                                int start = 0, end = max_file_size;
-
-                                if (end - start > max_file_size)
-                                {
-                                    end = start + max_file_size;
-                                }
-                                if (end > file_size)
-                                {
-                                    end = file_size;
-                                }
-                                fi.seekg(start, std::ios::beg);
-                                body_data.resize(end - start);
-                                fi.read(body_data.data(), end - start);
                                 fi.close();
-                                header.set_header("Content-Range", "bytes " +
-                                                                   std::to_string(start) + "-" +
-                                                                   std::to_string(end) + "/" +
-                                                                   std::to_string(file_size));
-                                if(end == file_size)
-                                {
-                                    res.set_status(200);
-                                }
-                                else
-                                {
-                                    res.set_status(206);
-                                    res.set_reason("Partial Content");
-                                }
+                                res.set_header(header);
+                                res.set_file(sf_http_response::response_file_info_t{abspath,0,file_size});
+                                return;
                             } else
                             {
                                 body_data.resize(file_size);

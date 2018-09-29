@@ -35,6 +35,9 @@ namespace skyfire
             res.get_header().set_header("Server", "SkyFire HTTP Server");
             res.get_header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
             // sf_debug("reply",to_string(res.to_package()));
+
+
+            // TODO response 方法处理
             server__->send(sock, res.to_package());
             if (!keep_alive)
             {

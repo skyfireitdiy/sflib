@@ -22,7 +22,21 @@ namespace skyfire
     }
 
     inline void sf_http_response::set_body(const byte_array &body) {
+        type__ = response_type ::normal;
         body__ = body;
+    }
+
+
+    inline void sf_http_response::set_file(const sf_http_response::response_file_info_t &file_info)
+    {
+        type__ = response_type ::file;
+        file_info__ = file_info;
+    }
+
+    inline void sf_http_response::set_multipart(const std::vector<multipart_info_t> &multipart_info_vec)
+    {
+        type__ = response_type ::multipart;
+        multipart_info_vec__ = multipart_info_vec;
     }
 
     inline unsigned long long sf_http_response::get_length() const {
@@ -34,6 +48,8 @@ namespace skyfire
     }
 
     inline byte_array sf_http_response::to_package() const {
+        if(type__ != response_type::normal)
+            return byte_array();
         std::string response_head;
         response_head += http_version__ + " " + std::to_string(status__) + " " + reason__ + "\r\n";
         for(auto &p:header__.get_key_list())
