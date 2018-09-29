@@ -6,6 +6,7 @@
 #endif
 #endif
 
+#include <cctype>
 
 #define SF_PRIVATE_ARGS_GLUE(x, y) x y
 #define SF_PRIVATE_MACRO_VAR_ARGS_IMPL_COUNT(_1,_2,_3,_4,_5,_6,_7,_8,_9, _10, N, ...) N
@@ -61,34 +62,37 @@ namespace skyfire {
 
     // 以下为系统定义type类型
     // NAT穿透获取客户端列表
-    constexpr int TYPE_NAT_TRAVERSAL_GET_LIST = 0x00010001;
+    enum sf_nat_pkg_type
+    {
+        TYPE_NAT_TRAVERSAL_GET_LIST = 0x00010001,
 
-    // NAT穿透客户端列表
-    constexpr int TYPE_NAT_TRAVERSAL_LIST = 0x00010002;
+        // NAT穿透客户端列表
+        TYPE_NAT_TRAVERSAL_LIST = 0x00010002,
 
-    // NAT穿透客户端注册
-    constexpr int TYPE_NAT_TRAVERSAL_REG = 0x00010003;
+        // NAT穿透客户端注册
+        TYPE_NAT_TRAVERSAL_REG = 0x00010003,
 
-    // NAT穿透请求连接远端peer
-    constexpr int TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER = 0x00010004;
+        // NAT穿透请求连接远端peer
+        TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER = 0x00010004,
 
-    // NAT设置client id
-    constexpr int TYPE_NAT_TRAVERSAL_SET_ID = 0x00010005;
+        // NAT设置client id
+        TYPE_NAT_TRAVERSAL_SET_ID = 0x00010005,
 
-    // NAT穿透错误
-    constexpr int TYPE_NAT_TRAVERSAL_ERROR = 0x00010005;
+        // NAT穿透错误
+        TYPE_NAT_TRAVERSAL_ERROR = 0x00010005,
 
-    // NAT穿透新连接请求
-    constexpr int TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED = 0x00010006;
+        // NAT穿透新连接请求
+        TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED = 0x00010006,
 
-    // NAT穿透服务器回复B的地址
-    constexpr int TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR = 0x00010007;
+        // NAT穿透服务器回复B的地址
+        TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR = 0x00010007,
 
-    // NAT穿透B端回复地址
-    constexpr int TYPE_NAT_TRAVERSAL_B_REPLY_ADDR = 0x00010008;
+        // NAT穿透B端回复地址
+        TYPE_NAT_TRAVERSAL_B_REPLY_ADDR = 0x00010008,
 
-    // NAT穿透连接成功
-    constexpr int TYPE_NAT_TRAVERSAL_CONNECTED = 0x00010009;
+        // NAT穿透连接成功
+        TYPE_NAT_TRAVERSAL_CONNECTED = 0x00010009
+    };
 
 
     // http
@@ -102,23 +106,26 @@ namespace skyfire {
 
     // error_code
 
-    // 无错误
-    constexpr int SF_ERR_OK = 0;
+    enum sf_error_code
+    {
+        // 无错误
+        SF_ERR_OK = 0,
 
-    // 资源不存在
-    constexpr int SF_ERR_NOT_EXIST = 0x00000001;
+        // 资源不存在
+        SF_ERR_NOT_EXIST = 0x00000001,
 
-    // 连接断开
-    constexpr int SF_ERR_DISCONNECT = 0x00010002;
+        // 连接断开
+        SF_ERR_DISCONNECT = 0x00010002,
 
-    // 远程错误
-    constexpr int SF_ERR_REMOTE_ERR = 0x00010003;
+        // 远程错误
+        SF_ERR_REMOTE_ERR = 0x00010003,
 
-    // 监听错误
-    constexpr int SF_ERR_LISTEN_ERR = 0x00010004;
+        // 监听错误
+        SF_ERR_LISTEN_ERR = 0x00010004,
 
-    // 绑定错误
-    constexpr int SF_ERR_BIND_ERR = 0x00010005;
+        // 绑定错误
+        SF_ERR_BIND_ERR = 0x00010005,
+    };
 }
 
 

@@ -116,17 +116,15 @@ namespace skyfire {
         std::shared_ptr<sf_http_server> p_server;
     };
 
-    constexpr int WEBSOCKET_OP_MIDDLE_PKG = 0x0;
-
-    constexpr int WEBSOCKET_OP_TEXT_PKG = 0x1;
-
-    constexpr int WEBSOCKET_OP_BINARY_PKG = 0x2;
-
-    constexpr int WEBSOCKET_OP_DISCONNECT_PKG = 0x08;
-
-    constexpr int WEBSOCKET_OP_PING_PKG = 0x09;
-
-    constexpr int WEBSOCKET_OP_PONG_PKG = 0x0A;
+    enum websocket_pkg_type
+    {
+        WEBSOCKET_OP_MIDDLE_PKG = 0x0,
+        WEBSOCKET_OP_TEXT_PKG = 0x1,
+        WEBSOCKET_OP_BINARY_PKG = 0x2,
+        WEBSOCKET_OP_DISCONNECT_PKG = 0x08,
+        WEBSOCKET_OP_PING_PKG = 0x09,
+        WEBSOCKET_OP_PONG_PKG = 0x0A
+    };
 
     template<typename T>
     byte_array make_server_websocket_data_pkg(const T &data) ;
