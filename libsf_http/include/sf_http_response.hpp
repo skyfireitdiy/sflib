@@ -50,6 +50,13 @@ namespace skyfire
     inline byte_array sf_http_response::to_package() const {
         if(type__ != response_type::normal)
             return byte_array();
+        auto pkg = to_header_package();
+        pkg.insert(pkg.end(), body__.begin(),body__.end());
+        return pkg;
+    }
+
+    inline byte_array sf_http_response::to_header_package() const
+    {
         std::string response_head;
         response_head += http_version__ + " " + std::to_string(status__) + " " + reason__ + "\r\n";
         for(auto &p:header__.get_key_list())
@@ -57,8 +64,21 @@ namespace skyfire
             response_head += p + ":" + header__.get_header_value(p) + "\r\n";
         }
         response_head += "\r\n";
-        byte_array pkg(response_head.begin(),response_head.end());
-        pkg.insert(pkg.end(), body__.begin(),body__.end());
-        return pkg;
+        return {response_head.begin(),response_head.end()};
+    }
+
+    inline sf_http_response::response_type sf_http_response::get_type() const
+    {
+        return type__;
+    }
+
+    inline sf_http_response::response_file_info_t sf_http_response::get_file() const
+    {
+        return file_info__;
+    }
+
+    inline std::vector<sf_http_response::multipart_info_t> sf_http_response::get_multipart() const
+    {
+        return multipart_info_vec__;
     }
 }

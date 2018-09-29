@@ -58,10 +58,13 @@ namespace skyfire
         void set_body(const byte_array & body);
         void set_file(const response_file_info_t &file_info);
         void set_multipart(const std::vector<multipart_info_t>& multipart_info_vec);
+        response_type get_type() const ;
+        response_file_info_t get_file() const;
+        std::vector<multipart_info_t> get_multipart() const;
         unsigned long long get_length() const;
 
         sf_http_header& get_header();
-
+        byte_array to_header_package() const;
         byte_array to_package() const;
     };
 }

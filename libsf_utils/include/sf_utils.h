@@ -37,4 +37,6 @@ namespace skyfire
 
     inline std::string sf_path_join(std::string path1, const std::string path2);
 
+    long long sf_get_file_size(const std::string& filename);
+
 }

@@ -11,6 +11,12 @@
 #include "sf_http_utils.hpp"
 #include "sf_websocket_utils.hpp"
 #include "sf_logger.hpp"
+#include "sf_http_server_config.h"
+#include "sf_content_type.h"
+
+#include <string>
+
+using namespace std::string_literals;
 
 namespace skyfire
 {
@@ -27,18 +33,124 @@ namespace skyfire
 
             res.set_http_version(http_request.get_request_line().http_version);
             request_callback__(http_request, res);
-            res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
+
             if (sf_equal_nocase_string(http_request.get_header().get_header_value("Connection", "Close"), "Close"))
             {
                 keep_alive = false;
             }
             res.get_header().set_header("Server", "SkyFire HTTP Server");
             res.get_header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
-            // sf_debug("reply",to_string(res.to_package()));
 
+            if(res.get_type() == sf_http_response::response_type::file)
+            {
+                auto file = res.get_file();
+                auto file_size = sf_get_file_size(file.filename);
+                sf_debug("file:",file.filename,file.begin,file.end);
+                if (file.begin!=0 || (file.end!=file_size && file.end!=-1)){
+                    auto& header = res.get_header();
+                    if(file.end == -1)
+                    {
+                        file.end = file_size-1;
+                    }
+                    if(file.begin > file_size-1 || file.end > file_size-1)
+                    {
+                        res.set_status(416);
+                        res.set_reason("Requested Range Not Satisfiable");
+                        res.set_body(to_byte_array("Requested Range Not Satisfiable"s));
+                    } else
+                    {
+                        header.set_header("Content-Range", "bytes " + std::to_string(file.begin)+"-"+std::to_string(file.end)+"/"+std::to_string(file_size));
+                        header.set_header("Content-Length",std::to_string(file.end-file.begin+1));
+                        auto suffix = sf_to_lower_string(sf_get_path_ext(file.filename));
+                        if(sf_http_content_type.count(suffix)!=0)
+                        {
+                            header.set_header("Content-Type", sf_http_content_type[suffix]);
+                        }else
+                        {
+                            header.set_header("Content-Type","application/octet-stream");
+                        }
 
-            // TODO response 方法处理
-            server__->send(sock, res.to_package());
+                        std::ifstream fi(file.filename,std::ios::binary| std::ios::in);
+                        if(!fi)
+                        {
+                            sf_debug("file not found");
+                            res.set_status(404);
+                            res.set_reason("Not Found");
+                            res.set_body(to_byte_array("Not Found"s));
+                        } else
+                        {
+                            res.set_status(206);
+                            res.set_reason("Partial Content");
+                            fi.seekg(file.begin, std::ios::beg);
+                            server__->send(sock, res.to_header_package());
+                            auto buffer_size = 4096;
+                            byte_array buffer(static_cast<unsigned long>(buffer_size));
+                            auto curr_read_pos = file.begin;
+                            while(curr_read_pos<=file.end - buffer_size)
+                            {
+                                sf_debug("read file", curr_read_pos, file.end);
+                                fi.read(buffer.data(),buffer_size);
+                                server__->send(sock, buffer);
+                                curr_read_pos += buffer_size;
+                            }
+                            fi.read(buffer.data(),file.end+1-curr_read_pos);
+                            buffer.resize(static_cast<unsigned long>(file.end + 1 - curr_read_pos));
+                            server__->send(sock, buffer);
+                            fi.close();
+                        }
+                    }
+                }
+                else
+                {
+                    file.end = file_size-1;
+                    auto& header = res.get_header();
+                    header.set_header("Content-Length",std::to_string(file_size));
+                    auto suffix = sf_to_lower_string(sf_get_path_ext(file.filename));
+                    if(sf_http_content_type.count(suffix)!=0)
+                    {
+                        header.set_header("Content-Type", sf_http_content_type[suffix]);
+                    }else
+                    {
+                        header.set_header("Content-Type","application/octet-stream");
+                    }
+
+                    std::ifstream fi(file.filename,std::ios::binary| std::ios::in);
+                    if(!fi)
+                    {
+                        sf_debug("file not found");
+                        res.set_status(404);
+                        res.set_reason("Not Found");
+                        res.set_body(to_byte_array("Not Found"s));
+                    } else
+                    {
+                        server__->send(sock, res.to_header_package());
+                        auto buffer_size = 4096;
+                        byte_array buffer(static_cast<unsigned long>(buffer_size));
+                        auto curr_read_pos = file.begin;
+                        while(curr_read_pos<=file.end - buffer_size)
+                        {
+                            sf_debug("read file", curr_read_pos, file.end);
+                            fi.read(buffer.data(),buffer_size);
+                            server__->send(sock, buffer);
+                            curr_read_pos += buffer_size;
+                        }
+                        fi.read(buffer.data(),file.end+1-curr_read_pos);
+                        buffer.resize(static_cast<unsigned long>(file.end + 1 - curr_read_pos));
+                        server__->send(sock, buffer);
+                        fi.close();
+                    }
+                }
+            }
+            else if(res.get_type() == sf_http_response::response_type::multipart)
+            {
+                // TODO multipart 处理
+            }
+
+            if(res.get_type() == sf_http_response::response_type::normal)
+            {
+                res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
+                server__->send(sock, res.to_package());
+            }
             if (!keep_alive)
             {
                 server__->close(sock);

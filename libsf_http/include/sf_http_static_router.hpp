@@ -73,21 +73,16 @@ namespace skyfire
                         _404_res();
                     } else
                     {
-
-                        std::ifstream fi(abspath);
-                        if (!fi)
+                        auto file_size = sf_get_file_size(abspath);
+                        if (file_size == -1)
                         {
                             _404_res();
                         } else
                         {
-                            fi.seekg(0, std::ios::end);
-                            auto file_size = static_cast<long long int>(fi.tellg());
-                            fi.seekg(std::ios::beg);
-                            // sf_debug("File Size:", file_size);
-
-                            if (header.has_key("Range"))
+                            if (req.get_header().has_key("Range"))
                             {
-                                auto range_header = header.get_header_value("Range", "");
+                                sf_debug("Range found");
+                                auto range_header = req.get_header().get_header_value("Range", "");
                                 auto range_content_list = sf_split_string(range_header, "=");
                                 if (range_content_list.size() < 2)
                                 {
@@ -119,7 +114,6 @@ namespace skyfire
                                         }
                                         if(!error_flag)
                                         {
-                                            fi.close();
                                             res.set_header(header);
                                             res.set_multipart(multipart_info_vec);
                                             return;
@@ -132,35 +126,19 @@ namespace skyfire
                                             _401_res();
                                         } else
                                         {
-                                            fi.close();
                                             res.set_header(header);
                                             res.set_file(sf_http_response::response_file_info_t{abspath,start,end});
                                             return;
                                         }
                                     }
                                 }
-                            } else if (file_size > max_file_size)
-                            {
-                                fi.close();
-                                res.set_header(header);
-                                res.set_file(sf_http_response::response_file_info_t{abspath,0,file_size});
-                                return;
                             } else
                             {
-                                body_data.resize(file_size);
-                                fi.read(body_data.data(), file_size);
-                                std::string suffix = sf_to_lower_string(sf_get_path_ext(abspath));
-
-                                if (sf_http_content_type.count(suffix) != 0)
-                                {
-                                    header.set_header("Content-Type",
-                                                      sf_http_content_type.at(suffix) + "; charset=" + charset);
-                                } else
-                                {
-                                    header.set_header("Content-Type", "Unknown; charset=" + charset);
-                                }
+                                sf_debug("big file", abspath);
+                                res.set_header(header);
+                                res.set_file(sf_http_response::response_file_info_t{abspath,0,-1});
+                                return;
                             }
-                            fi.close();
                         }
                     }
 
