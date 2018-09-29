@@ -12,7 +12,7 @@
 #include "sf_websocket_utils.hpp"
 #include "sf_logger.hpp"
 #include "sf_http_server_config.h"
-#include "sf_content_type.h"
+#include "sf_content_type.hpp"
 
 #include <string>
 
@@ -21,144 +21,43 @@ using namespace std::string_literals;
 namespace skyfire
 {
 
+    inline void sf_http_base_server::http_handler__(SOCKET sock, sf_http_request http_request)
+    {
+        bool keep_alive = true;
+        sf_http_response res;
+        res.set_status(200);
+        res.set_reason("OK");
+        res.set_http_version(http_request.get_request_line().http_version);
+        request_callback__(http_request, res);
+        if (sf_equal_nocase_string(http_request.get_header().get_header_value("Connection", "Close"), "Close"))
+        {
+            keep_alive = false;
+        }
+        res.get_header().set_header("Server", "SkyFire HTTP Server");
+        res.get_header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
+
+        if (res.get_type() == sf_http_response::response_type::file)
+        {
+            file_response__(sock, res);
+        } else if (res.get_type() == sf_http_response::response_type::multipart)
+        {
+            // TODO multipart 处理
+        }
+
+        if (res.get_type() == sf_http_response::response_type::normal)
+        {
+            normal_response__(sock, res);
+        }
+        if (!keep_alive)
+        {
+            close_request__(sock);
+        }
+        sf_debug("request finished");
+    }
+
     inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array &data)
     {
         sf_debug("Socket", sock, "Data size", data.size());
-        auto http_handler = [&](sf_http_request http_request)
-        {
-            bool keep_alive = true;
-            sf_http_response res;
-            res.set_status(200);
-            res.set_reason("OK");
-
-            res.set_http_version(http_request.get_request_line().http_version);
-            request_callback__(http_request, res);
-
-            if (sf_equal_nocase_string(http_request.get_header().get_header_value("Connection", "Close"), "Close"))
-            {
-                keep_alive = false;
-            }
-            res.get_header().set_header("Server", "SkyFire HTTP Server");
-            res.get_header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
-
-            if(res.get_type() == sf_http_response::response_type::file)
-            {
-                auto file = res.get_file();
-                auto file_size = sf_get_file_size(file.filename);
-                sf_debug("file:",file.filename,file.begin,file.end);
-                if (file.begin!=0 || (file.end!=file_size && file.end!=-1)){
-                    auto& header = res.get_header();
-                    if(file.end == -1)
-                    {
-                        file.end = file_size-1;
-                    }
-                    if(file.begin > file_size-1 || file.end > file_size-1)
-                    {
-                        res.set_status(416);
-                        res.set_reason("Requested Range Not Satisfiable");
-                        res.set_body(to_byte_array("Requested Range Not Satisfiable"s));
-                    } else
-                    {
-                        header.set_header("Content-Range", "bytes " + std::to_string(file.begin)+"-"+std::to_string(file.end)+"/"+std::to_string(file_size));
-                        header.set_header("Content-Length",std::to_string(file.end-file.begin+1));
-                        auto suffix = sf_to_lower_string(sf_get_path_ext(file.filename));
-                        if(sf_http_content_type.count(suffix)!=0)
-                        {
-                            header.set_header("Content-Type", sf_http_content_type[suffix]);
-                        }else
-                        {
-                            header.set_header("Content-Type","application/octet-stream");
-                        }
-
-                        std::ifstream fi(file.filename,std::ios::binary| std::ios::in);
-                        if(!fi)
-                        {
-                            sf_debug("file not found");
-                            res.set_status(404);
-                            res.set_reason("Not Found");
-                            res.set_body(to_byte_array("Not Found"s));
-                        } else
-                        {
-                            res.set_status(206);
-                            res.set_reason("Partial Content");
-                            fi.seekg(file.begin, std::ios::beg);
-                            server__->send(sock, res.to_header_package());
-                            auto buffer_size = 4096;
-                            byte_array buffer(static_cast<unsigned long>(buffer_size));
-                            auto curr_read_pos = file.begin;
-                            while(curr_read_pos<=file.end - buffer_size)
-                            {
-                                sf_debug("read file", curr_read_pos, file.end);
-                                fi.read(buffer.data(),buffer_size);
-                                server__->send(sock, buffer);
-                                curr_read_pos += buffer_size;
-                            }
-                            fi.read(buffer.data(),file.end+1-curr_read_pos);
-                            buffer.resize(static_cast<unsigned long>(file.end + 1 - curr_read_pos));
-                            server__->send(sock, buffer);
-                            fi.close();
-                        }
-                    }
-                }
-                else
-                {
-                    file.end = file_size-1;
-                    auto& header = res.get_header();
-                    header.set_header("Content-Length",std::to_string(file_size));
-                    auto suffix = sf_to_lower_string(sf_get_path_ext(file.filename));
-                    if(sf_http_content_type.count(suffix)!=0)
-                    {
-                        header.set_header("Content-Type", sf_http_content_type[suffix]);
-                    }else
-                    {
-                        header.set_header("Content-Type","application/octet-stream");
-                    }
-
-                    std::ifstream fi(file.filename,std::ios::binary| std::ios::in);
-                    if(!fi)
-                    {
-                        sf_debug("file not found");
-                        res.set_status(404);
-                        res.set_reason("Not Found");
-                        res.set_body(to_byte_array("Not Found"s));
-                    } else
-                    {
-                        server__->send(sock, res.to_header_package());
-                        auto buffer_size = 4096;
-                        byte_array buffer(static_cast<unsigned long>(buffer_size));
-                        auto curr_read_pos = file.begin;
-                        while(curr_read_pos<=file.end - buffer_size)
-                        {
-                            sf_debug("read file", curr_read_pos, file.end);
-                            fi.read(buffer.data(),buffer_size);
-                            server__->send(sock, buffer);
-                            curr_read_pos += buffer_size;
-                        }
-                        fi.read(buffer.data(),file.end+1-curr_read_pos);
-                        buffer.resize(static_cast<unsigned long>(file.end + 1 - curr_read_pos));
-                        server__->send(sock, buffer);
-                        fi.close();
-                    }
-                }
-            }
-            else if(res.get_type() == sf_http_response::response_type::multipart)
-            {
-                // TODO multipart 处理
-            }
-
-            if(res.get_type() == sf_http_response::response_type::normal)
-            {
-                res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
-                server__->send(sock, res.to_package());
-            }
-            if (!keep_alive)
-            {
-                server__->close(sock);
-                std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
-                request_context__.erase(sock);
-            }
-            sf_debug("request finished");
-        };
 
         // 过滤websocket消息
         {
@@ -170,6 +69,7 @@ namespace skyfire
                 return;
             }
         }
+        // 普通请求
         {
             std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
             // sf_debug("Request",to_string(data));
@@ -184,7 +84,7 @@ namespace skyfire
                 return;
             }
         }
-
+        // multipart消息
         {
             std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
             if (boundary_data_context__.count(sock) != 0)
@@ -192,19 +92,20 @@ namespace skyfire
                 std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
                 sf_debug("boundary data append", request_context__[sock].buffer.size());
 
-                request_context__[sock].buffer = append_boundary_data(boundary_data_context__[sock],request_context__[sock].buffer);
+                request_context__[sock].buffer = append_boundary_data__(boundary_data_context__[sock],
+                                                                        request_context__[sock].buffer);
 
                 if (boundary_data_context__[sock].multipart.back().is_end())
                 {
                     sf_debug("boundary data finished");
-                    http_handler(sf_http_request(boundary_data_context__[sock]));
+                    http_handler__(sock,sf_http_request(boundary_data_context__[sock]));
                     boundary_data_context__.erase(sock);
                 }
                 request_context__[sock].buffer.clear();
                 return;
             }
         }
-        // TODO 会不会存在两个请求同时到来导致的粘包现象？
+
         std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
         sf_http_request request(request_context__[sock].buffer);
         if (request.is_valid())
@@ -216,23 +117,7 @@ namespace skyfire
 
             if (request.is_boundary_data())
             {
-                sf_debug("is boundary data");
-                // 初始化boundary数据
-                auto boundary_data = request.get_boundary_data_context();
-
-                request_context__[sock].buffer = append_boundary_data(boundary_data,request.get_body());
-
-                if (!boundary_data.multipart.empty() && boundary_data.multipart.back().is_end())
-                {
-                    sf_debug("boundary data success one time");
-                    http_handler(sf_http_request(boundary_data));
-                }
-                else
-                {
-                    sf_debug("boundary data prepare");
-                    std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
-                    boundary_data_context__[sock] = boundary_data;
-                }
+                build_boundary_context_data(sock, request);
                 return;
             }
 
@@ -251,48 +136,189 @@ namespace skyfire
                 // 筛选Websocket请求
                 if (sf_equal_nocase_string(req_header.get_header_value("Upgrade"), "websocket"))
                 {
-                    // NOTE 删除记录，防止超时检测线程关闭连接
-                    request_context__.erase(sock);
-                    websocket_context_t ws_data;
-                    ws_data.url = request.get_request_line().url;
-
-                    if (websocket_request_callback__)
-                    {
-                        sf_http_response res;
-                        websocket_request_callback__(request, res);
-                        res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
-                        sf_debug("Response", to_string(res.to_package()));
-                        server__->send(sock, res.to_package());
-                        std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
-                        websocket_context__.insert({sock, ws_data});
-                        websocket_context__[sock].sock = sock;
-                        websocket_context__[sock].buffer = byte_array();
-                        if (websocket_open_callback__)
-                        {
-                            websocket_open_callback__(sock, ws_data.url);
-                        }
-                        sf_debug("websocket add to context", sock);
-                    }
+                    build_websocket_context_data__(sock, request);
                 }
                 return;
             }
 
             if (request_callback__)
             {
-                http_handler(request);
+                http_handler__(sock,request);
             }
 
-        }
-        else
+        } else
         {
             sf_debug("invalid request");
         }
     }
 
+    inline void sf_http_base_server::build_websocket_context_data__(SOCKET sock, const sf_http_request &request)
+    {
+        // NOTE 删除记录，防止超时检测线程关闭连接
+        request_context__.erase(sock);
+        websocket_context_t ws_data;
+        ws_data.url = request.get_request_line().url;
+
+        if (websocket_request_callback__)
+        {
+            sf_http_response res;
+            websocket_request_callback__(request, res);
+            res.get_header().set_header("Content-Length", std::__cxx11::to_string(res.get_length()));
+            sf_debug("Response", to_string(res.to_package()));
+            server__->send(sock, res.to_package());
+            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+            websocket_context__.insert({sock, ws_data});
+            websocket_context__[sock].sock = sock;
+            websocket_context__[sock].buffer = byte_array();
+            if (websocket_open_callback__)
+            {
+                websocket_open_callback__(sock, ws_data.url);
+            }
+            sf_debug("websocket add to context", sock);
+        }
+    }
+
+    inline void sf_http_base_server::build_boundary_context_data(SOCKET sock, const sf_http_request &request)
+    {
+        sf_debug("is boundary data");
+        // 初始化boundary数据
+        auto boundary_data = request.get_boundary_data_context();
+
+        request_context__[sock].buffer = append_boundary_data__(boundary_data, request.get_body());
+
+        if (!boundary_data.multipart.empty() && boundary_data.multipart.back().is_end())
+        {
+            sf_debug("boundary data success one time");
+            http_handler__(sock,sf_http_request(boundary_data));
+        } else
+        {
+            sf_debug("boundary data prepare");
+            std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
+            boundary_data_context__[sock] = boundary_data;
+        }
+    }
+
+    inline void sf_http_base_server::close_request__(SOCKET sock)
+    {
+        server__->close(sock);
+        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+        request_context__.erase(sock);
+    }
+
+    inline void sf_http_base_server::normal_response__(SOCKET sock, sf_http_response &res) const
+    {
+        res.get_header().set_header("Content-Length", std::__cxx11::to_string(res.get_length()));
+        server__->send(sock, res.to_package());
+    }
+
+    inline void sf_http_base_server::file_response__(SOCKET sock, sf_http_response &res) const
+    {
+        auto file = res.get_file();
+        auto file_size = sf_get_file_size(file.filename);
+        sf_debug("file:", file.filename, file.begin, file.end);
+        if (file.begin != 0 || (file.end != file_size && file.end != -1))
+        {
+            auto &header = res.get_header();
+            if (file.end == -1)
+            {
+                file.end = file_size - 1;
+            }
+            if (file.begin > file_size - 1 || file.end > file_size - 1)
+            {
+                res.set_status(416);
+                res.set_reason("Requested Range Not Satisfiable");
+                res.set_body(to_byte_array("Requested Range Not Satisfiable"s));
+            } else
+            {
+                header.set_header("Content-Range", "bytes " + std::__cxx11::to_string(file.begin) + "-" +
+                                                   std::__cxx11::to_string(file.end) + "/" +
+                                                   std::__cxx11::to_string(file_size));
+                header.set_header("Content-Length", std::__cxx11::to_string(file.end - file.begin + 1));
+                auto suffix = sf_to_lower_string(sf_get_path_ext(file.filename));
+                if (sf_http_content_type.count(suffix) != 0)
+                {
+                    header.set_header("Content-Type", sf_http_content_type[suffix]);
+                } else
+                {
+                    header.set_header("Content-Type", "application/octet-stream");
+                }
+
+                std::ifstream fi(file.filename, std::ios_base::binary | std::ios_base::in);
+                if (!fi)
+                {
+                    sf_debug("file not found");
+                    res.set_status(404);
+                    res.set_reason("Not Found");
+                    res.set_body(to_byte_array("Not Found"s));
+                } else
+                {
+                    res.set_status(206);
+                    res.set_reason("Partial Content");
+                    fi.seekg(file.begin, std::ios_base::beg);
+                    server__->send(sock, res.to_header_package());
+                    auto buffer_size = 4096;
+                    byte_array buffer(static_cast<unsigned long>(buffer_size));
+                    auto curr_read_pos = file.begin;
+                    while (curr_read_pos <= file.end - buffer_size)
+                    {
+                        sf_debug("read file", curr_read_pos, file.end);
+                        fi.read(buffer.data(), buffer_size);
+                        server__->send(sock, buffer);
+                        curr_read_pos += buffer_size;
+                    }
+                    fi.read(buffer.data(), static_cast<std::streamsize>(file.end + 1 - curr_read_pos));
+                    buffer.resize(static_cast<unsigned long>(file.end + 1 - curr_read_pos));
+                    server__->send(sock, buffer);
+                    fi.close();
+                }
+            }
+        } else
+        {
+            file.end = file_size - 1;
+            auto &header = res.get_header();
+            header.set_header("Content-Length", std::__cxx11::to_string(file_size));
+            auto suffix = sf_to_lower_string(sf_get_path_ext(file.filename));
+            if (sf_http_content_type.count(suffix) != 0)
+            {
+                header.set_header("Content-Type", sf_http_content_type[suffix]);
+            } else
+            {
+                header.set_header("Content-Type", "application/octet-stream");
+            }
+
+            std::ifstream fi(file.filename, std::ios_base::binary | std::ios_base::in);
+            if (!fi)
+            {
+                sf_debug("file not found");
+                res.set_status(404);
+                res.set_reason("Not Found");
+                res.set_body(to_byte_array("Not Found"s));
+            } else
+            {
+                server__->send(sock, res.to_header_package());
+                auto buffer_size = 4096;
+                byte_array buffer(static_cast<unsigned long>(buffer_size));
+                auto curr_read_pos = file.begin;
+                while (curr_read_pos <= file.end - buffer_size)
+                {
+                    sf_debug("read file", curr_read_pos, file.end);
+                    fi.read(buffer.data(), buffer_size);
+                    server__->send(sock, buffer);
+                    curr_read_pos += buffer_size;
+                }
+                fi.read(buffer.data(), static_cast<std::streamsize>(file.end + 1 - curr_read_pos));
+                buffer.resize(static_cast<unsigned long>(file.end + 1 - curr_read_pos));
+                server__->send(sock, buffer);
+                fi.close();
+            }
+        }
+    }
+
     template<typename T>
     bool
-    sf_http_base_server::analysis_websocket_pkg(SOCKET sock, const T *header, int &resolve_pos, unsigned long long &len,
-                                                byte_array &body, bool &fin, int &op_code)
+    sf_http_base_server::analysis_websocket_pkg__(SOCKET sock, const T *header, int &resolve_pos,
+                                                  unsigned long long &len,
+                                                  byte_array &body, bool &fin, int &op_code)
     {
         std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
         len = sf_get_size(*header);
@@ -352,7 +378,7 @@ namespace skyfire
                 }
                 header2 = reinterpret_cast<const websocket_client_data_2_header_t *>(
                         websocket_context__[sock].buffer.data() + resolve_pos);
-                if (!analysis_websocket_pkg(sock, header2, resolve_pos, len, body, fin, op_code))
+                if (!analysis_websocket_pkg__(sock, header2, resolve_pos, len, body, fin, op_code))
                 {
                     break;
                 }
@@ -364,13 +390,13 @@ namespace skyfire
                 }
                 header3 = reinterpret_cast<const websocket_client_data_3_header_t *>(
                         websocket_context__[sock].buffer.data() + resolve_pos);
-                if (!analysis_websocket_pkg(sock, header3, resolve_pos, len, body, fin, op_code))
+                if (!analysis_websocket_pkg__(sock, header3, resolve_pos, len, body, fin, op_code))
                 {
                     break;
                 }
             } else
             {
-                if (!analysis_websocket_pkg(sock, header1, resolve_pos, len, body, fin, op_code))
+                if (!analysis_websocket_pkg__(sock, header1, resolve_pos, len, body, fin, op_code))
                 {
                     break;
                 }
@@ -404,20 +430,16 @@ namespace skyfire
                         websocket_binary_data_callback__(sock, websocket_context__[sock].url,
                                                          websocket_context__[sock].data_buffer);
                     }
-                }
-                else if (WEBSOCKET_OP_PING_PKG == op_code)
+                } else if (WEBSOCKET_OP_PING_PKG == op_code)
                 {
                     // TODO ping消息相应
-                }
-                else if (WEBSOCKET_OP_PONG_PKG == op_code)
+                } else if (WEBSOCKET_OP_PONG_PKG == op_code)
                 {
                     // TODO pong消息相应
-                }
-                else if (WEBSOCKET_OP_MIDDLE_PKG == op_code)
+                } else if (WEBSOCKET_OP_MIDDLE_PKG == op_code)
                 {
                     // TODO middle 消息响应
-                }
-                else
+                } else
                 {
                     // TODO 其他消息响应
                 }
@@ -455,7 +477,7 @@ namespace skyfire
                     }).detach();
     }
 
-    inline void sf_http_base_server::on_socket_closed(SOCKET sock)
+    inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
     {
         if (request_context__.count(sock) != 0)
             request_context__.erase(sock);
@@ -492,7 +514,7 @@ namespace skyfire
         }, false);
         sf_bind_signal(server__, closed, [=](SOCKET sock)
         {
-            on_socket_closed(sock);
+            on_socket_closed__(sock);
         }, false);
 
     }
@@ -592,21 +614,23 @@ namespace skyfire
         }
     }
 
-    inline byte_array sf_http_base_server::append_boundary_data(boundary_data_context_t& boundary_data,const byte_array& data)
+    inline byte_array
+    sf_http_base_server::append_boundary_data__(boundary_data_context_t &boundary_data, const byte_array &data)
     {
         auto tmp_data = data;
-        while(!tmp_data.empty())
+        while (!tmp_data.empty())
         {
-            if(boundary_data.multipart.empty()||boundary_data.multipart.back().is_finished())
+            if (boundary_data.multipart.empty() || boundary_data.multipart.back().is_finished())
             {
-                boundary_data.multipart.push_back(sf_http_multipart(boundary_data.boundary_str,config__.tmp_file_path));
+                boundary_data.multipart.push_back(
+                        sf_http_multipart(boundary_data.boundary_str, config__.tmp_file_path));
             }
-            auto ret = boundary_data.multipart.back().append_data(tmp_data,tmp_data);
-            if(!ret)
+            auto ret = boundary_data.multipart.back().append_data(tmp_data, tmp_data);
+            if (!ret)
             {
                 return tmp_data;
             }
-            if(boundary_data.multipart.back().is_end())
+            if (boundary_data.multipart.back().is_end())
             {
                 return byte_array();
             }

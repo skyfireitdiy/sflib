@@ -41,15 +41,28 @@ namespace skyfire {
         void raw_data_coming__(SOCKET sock, const byte_array &data);
 
         template <typename T>
-        bool analysis_websocket_pkg(SOCKET sock, const T* header,int &resolve_pos, unsigned long long &len, byte_array& body, bool &fin, int &op_code);
+        bool analysis_websocket_pkg__(SOCKET sock, const T *header, int &resolve_pos, unsigned long long &len,
+                                      byte_array &body, bool &fin, int &op_code);
 
         void websocket_data_coming__(int sock, const byte_array &data);
 
         void build_new_request__(SOCKET sock);
 
-        void on_socket_closed(SOCKET sock);
+        void on_socket_closed__(SOCKET sock);
 
-        byte_array append_boundary_data(boundary_data_context_t& boundary_data,const byte_array& data);
+        byte_array append_boundary_data__(boundary_data_context_t &boundary_data, const byte_array &data);
+
+        void file_response__(SOCKET sock, sf_http_response &res) const;
+
+        void normal_response__(SOCKET sock, sf_http_response &res) const;
+
+        void close_request__(SOCKET sock) ;
+
+        void http_handler__(SOCKET sock, sf_http_request http_request);
+
+        void build_boundary_context_data(SOCKET sock, const sf_http_request &request);
+
+        void build_websocket_context_data__(SOCKET sock, const sf_http_request &request) ;
 
     protected:
         explicit sf_http_base_server(sf_http_server_config config);

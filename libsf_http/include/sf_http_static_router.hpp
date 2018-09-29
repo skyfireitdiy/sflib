@@ -43,15 +43,6 @@ namespace skyfire
                                 "<p>" + url + " bad request! (" + std::to_string(max_file_size) +
                                 ")</p>");
                     };
-                    auto _403_res = [&]
-                    {
-                        res.set_status(403);
-                        res.set_reason("FORBIDDEN");
-                        header.set_header("Content-Type", "text/html; charset=" + charset);
-                        body_data = to_byte_array(
-                                "<p>" + url + " size out of range! (" + std::to_string(max_file_size) +
-                                ")</p>");
-                    };
                     auto _404_res = [&]
                     {
                         res.set_status(404);
