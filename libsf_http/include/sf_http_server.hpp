@@ -116,7 +116,6 @@ namespace skyfire
                 res.get_header().set_header("Sec-WebSocket-Protocol",headers.get_header_value("Sec-WebSocket-Protocol"));
             res.set_status(101);
             res.set_http_version(req.get_request_line().http_version);
-            res.set_reason("Switching Protocols");
         }
     }
 }

@@ -49,4 +49,15 @@ namespace skyfire
     {
         return header_data__.count(sf_to_header_key_format(key)) != 0;
     }
+
+    inline std::string sf_http_header::to_string() const
+    {
+        std::string ret;
+        for(auto &p:header_data__)
+        {
+            ret += p.first + ":" + p.second + "\r\n";
+        }
+        ret += "\r\n";
+        return ret;
+    }
 }

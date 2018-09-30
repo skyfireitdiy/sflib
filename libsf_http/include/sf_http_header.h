@@ -25,5 +25,7 @@ namespace skyfire
         void set_header(const sf_http_header_t& header);
 
         bool has_key(const std::string& key) const ;
+
+        std::string to_string() const;
     };
 }

@@ -37,7 +37,6 @@ namespace skyfire
                     auto _401_res = [&]
                     {
                         res.set_status(401);
-                        res.set_reason("BAD REQUEST");
                         header.set_header("Content-Type", "text/html; charset=" + charset);
                         body_data = to_byte_array(
                                 "<p>" + url + " bad request! (" + std::to_string(max_file_size) +
@@ -46,14 +45,12 @@ namespace skyfire
                     auto _404_res = [&]
                     {
                         res.set_status(404);
-                        res.set_reason("NOT FOUND");
                         body_data = to_byte_array("<p>" + url + " is a directory</p>");
                         header.set_header("Content-Type", "text/html; charset=" + charset);
                     };
                     auto _416_res = [&]
                     {
-                        res.set_status(404);
-                        res.set_reason("Requested Range Not Satisfiable");
+                        res.set_status(416);
                         body_data = to_byte_array("<p>" + url + " Requested Range Not Satisfiable</p>");
                         header.set_header("Content-Type", "text/html; charset=" + charset);
                     };

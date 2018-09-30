@@ -1,12 +1,20 @@
 #pragma once
 
 #include "sf_http_response.h"
+#include "sf_http_status_info.h"
 
 namespace skyfire
 {
 
     inline void sf_http_response::set_status(int status) {
         status__ = status;
+        if(sf_http_status.count(status)!=0)
+        {
+            set_reason(sf_http_status[status]);
+        }else
+        {
+            set_reason("Unknown");
+        }
     }
 
     inline void sf_http_response::set_http_version(const std::string &http_version) {
@@ -59,11 +67,7 @@ namespace skyfire
     {
         std::string response_head;
         response_head += http_version__ + " " + std::to_string(status__) + " " + reason__ + "\r\n";
-        for(auto &p:header__.get_key_list())
-        {
-            response_head += p + ":" + header__.get_header_value(p) + "\r\n";
-        }
-        response_head += "\r\n";
+        response_head += header__.to_string();
         return {response_head.begin(),response_head.end()};
     }
 

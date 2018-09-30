@@ -56,6 +56,10 @@ namespace skyfire {
 
         void normal_response__(SOCKET sock, sf_http_response &res) const;
 
+        void multipart_response__(SOCKET sock, sf_http_response &res) ;
+
+        static bool check_analysis_multipart_file__(std::vector<sf_http_response::multipart_info_t>& multipart_data);
+
         void close_request__(SOCKET sock) ;
 
         void http_handler__(SOCKET sock, sf_http_request http_request);
@@ -63,6 +67,8 @@ namespace skyfire {
         void build_boundary_context_data(SOCKET sock, const sf_http_request &request);
 
         void build_websocket_context_data__(SOCKET sock, const sf_http_request &request) ;
+
+        void send_response_file_part__(int sock, const sf_http_response::response_file_info_t &file, std::ifstream &fi) const;
 
     protected:
         explicit sf_http_base_server(sf_http_server_config config);
@@ -91,6 +97,5 @@ namespace skyfire {
 
 
         void close_websocket(SOCKET sock);
-
     };
 }

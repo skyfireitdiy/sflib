@@ -32,7 +32,7 @@ namespace skyfire
             struct form_info_t
             {
                 sf_http_header_t header;
-                sf_http_header_t body;
+                byte_array body;
             };
 
             multipart_info_type type;
