@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sf_http_base_server.h"
-#include "sf_http_server_config.hpp"
+#include "sf_http_server_config.h"
 #include "sf_eventloop.hpp"
 #include "sf_tcpserver.hpp"
 #include "sf_logger.hpp"
@@ -12,7 +12,7 @@
 #include "sf_websocket_utils.hpp"
 #include "sf_logger.hpp"
 #include "sf_http_server_config.h"
-#include "sf_content_type.hpp"
+#include "sf_content_type.h"
 
 #include <string>
 
@@ -203,7 +203,7 @@ namespace skyfire
         request_context__.erase(sock);
     }
 
-    inline void sf_http_base_server::normal_response__(SOCKET sock, sf_http_response &res) const
+    inline void sf_http_base_server::normal_response__(SOCKET sock, sf_http_response &res)
     {
         res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
         server__->send(sock, res.to_package());
@@ -313,7 +313,7 @@ namespace skyfire
         return true;
     }
 
-    inline void sf_http_base_server::file_response__(SOCKET sock, sf_http_response &res) const
+    inline void sf_http_base_server::file_response__(SOCKET sock, sf_http_response &res)
     {
         auto file = res.get_file();
         auto file_size = sf_get_file_size(file.filename);
@@ -390,7 +390,7 @@ namespace skyfire
     }
 
     inline void sf_http_base_server::send_response_file_part__(SOCKET sock, const sf_http_response::response_file_info_t &file,
-                                                        std::ifstream &fi) const
+                                                        std::ifstream &fi)
     {
         fi.seekg(file.begin, std::ios_base::beg);
         auto buffer_size = 4096;

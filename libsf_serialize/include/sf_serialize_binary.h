@@ -141,6 +141,14 @@ namespace skyfire
         std::string _message;
     };
 
+
+    template<typename T>
+    size_t sf_deserialize_binary_obj_helper(const byte_array &data, size_t begin_pos, T &obj) ;
+
+    template<typename T, typename ... _Type>
+    size_t sf_deserialize_binary_obj_helper(const byte_array &data, size_t begin_pos, T &obj, _Type &... other);
+
+
     //使一个结构变成可序列化的结构（需保证内部的每个成员都可以序列化，使用时需要注入到skyfire命名空间内部）
 
 #define SF_MAKE_SERIALIZABLE_BINARY(className, ...)                                                                            \

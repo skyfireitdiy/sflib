@@ -18,18 +18,13 @@
 #include "sf_range.hpp"
 #include "sf_serialize_binary.hpp"
 #include "sf_logger.hpp"
+#include "sf_tcpserver_interface.h"
 
 
 namespace skyfire
 {
-    class sf_tcpserver : public sf_nocopy<sf_object>
+    class sf_tcpserver : public sf_tcp_server_interface
     {
-
-    SF_REG_SIGNAL(new_connection, SOCKET)
-    SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&)
-    SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&)
-    SF_REG_SIGNAL(closed, SOCKET)
-
     private:
         int listen_fd__ = -1;
         std::map<int, byte_array> sock_data_buffer__;
@@ -46,18 +41,18 @@ namespace skyfire
 
         static std::shared_ptr<sf_tcpserver> make_server(bool raw = false);
 
-        bool listen(const std::string &ip, unsigned short port);
+        bool listen(const std::string &ip, unsigned short port) override;
 
 
-        void close();
+        void close() override;
         
-        void close(SOCKET sock);
+        void close(SOCKET sock) override;
 
-        bool send(int sock, int type, const byte_array &data);
+        bool send(int sock, int type, const byte_array &data) override;
 
-        bool send(int sock, const byte_array &data);
+        bool send(int sock, const byte_array &data) override;
 
-        SOCKET get_raw_socket();
+        SOCKET get_raw_socket() override;
     };
 
 }

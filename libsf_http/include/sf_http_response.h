@@ -2,6 +2,7 @@
 
 #include <string>
 #include "sf_type.hpp"
+#include "sf_http_utils.h"
 
 namespace skyfire
 {

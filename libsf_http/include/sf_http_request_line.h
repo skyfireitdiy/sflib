@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include "sf_serialize_binary.hpp"
 
 namespace skyfire
 {

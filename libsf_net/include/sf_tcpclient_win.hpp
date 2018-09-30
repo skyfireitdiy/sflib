@@ -1,6 +1,10 @@
 #pragma once
 
 #include "sf_tcpclient_win.h"
+#include "sf_tcputils.hpp"
+#include "sf_object.hpp"
+#include "sf_nocopy.hpp"
+#include "sf_type.hpp"
 
 namespace skyfire
 {

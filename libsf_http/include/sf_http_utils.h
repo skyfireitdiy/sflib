@@ -7,8 +7,9 @@
 
 #include "sf_tcputils.h"
 #include "sf_type.h"
-#include "sf_serialize_binary.h"
 #include "sf_http_request_line.h"
+#include "sf_serialize_binary.hpp"
+
 
 
 namespace skyfire

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sf_http_response.h"
-#include "sf_http_status_info.h"
+#include "sf_http_status.h"
 
 namespace skyfire
 {

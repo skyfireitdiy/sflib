@@ -12,6 +12,7 @@
 #include "sf_type.hpp"
 #include "sf_range.hpp"
 #include "sf_serialize_binary.hpp"
+#include "sf_tcpserver_interface.h"
 
 
 namespace skyfire {
@@ -28,12 +29,7 @@ namespace skyfire {
     };
 
 
-    class sf_tcpserver : public sf_nocopy<sf_object> {
-    SF_REG_SIGNAL(new_connection, SOCKET);
-    SF_REG_SIGNAL(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
-    SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&);
-    SF_REG_SIGNAL(closed, SOCKET);
-
+    class sf_tcpserver : public sf_tcp_server_interface {
     private:
         bool inited__ = false;
         bool exit_flag__ = false;
@@ -43,25 +39,24 @@ namespace skyfire {
         HANDLE completion_port__ = INVALID_HANDLE_VALUE;
         int thread_count__ = 4;
         std::map<SOCKET, byte_array> sock_data_buffer__;
-
     public:
 
-        SOCKET get_raw_socket();
+        SOCKET get_raw_socket() override;
 
         sf_tcpserver(bool raw = false);
 
 
         static std::shared_ptr<sf_tcpserver> make_server(bool raw = false);
 
-        bool listen(const std::string &ip, unsigned short port);
+        bool listen(const std::string &ip, unsigned short port) override;
 
-        void close();
+        void close() override;
 
-        void close(SOCKET sock);
+        void close(SOCKET sock) override;
 
-        bool send(SOCKET sock, int type, const byte_array &data);
+        bool send(SOCKET sock, int type, const byte_array &data) override;
 
-        bool send(SOCKET sock, const byte_array &data);
+        bool send(SOCKET sock, const byte_array &data) override;
 
 
         ~sf_tcpserver() override;
