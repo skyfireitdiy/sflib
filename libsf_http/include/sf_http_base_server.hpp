@@ -10,8 +10,6 @@
 #include "sf_http_response.hpp"
 #include "sf_http_utils.hpp"
 #include "sf_websocket_utils.hpp"
-#include "sf_logger.hpp"
-#include "sf_http_server_config.h"
 #include "sf_content_type.h"
 
 #include <string>
@@ -199,8 +197,14 @@ namespace skyfire
     inline void sf_http_base_server::close_request__(SOCKET sock)
     {
         server__->close(sock);
-        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
-        request_context__.erase(sock);
+        {
+            std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+            request_context__.erase(sock);
+        }
+        {
+            std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
+            boundary_data_context__.erase(sock);
+        }
     }
 
     inline void sf_http_base_server::normal_response__(SOCKET sock, sf_http_response &res)

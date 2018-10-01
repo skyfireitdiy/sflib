@@ -57,7 +57,12 @@ namespace skyfire
                 return false;
             }
             first_block = false;
-            fp__ = std::make_shared<std::ofstream>(filename__,std::ios::binary | std::ios::out);
+            fp__ = std::shared_ptr<std::ofstream>(new std::ofstream(filename__,std::ios::binary | std::ios::out),[](std::ofstream *p){
+                if(p->good()){
+                    p->close();
+                }
+                delete p;
+            });
             // NOTE 暂时忽略掉打开失败的情况
             auto body_str = to_string(body);
             auto finish_pos = body_str.find(new_boundary_str);
