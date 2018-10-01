@@ -1,3 +1,5 @@
+#include <utility>
+
 #pragma once
 
 #include "sf_websocket_router.h"
@@ -7,7 +9,7 @@ namespace skyfire {
     inline std::shared_ptr<sf_websocket_router> make_websocket_router(const std::string &url,
                                                                       std::function<void(
                                                                               const websocket_param_t &)> callback) {
-        return std::shared_ptr<sf_websocket_router>(new sf_websocket_router(url, callback));
+        return std::shared_ptr<sf_websocket_router>(new sf_websocket_router(url, std::move(callback)));
     }
 
     inline std::shared_ptr<sf_websocket_router>
@@ -17,7 +19,7 @@ namespace skyfire {
 
     inline sf_websocket_router::sf_websocket_router(const std::string &url,
                                              std::function<void(const websocket_param_t &)> callback) :
-            url__(url), callback__(callback) {
+            url__(url), callback__(std::move(callback)) {
 
     }
 
