@@ -44,7 +44,7 @@ namespace skyfire {
         bool analysis_websocket_pkg__(SOCKET sock, const T *header, int &resolve_pos, unsigned long long &len,
                                       byte_array &body, bool &fin, int &op_code);
 
-        void websocket_data_coming__(int sock, const byte_array &data);
+        void websocket_data_coming__(SOCKET sock, const byte_array &data);
 
         void build_new_request__(SOCKET sock);
 

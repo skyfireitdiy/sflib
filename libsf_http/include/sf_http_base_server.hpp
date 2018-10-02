@@ -443,7 +443,7 @@ namespace skyfire
         return true;
     }
 
-    inline void sf_http_base_server::websocket_data_coming__(int sock, const byte_array &data)
+    inline void sf_http_base_server::websocket_data_coming__(SOCKET sock, const byte_array &data)
     {
         std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
         websocket_context__[sock].buffer += data;
@@ -555,7 +555,7 @@ namespace skyfire
                         while (true)
                         {
                             std::this_thread::sleep_for(std::chrono::seconds(config__.request_timeout));
-                            std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+                            std::unique_lock<std::recursive_mutex> lck2(mu_request_context__);
                             if (request_context__.count(sock) != 0)
                             {
                                 if (!request_context__[sock].new_req)
