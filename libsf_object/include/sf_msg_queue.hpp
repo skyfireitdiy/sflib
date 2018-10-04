@@ -13,13 +13,13 @@ namespace skyfire
 
     inline void sf_msg_queue::add_msg(void *id, std::function<void()> func) {
         std::lock_guard<std::mutex> lck(mu_func_data_op__);
-        func_data__.push_back({id, func});
+        func_data__.emplace_back(id, func);
         wait_cond__.notify_all();
     }
 
     inline void sf_msg_queue::remove_msg(void *id) {
         std::lock_guard<std::mutex> lck(mu_func_data_op__);
-        std::remove_if(func_data__.begin(),func_data__.end(),[=](const std::pair<void*,std::function<void()>> dt){
+        func_data__.remove_if([=](const std::pair<void*,std::function<void()>> dt){
             return dt.first == id;
         });
     }

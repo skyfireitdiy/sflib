@@ -85,7 +85,7 @@ namespace skyfire
             std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
             if (boundary_data_context__.count(sock) != 0)
             {
-                std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+                std::unique_lock<std::recursive_mutex> lck2(mu_request_context__);
                 sf_debug("boundary data append", request_context__[sock].buffer.size());
 
                 request_context__[sock].buffer = append_boundary_data__(boundary_data_context__[sock],
@@ -144,7 +144,7 @@ namespace skyfire
 
         } else
         {
-            sf_debug("invalid request");
+            sf_debug("invalid request", to_string(request_context__[sock].buffer));
         }
     }
 
@@ -604,15 +604,15 @@ namespace skyfire
         sf_bind_signal(server__, raw_data_coming, [=](SOCKET sock, const byte_array &data)
         {
             raw_data_coming__(sock, data);
-        }, false);
+        }, true);
         sf_bind_signal(server__, new_connection, [=](SOCKET sock)
         {
             build_new_request__(sock);
-        }, false);
+        }, true);
         sf_bind_signal(server__, closed, [=](SOCKET sock)
         {
             on_socket_closed__(sock);
-        }, false);
+        }, true);
 
     }
 
