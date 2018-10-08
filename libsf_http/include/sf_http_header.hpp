@@ -57,6 +57,10 @@ namespace skyfire
         {
             ret += p.first + ":" + p.second + "\r\n";
         }
+        for(auto &p:cookie_str_vec__)
+        {
+            ret += "Set-Cookie:"+p+"\r\n";
+        }
         ret += "\r\n";
         return ret;
     }

@@ -77,6 +77,9 @@ namespace skyfire
             sf_debug("parse header error");
             return false;
         }
+
+        parse_cookies(header__,cookies__);
+
         auto content_len = header__.get_header_value("Content-Length", "0");
 
         auto content_type = header__.get_header_value("Content-Type", "");
@@ -161,5 +164,35 @@ namespace skyfire
         header__.set_header(boundary_data.header);
         boundary_data__ = true;
         boundary_data_context__ = boundary_data;
+    }
+
+    void
+    sf_http_request::parse_cookies(const sf_http_header &header_data, std::map<std::string, std::string> &cookies)
+    {
+        cookies.clear();
+        if(!header_data.has_key("Cookie"))
+        {
+            return;
+        }
+        auto cookie_str = header_data.get_header_value("Cookie");
+        auto str_list = sf_split_string(cookie_str,";");
+        for(auto &p:str_list)
+        {
+            p = sf_string_trim(p);
+        }
+        for(auto &p:str_list)
+        {
+            auto tmp_list = sf_split_string(p,"=");
+            if(tmp_list.size()!=2)
+            {
+                continue;
+            }
+            cookies[tmp_list[0]]=tmp_list[1];
+        }
+    }
+
+    std::map<std::string, std::string> sf_http_request::get_cookies() const
+    {
+        return cookies__;
     }
 }

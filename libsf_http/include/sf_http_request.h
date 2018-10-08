@@ -23,6 +23,7 @@ namespace skyfire{
         bool boundary_data__ = false;
         boundary_data_context_t boundary_data_context__;
         bool parse_request__();
+        std::map<std::string,std::string> cookies__;
 
     public:
         explicit sf_http_request(byte_array raw);
@@ -41,10 +42,14 @@ namespace skyfire{
 
         boundary_data_context_t get_boundary_data_context() const;
 
+        std::map<std::string,std::string> get_cookies() const;
+
         static bool split_request(const byte_array &raw,std::string &request_line, std::vector<std::string> &header_lines, byte_array &body);
 
         static bool parse_request_line(const std::string& request_line,sf_http_request_line& request_line_para);
 
         static bool parse_header(const std::vector<std::string> header_lines, sf_http_header& header);
+
+        static void parse_cookies(const sf_http_header &header_data, std::map<std::string,std::string>& cookies);
     };
 }

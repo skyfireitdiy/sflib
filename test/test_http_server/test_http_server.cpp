@@ -17,6 +17,10 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
     for(auto &p:header.get_key_list()){
         sf_debug(p,header.get_header_value(p));
     }
+    for(auto &p:req.get_cookies())
+    {
+        sf_debug("cookie",p.first, p.second);
+    }
 
     if(req.is_boundary_data())
     {
@@ -49,6 +53,17 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
     else
     {
         res.set_body(to_byte_array("upload ok, no file"s));
+        sf_http_cookie_t cookie;
+
+        cookie.path = req.get_request_line().url;
+
+        cookie.key="token";
+        cookie.value=sf_random::get_instance()->get_uuid_str();
+        res.add_cookie(cookie);
+        cookie.key="time";
+        cookie.value = sf_make_http_time_str();
+        cookie.http_only = false;
+        res.add_cookie(cookie);
     }
 
     res.set_status(200);

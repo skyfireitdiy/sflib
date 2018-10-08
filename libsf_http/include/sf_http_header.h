@@ -7,8 +7,12 @@
 
 namespace skyfire
 {
+
+    class sf_http_base_server;
+
     class sf_http_header{
         sf_http_header_t header_data__;
+        std::vector<std::string> cookie_str_vec__;
     public:
         void clear();
 
@@ -27,5 +31,7 @@ namespace skyfire
         bool has_key(const std::string& key) const ;
 
         std::string to_string() const;
+
+        friend sf_http_base_server;
     };
 }

@@ -115,16 +115,9 @@ namespace skyfire
     }
 
 
-
     inline std::string sf_make_http_time_str()
     {
-        std::time_t raw_time;
-        std::time(&raw_time);
-        std::tm *time_info = std::localtime(&raw_time);
-        std::string ret(128,'\0');
-        strftime(ret.data(),128,"%a, %d %b %Y %T GMT",time_info);
-        ret.resize(strlen(ret.c_str()));
-        return ret;
+        return sf_make_http_time_str(std::chrono::system_clock::now());
     }
 
     inline std::string sf_to_header_key_format(std::string key) {
@@ -139,6 +132,16 @@ namespace skyfire
             }
         }
         return key;
+    }
+
+    std::string sf_make_http_time_str(const std::chrono::system_clock::time_point &tp)
+    {
+        auto raw_time = std::chrono::system_clock::to_time_t(tp);
+        std::tm *time_info = std::localtime(&raw_time);
+        std::string ret(128,'\0');
+        strftime(ret.data(),128,"%a, %d %b %Y %T GMT",time_info);
+        ret.resize(strlen(ret.c_str()));
+        return ret;
     }
 
 }

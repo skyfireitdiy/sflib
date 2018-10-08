@@ -4,8 +4,12 @@
 #include "sf_type.hpp"
 #include "sf_http_utils.h"
 
+
+
 namespace skyfire
 {
+    class sf_http_base_server;
+
     class sf_http_response
     {
     public:
@@ -48,7 +52,7 @@ namespace skyfire
         sf_http_header header__;
         byte_array body__;
         response_type type__ = {response_type ::normal};
-
+        std::map<std::string,sf_http_cookie_t> cookies__;
         response_file_info_t file_info__;
         std::vector<multipart_info_t> multipart_info_vec__;
     public:
@@ -59,6 +63,10 @@ namespace skyfire
         void set_body(const byte_array & body);
         void set_file(const response_file_info_t &file_info);
         void set_multipart(const std::vector<multipart_info_t>& multipart_info_vec);
+        void add_cookie(const sf_http_cookie_t &cookie_data);
+        void remove_cookie(const std::string& key);
+        std::map<std::string,sf_http_cookie_t> get_cookies() const;
+
         response_type get_type() const ;
         response_file_info_t get_file() const;
         std::vector<multipart_info_t> get_multipart() const;
@@ -67,5 +75,7 @@ namespace skyfire
         sf_http_header& get_header();
         byte_array to_header_package() const;
         byte_array to_package() const;
+
+        friend sf_http_base_server;
     };
 }

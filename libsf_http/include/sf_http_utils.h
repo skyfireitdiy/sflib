@@ -50,6 +50,23 @@ namespace skyfire
     };
 
 
+    enum class cookie_life_type
+    {
+        session = 0,
+        time_point = 1
+    };
+
+    struct sf_http_cookie_t{
+        std::string key;
+        std::string value;
+        cookie_life_type life_type = cookie_life_type ::session;
+        std::chrono::system_clock::time_point time_point = std::chrono::system_clock::now();
+        std::string path = "/";
+        bool secure = true;
+        bool http_only = true;
+    };
+
+
     inline unsigned char sf_to_hex(unsigned char x);
 
     inline unsigned char sf_from_hex(unsigned char x);
@@ -64,6 +81,8 @@ namespace skyfire
                              std::string frame);
 
     inline std::string sf_make_http_time_str();
+
+    inline std::string sf_make_http_time_str(const std::chrono::system_clock::time_point& tp);
 
     inline std::string sf_to_header_key_format(std::string key);
 

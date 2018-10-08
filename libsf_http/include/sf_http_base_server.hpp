@@ -30,6 +30,31 @@ namespace skyfire
         {
             keep_alive = false;
         }
+
+        auto cookies = res.get_cookies();
+        for(auto &p:cookies)
+        {
+            std::string value_str = p.second.key + "="s + p.second.value + ";"s;
+            if(p.second.life_type == cookie_life_type::time_point)
+            {
+                value_str+= "Expires=" + sf_make_http_time_str(p.second.time_point) + ";"s;
+            }
+            if(p.second.path.empty())
+            {
+                p.second.path = "/";
+            }
+            value_str += "Path=" + p.second.path + ";";
+            if(p.second.secure)
+            {
+                value_str += "Secure;";
+            }
+            if(p.second.http_only)
+            {
+                value_str+="HttpOnly;";
+            }
+            res.get_header().cookie_str_vec__.push_back(value_str);
+        }
+
         res.get_header().set_header("Server", "SkyFire HTTP Server");
         res.get_header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
 
