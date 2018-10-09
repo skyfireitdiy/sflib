@@ -10,7 +10,7 @@
 #include "sf_http_response.hpp"
 #include "sf_http_utils.hpp"
 #include "sf_websocket_utils.hpp"
-#include "sf_content_type.h"
+#include "sf_http_content_type.h"
 
 #include <string>
 

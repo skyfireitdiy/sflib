@@ -6,7 +6,7 @@
 #include "sf_http_router.hpp"
 #include "sf_define.hpp"
 #include "sf_http_utils.hpp"
-#include "sf_content_type.h"
+#include "sf_http_content_type.h"
 #include "sf_logger.hpp"
 
 

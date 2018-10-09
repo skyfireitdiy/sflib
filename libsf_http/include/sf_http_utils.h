@@ -4,6 +4,7 @@
 #include <ctime>
 #include <map>
 #include <memory>
+#include <chrono>
 
 #include "sf_tcputils.h"
 #include "sf_type.h"
@@ -85,5 +86,7 @@ namespace skyfire
     inline std::string sf_make_http_time_str(const std::chrono::system_clock::time_point& tp);
 
     inline std::string sf_to_header_key_format(std::string key);
+
+    inline byte_array read_file(const std::string& filename, size_t max_size = 4096);
 
 }

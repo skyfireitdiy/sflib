@@ -134,7 +134,7 @@ namespace skyfire
         return key;
     }
 
-    std::string sf_make_http_time_str(const std::chrono::system_clock::time_point &tp)
+    inline std::string sf_make_http_time_str(const std::chrono::system_clock::time_point &tp)
     {
         auto raw_time = std::chrono::system_clock::to_time_t(tp);
         std::tm *time_info = std::localtime(&raw_time);
@@ -142,6 +142,26 @@ namespace skyfire
         strftime(ret.data(),128,"%a, %d %b %Y %T GMT",time_info);
         ret.resize(strlen(ret.c_str()));
         return ret;
+    }
+
+    inline byte_array read_file(const std::string &filename, size_t max_size)
+    {
+        byte_array data;
+        std::ifstream fi(filename, std::ios::in | std::ios::binary);
+        if(!fi){
+            return data;
+        }
+        fi.seekg(0,std::ios::end);
+        auto file_size = fi.tellg();
+        if(file_size>max_size)
+        {
+            file_size = max_size;
+        }
+        fi.seekg(0,std::ios::beg);
+        data.resize(file_size);
+        fi.read(data.data(),file_size);
+        fi.close();
+        return data;
     }
 
 }
