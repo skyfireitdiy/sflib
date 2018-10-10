@@ -17,30 +17,24 @@ namespace skyfire
     class sf_component_server : public sf_nocopy<sf_object>
     {
         // 组件注册信号
-        SF_REG_SIGNAL(component_reg, SOCKET, const std::string&);
+        SF_REG_SIGNAL(component_reg, const std::string&);
         // 组件反注册信号
-        SF_REG_SIGNAL(component_unreg, SOCKET, const std::string&);
+        SF_REG_SIGNAL(component_unreg, const std::string&);
 
     private:
         std::map<std::string, byte_array> public_area__;
         std::shared_ptr<sf_rpcserver> rpc_server__ = sf_rpcserver::make_server();
-        std::map<SOCKET, sf_component_context_t> component_context__;
+        std::map<long long, sf_component_context_t> component_context__;
         std::shared_mutex mu_public__;
         std::shared_mutex mu_private__;
         std::string data_dir__;
 
-        byte_array get_private_data(SOCKET sock, std::string key) ;
-        void delete_private_data(SOCKET sock, std::string key) ;
-        void clear_private_data(SOCKET sock) ;
-        void set_private_data(SOCKET sock,std::string key, byte_array value);
-        bool has_private_data(SOCKET sock,std::string key) ;
+        long long reg_component(std::string name);
 
-        bool reg_component(SOCKET sock, std::string name);
+        std::list<std::string> get_component_list();
 
-        std::list<std::string> get_component_list(SOCKET sock) ;
-
-        bool save_private_data(SOCKET sock);
-        bool load_private_data(SOCKET sock);
+        bool save_private_data(long long token);
+        void load_private_data(long long token);
 
         sf_component_server(const std::string& data_dir);
 
