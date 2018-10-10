@@ -110,6 +110,7 @@ file(GLOB headers
         libsf_random/include/*.h
         libsf_http/include/*.h
         libsf_utils/include/*.h
+        libsf_component_system/*.h
 
         libsf_any/include/*.hpp
         libsf_logger/include/*.hpp
@@ -137,6 +138,7 @@ file(GLOB headers
         libsf_random/include/*.hpp
         libsf_http/include/*.hpp
         libsf_utils/include/*.hpp
+        libsf_component_system/*.hpp
         )
 
 install(FILES ${headers} DESTINATION include)
