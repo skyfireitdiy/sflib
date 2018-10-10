@@ -73,6 +73,7 @@ include_directories(
         libsf_random/include
         libsf_http/include
         libsf_utils/include
+        libsf_component_system/include
 
 )
 
@@ -166,6 +167,9 @@ add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${head
 add_executable(test_encrypt test/test_encrypt/test_encrypt.cpp ${headers})
 add_executable(test_tcpserver test/test_tcpserver/test_tcpserver.cpp ${headers})
 add_executable(test_finally test/test_finally/test_finally.cpp ${headers})
+add_executable(test_component_server test/test_component_system/test_component_server.cpp ${headers})
+add_executable(test_component_a test/test_component_system/test_component_a.cpp ${headers})
+add_executable(test_component_b test/test_component_system/test_component_b.cpp ${headers})
 
 
 
@@ -197,6 +201,10 @@ ELSE()
     target_link_libraries(test_event_waiter pthread)
     target_link_libraries(test_httpserver pthread ssl crypto z)
 	target_link_libraries(test_encrypt PRIVATE ssl crypto z pthread)
+    target_link_libraries(test_component_server pthread)
+    target_link_libraries(test_component_a pthread)
+    target_link_libraries(test_component_b pthread)
+
 ENDIF ()
 
 

@@ -8,15 +8,13 @@
 
 namespace skyfire {
 
-    template<typename _BaseClass>
-    int sf_rpcclient<_BaseClass>::__make_call_id() {
+    int sf_rpcclient::__make_call_id() {
         current_call_id__ = (current_call_id__ + 1) & TCP_RPC_TYPE_MASK;
         return current_call_id__;
     }
 
-    template<typename _BaseClass>
     template<typename _Ret, typename... __SF_RPC_ARGS__>
-    void sf_rpcclient<_BaseClass>::async_call(const std::string &func_id, std::function<void(_Ret)> rpc_callback,
+    void sf_rpcclient::async_call(const std::string &func_id, std::function<void(_Ret)> rpc_callback,
                                               __SF_RPC_ARGS__... args) {
         static_assert(!std::is_reference<_Ret>::value, "Param can't be reference");
         static_assert(!std::is_pointer<_Ret>::value, "Param can't be pointer");
@@ -26,8 +24,6 @@ namespace skyfire {
         using __Ret = typename std::decay<_Ret>::type;
         std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
         int call_id = __make_call_id();
-        pkg_header_t header;
-        byte_array data;
         __rpc_data__[call_id] = std::make_shared<rpc_struct>();
         __rpc_data__[call_id]->is_async = true;
         __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
@@ -45,16 +41,13 @@ namespace skyfire {
         ptimer->start(rpc_timeout__, true);
     }
 
-    template<typename _BaseClass>
     template<typename... __SF_RPC_ARGS__>
-    void sf_rpcclient<_BaseClass>::async_call(const std::string &func_id, std::function<void()> rpc_callback,
+    void sf_rpcclient::async_call(const std::string &func_id, std::function<void()> rpc_callback,
                                               __SF_RPC_ARGS__... args) {
         static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
         static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
         std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
         int call_id = __make_call_id();
-        pkg_header_t header;
-        byte_array data;
         __rpc_data__[call_id] = std::make_shared<rpc_struct>();
         __rpc_data__[call_id]->is_async = true;
         __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
@@ -68,12 +61,9 @@ namespace skyfire {
         ptimer->start(rpc_timeout__, true);
     }
 
-    template<typename _BaseClass>
     template<typename T>
-    void sf_rpcclient<_BaseClass>::async_call(const std::string &func_id, std::function<void()> rpc_callback) {
+    void sf_rpcclient::async_call(const std::string &func_id, std::function<void()> rpc_callback) {
         int call_id = __make_call_id();
-        pkg_header_t header;
-        byte_array data;
         __rpc_data__[call_id] = std::make_shared<rpc_struct>();
         __rpc_data__[call_id]->is_async = true;
         __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
@@ -82,9 +72,8 @@ namespace skyfire {
         __tcp_client__->send(call_id, sf_serialize_binary(std::string(func_id)));
     }
 
-    template<typename _BaseClass>
     template<typename _Ret, typename... __SF_RPC_ARGS__>
-    sf_tri_type<_Ret> sf_rpcclient<_BaseClass>::call(const std::string &func_id, __SF_RPC_ARGS__... args) {
+    sf_tri_type<_Ret> sf_rpcclient::call(const std::string &func_id, __SF_RPC_ARGS__... args) {
         static_assert(!std::is_reference<_Ret>::value, "Param can't be reference");
         static_assert(!std::is_pointer<_Ret>::value, "Param can't be pointer");
         static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
@@ -94,9 +83,6 @@ namespace skyfire {
 
         std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param{args...};
         int call_id = __make_call_id();
-        pkg_header_t header;
-        byte_array data;
-
         __rpc_data__[call_id] = std::make_shared<rpc_struct>();
         __rpc_data__[call_id]->is_async = false;
         __tcp_client__->send(call_id, sf_serialize_binary(std::string(func_id)) + sf_serialize_binary(param));
@@ -129,13 +115,11 @@ namespace skyfire {
         }
     }
 
-    template<typename _BaseClass>
-    void sf_rpcclient<_BaseClass>::set_rpc_timeout(unsigned int ms) {
+    void sf_rpcclient::set_rpc_timeout(unsigned int ms) {
         rpc_timeout__ = ms;
     }
 
-    template<typename _BaseClass>
-    sf_rpcclient<_BaseClass>::sf_rpcclient() {
+    sf_rpcclient::sf_rpcclient() {
         sf_bind_signal(__tcp_client__,
                        data_coming,
                        [=](const pkg_header_t &header_t, const byte_array &data_t) {
@@ -152,23 +136,22 @@ namespace skyfire {
                        true);
     }
 
-    template<typename _BaseClass>
-    void sf_rpcclient<_BaseClass>::close() {
+
+    void sf_rpcclient::close() {
         __tcp_client__->close();
     }
 
-    template<typename _BaseClass>
-    bool sf_rpcclient<_BaseClass>::connect(const std::string ip, unsigned short port) {
+
+    bool sf_rpcclient::connect(const std::string ip, unsigned short port) {
         return __tcp_client__->connect(ip, port);
     }
 
-    template<typename _BaseClass>
-    std::shared_ptr<sf_rpcclient<_BaseClass>> sf_rpcclient<_BaseClass>::make_client() {
-        return std::make_shared<sf_rpcclient<_BaseClass>>();
+    std::shared_ptr<sf_rpcclient> sf_rpcclient::make_client() {
+        return std::shared_ptr<sf_rpcclient>(new sf_rpcclient);
     }
 
-    template<typename _BaseClass>
-    void sf_rpcclient<_BaseClass>::__back_callback(const pkg_header_t &header_t, const byte_array &data_t) {
+    
+    void sf_rpcclient::__back_callback(const pkg_header_t &header_t, const byte_array &data_t) {
         int call_id = header_t.type;
         if (__rpc_data__[call_id]->is_async) {
             __rpc_data__[call_id]->async_callback(data_t);
@@ -181,8 +164,7 @@ namespace skyfire {
         }
     }
 
-    template<typename _BaseClass>
-    void sf_rpcclient<_BaseClass>::__on_closed() {
+    void sf_rpcclient::__on_closed() {
         for (auto &p : __rpc_data__) {
             if (!p.second->is_async) {
                 p.second->back_finished = false;

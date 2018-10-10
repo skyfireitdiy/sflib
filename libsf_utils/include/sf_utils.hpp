@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <fstream>
 #include <openssl/evp.h>
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
@@ -173,4 +174,26 @@ namespace skyfire
         return ps;
     }
 
+    inline bool sf_write_file(const std::string &file_name, const byte_array &data, bool append )
+    {
+        std::ofstream fo(file_name,(append?std::ios::app:std::ios::out)|std::ios::binary);
+        if(!fo)
+            return false;
+        fo.write(data.data(),data.size());
+        fo.close();
+        return true;
+    }
+
+    inline bool sf_read_file(const std::string& file_name, byte_array& data)
+    {
+        std::ifstream fi(file_name,std::ios::in|std::ios::binary);
+        if(!fi)
+            return false;
+        fi.seekg(0,std::ios::end);
+        auto size = fi.tellg();
+        data.resize(static_cast<unsigned long>(size));
+        fi.read(data.data(),size);
+        fi.close();
+        return true;
+    }
 }

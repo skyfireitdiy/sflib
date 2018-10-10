@@ -8,14 +8,14 @@
 
 namespace skyfire {
 
-    template<typename _BaseClass>
+    
     template<typename _Type>
-    void sf_rpcserver<_BaseClass>::__send_back(SOCKET sock, int id_code, const std::string &id_str, _Type data) {
+    void sf_rpcserver::__send_back(SOCKET sock, int id_code, const std::string &id_str, _Type data) {
         __tcp_server__->send(sock, id_code, sf_serialize_binary(id_str) + sf_serialize_binary(data));
     }
 
-    template<typename _BaseClass>
-    void sf_rpcserver<_BaseClass>::__on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data) {
+    
+    void sf_rpcserver::__on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data) {
         std::string id;
         byte_array param;
         size_t pos = sf_deserialize_binary(data, id, 0);
@@ -24,9 +24,9 @@ namespace skyfire {
         }
     }
 
-    template<typename _BaseClass>
+    
     template<typename _Func>
-    void sf_rpcserver<_BaseClass>::reg_rpc_func(const std::string &id, _Func func) {
+    void sf_rpcserver::reg_rpc_func(const std::string &id, _Func func) {
         if constexpr (std::is_bind_expression<_Func>::value) {
             static_assert(!sf_check_param_reference<_Func>::value, "Param can't be reference");
             static_assert(!sf_check_param_pointer<_Func>::value, "Param can't be pointer");
@@ -78,28 +78,34 @@ namespace skyfire {
 
     }
 
-    template<typename _BaseClass>
-    std::shared_ptr<sf_rpcserver<_BaseClass>> sf_rpcserver<_BaseClass>::make_server() {
-        return std::make_shared<sf_rpcserver<_BaseClass>>();
+    
+    std::shared_ptr<sf_rpcserver> sf_rpcserver::make_server() {
+        return std::shared_ptr<sf_rpcserver>(new sf_rpcserver);
     }
 
-    template<typename _BaseClass>
-    sf_rpcserver<_BaseClass>::sf_rpcserver() {
+    
+    sf_rpcserver::sf_rpcserver() {
         sf_bind_signal(sf_rpcserver::__tcp_server__,
                        data_coming,
                        [=](SOCKET sock, const pkg_header_t &header, const byte_array &data) {
                            __on_data_coming(sock, header, data);
                        },
                        true);
+        sf_bind_signal(sf_rpcserver::__tcp_server__,new_connection,[=](SOCKET sock){
+            client_connected(sock);
+        },true);
+        sf_bind_signal(sf_rpcserver::__tcp_server__,closed,[=](SOCKET sock){
+            client_disconnected(sock);
+        },true);
     }
 
-    template<typename _BaseClass>
-    bool sf_rpcserver<_BaseClass>::listen(const std::string &ip, unsigned short port) {
+    
+    bool sf_rpcserver::listen(const std::string &ip, unsigned short port) {
         return __tcp_server__->listen(ip, port);
     }
 
-    template<typename _BaseClass>
-    void sf_rpcserver<_BaseClass>::close() {
+    
+    void sf_rpcserver::close() {
         __tcp_server__->close();
     }
 }

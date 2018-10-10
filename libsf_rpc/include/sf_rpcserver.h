@@ -16,8 +16,11 @@
 
 namespace skyfire {
 
-    template<typename _BaseClass = sf_empty_class>
-    class sf_rpcserver : public sf_nocopy<_BaseClass> {
+    class sf_rpcserver : public sf_nocopy<sf_object> {
+
+    SF_REG_SIGNAL(client_connected, SOCKET)
+    SF_REG_SIGNAL(client_disconnected, SOCKET)
+
     private:
 
         std::shared_ptr<sf_tcpserver> __tcp_server__ = sf_tcpserver::make_server();
@@ -30,7 +33,10 @@ namespace skyfire {
 
         void __on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data);
 
-
+        /**
+         * @brief sf_rpcserver 构造函数
+         */
+        sf_rpcserver();
     public:
 
         /**
@@ -47,10 +53,7 @@ namespace skyfire {
          */
         static std::shared_ptr<sf_rpcserver> make_server();
 
-        /**
-         * @brief sf_rpcserver 构造函数
-         */
-        sf_rpcserver();
+
 
         /**
          * @brief listen 监听
@@ -64,6 +67,8 @@ namespace skyfire {
          * @brief close 关闭RPC服务器
          */
         void close();
+
+        friend std::shared_ptr<sf_rpcserver>;
 
     };
 

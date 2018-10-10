@@ -31,8 +31,7 @@ namespace skyfire {
         std::function<void(const byte_array &)> async_callback;
     };
 
-    template<typename _BaseClass = sf_empty_class>
-    class sf_rpcclient : public sf_nocopy<_BaseClass> {
+    class sf_rpcclient : public sf_nocopy<sf_object> {
     private:
         std::shared_ptr<sf_tcpclient> __tcp_client__ = sf_tcpclient::make_client();
         std::map<int, std::shared_ptr<rpc_struct>> __rpc_data__;
@@ -46,17 +45,17 @@ namespace skyfire {
 
         void __on_closed();
 
+        /**
+         * @brief sf_rpcclient 构造RPC客户端
+         */
+        sf_rpcclient();
+
     public:
         /**
          * @brief make_client 创建RPC客户端
          * @return 客户端对象
          */
         static std::shared_ptr<sf_rpcclient> make_client();
-
-        /**
-         * @brief sf_rpcclient 构造RPC客户端
-         */
-        sf_rpcclient();
 
         /**
          * @brief set_rpc_timeout 设置RPC超时
@@ -119,5 +118,7 @@ namespace skyfire {
                         std::function<void(_Ret)> rpc_callback,
                         __SF_RPC_ARGS__ ...args
         );
+
+        friend std::shared_ptr<sf_tcpclient>;
     };
 }

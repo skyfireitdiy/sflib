@@ -39,4 +39,7 @@ namespace skyfire
 
     long long sf_get_file_size(const std::string& filename);
 
+    bool sf_write_file(const std::string& file_name, const byte_array& data, bool append);
+
+    bool sf_read_file(const std::string& file_name, byte_array& data);
 }
