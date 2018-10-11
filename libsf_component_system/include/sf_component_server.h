@@ -17,24 +17,28 @@ namespace skyfire
     class sf_component_server : public sf_nocopy<sf_object>
     {
         // 组件注册信号
-        SF_REG_SIGNAL(component_reg, const std::string&);
+        SF_REG_SIGNAL(component_reged, const std::string&);
         // 组件反注册信号
-        SF_REG_SIGNAL(component_unreg, const std::string&);
+        SF_REG_SIGNAL(component_unreged, const std::string&);
 
     private:
         std::map<std::string, byte_array> public_area__;
         std::shared_ptr<sf_rpcserver> rpc_server__ = sf_rpcserver::make_server();
-        std::map<long long, sf_component_context_t> component_context__;
+        std::map<std::string, sf_component_context_t> component_context__;
         std::shared_mutex mu_public__;
         std::shared_mutex mu_private__;
         std::string data_dir__;
 
-        long long reg_component(std::string name);
+        bool has_component_name__(const std::string &name);
+        bool has_component_token__(const std::string &token);
+        std::string get_token_by_name__(const std::string &name);
 
-        std::list<std::string> get_component_list();
+        std::string reg_component__(std::string name);
 
-        bool save_private_data(long long token);
-        void load_private_data(long long token);
+        std::list<std::string> get_component_list__(std::string token);
+
+        bool save_private_data__(std::string token);
+        void load_private_data__(std::string token);
 
         sf_component_server(const std::string& data_dir);
 
@@ -43,7 +47,7 @@ namespace skyfire
 
 
         bool listen(const std::string& ip, unsigned short port);
-        std::list<sf_component_context_t> get_component_context();
+        std::map<std::string,sf_component_context_t> get_component_context();
         void unreg_component(std::string name);
 
         void clear_public_area();
