@@ -4,6 +4,7 @@
 #include "sf_object.h"
 #include "sf_type.h"
 #include "sf_tcputils.h"
+#include "sf_netutils.h"
 #include <string>
 
 namespace skyfire
@@ -21,5 +22,7 @@ namespace skyfire
         virtual void close(SOCKET sock) = 0;
         virtual bool send(SOCKET sock, int type, const byte_array &data) = 0;
         virtual bool send(SOCKET sock, const byte_array &data) = 0;
+
+        bool get_server_addr(addr_info_t &addr);
     };
 }

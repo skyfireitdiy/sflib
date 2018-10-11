@@ -4,6 +4,7 @@
 #include "sf_object.h"
 #include "sf_nocopy.h"
 #include "sf_type.h"
+#include "sf_netutils.h"
 #include <string>
 
 namespace skyfire
@@ -25,5 +26,13 @@ namespace skyfire
         virtual bool send(const byte_array & data) = 0;
 
         virtual void close() = 0;
+
+        bool get_peer_addr(addr_info_t &addr);
+
+        bool get_local_addr(addr_info_t &addr);
     };
+
+
+
+
 }

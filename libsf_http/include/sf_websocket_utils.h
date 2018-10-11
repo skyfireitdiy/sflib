@@ -142,8 +142,6 @@ namespace skyfire {
     unsigned long long sf_get_size(const websocket_client_data_2_header_t &header) ;
 
 
-
-
     template <typename T>
     bool sf_is_fin(const T& header);
     template <typename T>

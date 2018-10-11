@@ -3,7 +3,7 @@
 
 #include "sf_tcpserver_linux.h"
 #include "sf_define.h"
-
+#include "sf_tcpclient_interface.hpp"
 
 namespace skyfire
 {

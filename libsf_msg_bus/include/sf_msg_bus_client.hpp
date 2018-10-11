@@ -71,5 +71,15 @@ namespace skyfire
             msg_come(msg_data.type, msg_data.data);
         }
     }
+
+    inline bool sf_msg_bus_client::get_local_addr(addr_info_t &addr)
+    {
+        return p_client__->get_local_addr(addr);
+    }
+
+    bool sf_msg_bus_client::get_peer_addr(addr_info_t &addr)
+    {
+        return p_client__->get_peer_addr(addr);
+    }
 }
 

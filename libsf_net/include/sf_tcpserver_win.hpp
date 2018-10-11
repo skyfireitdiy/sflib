@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sf_tcpserver_win.h"
-
+#include "sf_tcpclient_interface.hpp"
 #include "sf_logger.hpp"
 
 namespace skyfire {

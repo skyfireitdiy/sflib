@@ -123,4 +123,9 @@ namespace skyfire {
                 true
         );
     }
+
+    inline bool sf_msg_bus_server::get_server_addr(addr_info_t &addr)
+    {
+        return p_server__->get_server_addr(addr);
+    }
 }

@@ -60,6 +60,8 @@ namespace skyfire {
          */
         void send_msg(const std::string &type, const byte_array &data);
 
+        bool get_server_addr(addr_info_t &addr);
+
     private:
         std::shared_ptr<sf_tcpserver> p_server__ = sf_tcpserver::make_server();
 
@@ -72,5 +74,6 @@ namespace skyfire {
         void unreg_msg__(SOCKET sock, const std::string &msg);
 
         void on_disconnect__(SOCKET sock);
+
     };
 }

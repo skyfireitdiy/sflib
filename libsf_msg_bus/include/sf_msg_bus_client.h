@@ -76,6 +76,10 @@ namespace skyfire
          */
         void close();
 
+        bool get_local_addr(addr_info_t& addr);
+
+        bool get_peer_addr(addr_info_t& addr);
+
     private:
         std::shared_ptr<sf_tcpclient> p_client__ = sf_tcpclient::make_client();
 
