@@ -19,7 +19,7 @@
 #include <unordered_map>
 #include <climits>
 #include <shared_mutex>
-
+#include <thread>
 
 #ifdef QT_CORE_LIB
 #include <QString>
@@ -72,9 +72,16 @@ namespace skyfire
     struct logger_info_t__
     {
         SF_LOG_LEVEL level;
+        std::string time;
+        int line;
+        std::string file;
+        std::thread::id thread_id;
+        std::string func;
         std::string msg;
     };
 
+
+    constexpr char sf_default_log_format[] = "[{level}][{time}][{thread}][{file} ({line}) {func}] --> {msg}\n";
 
     template<typename _Base = sf_empty_class>
     class sf_logger__ : public _Base
@@ -82,11 +89,11 @@ namespace skyfire
     public:
         SF_SINGLE_TON(sf_logger__)
 
-        int add_level_func(SF_LOG_LEVEL level, std::function<void(const std::string &)> func);
+        int add_level_func(SF_LOG_LEVEL level, std::function<void(const logger_info_t__ &)> func);
 
-        int add_level_stream(SF_LOG_LEVEL level, std::ostream *os);
+        int add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::string format = sf_default_log_format);
 
-        int add_level_file(SF_LOG_LEVEL level, const std::string &filename);
+        int add_level_file(SF_LOG_LEVEL level, const std::string &filename, std::string format = sf_default_log_format);
 
         void remove_filter(int key);
 
@@ -100,12 +107,14 @@ namespace skyfire
 
         void empty_func__(){}
 
+        std::string format(std::string format_str, const logger_info_t__& log_info);
+
     private:
         std::deque<logger_info_t__> log_deque__;
         std::mutex cond_mu__;
         std::condition_variable cond__;
         std::mutex deque_mu__;
-        std::map<int, std::unordered_map<int ,std::function<void(const std::string &)>>> logger_func_set__;
+        std::map<int, std::unordered_map<int ,std::function<void(const logger_info_t__ &)>>> logger_func_set__;
         std::atomic<bool> run__ {true};
         std::recursive_mutex func_set_mutex__;
 
@@ -128,16 +137,16 @@ namespace skyfire
 
 
         template<typename T, typename...U>
-        void logout__(SF_LOG_LEVEL level, const T &tmp, const U &...tmp2);
+        void logout__(logger_info_t__ &log_info, const T &tmp, const U &...tmp2);
 
 #ifdef QT_CORE_LIB
         template<typename...U>
-        void logout__(SF_LOG_LEVEL level, const QString &tmp, const U &...tmp2);
+        void logout__(logger_info_t__ &log_info, const QString &tmp, const U &...tmp2);
         //template<>
-        void logout__(SF_LOG_LEVEL level, const QString &tmp);
+        void logout__(logger_info_t__ &log_info, const QString &tmp);
 #endif
         template<typename T>
-        void logout__(SF_LOG_LEVEL level, const T &tmp);
+        void logout__(logger_info_t__ &log_info, const T &tmp);
 
         static std::string make_time_str__();
     };

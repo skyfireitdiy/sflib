@@ -9,11 +9,11 @@
 namespace skyfire
 {
     template<typename _Base>
-    int sf_logger__<_Base>::add_level_func(SF_LOG_LEVEL level, std::function<void(const std::string &)> func) {
+    int sf_logger__<_Base>::add_level_func(SF_LOG_LEVEL level, std::function<void(const logger_info_t__ &)> func) {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0)
         {
-            logger_func_set__[level] = std::unordered_map<int,std::function<void(const std::string &)>>();
+            logger_func_set__[level] = std::unordered_map<int,std::function<void(const logger_info_t__ &)>>();
         }
         auto key = make_random_logger_id__();
         logger_func_set__[level][key] = func;
@@ -21,34 +21,34 @@ namespace skyfire
     }
 
     template<typename _Base>
-    int sf_logger__<_Base>::add_level_stream(SF_LOG_LEVEL level, std::ostream *os) {
+    int sf_logger__<_Base>::add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::string format_str) {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0)
         {
-            logger_func_set__[level] = std::unordered_map<int,std::function<void(const std::string &)>>();
+            logger_func_set__[level] = std::unordered_map<int,std::function<void(const logger_info_t__ &)>>();
         }
         auto key = make_random_logger_id__();
-        logger_func_set__[level][key] = [=](const std::string &str)
+        logger_func_set__[level][key] = [=](const logger_info_t__ &log_info)
         {
-            *os << str << std::flush;
+            *os<<format(format_str, log_info);
         };
         return key;
     }
 
     template<typename _Base>
-    int sf_logger__<_Base>::add_level_file(SF_LOG_LEVEL level, const std::string &filename) {
+    int sf_logger__<_Base>::add_level_file(SF_LOG_LEVEL level, const std::string &filename, std::string format_str) {
         std::shared_ptr<std::ofstream> ofs = std::make_shared<std::ofstream>(filename, std::ios::app);
         if(*ofs)
         {
             std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
             if (logger_func_set__.count(level) == 0)
             {
-                logger_func_set__[level] = std::unordered_map<int,std::function<void(const std::string &)>>();
+                logger_func_set__[level] = std::unordered_map<int,std::function<void(const logger_info_t__ &)>>();
             }
 
             auto key = make_random_logger_id__();
-            logger_func_set__[level][key] = [=](const std::string &str){
-                *ofs << str << std::flush;
+            logger_func_set__[level][key] = [=](const logger_info_t__ &log_info){
+                *ofs<<format(format_str, log_info);
             };
             return key;
 
@@ -103,14 +103,14 @@ namespace skyfire
         {
             p_os__ = std::make_shared<std::ostringstream>();
         }
-        *p_os__ << "[" << make_time_str__() << "]"
-                #ifdef SF_LOG_OUTPUT_THREAD_ID
-                <<"[" << std::this_thread::get_id() << "]"
-                #endif
-                << "[" << file << " ("
-                << line
-                << ") " << func << "] -----> ";
-        logout__(level, dt);
+        logger_info_t__ log_info;
+        log_info.level = level;
+        log_info.file = file;
+        log_info.line = line;
+        log_info.thread_id = std::this_thread::get_id();
+        log_info.time = make_time_str__();
+        log_info.func = func;
+        logout__(log_info, dt);
     }
 
     template<typename _Base>
@@ -132,7 +132,7 @@ namespace skyfire
                                     {
                                         for (auto &func:level_func.second)
                                         {
-                                            func.second(log.msg);
+                                            func.second(log);
                                         }
                                     }
                                 }
@@ -148,19 +148,19 @@ namespace skyfire
 
     template<typename _Base>
     template<typename T, typename... U>
-    void sf_logger__<_Base>::logout__(SF_LOG_LEVEL level, const T &tmp, const U &... tmp2) {
+    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const T &tmp, const U &... tmp2) {
         *p_os__ << "[" << tmp << "]";
-        logout__(level, tmp2...);
+        logout__(log_info, tmp2...);
     }
 
     template<typename _Base>
     template<typename T>
-    void sf_logger__<_Base>::logout__(SF_LOG_LEVEL level, const T &tmp) {
+    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const T &tmp) {
         *p_os__ << "[" << tmp << "]";
-        logger_info_t__ info{level, "[" + logger_level_str__[level] + "]" + p_os__->str() + "\n"};
+        log_info.msg = p_os__->str();
         p_os__ = std::make_shared<std::ostringstream>();
         std::unique_lock<std::mutex> lck(deque_mu__);
-        log_deque__.push_back(info);
+        log_deque__.push_back(log_info);
         cond__.notify_one();
     }
 
@@ -206,20 +206,21 @@ namespace skyfire
         {
             p_os__ = std::make_shared<std::ostringstream>();
         }
-        *p_os__ << "[" << make_time_str__() << "]"
-                #ifdef SF_LOG_OUTPUT_THREAD_ID
-                <<"[" << std::this_thread::get_id() << "]"
-                #endif
-                << "[" << file << " ("
-                << line
-                << ") -> " << func << "] -----> ";
-        logout__(level, dt...);
+        logger_info_t__ log_info;
+        log_info.level = level;
+        log_info.file = file;
+        log_info.line = line;
+        log_info.thread_id = std::this_thread::get_id();
+        log_info.time = make_time_str__();
+        log_info.func = func;
+        logout__(log_info, dt...);
     }
 
     template<typename _Base>
     void sf_logger__<_Base>::stop_logger()
     {
         run__ = false;
+        cond__.notify_all();
     }
 
     template<typename _Base>
@@ -231,24 +232,50 @@ namespace skyfire
 
 #ifdef QT_CORE_LIB
     template<typename _Base>
-    void sf_logger__<_Base>::logout__(SF_LOG_LEVEL level, const QString &tmp)
+    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const QString &tmp)
     {
         *p_os__ << "[" <<  tmp.toStdString() << "]";
-        logger_info_t__ info{level, "[" + logger_level_str__[level] + "]" + p_os__->str() + "\n"};
+        log_info.msg = p_os__->str();
         p_os__ = std::make_shared<std::ostringstream>();
         std::unique_lock<std::mutex> lck(deque_mu__);
-        log_deque__.push_back(info);
+        log_deque__.push_back(log_info);
         cond__.notify_one();
     }
 
     template<typename _Base>
     template<typename...U>
-    void sf_logger__<_Base>::logout__(SF_LOG_LEVEL level, const QString &tmp, const U &...tmp2)
+    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const QString &tmp, const U &...tmp2)
     {
         *p_os__ << "[" << tmp.toStdString() << "]";
-        logout__(level, tmp2...);
+        logout__(log_info, tmp2...);
     }
 
 #endif
+
+    template <typename _Base>
+    inline std::string sf_logger__<_Base>::format(std::string format_str, const logger_info_t__& log_info)
+    {
+        auto replace = [](std::string& src,const std::string &old_str, const std::string &new_str)
+        {
+            unsigned int pos;
+            while((pos=src.find(old_str))!=std::string::npos)
+            {
+                src.replace(pos,old_str.size(),new_str);
+            }
+        };
+        auto thread_to_str=[](std::thread::id id){
+            std::ostringstream oss;
+            oss<<id;
+            return oss.str();
+        };
+        replace(format_str,"{func}",log_info.func);
+        replace(format_str,"{time}",log_info.time);
+        replace(format_str,"{thread}",thread_to_str(log_info.thread_id));
+        replace(format_str,"{line}",std::to_string(log_info.line));
+        replace(format_str,"{file}",log_info.file);
+        replace(format_str,"{level}",logger_level_str__[log_info.level]);
+        replace(format_str,"{msg}",log_info.msg);
+        return format_str;
+    }
 
 }
