@@ -58,7 +58,7 @@ namespace skyfire
 }
 
 /*
- * qiqinrushi侵入式单例宏实现
+ * 侵入式单例宏实现
  */
 
 #define SF_SINGLE_TON(ClassName)								\

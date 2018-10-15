@@ -9,9 +9,6 @@
 namespace skyfire
 {
     template<typename _Base>
-    thread_local std::ostringstream sf_logger__<_Base>::p_os__;
-
-    template<typename _Base>
     int sf_logger__<_Base>::add_level_func(SF_LOG_LEVEL level, std::function<void(const logger_info_t__ &)> func) {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0)
@@ -109,7 +106,8 @@ namespace skyfire
         log_info.thread_id = std::this_thread::get_id();
         log_info.time = make_time_str__();
         log_info.func = func;
-        logout__(log_info, dt);
+        std::ostringstream oss;
+        logout__(oss, log_info, dt);
     }
 
     template<typename _Base>
@@ -122,8 +120,13 @@ namespace skyfire
                             std::unique_lock<std::mutex> lck(cond_mu__);
                             cond__.wait(lck);
                             {
-                                std::unique_lock<std::mutex> de_lck(deque_mu__);
-                                for (auto &log: log_deque__)
+                                std::deque<logger_info_t__> tmp_info;
+                                {
+                                    std::unique_lock<std::mutex> de_lck(deque_mu__);
+                                    tmp_info=std::move(log_deque__);
+                                    log_deque__.clear();
+                                }
+                                for (auto &log: tmp_info)
                                 {
                                     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
                                     for (auto &level_func:logger_func_set__)
@@ -137,7 +140,6 @@ namespace skyfire
                                         }
                                     }
                                 }
-                                log_deque__.clear();
                             }
                             if(!run__){
                                 run__ = true;
@@ -150,17 +152,16 @@ namespace skyfire
 
     template<typename _Base>
     template<typename T, typename... U>
-    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const T &tmp, const U &... tmp2) {
-        p_os__ << "[" << tmp << "]";
-        logout__(log_info, tmp2...);
+    void sf_logger__<_Base>::logout__(std::ostringstream &oss, logger_info_t__ &log_info, const T &tmp, const U &... tmp2) {
+        oss << "[" << tmp << "]";
+        logout__(oss, log_info, tmp2...);
     }
 
     template<typename _Base>
     template<typename T>
-    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const T &tmp) {
-        p_os__ << "[" << tmp << "]";
-        log_info.msg = p_os__.str();
-        p_os__.str("");
+    void sf_logger__<_Base>::logout__(std::ostringstream &oss, logger_info_t__ &log_info, const T &tmp) {
+        oss << "[" << tmp << "]";
+        log_info.msg = oss.str();
         {
             std::unique_lock<std::mutex> lck(deque_mu__);
             log_deque__.push_back(log_info);
@@ -178,28 +179,9 @@ namespace skyfire
 #else
         ptm = localtime(&tt);
 #endif
-#if 0
-        //sprint_f无法完成格式化，而sprintf可以，Why？
-            char tmp[60] = {0};
-#ifdef _MSC_VER
-            sprintf_s
-#else
-            sprintf
-#endif
-                    (tmp, "%04d-%02d-%02d %02d:%02d:%02d",
-                    ptm->tm_year + 1900,
-                    ptm->tm_mon + 1,
-                    ptm->tm_mday,
-                    ptm->tm_hour,
-                    ptm->tm_min,
-                    ptm->tm_sec
-            );
-            return tmp;
-#else
         std::ostringstream os;
         os << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
         return os.str();
-#endif
     }
 
     template<typename _Base>
@@ -213,7 +195,8 @@ namespace skyfire
         log_info.thread_id = std::this_thread::get_id();
         log_info.time = make_time_str__();
         log_info.func = func;
-        logout__(log_info, dt...);
+        std::ostringstream oss;
+        logout__(oss, log_info, dt...);
     }
 
     template<typename _Base>
@@ -230,11 +213,10 @@ namespace skyfire
 
 #ifdef QT_CORE_LIB
     template<typename _Base>
-    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const QString &tmp)
+    void sf_logger__<_Base>::logout__(std::ostringstream &oss, logger_info_t__ &log_info, const QString &tmp)
     {
-        p_os__ << "[" <<  tmp.toStdString() << "]";
-        log_info.msg = p_os__.str();
-        p_os__.str("")
+        oss << "[" <<  tmp.toStdString() << "]";
+        log_info.msg = oss.str();
         {
             std::unique_lock<std::mutex> lck(deque_mu__);
             log_deque__.push_back(log_info);
@@ -244,10 +226,10 @@ namespace skyfire
 
     template<typename _Base>
     template<typename...U>
-    void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const QString &tmp, const U &...tmp2)
+    void sf_logger__<_Base>::logout__(std::ostringstream &oss, logger_info_t__ &log_info, const QString &tmp, const U &...tmp2)
     {
-        p_os__ << "[" << tmp.toStdString() << "]";
-        logout__(log_info, tmp2...);
+        oss << "[" << tmp.toStdString() << "]";
+        logout__(oss, log_info, tmp2...);
     }
 
 #endif
