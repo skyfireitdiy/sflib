@@ -118,7 +118,7 @@ namespace skyfire
         std::atomic<bool> run__ {true};
         std::recursive_mutex func_set_mutex__;
 
-        static thread_local std::shared_ptr<std::ostringstream> p_os__;
+        static thread_local std::ostringstream p_os__;
 
         bool check_key_can_use__(int key);
 

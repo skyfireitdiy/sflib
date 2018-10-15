@@ -9,6 +9,9 @@
 namespace skyfire
 {
     template<typename _Base>
+    thread_local std::ostringstream sf_logger__<_Base>::p_os__;
+
+    template<typename _Base>
     int sf_logger__<_Base>::add_level_func(SF_LOG_LEVEL level, std::function<void(const logger_info_t__ &)> func) {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0)
@@ -99,10 +102,6 @@ namespace skyfire
     template<typename T>
     void sf_logger__<_Base>::logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func,
                                     const T &dt) {
-        if (p_os__ == nullptr)
-        {
-            p_os__ = std::make_shared<std::ostringstream>();
-        }
         logger_info_t__ log_info;
         log_info.level = level;
         log_info.file = file;
@@ -122,45 +121,50 @@ namespace skyfire
                         {
                             std::unique_lock<std::mutex> lck(cond_mu__);
                             cond__.wait(lck);
-                            std::unique_lock<std::mutex> de_lck(deque_mu__);
-                            for (auto &log: log_deque__)
                             {
-                                std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-                                for (auto &level_func:logger_func_set__)
+                                std::unique_lock<std::mutex> de_lck(deque_mu__);
+                                for (auto &log: log_deque__)
                                 {
-                                    if (log.level >= level_func.first)
+                                    std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
+                                    for (auto &level_func:logger_func_set__)
                                     {
-                                        for (auto &func:level_func.second)
+                                        if (log.level >= level_func.first)
                                         {
-                                            func.second(log);
+                                            for (auto &func:level_func.second)
+                                            {
+                                                func.second(log);
+                                            }
                                         }
                                     }
                                 }
+                                log_deque__.clear();
                             }
-                            log_deque__.clear();
                             if(!run__){
                                 run__ = true;
                                 break;
                             }
                         }
+                        std::cout<<"thread exit"<<std::endl;
                     }).detach();
     }
 
     template<typename _Base>
     template<typename T, typename... U>
     void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const T &tmp, const U &... tmp2) {
-        *p_os__ << "[" << tmp << "]";
+        p_os__ << "[" << tmp << "]";
         logout__(log_info, tmp2...);
     }
 
     template<typename _Base>
     template<typename T>
     void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const T &tmp) {
-        *p_os__ << "[" << tmp << "]";
-        log_info.msg = p_os__->str();
-        p_os__ = std::make_shared<std::ostringstream>();
-        std::unique_lock<std::mutex> lck(deque_mu__);
-        log_deque__.push_back(log_info);
+        p_os__ << "[" << tmp << "]";
+        log_info.msg = p_os__.str();
+        p_os__.str("");
+        {
+            std::unique_lock<std::mutex> lck(deque_mu__);
+            log_deque__.push_back(log_info);
+        }
         cond__.notify_one();
     }
 
@@ -202,10 +206,6 @@ namespace skyfire
     template<typename... T>
     void sf_logger__<_Base>::logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func,
                                     const T &... dt) {
-        if (p_os__ == nullptr)
-        {
-            p_os__ = std::make_shared<std::ostringstream>();
-        }
         logger_info_t__ log_info;
         log_info.level = level;
         log_info.file = file;
@@ -223,8 +223,6 @@ namespace skyfire
         cond__.notify_all();
     }
 
-    template<typename _Base>
-    thread_local std::shared_ptr<std::ostringstream> sf_logger__<_Base>::p_os__{nullptr};
 
     namespace {
         auto g_logger = sf_logger::get_instance();
@@ -234,11 +232,13 @@ namespace skyfire
     template<typename _Base>
     void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const QString &tmp)
     {
-        *p_os__ << "[" <<  tmp.toStdString() << "]";
-        log_info.msg = p_os__->str();
-        p_os__ = std::make_shared<std::ostringstream>();
-        std::unique_lock<std::mutex> lck(deque_mu__);
-        log_deque__.push_back(log_info);
+        p_os__ << "[" <<  tmp.toStdString() << "]";
+        log_info.msg = p_os__.str();
+        p_os__.str("")
+        {
+            std::unique_lock<std::mutex> lck(deque_mu__);
+            log_deque__.push_back(log_info);
+        }
         cond__.notify_one();
     }
 
@@ -246,7 +246,7 @@ namespace skyfire
     template<typename...U>
     void sf_logger__<_Base>::logout__(logger_info_t__ &log_info, const QString &tmp, const U &...tmp2)
     {
-        *p_os__ << "[" << tmp.toStdString() << "]";
+        p_os__ << "[" << tmp.toStdString() << "]";
         logout__(log_info, tmp2...);
     }
 
@@ -255,12 +255,12 @@ namespace skyfire
     template <typename _Base>
     inline std::string sf_logger__<_Base>::format(std::string format_str, const logger_info_t__& log_info)
     {
-        auto replace = [](std::string& src,const std::string &old_str, const std::string &new_str)
+        auto replace = [](std::string& str,const std::string &from, const std::string &to)
         {
-            unsigned int pos;
-            while((pos=src.find(old_str))!=std::string::npos)
-            {
-                src.replace(pos,old_str.size(),new_str);
+            size_t start_pos = 0;
+            while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+                str.replace(start_pos, from.length(), to);
+                start_pos += to.length();
             }
         };
         auto thread_to_str=[](std::thread::id id){
