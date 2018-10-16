@@ -21,6 +21,8 @@ namespace skyfire
         SF_REG_SIGNAL(component_reged, const std::string&);
         // 组件反注册信号
         SF_REG_SIGNAL(component_unreged, const std::string&);
+        // 消息到来
+        SF_REG_SIGNAL(msg_coming, std::string, byte_array);
 
     private:
         std::map<std::string, byte_array> public_area__;
@@ -60,6 +62,8 @@ namespace skyfire
         sf_component_server(const std::string& data_dir);
     public:
 
+        static std::shared_ptr<sf_component_server> make_server(const std::string& data_dir);
+
         bool listen(const std::string& ip, unsigned short port);
         std::map<std::string,sf_component_context_t> get_component_context();
 
@@ -77,5 +81,7 @@ namespace skyfire
 
         bool save_public_data();
         void load_public_data();
+
+        void send_msg(const std::string& type,const byte_array &data);
     };
 }

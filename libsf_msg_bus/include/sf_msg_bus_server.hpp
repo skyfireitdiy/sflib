@@ -5,6 +5,8 @@
 #pragma once
 
 #include "sf_msg_bus_server.h"
+#include "sf_tcpserver.hpp"
+#include "sf_tcpserver_interface.hpp"
 
 namespace skyfire {
 

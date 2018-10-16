@@ -310,7 +310,7 @@ namespace skyfire
         rpc_server__->reg_rpc_func("save_private_data",[=](std::string token){ return save_private_data__(token);});
         rpc_server__->reg_rpc_func("load_private_data",[=](std::string token){ load_private_data__(token);});
         rpc_server__->reg_rpc_func("unreg_component",[=](std::string token){ unreg_component__(token);});
-        rpc_server__->reg_rpc_func("clear_public_area",[=](std::string token){ clear_public_area__(token);});
+        //rpc_server__->reg_rpc_func("clear_public_area",[=](std::string token){ clear_public_area__(token);});
         rpc_server__->reg_rpc_func("get_public_data",[=](std::string token,std::string key){ return get_public_data__(token,key);});
         rpc_server__->reg_rpc_func("set_public_data",[=](std::string token,std::string key,byte_array value){ set_public_data__(token,key,value);});
         rpc_server__->reg_rpc_func("delete_public_data",[=](std::string token){ unreg_component__(token);});
@@ -345,5 +345,15 @@ namespace skyfire
             return addr_info_t{0};
         }
         return get_msg_bus_server_addr();
+    }
+
+    inline void sf_component_server::send_msg(const std::string &type, const byte_array &data)
+    {
+        msg_bus_server__->send_msg(type, data);
+    }
+
+    inline std::shared_ptr<sf_component_server> sf_component_server::make_server(const std::string &data_dir)
+    {
+        return std::shared_ptr<sf_component_server>(new sf_component_server(data_dir));
     }
 }
