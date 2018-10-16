@@ -57,12 +57,12 @@ namespace skyfire
         void unreg_msg_to_bus(const std::vector<std::string> &types);
 
         /**
-         * @brief connect_to_bus 连接消息总线
+         * @brief connect_to_server 连接消息总线
          * @param ip ip
          * @param port 端口
          * @return 连接结果
          */
-        bool connect_to_bus(const std::string &ip, unsigned short port);
+        bool connect_to_server(const std::string &ip, unsigned short port);
 
         /**
          * @brief send_msg 向消息总线发送消息

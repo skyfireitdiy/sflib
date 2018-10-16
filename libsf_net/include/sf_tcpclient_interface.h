@@ -19,7 +19,7 @@ namespace skyfire
 
         virtual bool bind(const std::string& ip, unsigned short port) = 0;
 
-        virtual bool connect(const std::string &ip, unsigned short port) = 0;
+        virtual bool connect_to_server(const std::string &ip, unsigned short port) = 0;
 
         virtual bool send(int type, const byte_array &data) = 0;
 

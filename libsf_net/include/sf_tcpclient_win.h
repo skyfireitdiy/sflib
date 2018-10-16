@@ -28,7 +28,7 @@ namespace skyfire
 
         ~sf_tcpclient();
 
-        bool connect(const std::string &ip, unsigned short port) override;
+        bool connect_to_server(const std::string &ip, unsigned short port) override;
 
 
         bool send(int type, const byte_array &data) override;

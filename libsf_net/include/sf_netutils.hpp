@@ -1,5 +1,19 @@
 #pragma once
 
+#ifdef _WIN32
+#include <winsock2.h>
+#else
+#include <unistd.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/epoll.h>
+#include <fcntl.h>
+#include <sys/resource.h>
+#endif
+
 #include "sf_netutils.h"
 
 namespace skyfire

@@ -16,7 +16,7 @@ void disp_vec(std::vector<int> data)
 int main()
 {
     auto client = sf_rpcclient::make_client();
-    if (!client->connect("127.0.0.1", 10001))
+    if (!client->connect_to_server("127.0.0.1", 10001))
     {
         std::cout << "connect error" << std::endl;
         return -1;

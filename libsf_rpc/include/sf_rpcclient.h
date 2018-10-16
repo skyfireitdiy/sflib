@@ -69,7 +69,7 @@ namespace skyfire {
          * @param port 端口
          * @return 是否连接成功
          */
-        bool connect(const std::string ip, unsigned short port);
+        bool connect_to_server(const std::string ip, unsigned short port);
 
         /**
          * @brief close 关闭RPC客户端

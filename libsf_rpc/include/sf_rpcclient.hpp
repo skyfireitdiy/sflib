@@ -142,8 +142,8 @@ namespace skyfire {
     }
 
 
-    bool sf_rpcclient::connect(const std::string ip, unsigned short port) {
-        return __tcp_client__->connect(ip, port);
+    bool sf_rpcclient::connect_to_server(const std::string ip, unsigned short port) {
+        return __tcp_client__->connect_to_server(ip, port);
     }
 
     std::shared_ptr<sf_rpcclient> sf_rpcclient::make_client() {

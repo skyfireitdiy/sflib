@@ -66,7 +66,7 @@ namespace skyfire {
          * @param port 穿透服务器端口
          * @return 连接结果
          */
-        bool connect(const std::string &ip, unsigned short port);
+        bool connect_to_server(const std::string &ip, unsigned short port);
 
         /**
          * 获取终端集合

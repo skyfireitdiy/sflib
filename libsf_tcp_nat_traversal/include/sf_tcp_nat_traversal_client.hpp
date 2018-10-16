@@ -43,7 +43,7 @@ namespace skyfire {
                  connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.ip,
                  connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.port);
         // 尝试连接a的外网ip端口，留下路由信息（一般会失败，但有时会直接成功）
-        if (connect_context_map__[context.connect_id].point_b_client_1->connect(
+        if (connect_context_map__[context.connect_id].point_b_client_1->connect_to_server(
                 connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.ip,
                 connect_context_map__[context.connect_id].tcp_nat_traversal_context.src_addr.port
         )) {
@@ -106,7 +106,7 @@ namespace skyfire {
         sf_debug("bind id", *tmp_bind_id);
 
         // 使用客户端2连接至server，便于server获取目的的外网ip端口
-        if (!connect_context_map__[context.connect_id].point_b_client_2->connect(server_addr__.ip,
+        if (!connect_context_map__[context.connect_id].point_b_client_2->connect_to_server(server_addr__.ip,
                                                                                  server_addr__.port)) {
             context.error_code = SF_ERR_DISCONNECT;
             client__->send(TYPE_NAT_TRAVERSAL_ERROR,
@@ -150,7 +150,7 @@ namespace skyfire {
         // 生成连接a客户端
         tmp_p2p_conn_context.point_a_client_1 = sf_tcpclient::make_client();
         // 尝试连接服务器
-        if (tmp_p2p_conn_context.point_a_client_1->connect(server_addr__.ip, server_addr__.port)) {
+        if (tmp_p2p_conn_context.point_a_client_1->connect_to_server(server_addr__.ip, server_addr__.port)) {
 
             addr_info_t addr;
             // 获取到本机要连接外网的ip端口，保存至连接上下文
@@ -184,10 +184,10 @@ namespace skyfire {
         return client_list__;
     }
 
-    inline bool sf_tcp_nat_traversal_client::connect(const std::string &ip, unsigned short port) {
+    inline bool sf_tcp_nat_traversal_client::connect_to_server(const std::string &ip, unsigned short port) {
         server_addr__.ip = ip;
         server_addr__.port = port;
-        if (client__->connect(ip, port)) {
+        if (client__->connect_to_server(ip, port)) {
             client__->send(TYPE_NAT_TRAVERSAL_REG, byte_array());
             return true;
         }
@@ -252,7 +252,7 @@ namespace skyfire {
         connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
         connect_context_map__[context.connect_id].point_a_client_2 = sf_tcpclient::make_client(context.raw);
         sf_debug("connect to B");
-        if (connect_context_map__[context.connect_id].point_a_client_2->connect(context.dest_addr.ip,
+        if (connect_context_map__[context.connect_id].point_a_client_2->connect_to_server(context.dest_addr.ip,
                                                                                 context.dest_addr.port)) {
             std::shared_ptr<sf_tcp_nat_traversal_connection> connection(new sf_tcp_nat_traversal_connection(
                     connect_context_map__[context.connect_id].point_a_client_2,

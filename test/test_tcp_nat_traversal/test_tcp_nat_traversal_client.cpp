@@ -16,7 +16,7 @@ void connect(std::shared_ptr<sf_tcp_nat_traversal_client> client){
     std::cout<<"port:"<<std::flush;
     std::cin>>port;
     std::cin.clear();
-    if(client->connect(ip,port)){
+    if(client->connect_to_server(ip,port)){
         std::cout<<"连接成功"<<std::endl;
     }else{
         std::cout<<"连接失败"<<std::endl;

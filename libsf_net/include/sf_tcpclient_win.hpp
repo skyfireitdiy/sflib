@@ -59,7 +59,7 @@ namespace skyfire
         WSACleanup();
     }
 
-    inline bool sf_tcpclient::connect(const std::string &ip, unsigned short port) {
+    inline bool sf_tcpclient::connect_to_server(const std::string &ip, unsigned short port) {
         if (!inited__)
             return false;
         sockaddr_in address;

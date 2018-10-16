@@ -23,7 +23,7 @@ namespace skyfire
 
         std::shared_ptr<sf_rpcclient> rpc_client__ = sf_rpcclient::make_client();
 
-        std::shared_ptr<sf_msg_bus_client> msg_bus_cleint__ = sf_msg_bus_client::make_client();
+        std::shared_ptr<sf_msg_bus_client> msg_bus_client__ = sf_msg_bus_client::make_client();
 
         std::string token__;
 
@@ -32,7 +32,7 @@ namespace skyfire
 
         bool connect_to_server(const std::string& ip, unsigned short port);
 
-        std::string reg_component(std::string name);
+        bool reg_component(std::string name);
 
         std::list<std::string> get_component_list(std::string token);
 

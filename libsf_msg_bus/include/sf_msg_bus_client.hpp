@@ -47,8 +47,8 @@ namespace skyfire
         p_client__->send(msg_bus_unreg_multi, sf_serialize_binary(types));
     }
 
-    inline bool sf_msg_bus_client::connect_to_bus(const std::string &ip, unsigned short port) {
-        return p_client__->connect(ip,port);
+    inline bool sf_msg_bus_client::connect_to_server(const std::string &ip, unsigned short port) {
+        return p_client__->connect_to_server(ip,port);
     }
 
     inline void sf_msg_bus_client::send_msg(const std::string &type, const byte_array &data) {

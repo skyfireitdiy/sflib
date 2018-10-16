@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "sf_component_client.h"
 #include "sf_component_utils.h"
 #include "sf_nocopy.hpp"
 #include "sf_object.hpp"
@@ -8,7 +8,7 @@
 #include "sf_netutils.hpp"
 
 #include "sf_msg_bus_client.hpp"
-#include "sf_rpcclient.h.hpp"
+#include "sf_rpcclient.hpp"
 
 namespace skyfire
 {
@@ -24,5 +24,29 @@ namespace skyfire
             return false;
         }
         return true;
+    }
+
+    inline bool sf_component_client::reg_component(std::string name)
+    {
+        auto token = rpc_client__->call<std::string>("reg_component",name);
+        if(!token)
+        {
+            return false;
+        }
+        if((*token).empty())
+        {
+            return false;
+        }
+        token__ = *token;
+        auto addr = rpc_client__->call<addr_info_t>("get_msg_bus_server_addr",token__);
+        if(!addr)
+        {
+            return false;
+        }
+        if((*addr).port == 0)
+        {
+            return false;
+        }
+        return msg_bus_client__->connect_to_server((*addr).ip,(*addr).port);
     }
 }
