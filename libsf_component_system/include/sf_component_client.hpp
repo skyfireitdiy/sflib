@@ -49,4 +49,14 @@ namespace skyfire
         }
         return msg_bus_client__->connect_to_server((*addr).ip,(*addr).port);
     }
+
+    inline byte_array sf_component_client::get_public_data(std::string key)
+    {
+        auto ret = rpc_client__->call<byte_array>(token__, key);
+        if(!ret)
+        {
+            return byte_array();
+        }
+        return *ret;
+    }
 }
