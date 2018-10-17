@@ -52,11 +52,16 @@ namespace skyfire
 
     inline byte_array sf_component_client::get_public_data(std::string key)
     {
-        auto ret = rpc_client__->call<byte_array>(token__, key);
+        auto ret = rpc_client__->call<byte_array>("get_public_data",token__, key);
         if(!ret)
         {
             return byte_array();
         }
         return *ret;
+    }
+
+    inline void sf_component_client::set_public_data(std::string key, byte_array value)
+    {
+        rpc_client__->call<byte_array>("set_public_data",token__, key, value);
     }
 }
