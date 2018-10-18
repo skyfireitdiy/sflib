@@ -50,18 +50,20 @@ namespace skyfire
         return msg_bus_client__->connect_to_server((*addr).ip,(*addr).port);
     }
 
-    inline byte_array sf_component_client::get_public_data(std::string key)
+    inline std::list<std::string> sf_component_client::get_component_list()
     {
-        auto ret = rpc_client__->call<byte_array>("get_public_data",token__, key);
+        auto ret = rpc_client__->call<std::list<std::string>>("get_component_list",token__);
         if(!ret)
         {
-            return byte_array();
+            return std::list<std::string>();
         }
         return *ret;
     }
 
-    inline void sf_component_client::set_public_data(std::string key, byte_array value)
+    inline void sf_component_client::clear_private_area()
     {
-        rpc_client__->call<byte_array>("set_public_data",token__, key, value);
+        rpc_client__->call<byte_array>("clear_private_area",token__);
     }
+
+
 }

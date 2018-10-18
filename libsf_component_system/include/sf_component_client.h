@@ -34,7 +34,7 @@ namespace skyfire
 
         bool reg_component(std::string name);
 
-        std::list<std::string> get_component_list(std::string token);
+        std::list<std::string> get_component_list();
 
         void clear_private_area();
         byte_array get_private_data(std::string key);
