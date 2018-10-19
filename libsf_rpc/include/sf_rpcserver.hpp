@@ -5,22 +5,31 @@
 #pragma once
 
 #include "sf_rpcserver.h"
+#include "sf_rpcutils.h"
 
 namespace skyfire {
 
     
     template<typename _Type>
-    void sf_rpcserver::__send_back(SOCKET sock, int id_code, const std::string &id_str, _Type data) {
-        __tcp_server__->send(sock, id_code, sf_serialize_binary(id_str) + sf_serialize_binary(data));
+    void sf_rpcserver::__send_back(SOCKET sock, int id_code, _Type data) {
+        sf_rpc_res_context_t res;
+        res.call_id = id_code;
+        res.ret = sf_serialize_binary(data);
+        __tcp_server__->send(sock, RPC_RES_TYPE, sf_serialize_binary(res));
     }
 
     
     void sf_rpcserver::__on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data) {
+        if(header.type != RPC_REQ_TYPE)
+        {
+            return;
+        }
         std::string id;
         byte_array param;
-        size_t pos = sf_deserialize_binary(data, id, 0);
+        sf_rpc_req_context_t req;
+        sf_deserialize_binary(data, req, 0);
         for (auto &p : __func__vec__) {
-            p(sock, header.type, id, byte_array(data.begin() + pos, data.end()));
+            p(sock, req);
         }
     }
 
@@ -37,12 +46,12 @@ namespace skyfire {
             using _Ret = typename sf_function_type_helper<_Func>::return_type;
             using _Param = typename sf_function_type_helper<_Func>::param_type;
 
-            auto f = [=](SOCKET s, int id_code, const std::string &id_str, const byte_array &data) {
-                if (id == id_str) {
+            auto f = [=](SOCKET s, const sf_rpc_req_context_t& req) {
+                if (req.func_id == id) {
                     _Param param;
-                    sf_deserialize_binary(data, param, 0);
+                    sf_deserialize_binary(req.params, param, 0);
                     _Ret ret = sf_invoke(func, param);
-                    __send_back(s, id_code, id_str, ret);
+                    __send_back(s, req.call_id, ret);
                 }
             };
             __func__vec__.push_back(f);
@@ -60,16 +69,16 @@ namespace skyfire {
             using _Ret = typename sf_function_type_helper<decltype(std::function(func))>::return_type;
             using _Param = typename sf_function_type_helper<decltype(std::function(func))>::param_type;
 
-            auto f = [=](SOCKET s, int id_code, const std::string &id_str, const byte_array &data) {
-                if (id == id_str) {
+            auto f = [=](SOCKET s, const sf_rpc_req_context_t& req ) {
+                if (req.func_id == id) {
                     _Param param;
-                    sf_deserialize_binary(data, param, 0);
+                    sf_deserialize_binary(req.params, param, 0);
                     if constexpr (std::is_same<_Ret, void>::value) {
                         sf_invoke(func, param);
-                        __send_back(s, id_code, id_str, '\0');
+                        __send_back(s, req.call_id, '\0');
                     } else {
                         _Ret ret = sf_invoke(func, param);
-                        __send_back(s, id_code, id_str, ret);
+                        __send_back(s, req.call_id, ret);
                     }
                 }
             };

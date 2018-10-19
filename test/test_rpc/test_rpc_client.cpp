@@ -22,6 +22,7 @@ int main()
         return -1;
     }
     client->call<>("print"s);
+    std::cout<<"call finished"<<std::endl;
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
     data = *client->call<std::vector<int>>("add_one"s, data);

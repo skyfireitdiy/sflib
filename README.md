@@ -1,6 +1,3 @@
-### libsf_chain
-提供链式调用辅助（支持同步/异步调用链）
-
 ### libsf_define
 宏定义以及通用编译期常量定义
 
@@ -18,9 +15,6 @@ HTTP服务器
 
 ### libsf_meta
 提供一些元编程功能
-
-### libsf_meta_object
-提供元对象注册，工厂模式实现
 
 ### libsf_msg_bus
 提供跨主机消息总线模型
@@ -54,9 +48,6 @@ tcp内网穿透库（测试中）
 
 ### libsf_thread_pool
 提供简单线程池的实现
-
-### libsf_tl
-模板库
 
 ### libsf_tri_type
 提供一个可以对变量是否赋值做检测的类

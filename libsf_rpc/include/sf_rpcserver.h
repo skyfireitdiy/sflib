@@ -8,11 +8,11 @@
 #include "sf_nocopy.hpp"
 #include "sf_serialize_binary.hpp"
 #include "sf_meta.hpp"
+#include "sf_rpcutils.h"
 #include <string>
 #include <functional>
 #include <tuple>
 #include <memory>
-
 
 namespace skyfire {
 
@@ -25,10 +25,10 @@ namespace skyfire {
 
         std::shared_ptr<sf_tcpserver> __tcp_server__ = sf_tcpserver::make_server();
 
-        std::vector<std::function<void(SOCKET, int, const std::string &, const byte_array &)>> __func__vec__;
+        std::vector<std::function<void(SOCKET, const sf_rpc_req_context_t &)>> __func__vec__;
 
         template<typename _Type>
-        void __send_back(SOCKET sock, int id_code, const std::string &id_str, _Type data);
+        void __send_back(SOCKET sock, int id_code, _Type data);
 
 
         void __on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data);

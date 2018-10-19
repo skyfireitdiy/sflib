@@ -47,7 +47,6 @@ find_package(ZLIB REQUIRED)
 include_directories(
         ${OPENSSL_INCLUDE_DIRS}
         ${ZLIB_INCLUDE_DIRS}
-        libsf_any/include
         libsf_logger/include
         libsf_empty_class/include
         libsf_finally/include
@@ -63,17 +62,13 @@ include_directories(
         libsf_watch_time/include
         libsf_type/include
         libsf_meta/include
-        libsf_meta_object/include
         libsf_type_list/include
         libsf_msg_bus/include
-        libsf_chain/include
         libsf_tcp_nat_traversal/include
-        libsf_tl/include
         libsf_define/include
         libsf_random/include
         libsf_http/include
         libsf_utils/include
-
 )
 
 link_directories(
@@ -100,12 +95,9 @@ file(GLOB headers
         libsf_watch_time/include/*.h
         libsf_type/include/*.h
         libsf_meta/include/*.h
-        libsf_meta_object/include/*.h
         libsf_type_list/include/*.h
         libsf_msg_bus/include/*.h
-        libsf_chain/include/*.h
         libsf_tcp_nat_traversal/include/*.h
-        libsf_tl/include/*.h
         libsf_define/include/*.h
         libsf_random/include/*.h
         libsf_http/include/*.h
@@ -127,12 +119,9 @@ file(GLOB headers
         libsf_watch_time/include/*.hpp
         libsf_type/include/*.hpp
         libsf_meta/include/*.hpp
-        libsf_meta_object/include/*.hpp
         libsf_type_list/include/*.hpp
         libsf_msg_bus/include/*.hpp
-        libsf_chain/include/*.hpp
         libsf_tcp_nat_traversal/include/*.hpp
-        libsf_tl/include/*.hpp
         libsf_define/include/*.hpp
         libsf_random/include/*.hpp
         libsf_http/include/*.hpp
@@ -146,7 +135,6 @@ include_directories(test)
 
 add_executable(test_rpc_server test/test_rpc/test_rpc_server.cpp ${headers})
 add_executable(test_rpc_client test/test_rpc/test_rpc_client.cpp ${headers})
-add_executable(sf_meta_object_test test/test_meta_object/test_meta_object.cpp ${headers})
 add_executable(test_meta test/test_meta/test_meta.cpp ${headers})
 add_executable(test_aop test/test_aop/test_aop.cpp ${headers})
 add_executable(test_sf_logger test/test_sf_logger/test_sf_logger.cpp ${headers})
@@ -155,7 +143,6 @@ add_executable(test_thread_pool test/test_thread_pool/test_thread_pool.cpp ${hea
 add_executable(test_type_list test/test_type_list/test_type_list.cpp ${headers})
 add_executable(test_msg_bus_server test/test_msg_bus/test_msg_bus_server.cpp ${headers})
 add_executable(test_msg_bus_client test/test_msg_bus/test_msg_bus_client.cpp ${headers})
-add_executable(test_chain_call test/test_chain_call/test_chain_call.cpp ${headers})
 add_executable(test_timer test/test_timer/test_timer.cpp ${headers})
 add_executable(test_tcp_nat_traversal_server test/test_tcp_nat_traversal/test_tcp_nat_traversal_server.cpp ${headers})
 add_executable(test_tcp_nat_traversal_client test/test_tcp_nat_traversal/test_tcp_nat_traversal_client.cpp ${headers})
@@ -186,7 +173,6 @@ ELSE()
     target_link_libraries(test_msg_bus_server pthread)
     target_link_libraries(test_object pthread)
     target_link_libraries(test_thread_pool pthread)
-    target_link_libraries(test_chain_call pthread)
     target_link_libraries(test_timer pthread)
     target_link_libraries(test_tcp_nat_traversal_server pthread)
     target_link_libraries(test_tcp_nat_traversal_client pthread)
