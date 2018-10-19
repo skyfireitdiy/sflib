@@ -46,7 +46,7 @@ namespace skyfire {
 
 
     // 网络缓冲区大小
-    constexpr size_t SF_NET_BUFFER_SIZE = 4096;
+    constexpr std::size_t SF_NET_BUFFER_SIZE = 4096;
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
