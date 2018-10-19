@@ -73,7 +73,6 @@ include_directories(
         libsf_random/include
         libsf_http/include
         libsf_utils/include
-        libsf_component_system/include
 
 )
 
@@ -111,7 +110,6 @@ file(GLOB headers
         libsf_random/include/*.h
         libsf_http/include/*.h
         libsf_utils/include/*.h
-        libsf_component_system/*.h
 
         libsf_any/include/*.hpp
         libsf_logger/include/*.hpp
@@ -139,7 +137,6 @@ file(GLOB headers
         libsf_random/include/*.hpp
         libsf_http/include/*.hpp
         libsf_utils/include/*.hpp
-        libsf_component_system/*.hpp
         )
 
 install(FILES ${headers} DESTINATION include)
@@ -167,9 +164,6 @@ add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${head
 add_executable(test_encrypt test/test_encrypt/test_encrypt.cpp ${headers})
 add_executable(test_tcpserver test/test_tcpserver/test_tcpserver.cpp ${headers})
 add_executable(test_finally test/test_finally/test_finally.cpp ${headers})
-add_executable(test_component_server test/test_component_system/test_component_server.cpp ${headers})
-add_executable(test_component_a test/test_component_system/test_component_a.cpp ${headers})
-add_executable(test_component_b test/test_component_system/test_component_b.cpp ${headers})
 
 
 
@@ -184,9 +178,6 @@ IF (WIN32)
     target_link_libraries(test_tcpserver ws2_32)
     target_link_libraries(test_httpserver ws2_32 ${OPENSSL_LIBRARIES} z)
 	target_link_libraries(test_encrypt PRIVATE ${OPENSSL_LIBRARIES} z)
-    target_link_libraries(test_component_server ws2_32)
-    target_link_libraries(test_component_a ws2_32)
-    target_link_libraries(test_component_b ws2_32)
 ELSE()
     target_link_libraries(test_meta pthread)
     target_link_libraries(test_rpc_server pthread)
@@ -204,9 +195,6 @@ ELSE()
     target_link_libraries(test_event_waiter pthread)
     target_link_libraries(test_httpserver pthread ssl crypto z)
 	target_link_libraries(test_encrypt PRIVATE ssl crypto z pthread)
-    target_link_libraries(test_component_server pthread)
-    target_link_libraries(test_component_a pthread)
-    target_link_libraries(test_component_b pthread)
 
 ENDIF ()
 
