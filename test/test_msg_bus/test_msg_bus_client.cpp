@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @email skyfireitdiy@hotmail.com
+* @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
 * @file test_msg_bus_client.cpp
 
@@ -18,8 +18,11 @@ using namespace skyfire;
 
 int main()
 {
+    // 1. 生成客户端
     auto client = sf_msg_bus_client::make_client();
+    // 2. 连接到消息总线服务器
     client->connect_to_server("127.0.0.1", 5678);
+    // 3. 添加事件到来相应
     sf_bind_signal(client, msg_come, [](std::string, byte_array data){
         std::string str;
         sf_deserialize_binary(data, str, 0);
@@ -27,7 +30,9 @@ int main()
         }, true);
     std::string type;
     std::cin>>type;
+    // 4. 注册消息
     client->reg_msg_to_bus(type);
     sf_eventloop e;
+    // 5.事件循环
     e.exec();
 }

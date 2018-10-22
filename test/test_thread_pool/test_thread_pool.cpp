@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @email skyfireitdiy@hotmail.com
+* @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
 * @file test_thread_pool.cpp
 
@@ -39,8 +39,11 @@ void func2(int a)
 
 int main()
 {
+    // 1. 创建线程池
     sf_thread_pool pool4(4);
+    // 2.添加任务
     pool4.add_task(std::bind(func2, 10));
+    // 3.等待所有任务完成
     pool4.wait_all_task_finished();
     pool4.add_task(func2, 7);
     pool4.add_task(func);

@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @email skyfireitdiy@hotmail.com
+* @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
 * @file test_tcp_nat_traversal_client.cpp
 
@@ -66,13 +66,15 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
 int main() {
 
     g_logger->add_level_stream(SF_DEBUG_LEVEL,&std::cout);
+    // 1.创建nat穿透客户端
     auto pclient = sf_tcp_nat_traversal_client::make_client();
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 
+    // 2.设新连接到来响应
     sf_bind_signal(pclient, new_nat_connection, [&](std::shared_ptr<sf_tcp_nat_traversal_connection> conn_t, int){
         std::cout<<"new connection!"<<std::endl;
         conn = conn_t;
-        sf_bind_signal(conn, data_coming, [](const pkg_header_t &header, const byte_array &data){
+        sf_bind_signal(conn, data_coming, [](const sf_pkg_header_t &header, const byte_array &data){
             std::string msg;
             sf_deserialize_binary(data,msg,0);
             std::cout<<"Recv:"<<msg<<std::endl;
@@ -86,15 +88,16 @@ int main() {
         if(cmd == "exit"){
             break;
         }
+        // 3.连接
         if(cmd == "conn"){
             connect(pclient);
-        }else if(cmd == "ls"){
+        }else if(cmd == "ls"){ // 4.枚举客户端
             ls(pclient);
-        }else if(cmd == "natconn"){
+        }else if(cmd == "natconn"){ // 5.连接客户端
             nat_conn(pclient);
-        }else if(cmd == "id"){
+        }else if(cmd == "id"){ // 6.获取id
             std::cout<<pclient->get_id()<<std::endl;
-        }else if(cmd == "send"){
+        }else if(cmd == "send"){ // 7.发送消息
             send(conn);
         }
     }

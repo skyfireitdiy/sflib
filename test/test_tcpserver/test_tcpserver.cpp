@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @email skyfireitdiy@hotmail.com
+* @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
 * @file test_tcpserver.cpp
 
@@ -16,7 +16,7 @@
 //
 #define SF_DEBUG
 #include "sf_logger.hpp"
-#include "sf_tcpserver.hpp"
+#include "sf_tcp_server.hpp"
 
 using namespace skyfire;
 
@@ -24,15 +24,19 @@ using namespace skyfire;
 
 int main()
 {
-    auto server = sf_tcpserver::make_server(true);
+    // 1.创建服务器
+    auto server = sf_tcp_server::make_server(true);
+    // 2.监听
     if(!server->listen("0.0.0.0",9988))
     {
         sf_debug("listen on 9988 error");
         return -1;
     }
+    // 3.设置数据到来事件响应
     sf_bind_signal(server,raw_data_coming,[=](SOCKET sock, const byte_array& data){
         //sf_debug("recv",to_string(data));
     },true);
+    // 4. 启动消息循环
     sf_eventloop loop;
     loop.exec();
 }

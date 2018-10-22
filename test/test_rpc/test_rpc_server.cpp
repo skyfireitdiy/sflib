@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @email skyfireitdiy@hotmail.com
+* @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
 * @file test_rpc_server.cpp
 
@@ -11,7 +11,7 @@
 * 发布日期：2018-10-22
 */
 
-#include "sf_rpcserver.hpp"
+#include "sf_rpc_server.hpp"
 #include <iostream>
 
 using namespace skyfire;
@@ -37,11 +37,14 @@ void output(const char *str)
 
 int main()
 {
-    std::cout<< sizeof(pkg_header_t) << std::endl;
-    auto server = sf_rpcserver::make_server();
+    // 1.创建server对象
+    auto server = sf_rpc_server::make_server();
+    // 2.注册rpc函数
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);
+    // 3.监听
     std::cout<<server->listen("127.0.0.1",10001)<<std::endl;
-    sf_eventloop eventloop;
-    eventloop.exec();
+    sf_eventloop event_loop;
+    // 4.启动时间循环
+    event_loop.exec();
 }

@@ -13,7 +13,7 @@ add_info = '''
 /**
 * @version ''' + version + '''
 * @author skyfire
-* @email skyfireitdiy@hotmail.com
+* @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
 '''
 

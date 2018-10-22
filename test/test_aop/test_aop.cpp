@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @email skyfireitdiy@hotmail.com
+* @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
 * @file test_aop.cpp
 
@@ -15,43 +15,57 @@
 #include <iostream>
 using namespace skyfire;
 
+// 1.对象继承自sf_object
 class A : public sf_object
 {
 public:
+    // 2. 注册aop成员函数，会生成aop_xxx函数
     SF_REG_AOP(func, int , int)
-    void func(int a, int b)
+    int func(int a, int b)
     {
         std::cout<<a+b<<std::endl;
+        return a+b;
     }
 };
 
-void before1(int a, int b)
+// 3.定义一个函数，使其插入到函数调用前，参数列表与要注入的函数相同
+void before_call(int a,int b)
 {
-    std::cout<<"before call" <<std::endl;
+    std::cout<<"a="<<a<<",b="<<b<<std::endl;
 }
 
-void before2(int a, int b)
+// 4.定义一个函数，使其插入到函数调用后，参数列表与要注入的函数返回类型
+void after_call()
 {
-    std::cout<< "a = " << a <<" ,b = " << b <<std::endl;
-}
-
-void after()
-{
-    std::cout<<"after call"<<std::endl;
+    std::cout<<"call finished"<<std::endl;
 }
 
 int main()
 {
     A a;
-    int b2 = sf_aop_before_bind(&a,func,before2);
-    int b1 = sf_aop_before_bind(&a,func,before1);
-    int c = sf_aop_after_bind(&a, func, after);
+    // 5.注入before_call，参数为 对象指针、成员函数名称、注入函数名称, 返回注入id，可用此id撤销注入
+    auto id = sf_aop_before_bind(&a, func, before_call);
+    // 6. 同样也支持lambda
+    sf_aop_before_bind(&a, func, [](int a,int b){
+        std::cout<<"this is lambda, a="<<a<<",b="<<b<<std::endl;
+    });
+    // 7. 注入after_call
+    sf_aop_after_bind(&a, func, after_call);
+    // 8. 调用函数
     a.aop_func(5,10);
-    std::cout<<"---------"<<std::endl;
-    sf_aop_before_unbind(&a, func, b1);
-    a.aop_func(100, 200);
-    std::cout<<"---------"<<std::endl;
-    sf_aop_before_unbind(&a, func, b2);
-    sf_aop_after_unbind(&a, func, c);
-    a.aop_func(200,300);
+
+    // 输出:
+    //    this is lambda, a=5,b=10
+    //    a=5,b=10
+    //    15
+    //    call finished
+
+    // 9.撤销注入
+    sf_aop_before_unbind(&a, func, id);
+    a.aop_func(5,10);
+
+    // 输出：
+    //    this is lambda, a=5,b=10
+    //    15
+    //    call finished
 }
