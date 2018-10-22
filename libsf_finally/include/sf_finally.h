@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_finally.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_finally 清理过程
  */
@@ -7,6 +20,9 @@
 
 namespace skyfire
 {
+    /**
+     *  @brief 清理过程对象
+     */
     class sf_finally{
     public:
         /**

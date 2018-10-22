@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_server.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include "sf_http_base_server.hpp"
@@ -9,8 +22,11 @@
 
 namespace skyfire
 {
+    /**
+     * @brief  HTTP服务器框架，丰富基础框架的接口
+     */
 
-class sf_http_server: public sf_http_base_server,  public std::enable_shared_from_this<sf_http_server>
+    class sf_http_server: public sf_http_base_server,  public std::enable_shared_from_this<sf_http_server>
     {
     private:
         std::set<std::shared_ptr<sf_http_router>,sf_router_shared_ptr_compare__<sf_http_router>> http_routers__;
@@ -32,11 +48,23 @@ class sf_http_server: public sf_http_base_server,  public std::enable_shared_fro
         explicit sf_http_server(const sf_http_server_config& config);
 
     public:
-
+        /**
+         * 添加http路由
+         * @param router http路由
+         */
         void add_router(const std::shared_ptr<sf_http_router>& router);
 
+        /**
+         * 添加websocket路由
+         * @param router websocket路由
+         */
         void add_router(const std::shared_ptr<sf_websocket_router>& router);
 
+        /**
+         * 创建http server
+         * @param config server配置
+         * @return http server对象
+         */
         static std::shared_ptr<sf_http_server> make_server(const sf_http_server_config &config);
 
         friend sf_websocket_router;

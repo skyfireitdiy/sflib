@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_eventloop.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_eventloop 事件循环
  */
@@ -10,10 +23,13 @@
 
 #include "sf_single_instance.hpp"
 #include "sf_msg_queue.hpp"
-#include "sf_nocopy.hpp"
+#include "sf_nocopy.h"
 
 namespace skyfire
 {
+    /**
+     *  @brief 消息循环
+     */
     class sf_eventloop : sf_nocopy<>
     {
     private:

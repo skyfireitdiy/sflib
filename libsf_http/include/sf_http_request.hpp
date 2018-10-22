@@ -1,4 +1,17 @@
 
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_request.hpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
+
 #pragma once
 
 #include "sf_http_request.h"
@@ -90,21 +103,21 @@ namespace skyfire
             {
                 auto tmp_str = sf_string_trim(p);
                 if(tmp_str.find("boundary=") == 0){
-                    boundary_data__ = true;
+                    multipart_data__ = true;
                     auto boundary_str_list = sf_split_string(tmp_str,"=");
                     if(boundary_str_list.size() != 2){
                         sf_error("boundary str size error");
                         return false;
                     }
-                    boundary_data_context__.request_line = request_line__;
+                    multipart_data_context__.request_line = request_line__;
                     if(boundary_str_list[1].size()<=2)
                     {
                         sf_error("boundary is too short");
                         return false;
                     }
-                    boundary_data_context__.boundary_str = {boundary_str_list[1].begin()+2, boundary_str_list[1].end()};
-                    sf_debug("boundary_str", boundary_data_context__.boundary_str);
-                    boundary_data_context__.header = header__.get_header();
+                    multipart_data_context__.boundary_str = {boundary_str_list[1].begin()+2, boundary_str_list[1].end()};
+                    sf_debug("boundary_str", multipart_data_context__.boundary_str);
+                    multipart_data_context__.header = header__.get_header();
                     return true;
                 }
             }
@@ -147,23 +160,23 @@ namespace skyfire
         return !!(si >> request_line_para.http_version);
     }
 
-    bool sf_http_request::is_boundary_data() const
+    bool sf_http_request::is_multipart_data() const
     {
-        return boundary_data__;
+        return multipart_data__;
     }
 
-    boundary_data_context_t sf_http_request::get_boundary_data_context() const
+    multipart_data_context_t sf_http_request::get_multipart_data_context() const
     {
-        return boundary_data_context__;
+        return multipart_data_context__;
     }
 
-    sf_http_request::sf_http_request(boundary_data_context_t boundary_data)
+    sf_http_request::sf_http_request(multipart_data_context_t multipart_data)
     {
         valid__ = true;
-        request_line__ = boundary_data.request_line;
-        header__.set_header(boundary_data.header);
-        boundary_data__ = true;
-        boundary_data_context__ = boundary_data;
+        request_line__ = multipart_data.request_line;
+        header__.set_header(multipart_data.header);
+        multipart_data__ = true;
+        multipart_data_context__ = multipart_data;
     }
 
     void

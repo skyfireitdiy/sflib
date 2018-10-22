@@ -1,11 +1,24 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_tcp_nat_traversal_client.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
-#include "sf_nocopy.hpp"
+#include "sf_nocopy.h"
 #include "sf_object.hpp"
 #include "sf_tcpclient.hpp"
 #include "sf_tcpserver.hpp"
 #include "sf_serialize_binary.hpp"
-#include "sf_define.hpp"
+#include "sf_define.h"
 #include "sf_tcp_nat_traversal_utils.hpp"
 #include "sf_random.hpp"
 #include <climits>
@@ -14,7 +27,9 @@
 
 namespace skyfire {
 
-    //p2p客户端连接上下文
+    /**
+     * @brief p2p客户端连接上下文
+     */
     struct sf_p2p_connect_context_t__ {
         sf_tcp_nat_traversal_context_t__ tcp_nat_traversal_context;
         std::shared_ptr<sf_tcpclient> point_a_client_1;
@@ -25,6 +40,9 @@ namespace skyfire {
         std::shared_ptr<sf_tcpserver> point_b_server;
     };
 
+    /**
+     *  @brief nat穿透客户端类
+     */
     class sf_tcp_nat_traversal_client : public sf_nocopy<sf_object> {
 
         // 新连接，返回建立连接成功的tcpserver和已经连接上的socket，可通过这两个与被连接方通信
@@ -37,11 +55,6 @@ namespace skyfire {
         std::map<int, sf_p2p_connect_context_t__> connect_context_map__;
         addr_info_t server_addr__;
 
-
-        /**
-         * 目的，有远程主机请求建立连接
-         * @param context
-         */
         void on_new_connect_required__(sf_tcp_nat_traversal_context_t__ &context);
 
         void on_server_reply_b_addr(sf_tcp_nat_traversal_context_t__ &context);
@@ -51,14 +64,20 @@ namespace skyfire {
 
         void on_client_close__();
 
-
+        sf_tcp_nat_traversal_client();
     public:
 
+        /**
+         * 生成客户端
+         * @return
+         */
         static std::shared_ptr<sf_tcp_nat_traversal_client> make_client();
 
+        /**
+         * 获取id
+         * @return id
+         */
         unsigned long long int get_id();
-
-        sf_tcp_nat_traversal_client();
 
         /**
          * 连接到穿透服务器，连接成功后会注册
@@ -77,10 +96,14 @@ namespace skyfire {
         /**
          * 来源，连接远程peer端
          * @param peer_id 远端id
+         * @param raw 是否为原始数据格式
          * @return -1表示失败，其他表示此次连接的id
          */
         int connect_to_peer(unsigned long long peer_id, bool raw);
 
+        /**
+         * 关闭
+         */
         void close();
     };
 

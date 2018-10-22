@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_utils.hpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include "sf_http_utils.h"
@@ -66,8 +79,8 @@ namespace skyfire
     }
 
 
-    inline void sf_parse_param(std::map<std::string, std::string> param,std::string &param_str) {
-        param.clear();
+    inline std::map<std::string, std::string> sf_parse_param(std::string param_str) {
+        std::map<std::string, std::string> param;
         unsigned long url_pos;
         while((url_pos = param_str.find('&')) != std::string::npos)
         {
@@ -82,9 +95,9 @@ namespace skyfire
             param[key] = value;
         }
         if(param_str.empty())
-            return;
+            return param;
         if((url_pos = param_str.find('=')) == std::string::npos)
-            return;
+            return param;
         auto key = sf_url_decode(std::string(param_str.begin(), param_str.begin() + url_pos));
         auto value = sf_url_decode(std::string(param_str.begin() + url_pos + 1, param_str.end()));
         param[key] = value;
@@ -111,14 +124,9 @@ namespace skyfire
         }
         url = std::string(raw_url_without_frame.begin(),raw_url_without_frame.begin()+url_pos);
         auto param_str = std::string(raw_url_without_frame.begin()+url_pos+1,raw_url_without_frame.end());
-        sf_parse_param(param, param_str);
+        param = sf_parse_param(param_str);
     }
 
-
-    inline std::string sf_make_http_time_str()
-    {
-        return sf_make_http_time_str(std::chrono::system_clock::now());
-    }
 
     inline std::string sf_to_header_key_format(std::string key) {
         bool flag = false;

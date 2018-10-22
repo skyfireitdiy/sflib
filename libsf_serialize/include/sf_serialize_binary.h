@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_serialize_binary.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * 提供序列化支持（二进制）
  */
@@ -17,7 +30,7 @@
 #include <unordered_set>
 #include <tuple>
 #include "sf_type.hpp"
-#include "sf_define.hpp"
+#include "sf_define.h"
 
 namespace skyfire
 {

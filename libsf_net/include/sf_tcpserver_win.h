@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_tcpserver_win.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include <winsock2.h>
@@ -7,7 +20,7 @@
 #include <memory>
 #include <map>
 #include "sf_tcputils.hpp"
-#include "sf_nocopy.hpp"
+#include "sf_nocopy.h"
 #include "sf_object.hpp"
 #include "sf_type.hpp"
 #include "sf_range.hpp"
@@ -29,7 +42,7 @@ namespace skyfire {
     };
 
 
-    class sf_tcpserver : public sf_tcp_server_interface {
+    class sf_tcpserver : public sf_tcpserver_interface {
     private:
         bool inited__ = false;
         bool exit_flag__ = false;

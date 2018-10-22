@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_utils.hpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include <string>
@@ -142,7 +155,7 @@ namespace skyfire
     }
 
     // TODO 后续使用filesystem
-    std::string sf_path_join(std::string path1, const std::string path2)
+    inline std::string sf_path_join(std::string path1, const std::string path2)
     {
         if(path1.empty())
             return path2;

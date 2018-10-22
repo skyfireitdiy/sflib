@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_response.hpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include "sf_http_response.h"
@@ -10,10 +23,10 @@ namespace skyfire
         status__ = status;
         if(sf_http_status.count(status)!=0)
         {
-            set_reason(sf_http_status[status]);
+            set_status_desc(sf_http_status[status]);
         }else
         {
-            set_reason("Unknown");
+            set_status_desc("Unknown");
         }
     }
 
@@ -21,8 +34,8 @@ namespace skyfire
         http_version__ = http_version;
     }
 
-    inline void sf_http_response::set_reason(const std::string &reason) {
-        reason__ = reason;
+    inline void sf_http_response::set_status_desc(const std::string &desc) {
+        status_desc__ = desc;
     }
 
     inline void sf_http_response::set_header(const sf_http_header &header) {
@@ -66,7 +79,7 @@ namespace skyfire
     inline byte_array sf_http_response::to_header_package() const
     {
         std::string response_head;
-        response_head += http_version__ + " " + std::to_string(status__) + " " + reason__ + "\r\n";
+        response_head += http_version__ + " " + std::to_string(status__) + " " + status_desc__ + "\r\n";
         response_head += header__.to_string();
         return {response_head.begin(),response_head.end()};
     }

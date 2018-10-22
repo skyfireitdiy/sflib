@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_status.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include <map>
@@ -7,6 +20,9 @@ namespace skyfire
 {
     namespace
     {
+        /**
+         * @brief  HTTP状态码对应的描述信息
+         */
          std::map<int, std::string> sf_http_status = {
                 {100, "Continue"},
                 {101, "Switching Protocols"},

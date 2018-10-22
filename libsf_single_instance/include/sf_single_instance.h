@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_single_instance.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_single_instance单例支持
  */
@@ -9,56 +22,37 @@
 
 namespace skyfire
 {
-
-	template<typename ThisClass,typename BaseClass=sf_empty_class>
-	class sf_single_instance:public BaseClass
+    /**
+     * 单例类
+     * @tparam ThisClass 要单例的类
+     * @tparam BaseClass 父类
+     */
+	template<typename ThisClass, typename BaseClass=sf_empty_class>
+	class sf_single_instance : public BaseClass
 	{
 	public:
 
-        /**
+		/**
          * @brief get_instance 获取单例对象
          * @return
          */
-		static ThisClass* get_instance();
+		static ThisClass *get_instance();
 
 		~sf_single_instance();
 
 	private:
 		sf_single_instance() = default;
-		static ThisClass * instance;
+
+		static ThisClass *instance;
 		static std::mutex mu;
 		friend ThisClass;
 	};
 
-	template <typename ThisClass, typename BaseClass>
-	ThisClass* sf_single_instance<ThisClass, BaseClass>::get_instance()
-	{
-		if (instance == nullptr)
-		{
-			std::lock_guard<std::mutex> lck(mu);
-			if (instance == nullptr)
-			{
-				instance = new ThisClass();
-			}
-		}
-		return instance;
-	}
-
-	template <typename ThisClass, typename BaseClass>
-	sf_single_instance<ThisClass, BaseClass>::~sf_single_instance()
-	{
-		if (instance != nullptr)
-			delete instance;
-	}
-
-	template<typename ThisClass, typename BaseClass>
-	ThisClass* sf_single_instance<ThisClass, BaseClass>::instance = nullptr;
-	template<typename ThisClass, typename BaseClass>
-	std::mutex sf_single_instance<ThisClass, BaseClass>::mu;
 }
 
+
 /*
- * qiqinrushi侵入式单例宏实现
+ * 侵入式单例宏实现
  */
 
 #define SF_SINGLE_TON(ClassName)								\
@@ -78,5 +72,4 @@ static ClassName* get_instance()								\
 	}															\
 	return instance__;											\
 }																\
-
 

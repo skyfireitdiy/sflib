@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_logger.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_logger日志打印
  */
@@ -60,6 +73,9 @@ static ClassName* get_instance()								\
 namespace skyfire
 {
 
+    /**
+     * @brief  日志等级
+     */
     enum SF_LOG_LEVEL
     {
         SF_DEBUG_LEVEL = 0,
@@ -69,33 +85,67 @@ namespace skyfire
         SF_FATAL_LEVEL = 4
     };
 
+    /**
+     *  @brief 日志信息
+     */
     struct logger_info_t__
     {
-        SF_LOG_LEVEL level;
-        std::string time;
-        int line;
-        std::string file;
-        std::thread::id thread_id;
-        std::string func;
-        std::string msg;
+        SF_LOG_LEVEL level;                 // 日志等级
+        std::string time;                   // 时间
+        int line;                           // 行号
+        std::string file;                   // 文件名称
+        std::thread::id thread_id;          // 线程号
+        std::string func;                   // 函数名称
+        std::string msg;                    // 消息
     };
 
-
+    /**
+     *  @brief 默认日志格式
+     */
     constexpr char sf_default_log_format[] = "[{level}][{time}][{thread}][{file} ({line}) {func}] --> {msg}\n";
 
+    /**
+     * 日志类
+     * @tparam _Base 基类（默认为empty_class）
+     */
     template<typename _Base = sf_empty_class>
     class sf_logger__ : public _Base
     {
     public:
         SF_SINGLE_TON(sf_logger__)
 
+        /**
+         * 添加指定等级的回调函数
+         * @param level 等级
+         * @param func 函数
+         * @return id号（可用于移除回调）
+         */
         int add_level_func(SF_LOG_LEVEL level, std::function<void(const logger_info_t__ &)> func);
 
+        /**
+         * 添加指定等级日志输出流
+         * @param level 等级
+         * @param os 输出流
+         * @param format 格式化字符串
+         * @return id号（可用于移除回调）
+         */
         int add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::string format = sf_default_log_format);
 
+        /**
+         * 添加指定等级日志输出文件
+         * @param level 等级
+         * @param filename 文件名
+         * @param format 格式化字符串
+         * @return id号（可用于移除回调）
+         */
         int add_level_file(SF_LOG_LEVEL level, const std::string &filename, std::string format = sf_default_log_format);
 
+        /**
+         * 根据id删除过滤器
+         * @param key id
+         */
         void remove_filter(int key);
+
 
         template<typename T>
         void logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func, const T &dt);

@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_rpcserver.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_rpcserver RPC服务器
  */
@@ -5,7 +18,7 @@
 #pragma once
 
 #include "sf_tcpserver.hpp"
-#include "sf_nocopy.hpp"
+#include "sf_nocopy.h"
 #include "sf_serialize_binary.hpp"
 #include "sf_meta.hpp"
 #include "sf_rpcutils.h"
@@ -16,9 +29,17 @@
 
 namespace skyfire {
 
+    /**
+     *  @brief rpc server类
+     */
     class sf_rpcserver : public sf_nocopy<sf_object> {
-
+        /**
+         * 客户端连接信号
+         */
     SF_REG_SIGNAL(client_connected, SOCKET)
+    /**
+     * 客户端断开连接信号
+     */
     SF_REG_SIGNAL(client_disconnected, SOCKET)
 
     private:
@@ -33,9 +54,6 @@ namespace skyfire {
 
         void __on_data_coming(SOCKET sock, const pkg_header_t &header, const byte_array &data);
 
-        /**
-         * @brief sf_rpcserver 构造函数
-         */
         sf_rpcserver();
     public:
 

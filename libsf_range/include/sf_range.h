@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_range.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_range range产生序列的功能
  */
@@ -58,12 +71,33 @@ namespace skyfire
 		const_iterator end()const;
 	};
 
+	/**
+	 * 生成range序列
+	 * @tparam T 类型
+	 * @param end 结尾值
+	 * @return range序列
+	 */
 	template<typename T>
 	sf_range_impl__<T> sf_range(const T &end);
 
+    /**
+     * 生成range序列
+     * @tparam T 类型
+     * @param begin 开始值
+     * @param end 结尾值
+     * @return range序列
+     */
 	template<typename T>
 	sf_range_impl__<T> sf_range(const T &begin, const T &end);
 
+    /**
+     * 生成range序列
+     * @tparam T 类型
+     * @param begin 开始值
+     * @param end 结尾值
+     * @param step 步进
+     * @return range序列
+     */
 	template<typename T>
 	auto sf_range(const T &begin, const T &end, const T &step);
 

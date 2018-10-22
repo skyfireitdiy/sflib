@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_base_server.hpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include "sf_http_base_server.h"
@@ -107,20 +120,20 @@ namespace skyfire
         }
         // multipart消息
         {
-            std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
-            if (boundary_data_context__.count(sock) != 0)
+            std::unique_lock<std::recursive_mutex> lck(mu_multipart_data_context__);
+            if (multipart_data_context__.count(sock) != 0)
             {
                 std::unique_lock<std::recursive_mutex> lck2(mu_request_context__);
                 sf_debug("boundary data append", request_context__[sock].buffer.size());
 
-                request_context__[sock].buffer = append_boundary_data__(boundary_data_context__[sock],
+                request_context__[sock].buffer = append_multipart_data__(multipart_data_context__[sock],
                                                                         request_context__[sock].buffer);
 
-                if (boundary_data_context__[sock].multipart.back().is_end())
+                if (multipart_data_context__[sock].multipart.back().is_end())
                 {
                     sf_debug("boundary data finished");
-                    http_handler__(sock,sf_http_request(boundary_data_context__[sock]));
-                    boundary_data_context__.erase(sock);
+                    http_handler__(sock,sf_http_request(multipart_data_context__[sock]));
+                    multipart_data_context__.erase(sock);
                 }
                 request_context__[sock].buffer.clear();
                 return;
@@ -136,7 +149,7 @@ namespace skyfire
 
             auto req_header = request.get_header();
 
-            if (request.is_boundary_data())
+            if (request.is_multipart_data())
             {
                 build_boundary_context_data(sock, request);
                 return;
@@ -203,19 +216,19 @@ namespace skyfire
     {
         sf_debug("is boundary data");
         // 初始化boundary数据
-        auto boundary_data = request.get_boundary_data_context();
+        auto multipart_data = request.get_multipart_data_context();
 
-        request_context__[sock].buffer = append_boundary_data__(boundary_data, request.get_body());
+        request_context__[sock].buffer = append_multipart_data__(multipart_data, request.get_body());
 
-        if (!boundary_data.multipart.empty() && boundary_data.multipart.back().is_end())
+        if (!multipart_data.multipart.empty() && multipart_data.multipart.back().is_end())
         {
             sf_debug("boundary data success one time");
-            http_handler__(sock,sf_http_request(boundary_data));
+            http_handler__(sock,sf_http_request(multipart_data));
         } else
         {
             sf_debug("boundary data prepare");
-            std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
-            boundary_data_context__[sock] = boundary_data;
+            std::unique_lock<std::recursive_mutex> lck(mu_multipart_data_context__);
+            multipart_data_context__[sock] = multipart_data;
         }
     }
 
@@ -227,8 +240,8 @@ namespace skyfire
             request_context__.erase(sock);
         }
         {
-            std::unique_lock<std::recursive_mutex> lck(mu_boundary_data_context__);
-            boundary_data_context__.erase(sock);
+            std::unique_lock<std::recursive_mutex> lck(mu_multipart_data_context__);
+            multipart_data_context__.erase(sock);
         }
     }
 
@@ -615,10 +628,10 @@ namespace skyfire
             }
         }
         {
-            std::lock_guard<std::recursive_mutex> lck(mu_boundary_data_context__);
-            if (boundary_data_context__.count(sock) != 0)
+            std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
+            if (multipart_data_context__.count(sock) != 0)
             {
-                boundary_data_context__.erase(sock);
+                multipart_data_context__.erase(sock);
             }
         }
     }
@@ -737,22 +750,22 @@ namespace skyfire
     }
 
     inline byte_array
-    sf_http_base_server::append_boundary_data__(boundary_data_context_t &boundary_data, const byte_array &data)
+    sf_http_base_server::append_multipart_data__(multipart_data_context_t &multipart_data, const byte_array &data)
     {
         auto tmp_data = data;
         while (!tmp_data.empty())
         {
-            if (boundary_data.multipart.empty() || boundary_data.multipart.back().is_finished())
+            if (multipart_data.multipart.empty() || multipart_data.multipart.back().is_finished())
             {
-                boundary_data.multipart.push_back(
-                        sf_http_multipart(boundary_data.boundary_str, config__.tmp_file_path));
+                multipart_data.multipart.push_back(
+                        sf_http_multipart(multipart_data.boundary_str, config__.tmp_file_path));
             }
-            auto ret = boundary_data.multipart.back().append_data(tmp_data, tmp_data);
+            auto ret = multipart_data.multipart.back().append_data(tmp_data, tmp_data);
             if (!ret)
             {
                 return tmp_data;
             }
-            if (boundary_data.multipart.back().is_end())
+            if (multipart_data.multipart.back().is_end())
             {
                 return byte_array();
             }

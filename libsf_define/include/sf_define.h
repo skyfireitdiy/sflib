@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_define.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #ifdef __GNUC__
@@ -56,10 +69,10 @@ namespace skyfire {
     // 用户可用的起始位置
     constexpr int TCP_PKG_TYPE_USER = 0x70000000;
 
-
+    // RPC请求包类型
     constexpr int RPC_REQ_TYPE = 0x0000ffff;
 
-
+    // RPC响应包类型
     constexpr int RPC_RES_TYPE = 0x0000fffe;
 
 

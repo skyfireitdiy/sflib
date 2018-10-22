@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_msg_bus_client.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_msg_bus_client 消息总线客户端
  */
@@ -7,11 +20,14 @@
 #include "sf_object.hpp"
 #include "sf_type.hpp"
 #include "sf_tcpclient.hpp"
-#include "sf_msg_bus_utils.hpp"
+#include "sf_msg_bus_utils.h"
 
 
 namespace skyfire
 {
+    /**
+     *  @brief 消息总线客户端
+     */
     class sf_msg_bus_client : public sf_nocopy<sf_object>
     {
         /**
@@ -31,6 +47,9 @@ namespace skyfire
          */
         sf_msg_bus_client();
 
+        /**
+         * 析构函数
+         */
         ~sf_msg_bus_client();
 
         /**
@@ -76,8 +95,18 @@ namespace skyfire
          */
         void close();
 
+        /**
+         * 获取本地地址
+         * @param addr 地址
+         * @return 是否获取成功
+         */
         bool get_local_addr(addr_info_t& addr);
 
+        /**
+         * 获取远端地址
+         * @param addr 地址信息
+         * @return 是否获取成功
+         */
         bool get_peer_addr(addr_info_t& addr);
 
     private:

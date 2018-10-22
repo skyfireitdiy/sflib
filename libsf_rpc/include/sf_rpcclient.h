@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_rpcclient.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_rpcclient rpc客户端
  */
@@ -5,11 +18,11 @@
 #pragma once
 
 #include "sf_tcpclient.hpp"
-#include "sf_nocopy.hpp"
+#include "sf_nocopy.h"
 #include "sf_serialize_binary.hpp"
 #include "sf_timer.hpp"
 #include "sf_tri_type.hpp"
-#include "sf_define.hpp"
+#include "sf_define.h"
 #include <string>
 #include <functional>
 #include <tuple>
@@ -21,6 +34,9 @@
 
 namespace skyfire {
 
+    /**
+     *  @brief rpc数据
+     */
     struct rpc_struct {
         pkg_header_t header;
         byte_array data;
@@ -31,6 +47,9 @@ namespace skyfire {
         std::function<void(const byte_array &)> async_callback;
     };
 
+    /**
+     *  @brief rpc客户端类
+     */
     class sf_rpcclient : public sf_nocopy<sf_object> {
     private:
         std::shared_ptr<sf_tcpclient> __tcp_client__ = sf_tcpclient::make_client();
@@ -45,9 +64,6 @@ namespace skyfire {
 
         void __on_closed();
 
-        /**
-         * @brief sf_rpcclient 构造RPC客户端
-         */
         sf_rpcclient();
 
     public:

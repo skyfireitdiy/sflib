@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file test_http_server.cpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #define SF_DEBUG
 #include "sf_http_base_server.hpp"
 #include "sf_http_static_router.hpp"
@@ -22,11 +35,11 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
         sf_debug("cookie",p.first, p.second);
     }
 
-    if(req.is_boundary_data())
+    if(req.is_multipart_data())
     {
         std::string ret_str;
         sf_debug("boundary data");
-        auto header = req.get_boundary_data_context().header;
+        auto header = req.get_multipart_data_context().header;
         for(auto &p:header)
         {
             sf_debug(p.first,p.second);
@@ -36,7 +49,7 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
         ret_str += "-----------header end-------------\n";
 
         sf_debug("----");
-        auto multipart = req.get_boundary_data_context().multipart;
+        auto multipart = req.get_multipart_data_context().multipart;
         for(auto &p: multipart)
         {
             auto tmp_header = p.get_header().get_header();

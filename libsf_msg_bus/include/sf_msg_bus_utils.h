@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_msg_bus_utils.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include <string>
@@ -14,17 +27,15 @@ namespace skyfire
     constexpr int msg_bus_unreg_single = 3;
     constexpr int msg_bus_unreg_multi = 4;
 
-
+    /**
+     *   @brief  消息总线数据
+     */
     struct msg_bus_t
     {
         std::string type;
         byte_array data;
     };
 
-
-    inline byte_array sf_serialize_binary(const msg_bus_t &value);
-
-    inline size_t sf_deserialize_binary(const byte_array &data, msg_bus_t &obj,
-                          size_t begin_pos);
+    SF_MAKE_SERIALIZABLE_BINARY(msg_bus_t, type, data)
 
 }

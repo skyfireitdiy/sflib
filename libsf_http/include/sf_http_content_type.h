@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_content_type.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include <map>
@@ -6,6 +19,9 @@
 namespace skyfire
 {
     namespace {
+        /**
+         * @brief  http Content-Type映射表
+         */
         std::map<std::string, std::string> sf_http_content_type{
                 {"001",     "application/x-001"},
                 {"323",     "text/h323"},

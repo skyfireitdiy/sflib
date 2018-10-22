@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_tcp_nat_traversal_client.hpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include "sf_tcp_nat_traversal_client.h"
@@ -206,7 +219,7 @@ namespace skyfire {
     }
 
     inline std::shared_ptr <sf_tcp_nat_traversal_client> sf_tcp_nat_traversal_client::make_client() {
-        return std::make_shared<sf_tcp_nat_traversal_client>();
+        return std::shared_ptr<sf_tcp_nat_traversal_client>(new sf_tcp_nat_traversal_client);
     }
 
     inline void sf_tcp_nat_traversal_client::on_client_data_coming__(const pkg_header_t &header, const byte_array &data) {

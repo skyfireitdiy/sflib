@@ -1,10 +1,23 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_event_waiter.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_event_waiter 事件等待
  */
 
 #pragma once
 
-#include "sf_nocopy.hpp"
+#include "sf_nocopy.h"
 #include "sf_object.hpp"
 #include "sf_meta.hpp"
 #include <condition_variable>
@@ -27,11 +40,20 @@
 
 
 namespace skyfire {
+    /**
+     * 对待对象
+     * @tparam ARGS 等待参数列表
+     */
     template<typename ... ARGS>
     class sf_event_waiter : public sf_nocopy<> {
     private:
         std::mutex mu_cond__;
         std::condition_variable cond__;
+
+        template<std::size_t... Index>
+        auto __make_quit_func_helper(std::index_sequence<Index...>);
+
+        auto __make_quit_func();
     public:
         /**
          * @brief sf_event_waiter 构造一个事件等待对象
@@ -43,17 +65,17 @@ namespace skyfire {
          */
         void wait();
 
-        template<std::size_t... Index>
-        auto __make_quit_func_helper(std::index_sequence<Index...>);
-
-        auto __make_quit_func();
-
         /**
          * @brief quit 退出等待
          */
         void quit(ARGS ...);
     };
 
+    /**
+     * 生成等待器
+     * @tparam ARGS 参数表
+     * @return 等待器
+     */
     template<typename...ARGS>
     std::shared_ptr<sf_event_waiter<ARGS...>>
     sf_make_waiter(const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>> &);

@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_msg_bus_server.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_msg_bus_server 消息总线服务器
  */
@@ -6,7 +19,7 @@
 
 #include <string>
 
-#include "sf_msg_bus_utils.hpp"
+#include "sf_msg_bus_utils.h"
 #include "sf_type.hpp"
 #include "sf_object.hpp"
 #include "sf_tcpserver.hpp"
@@ -14,6 +27,9 @@
 
 namespace skyfire {
 
+    /**
+     *  @brief 消息总线服务端
+     */
     class sf_msg_bus_server : public sf_nocopy<sf_object> {
         /**
          * @brief msg_come 消息到来信号
@@ -32,7 +48,9 @@ namespace skyfire {
          * @brief sf_msg_bus_server 构造函数
          */
         sf_msg_bus_server();
-
+        /**
+         * 析构函数
+         */
         ~sf_msg_bus_server();
 
         /**
@@ -60,6 +78,11 @@ namespace skyfire {
          */
         void send_msg(const std::string &type, const byte_array &data);
 
+        /**
+         * 获取服务器地址
+         * @param addr 地址信息
+         * @return 是否成功
+         */
         bool get_server_addr(addr_info_t &addr);
 
     private:

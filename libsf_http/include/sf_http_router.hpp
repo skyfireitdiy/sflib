@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_http_router.hpp
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 #pragma once
 
 #include "sf_http_router.h"
@@ -13,7 +26,7 @@ namespace skyfire
     }
 
     template<typename... StringType>
-    sf_http_router::sf_http_router(const std::string &pattern, void (*callback)(StringType...),
+    sf_http_router::sf_http_router(const std::string &pattern, void (*callback)(const sf_http_request &,sf_http_response&,StringType...),
                                    const std::vector<std::string> &methods, int priority):
             sf_http_router(pattern,std::function(callback),methods,priority)
     {

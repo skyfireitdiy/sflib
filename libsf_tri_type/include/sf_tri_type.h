@@ -1,3 +1,16 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @email skyfireitdiy@hotmail.com
+* @see http://github.com/skyfireitdiy/sflib
+* @file sf_tri_type.h
+
+* sflib第一版本发布
+* 版本号1.0.0
+* 发布日期：2018-10-22
+*/
+
 /*
  * sf_tri_type tri类型
  */
@@ -6,6 +19,10 @@
 
 namespace skyfire
 {
+	/**
+	 * tri类型
+	 * @tparam T 包装类型
+	 */
 	template<typename T>
 	class sf_tri_type
 	{
