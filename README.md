@@ -476,7 +476,7 @@ int main() {
 
 #### 日志工具的使用
 
-```
+```cpp
 #include <iostream>
 // 1.SF_LOGGER_STANDALONE宏表示单独使用sf_logger，不必依赖其他sflib库
 #define SF_LOGGER_STANDALONE
