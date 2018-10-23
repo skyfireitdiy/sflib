@@ -18,11 +18,7 @@
 #define SF_DEBUG
 #include "sf_logger.hpp"
 
-#include <iostream>
-#include <sf_finally.h>
-
 using namespace skyfire;
-
 
 
 int main()

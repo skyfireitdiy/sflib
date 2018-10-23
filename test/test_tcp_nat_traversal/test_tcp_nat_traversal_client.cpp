@@ -16,9 +16,6 @@
 #include <iostream>
 #include <sf_timer.hpp>
 
-#include "sf_random.hpp"
-#include "sf_range.hpp"
-
 using namespace skyfire;
 
 void connect(std::shared_ptr<sf_tcp_nat_traversal_client> client){

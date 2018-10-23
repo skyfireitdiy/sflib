@@ -87,4 +87,22 @@ namespace skyfire
         sf_debug("call callback_call_helper__");
         callback_call_helper__<FuncType,N,Args...,std::string>(req,res,func,sm,args..., sm[sizeof...(args)].str());
     }
+
+    template<typename ...StringType>
+    std::shared_ptr<sf_http_router> make_http_router(const std::string &pattern,
+                                                     void (*callback)(const sf_http_request &, sf_http_response &,
+                                                                      StringType...),
+                                                     const std::vector<std::string> &methods, int priority)
+    {
+        return std::shared_ptr < sf_http_router > (new sf_http_router(pattern, callback, methods, priority));
+    }
+
+    template<typename ...StringType>
+    std::shared_ptr<sf_http_router> make_http_router(const std::string &pattern,
+                                                     std::function<void(const sf_http_request &, sf_http_response &,
+                                                                        StringType...)> callback,
+                                                     const std::vector<std::string> &methods, int priority)
+    {
+        return std::shared_ptr < sf_http_router > (new sf_http_router(pattern, callback, methods, priority));
+    }
 }

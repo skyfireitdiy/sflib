@@ -14,8 +14,6 @@
 //
 // Created by skyfire on 2018/8/27 0027.
 //
-#define SF_DEBUG
-#include "sf_logger.hpp"
 #include "sf_tcp_server.hpp"
 
 using namespace skyfire;
@@ -29,12 +27,12 @@ int main()
     // 2.监听
     if(!server->listen("0.0.0.0",9988))
     {
-        sf_debug("listen on 9988 error");
+        std::cout << "listen on 9988 error" << std::endl;
         return -1;
     }
     // 3.设置数据到来事件响应
     sf_bind_signal(server,raw_data_coming,[=](SOCKET sock, const byte_array& data){
-        //sf_debug("recv",to_string(data));
+        std::cout << "recv:" << to_string(data) << std::endl;
     },true);
     // 4. 启动消息循环
     sf_eventloop loop;

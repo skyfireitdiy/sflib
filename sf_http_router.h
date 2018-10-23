@@ -90,4 +90,36 @@ namespace skyfire
          */
         int get_priority() const override;
     };
+
+    /**
+     * 生成http路由
+     * @tparam StringType 匹配到的字符串
+     * @param pattern 用于匹配url的正则表达式
+     * @param callback 回调函数，接收N个string类型参数，分别对应pattern匹配到的字符串
+     * @param methods 请求类型集合,"GET"，"POST"，"PUT"，"DELETE"等组合,"*"表示所有请求类型
+     * @param priority 路由优先级
+     */
+    template<typename ...StringType>
+    std::shared_ptr<sf_http_router> make_http_router(const std::string &pattern,
+                                                     void(*callback)(const sf_http_request &, sf_http_response &,
+                                                                     StringType...),
+                                                     const std::vector<std::string> &methods = {{"*"}},
+                                                     int priority = 0);
+
+    /**
+     * 生成http路由
+     * @tparam StringType 匹配到的字符串
+     * @param pattern 用于匹配url的正则表达式
+     * @param callback 回调函数，接收N个string类型参数，分别对应pattern匹配到的字符串
+     * @param methods 请求类型集合,"GET"，"POST"，"PUT"，"DELETE"等组合,"*"表示所有请求类型
+     * @param priority 路由优先级
+     */
+    template<typename ...StringType>
+    std::shared_ptr<sf_http_router> make_http_router(const std::string &pattern,
+                                                     std::function<void(const sf_http_request &, sf_http_response &,
+                                                                        StringType...)> callback,
+                                                     const std::vector<std::string> &methods = {{"*"}},
+                                                     int priority = 0);
+
+
 }

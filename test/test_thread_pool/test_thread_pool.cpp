@@ -13,8 +13,6 @@
 
 #include "sf_thread_pool.hpp"
 #include <iostream>
-#include <chrono>
-#include <functional>
 
 using namespace skyfire;
 

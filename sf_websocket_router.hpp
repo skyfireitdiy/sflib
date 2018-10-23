@@ -21,23 +21,38 @@ namespace skyfire {
 
     inline std::shared_ptr<sf_websocket_router> make_websocket_router(const std::string &url,
                                                                       std::function<void(
-                                                                              const sf_websocket_param_t &)> callback) {
-        return std::shared_ptr<sf_websocket_router>(new sf_websocket_router(url, std::move(callback)));
+                                                                              const sf_websocket_param_t &)> callback,
+                                                                      int priority)
+    {
+        return std::shared_ptr < sf_websocket_router > (new sf_websocket_router(url, std::move(callback), priority));
     }
 
     inline std::shared_ptr<sf_websocket_router>
-    make_websocket_router(const std::string &url, void(*callback)(const sf_websocket_param_t &)) {
-        return std::shared_ptr<sf_websocket_router>(new sf_websocket_router(url, callback));
+    make_websocket_router(const std::string &url, void(*callback)(const sf_websocket_param_t &), int priority)
+    {
+        return std::shared_ptr < sf_websocket_router > (new sf_websocket_router(url, callback, priority));
     }
 
     inline sf_websocket_router::sf_websocket_router(const std::string &url,
-                                             std::function<void(const sf_websocket_param_t &)> callback) :
-            url__(url), callback__(std::move(callback)) {
+                                                    std::function<void( const sf_websocket_param_t &
+
+    )> callback,
+    int priority
+    ) :
+
+    url__ (url), callback__(std::move(callback)), priority__(priority)
+    {
 
     }
 
-    inline sf_websocket_router::sf_websocket_router(const std::string &url, void (*callback)(const sf_websocket_param_t &)) :
-            url__(url), callback__(std::function(callback)) {
+    inline sf_websocket_router::sf_websocket_router(const std::string &url, void (*callback)(const
+                                                    sf_websocket_param_t &),
+
+    int priority
+    ) :
+
+    url__ (url), callback__(std::function(callback)), priority__(priority)
+    {
 
     }
 

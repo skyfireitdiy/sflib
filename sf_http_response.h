@@ -16,7 +16,7 @@
 #include <string>
 #include "sf_type.hpp"
 #include "sf_http_utils.h"
-
+#include "sf_http_header.h"
 
 
 namespace skyfire

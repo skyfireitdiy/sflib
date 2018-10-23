@@ -11,11 +11,8 @@
 * 发布日期：2018-10-22
 */
 
-#define SF_DEBUG
-#include "sf_http_base_server.hpp"
 #include "sf_http_static_router.hpp"
-#include <iostream>
-#include <sf_http_server.hpp>
+#include "sf_http_server.hpp"
 
 using namespace std::literals;
 
@@ -89,21 +86,21 @@ int main() {
     auto server = sf_http_server::make_server(config);
 
     // 3. 添加一个http路由，地址为/upload_file， 回调函数为upload_file_route，方法为所有
-    server->add_router(std::make_shared<sf_http_router>(
+    server->add_router(make_http_router(
             "/upload_file"s,
             upload_file_route,
             std::vector<std::string>{{"*"s}}
     ));
 
     // 4. 同样支持lambda
-    server->add_router(std::make_shared<sf_http_router>(
+    server->add_router(make_http_router(
             "/user/(.*)/name"s,
             // 使用lambda时需要使用function包装一下，例子中第一个string参数会接收整个url，第二个会接收(.*?)匹配的url，规则与<regex>相同
             std::function([](const sf_http_request &req,sf_http_response& res, std::string, std::string user){
                 res.set_body(to_byte_array(user+"'s name is skyfire"s));
             }),
             std::vector<std::string>{{"GET"s}}
-            ));
+    ));
 
     // 5. 添加一个websocket路由，地址为/ws，回调函数为websocket_route
     server->add_router(make_websocket_router("/ws", websocket_route));
