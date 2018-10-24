@@ -42,6 +42,7 @@ add_executable(test_event_waiter test/test_event_waiter/test_event_waiter.cpp ${
 add_executable(test_httpserver test/test_http_server/test_http_server.cpp ${headers})
 add_executable(test_tcpserver test/test_tcp_server/test_tcp_server.cpp ${headers})
 add_executable(test_finally test/test_finally/test_finally.cpp ${headers})
+add_executable(test_grammer test/test_grammer/test_grammer.cpp ${headers})
 
 
 IF (WIN32)
