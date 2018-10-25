@@ -20,6 +20,12 @@ namespace skyfire
         void add_rule(const sf_lex_rule_t& rule);
 
         /**
+         * 批量添加规则
+         * @param rule 规则集合
+         */
+        void add_rules(const std::vector<sf_lex_rule_t> &rule);
+
+        /**
          * 解析
          * @param content 内容
          * @param result 结果

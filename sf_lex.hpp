@@ -57,4 +57,9 @@ namespace skyfire
         }
         return true;
     }
+
+    inline void sf_lex::add_rules(const std::vector<sf_lex_rule_t> &rule)
+    {
+        rules__.insert(rules__.end(), rule.begin(), rule.end());
+    }
 }
