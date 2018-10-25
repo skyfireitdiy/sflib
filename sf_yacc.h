@@ -12,7 +12,6 @@ namespace skyfire
     {
         std::vector<sf_yacc_rule> rules__;
 
-        void reduct__(std::vector<std::shared_ptr<sf_yacc_result_t>> &result);
 
         static bool rule_matched__(std::vector<std::string>::iterator str_begin,
                                    std::vector<std::string>::iterator str_end,

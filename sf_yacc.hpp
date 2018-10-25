@@ -2,6 +2,8 @@
 
 #include "sf_yacc.h"
 
+#include <iostream>
+
 namespace skyfire
 {
     inline void sf_yacc::add_rule(const sf_yacc_rule &rule)
@@ -11,53 +13,80 @@ namespace skyfire
 
     inline std::vector<std::shared_ptr<sf_yacc_result_t>> sf_yacc::parse(const std::vector<sf_lex_result_t> &lex_result)
     {
-        std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result_vec;
-        for (auto &p:lex_result)
+        std::vector<std::pair<sf_yacc_rule_callback,std::string>> reduct_rules;
+        for(auto &p:rules__)
+        {
+            for(auto &q:p.rules)
+            {
+                reduct_rules.emplace_back(q,p.id);
+            }
+        }
+        // 长规则排前面
+        std::sort(reduct_rules.begin(),reduct_rules.end(),[](const auto &a,const auto &b){
+            return a.first.rule.size()>b.first.rule.size();
+        });
+
+        // 准备数据
+
+        std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
+        for(auto &p:lex_result)
         {
             auto node = std::make_shared<sf_yacc_result_t>();
             node->id = p.id;
             node->text = p.matched_str;
-            yacc_result_vec.push_back(node);
-            auto new_result = yacc_result_vec;
-            reduct__(yacc_result_vec);
+            yacc_result.push_back(node);
         }
-        return yacc_result_vec;
-    }
 
-    inline void sf_yacc::reduct__(std::vector<std::shared_ptr<sf_yacc_result_t>> &result)
-    {
-        bool flag = true;
-        while (flag)
+        // 归约
+        while(true)
         {
-            flag = false;
-            for (auto &p:rules__)
+            if(yacc_result.size() <= 1)
             {
-                for (auto &q:p.rules)
+                break;
+            }
+
+            bool flag = false;
+            for(auto &p:reduct_rules)
+            {
+                if(p.first.rule.size()>yacc_result.size())
                 {
-                    if (q.rule.size() > result.size())
-                        continue;
-                    auto result_begin = result.end() - q.rule.size();
-                    auto result_end = result.end();
-                    if (rule_matched__(q.rule.begin(), q.rule.end(), result_begin, result_end))
+                    continue;
+                }
+                for(int i=0;i<yacc_result.size()-p.first.rule.size()+1;++i)
+                {
+                    auto begin_iter = yacc_result.begin()+i;
+                    auto end_iter = begin_iter+p.first.rule.size();
+                    if(rule_matched__(p.first.rule.begin(),p.first.rule.end(),begin_iter,end_iter))
                     {
-                        auto node = std::make_shared<sf_yacc_result_t>();
-                        node->id = p.id;
-                        node->child = {result_begin, result_end};
-                        for (auto &k:node->child)
-                        {
-                            node->text += k->text;
-                        }
-                        if (q.callback)
-                        {
-                            node->user_data = q.callback(node->child);
-                        }
-                        result.erase(result_begin, result_end);
-                        result.push_back(node);
                         flag = true;
+                        auto new_node = std::make_shared<sf_yacc_result_t>();
+                        new_node->id = p.second;
+                        for(auto iter=begin_iter;iter!=end_iter;++iter)
+                        {
+                            new_node->text+=(*iter)->text;
+                        }
+                        new_node->child = {begin_iter,end_iter};
+                        if(p.first.callback)
+                        {
+                            new_node->user_data = p.first.callback(new_node->child);
+                        }
+                        yacc_result.erase(begin_iter,end_iter);
+                        yacc_result.insert(yacc_result.begin()+i,new_node);
+                        break;
                     }
                 }
+                if(flag)
+                {
+                    break;
+                }
+            }
+
+            if(!flag)
+            {
+                break;
             }
         }
+        return yacc_result;
     }
 
     inline bool sf_yacc::rule_matched__(std::vector<std::string>::iterator str_begin,

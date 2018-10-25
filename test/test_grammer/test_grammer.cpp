@@ -7,73 +7,107 @@ using namespace skyfire;
 
 int main()
 {
-#if 1
+
     std::string json_str = R"({
-    "name": "王尼玛",
-    "fans": [
-        {
-            "name": "小王",
-            "age": 7
+    "code": 0,
+    "message": "交易成功",
+    "object": {
+        "head": {
+            "version": "1.0.0",
+            "code": "contract_setting_info",
+            "timestamp": 1400138523979
         },
-        {
-            "name": "小尼玛",
-            "age": 10,
+        "body": {
+            "contractSettings": [
+                {
+                    "contractDict": {
+                        "code": "YGXAG9995",
+                        "name": "粤贵银9995",
+                        "market_code": "PMEC",
+                        "status": 1,
+                        "sort": 0
+                    },
+                    "contractEx": {
+                        "unit_number": 15,
+                        "unit_type": "KG",
+                        "min_quote_unit": 1,
+                        "min_var_unit": 1,
+                        "step_unit": 1,
+                        "currency": "CNY",
+                        "quote_type": 1
+                    },
+                    "contractProtect": {
+                        "spread": 20,
+                        "time_interval": 60000
+                    },
+                    "contractAccess": null
+                },
+                {
+                    "contractDict": {
+                        "code": "YGXAG9999",
+                        "name": "粤贵银9999",
+                        "market_code": "PMEC",
+                        "status": 1,
+                        "sort": 0
+                    },
+                    "contractEx": {
+                        "unit_number": 1,
+                        "unit_type": "KG",
+                        "min_quote_unit": 1,
+                        "min_var_unit": 1,
+                        "step_unit": 1,
+                        "currency": "CNY",
+                        "quote_type": 1
+                    },
+                    "contractProtect": {
+                        "spread": 20,
+                        "time_interval": 600
+                    },
+                    "contractAccess": null
+                },
+                {
+                    "contractDict": {
+                        "code": "YGXAG100G",
+                        "name": "粤贵银100G",
+                        "market_code": "PMEC",
+                        "status": 1,
+                        "sort": 0
+                    },
+                    "contractEx": {
+                        "unit_number": 100,
+                        "unit_type": "g",
+                        "min_quote_unit": 0.001,
+                        "min_var_unit": 0.001,
+                        "step_unit": 0.001,
+                        "currency": "CNY",
+                        "quote_type": 1
+                    },
+                    "contractProtect": {
+                        "spread": 20,
+                        "time_interval": 600
+                    },
+                    "contractAccess": null
+                }
+            ]
         }
-    ]
+    },
+    "success": true
 })";
-#else
-    std::string json_str = R"({"number": 1234, "data":[1,2,3,true]})";
-#endif
+
     sf_lex lex;
     lex.add_rules({
-                          {
-                                  "string",
-                                  R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"
-                          },
-                          {
-                                  "left_square_bracket",
-                                  R"(\[)"
-                          },
-                          {
-                                  "right_square_bracket",
-                                  R"(\])"
-                          },
-                          {
-                                  "left_curly_bracket",
-                                  R"(\{)"
-                          },
-                          {
-                                  "right_curly_bracket",
-                                  R"(\})"
-                          },
-                          {
-                                  "comma",
-                                  R"(,)"
-                          },
-                          {
-                                  "colon",
-                                  R"(:)"
-                          },
-                          {
-                                  "ws",
-                                  R"([\r\n\t ]+)"
-                          },
-                          {
-                                  "number",
-                                  R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"
-                          },
-                          {
-                                  "true",
-                                  R"(true)"
-                          },
-                          {
-                                  "false",
-                                  R"(false)"
-                          },
-                          {
-                                  "null",
-                                  R"(null)"
-                          }
+                          {"string", R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
+                          {"left_square_bracket", R"(\[)"},
+                          {"right_square_bracket", R"(\])"},
+                          {"left_curly_bracket", R"(\{)"},
+                          {"right_curly_bracket", R"(\})"},
+                          {"comma", R"(,)"},
+                          {"colon", R"(:)"},
+                          {"ws", R"([\r\n\t ]+)"},
+                          {"number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
+                          {"true", R"(true)"},
+                          {"false", R"(false)"},
+                          {"null", R"(null)"}
                   });
 
     std::vector<sf_lex_result_t> lex_result;
@@ -146,7 +180,7 @@ int main()
                                                        nullptr
                                                },
                                                {
-                                                       {"members",             "comma",    "member"},
+                                                       {"members","comma","member"},
                                                        nullptr
                                                }
                                        }
@@ -155,9 +189,34 @@ int main()
                                        "member",
                                        {
                                                {
-                                                       {"string",              "colon", "element"},
+                                                       {"string", "colon", "array"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string", "colon", "object"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string","colon","string"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string","colon","number"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string","colon","true"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string","colon","false"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string","colon","null"},
                                                        nullptr
                                                }
+
                                        }
                                },
                                {
@@ -182,6 +241,10 @@ int main()
                                                {
                                                        {"elements",            "comma",    "element"},
                                                        nullptr
+                                               },
+                                               {
+                                                       {"elements",            "comma",    "elements"},
+                                                       nullptr
                                                }
                                        }
                                },
@@ -200,7 +263,7 @@ int main()
 
         for (auto &p:yacc_result)
         {
-            std::cout << p->text << "(" << p->id << ")" << std::endl;
+            std::cout << "(" << p->id << ")[" << p->text << "]" << std::flush;
         }
     }
 
