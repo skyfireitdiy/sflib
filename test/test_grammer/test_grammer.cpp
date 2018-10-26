@@ -7,7 +7,7 @@ using namespace skyfire;
 
 int main()
 {
-
+#if 1
     std::string json_str = R"({
     "code": 0,
     "message": "交易成功",
@@ -93,6 +93,10 @@ int main()
     },
     "success": true
 })";
+
+#else
+    std::string json_str = R"({"hello":1231})";
+#endif
 
     sf_lex lex;
     lex.add_rules({
@@ -259,11 +263,14 @@ int main()
                                }
                        });
 
-        auto yacc_result = yacc.parse(lex_result);
-
-        for (auto &p:yacc_result)
+        yacc.add_termanate_ids({"value", "array", "object"});
+        std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
+        if (yacc.parse(lex_result, yacc_result))
         {
-            std::cout << "(" << p->id << ")[" << p->text << "]" << std::flush;
+            for (auto &p:yacc_result)
+            {
+                std::cout << "(" << p->id << ")[" << p->text << "]" << std::flush;
+            }
         }
     }
 

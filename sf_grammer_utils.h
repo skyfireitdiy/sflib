@@ -33,7 +33,7 @@ namespace skyfire
     {
         std::string id;
         std::string text;
-        std::vector<std::shared_ptr<sf_yacc_result_t>> child;
+        std::vector<std::shared_ptr<sf_yacc_result_t>> children;
         std::any user_data;
     };
 
@@ -43,7 +43,7 @@ namespace skyfire
     struct sf_yacc_rule_callback
     {
         std::vector<std::string> rule;
-        std::function<std::any(std::vector<std::shared_ptr<sf_yacc_result_t>>)> callback;
+        std::function<std::any(const std::vector<std::shared_ptr<sf_yacc_result_t>> &)> callback;
     };
 
     /**
