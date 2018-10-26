@@ -4,6 +4,8 @@
 #include "sf_yacc.hpp"
 #include "sf_http_utils.h"
 
+#include <iostream>
+
 namespace skyfire
 {
     inline sf_json sf_json::from_string(const std::string &json_str)
@@ -392,6 +394,9 @@ namespace skyfire
         if (value__->type != sf_json_type::object)
         {
             convert_to_object();
+        }
+        if (value__->object_value.count(key) == 0)
+        {
             value__->object_value[key] = sf_json().value__;
         }
         return sf_json(value__->object_value[key]);
