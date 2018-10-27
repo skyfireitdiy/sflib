@@ -141,11 +141,11 @@ namespace skyfire {
                 }
 
                 ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
-                p_io_data->buffer.resize(SF_NET_BUFFER_SIZE);
+                p_io_data->buffer.resize(SF_DEFAULT_BUFFER_SIZE);
                 p_io_data->data_trans_count = 0;
                 p_io_data->is_send = false;
                 p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
-                p_io_data->wsa_buffer.len = SF_NET_BUFFER_SIZE;
+                p_io_data->wsa_buffer.len = SF_DEFAULT_BUFFER_SIZE;
 
                 flags = 0;
 
@@ -246,10 +246,10 @@ namespace skyfire {
                 auto *p_io_data = new sf_per_io_operation_data_t;
                 ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
                 p_io_data->data_trans_count = 0;
-                p_io_data->buffer.resize(SF_NET_BUFFER_SIZE);
+                p_io_data->buffer.resize(SF_DEFAULT_BUFFER_SIZE);
                 p_io_data->is_send = false;
                 p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
-                p_io_data->wsa_buffer.len = SF_NET_BUFFER_SIZE;
+                p_io_data->wsa_buffer.len = SF_DEFAULT_BUFFER_SIZE;
                 DWORD tmp_int = 0;
                 DWORD flags = 0;
                 if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),

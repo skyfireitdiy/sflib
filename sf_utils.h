@@ -140,4 +140,12 @@ namespace skyfire
      * @return 是否读取成功
      */
     bool sf_read_file(const std::string& file_name, byte_array& data);
+
+    /**
+     * 字符串替换
+     * @param str 字符串
+     * @param from 要替换的字符串
+     * @param to 替换后的新字符串
+     */
+    void sf_string_replace(std::string& str,const std::string &from, const std::string &to);
 }

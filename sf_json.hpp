@@ -3,8 +3,10 @@
 #include "sf_lex.hpp"
 #include "sf_yacc.hpp"
 #include "sf_http_utils.h"
+#include "sf_json.h"
+#include "sf_utils.hpp"
+#include "sf_define.h"
 
-#include <iostream>
 
 namespace skyfire
 {
@@ -58,8 +60,7 @@ namespace skyfire
                                                        {"string"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
-                                                           return sf_json(
-                                                                   sf_json::json_string_to_string(data[0]->text));
+                                                           return sf_json(sf_json::json_string_to_string(data[0]->text));
                                                        }
                                                },
                                                {
@@ -67,7 +68,7 @@ namespace skyfire
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            long double tmp_num;
-                                                           sscanf(data[0]->text.c_str(), "%llf", &tmp_num);
+                                                           sscanf(data[0]->text.c_str(), "%Lf", &tmp_num);
                                                            return sf_json(tmp_num);
                                                        }
                                                },
@@ -89,7 +90,7 @@ namespace skyfire
                                                        {"null"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
-                                                           return sf_json(sf_json_type_null{});
+                                                           return sf_json();
                                                        }
                                                }
                                        }
@@ -137,6 +138,19 @@ namespace skyfire
                                                            json.join(js2);
                                                            return json;
                                                        }
+                                               },
+                                               {
+                                                       {"members","comma","members"},
+                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
+                                                       {
+                                                           sf_json json;
+                                                           json.convert_to_object();
+                                                           sf_json js1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           sf_json js2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           json.join(js1);
+                                                           json.join(js2);
+                                                           return json;
+                                                       }
                                                }
                                        }
                                },
@@ -149,9 +163,10 @@ namespace skyfire
                                                        {
                                                            sf_json json;
                                                            json.convert_to_object();
+                                                           auto json1 = std::any_cast<sf_json>(data[2]->user_data);
+
                                                            json[sf_json::json_string_to_string(
-                                                                   data[0]->text)] = std::any_cast<sf_json>(
-                                                                   data[2]->user_data);
+                                                                   data[0]->text)] = json1;
                                                            return json;
                                                        }
                                                },
@@ -173,8 +188,7 @@ namespace skyfire
                                                        {
                                                            sf_json json;
                                                            json.convert_to_object();
-                                                           json[sf_json::json_string_to_string(
-                                                                   data[0]->text)] = sf_json::json_string_to_string(
+                                                           json[sf_json::json_string_to_string(data[0]->text)] = sf_json::json_string_to_string(
                                                                    data[2]->text);
                                                            return json;
                                                        }
@@ -186,7 +200,7 @@ namespace skyfire
                                                            sf_json json;
                                                            json.convert_to_object();
                                                            long double tmp_num;
-                                                           sscanf(data[2]->text.c_str(), "%llf", &tmp_num);
+                                                           sscanf(data[2]->text.c_str(), "%Lf", &tmp_num);
                                                            json[sf_json::json_string_to_string(
                                                                    data[0]->text)] = tmp_num;
                                                            return json;
@@ -219,7 +233,7 @@ namespace skyfire
                                                            sf_json json;
                                                            json.convert_to_object();
                                                            json[sf_json::json_string_to_string(
-                                                                   data[0]->text)] = sf_json_type_null{};
+                                                                   data[0]->text)] = sf_json();
                                                            return json;
                                                        }
                                                }
@@ -239,7 +253,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"left_square_bracket", "elements", "right_square_bracket"},
+                                                       {"left_square_bracket", "values", "right_square_bracket"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            return data[1]->user_data;
@@ -248,10 +262,10 @@ namespace skyfire
                                        }
                                },
                                {
-                                       "elements",
+                                       "values",
                                        {
                                                {
-                                                       {"element"},
+                                                       {"value"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -261,20 +275,100 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"elements",            "comma",    "element"},
+                                                       {"values",            "comma",    "string"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
                                                            json.convert_to_array();
                                                            sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           sf_json json2(sf_json::json_string_to_string(data[2]->text));
                                                            json.join(json1);
-                                                           json.join(json2);
+                                                           json.append(json2);
                                                            return json;
                                                        }
                                                },
                                                {
-                                                       {"elements", "comma", "elements"},
+                                                       {"values",            "comma",    "number"},
+                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
+                                                       {
+                                                           sf_json json;
+                                                           json.convert_to_array();
+                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           long double tmp_num;
+                                                           sscanf(data[2]->text.c_str(), "%Lf", &tmp_num);
+                                                           sf_json json2(tmp_num);
+                                                           json.join(json1);
+                                                           json.append(json2);
+                                                           return json;
+                                                       }
+                                               },
+                                               {
+                                                       {"values",            "comma",    "object"},
+                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
+                                                       {
+                                                           sf_json json;
+                                                           json.convert_to_array();
+                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           sf_json json2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           json.join(json1);
+                                                           json.append(json2);
+                                                           return json;
+                                                       }
+                                               },
+                                               {
+                                                       {"values",            "comma",    "array"},
+                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
+                                                       {
+                                                           sf_json json;
+                                                           json.convert_to_array();
+                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           sf_json json2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           json.join(json1);
+                                                           json.append(json2);
+                                                           return json;
+                                                       }
+                                               },
+                                               {
+                                                       {"values",            "comma",    "true"},
+                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
+                                                       {
+                                                           sf_json json;
+                                                           json.convert_to_array();
+                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           sf_json json2(true);
+                                                           json.join(json1);
+                                                           json.append(json2);
+                                                           return json;
+                                                       }
+                                               },
+                                               {
+                                                       {"values",            "comma",    "false"},
+                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
+                                                       {
+                                                           sf_json json;
+                                                           json.convert_to_array();
+                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           sf_json json2(false);
+                                                           json.join(json1);
+                                                           json.append(json2);
+                                                           return json;
+                                                       }
+                                               },
+                                               {
+                                                       {"values",            "comma",    "null"},
+                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
+                                                       {
+                                                           sf_json json;
+                                                           json.convert_to_array();
+                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           sf_json json2();
+                                                           json.join(json1);
+                                                           json.append(json2);
+                                                           return json;
+                                                       }
+                                               },
+                                               {
+                                                       {"values","comma","values"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -284,18 +378,6 @@ namespace skyfire
                                                            json.join(json1);
                                                            json.join(json2);
                                                            return json;
-                                                       }
-                                               }
-                                       }
-                               },
-                               {
-                                       "element",
-                                       {
-                                               {
-                                                       {"value"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           return data[0]->user_data;
                                                        }
                                                }
                                        }
@@ -322,16 +404,21 @@ namespace skyfire
         value__->string_value = str;
     }
 
-    template<typename T>
-    inline sf_json::sf_json(typename std::enable_if<std::is_arithmetic<T>::value, T> number):sf_json()
+    inline sf_json::sf_json(const char* c_str) : sf_json(std::string(c_str))
+    {
+    }
+
+
+
+    inline sf_json::sf_json(long double number):sf_json()
     {
         value__->type = sf_json_type::number;
         value__->number_value = number;
     }
 
-    inline sf_json::sf_json(const sf_json &json)
+    inline sf_json::sf_json(const sf_json &json):sf_json()
     {
-        value__ = json.value__;
+        value__=json.value__;
     }
 
     inline sf_json::sf_json(bool boolean_value) : sf_json()
@@ -340,10 +427,6 @@ namespace skyfire
         value__->number_value = boolean_value;
     }
 
-    inline sf_json::sf_json(sf_json_type_null null_value) : sf_json()
-    {
-        value__->type = sf_json_type::null;
-    }
 
     inline sf_json::sf_json(const std::shared_ptr<sf_json_value> &value)
     {
@@ -424,7 +507,7 @@ namespace skyfire
             case sf_json_type::null:
                 return "";
             case sf_json_type::boolean:
-                if (!!value__->number_value)
+                if (value__->number_value != 0)
                 {
                     return "true";
                 } else
@@ -435,21 +518,41 @@ namespace skyfire
                 return std::to_string(value__->number_value);
             case sf_json_type::string:
                 return value__->string_value;
+            default:
+                return "";
         }
     }
 
     inline std::string sf_json::json_string_to_string(std::string json_str)
     {
-        // TODO json字符串转一般字符串
         json_str.erase(json_str.begin());
         json_str.pop_back();
+        sf_string_replace(json_str,"\\\"","\"");
+        sf_string_replace(json_str,"\\/","/");
+        sf_string_replace(json_str,"\\b","\b");
+        sf_string_replace(json_str,"\\f","\f");
+        sf_string_replace(json_str,"\\n","\n");
+        sf_string_replace(json_str,"\\r","\r");
+        sf_string_replace(json_str,"\\t","\t");
+
+        // todo 未处理unicode
+
+        sf_string_replace(json_str,"\\\\","\\");
+
         return json_str;
     }
 
     inline std::string sf_json::string_to_json_string(std::string str)
     {
-        //TODO 一般字符串转json字符串
-
+        sf_string_replace(str,"\\","\\\\");
+        sf_string_replace(str,"\"","\\\"");
+        sf_string_replace(str,"/","\\/");
+        sf_string_replace(str,"\b","\\b");
+        sf_string_replace(str,"\f","\\f");
+        sf_string_replace(str,"\n","\\n");
+        sf_string_replace(str,"\r","\\r");
+        sf_string_replace(str,"\t","\\t");
+        // todo 未处理unicode
         str.insert(str.begin(), '\"');
         str += "\"";
         return str;
@@ -467,14 +570,15 @@ namespace skyfire
                 return false;
             case sf_json_type::boolean:
             case sf_json_type::number:
-                return !!value__->number_value;
+                return value__->number_value != 0;
             case sf_json_type::string:
                 return !value__->string_value.empty();
+            default:
+                return false;
         }
     }
 
-    template<typename T>
-    inline typename std::enable_if<std::is_arithmetic<T>::value, sf_json &>::type sf_json::operator=(const T &value)
+    inline sf_json &sf_json::operator=(long double value)
     {
         if (value__->type != sf_json_type::number)
         {
@@ -504,18 +608,9 @@ namespace skyfire
 
     inline sf_json sf_json::clone() const
     {
-        auto tmp_data = std::make_shared<sf_json_value>();
-        tmp_data->type = value__->type;
-        tmp_data->number_value = value__->number_value;
-        for (auto &p:value__->array_value)
-        {
-            tmp_data->array_value.push_back(sf_json(p).clone().value__);
-        }
-        for (auto &p:value__->object_value)
-        {
-            tmp_data->object_value[p.first] = sf_json(p.second).clone().value__;
-        }
-        return tmp_data;
+        sf_json tmp_json;
+        value_copy__(value__, tmp_json.value__);
+        return tmp_json;
     }
 
     inline bool sf_json::join(const sf_json &other)
@@ -564,7 +659,7 @@ namespace skyfire
         {
             if (len > value__->array_value.size() - pos)
             {
-                len = value__->array_value.size() - pos;
+                len = static_cast<int>(value__->array_value.size() - pos);
             }
             value__->array_value.erase(value__->array_value.begin() + pos, value__->array_value.begin() + pos + len);
         }
@@ -608,19 +703,24 @@ namespace skyfire
                 ret += string_to_json_string(value__->string_value);
                 break;
             case sf_json_type::number:
-                ret += std::to_string(value__->number_value);
+            {
+                char buffer[SF_DEFAULT_BUFFER_SIZE];
+                sprintf(buffer,"%Lg",value__->number_value);
+                ret+=buffer;
                 break;
+            }
             case sf_json_type::boolean:
-                ret += (!!value__->number_value) ? "true" : "false";
+                ret += value__->number_value != 0 ? "true" : "false";
                 break;
             case sf_json_type::null:
                 ret += "null";
                 break;
         }
+        return ret;
     }
 
-    template<typename T>
-    inline sf_json::operator typename std::enable_if<std::is_arithmetic<T>::value, T>::type() const
+
+    inline sf_json::operator long double() const
     {
         switch (value__->type)
         {
@@ -630,10 +730,154 @@ namespace skyfire
             case sf_json_type::string:
                 return 0;
             case sf_json_type::boolean:
-                return !!value__->number_value;
+                return value__->number_value != 0;
             case sf_json_type::number:
                 return value__->number_value;
+            default:
+                return 0;
         }
+    }
+
+    inline sf_json &sf_json::operator=(const sf_json& value)
+    {
+        if(&value != this)
+        {
+            value__ = value.value__;
+        }
+        return *this;
+    }
+
+    inline void sf_json::value_copy__(const std::shared_ptr<sf_json_value>& src, std::shared_ptr<sf_json_value>& dst) const
+    {
+        dst->type = src->type;
+        dst->string_value = src->string_value;
+        dst->number_value = src->number_value;
+        if(!src->array_value.empty())
+        {
+            for (int i=0;i<src->array_value.size();++i)
+            {
+                dst->array_value.push_back(std::make_shared<sf_json_value>());
+                value_copy__(src->array_value[i], dst->array_value[i]);
+            }
+        }
+        if(!src->object_value.empty())
+        {
+            for (auto &p:src->object_value)
+            {
+                dst->object_value[p.first] = std::make_shared<sf_json_value>();
+                value_copy__(p.second, dst->object_value[p.first]);
+            }
+        }
+    }
+
+    inline const sf_json sf_json::operator[](const char *c_str) const
+    {
+        return operator[](std::string(c_str));
+    }
+
+    inline sf_json sf_json::operator[](const char *c_str)
+    {
+        return operator[](std::string(c_str));
+    }
+
+    inline sf_json sf_json::operator[](int key)
+    {
+        if (value__->type != sf_json_type::array)
+        {
+            convert_to_array();
+        }
+        if (value__->array_value.size() <= key)
+        {
+            resize(key+1);
+        }
+        return sf_json(value__->array_value[key]);
+    }
+
+    inline sf_json::operator long long() const
+    {
+        return static_cast<long long>(operator long double());
+    }
+
+    inline sf_json::sf_json(long long number):sf_json(static_cast<long double>(number))
+    {
+    }
+
+    sf_json &sf_json::operator=(long long value)
+    {
+        if (value__->type != sf_json_type::number)
+        {
+            value__->type = sf_json_type::number;
+            clear();
+        }
+        value__->number_value = value;
+        return *this;
+    }
+
+    sf_json &sf_json::operator=(bool value)
+    {
+        if (value__->type != sf_json_type::boolean)
+        {
+            value__->type = sf_json_type::boolean;
+            clear();
+        }
+        value__->number_value = value;
+        return *this;
+    }
+
+    inline bool sf_json::is_null()
+    {
+        return value__->type == sf_json_type::null;
+    }
+
+    inline sf_json::sf_json(int number):sf_json(static_cast<long double>(number))
+    {
+
+    }
+
+    inline sf_json::operator int() const
+    {
+        return static_cast<int>(operator long double());
+    }
+
+    inline sf_json &sf_json::operator=(int value)
+    {
+        return operator=(static_cast<long double>(value));
+    }
+
+    inline sf_json &sf_json::operator=(const char *value)
+    {
+        return operator=(std::string(value));
+    }
+
+    inline void sf_json::convert_to_null()
+    {
+        clear();
+        value__->type = sf_json_type ::null;
+    }
+
+    inline size_t sf_json::size() const
+    {
+        return value__->type == sf_json_type ::array?value__->array_value.size():0;
+    }
+
+    inline bool sf_json::has(const std::string &key)
+    {
+        return value__->type == sf_json_type ::object?value__->object_value.count(key)!=0:0;
+    }
+
+    inline bool sf_json::has(const char *c_key)
+    {
+        return has(std::string(c_key));
+    }
+
+    inline sf_json operator ""_json(const char *str, unsigned long)
+    {
+        return sf_json::from_string(str);
+    }
+
+    inline std::ostream &operator<<(std::ostream &os, const sf_json &json)
+    {
+        return os<<json.to_string();
     }
 
 

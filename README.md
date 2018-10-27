@@ -39,7 +39,14 @@
 * HTTP服务器框架`sf_http_server`，包含基础框架`sf_http_base_server`
 
     `提供HTTP/1.1服务器端实现，包括WebSocket服务器实现。`
-    
+
+* 词法分析器`sf_lex`，语法分析器`sf_yacc`。
+
+    `提供词法分析与语法分析，作为基础的编译器前端。`
+
+* `json`库`sf_json`。
+
+    `提供对json数据的解析，生成，合并等操作，接口友好。`
     
 ### 特点
 
@@ -836,6 +843,395 @@ int main() {
 
 该框架单纯为`http`框架，开发`Web`应用可搭配[`ODB`orm框架](https://www.codesynthesis.com/products/odb/)和[`inja`模板引擎](https://github.com/pantor/inja)
 
+
+#### 词法分析器与语法分析器的使用。
+
+```cpp
+
+#include <iostream>
+#include "sf_lex.hpp"
+#include "sf_yacc.hpp"
+
+using namespace skyfire;
+
+int main()
+{
+    // 1. 一个测试用的json
+    std::string json_str = R"({
+    "code": 0,
+    "message": "交易成功",
+    "object": {
+        "head": {
+            "version": "1.0.0",
+            "code": "contract_setting_info",
+            "timestamp": 1400138523979
+        },
+        "body": {
+            "contractSettings": [
+                {
+                    "contractDict": {
+                        "code": "YGXAG9995",
+                        "name": "粤贵银9995",
+                        "market_code": "PMEC",
+                        "status": 1,
+                        "sort": 0
+                    },
+                    "contractEx": {
+                        "unit_number": 15,
+                        "unit_type": "KG",
+                        "min_quote_unit": 1,
+                        "min_var_unit": 1,
+                        "step_unit": 1,
+                        "currency": "CNY",
+                        "quote_type": 1
+                    },
+                    "contractProtect": {
+                        "spread": 20,
+                        "time_interval": 60000
+                    },
+                    "contractAccess": null
+                },
+                {
+                    "contractDict": {
+                        "code": "YGXAG9999",
+                        "name": "粤贵银9999",
+                        "market_code": "PMEC",
+                        "status": 1,
+                        "sort": 0
+                    },
+                    "contractEx": {
+                        "unit_number": 1,
+                        "unit_type": "KG",
+                        "min_quote_unit": 1,
+                        "min_var_unit": 1,
+                        "step_unit": 1,
+                        "currency": "CNY",
+                        "quote_type": 1
+                    },
+                    "contractProtect": {
+                        "spread": 20,
+                        "time_interval": 600
+                    },
+                    "contractAccess": null
+                },
+                {
+                    "contractDict": {
+                        "code": "YGXAG100G",
+                        "name": "粤贵银100G",
+                        "market_code": "PMEC",
+                        "status": 1,
+                        "sort": 0
+                    },
+                    "contractEx": {
+                        "unit_number": 100,
+                        "unit_type": "g",
+                        "min_quote_unit": 0.001,
+                        "min_var_unit": 0.001,
+                        "step_unit": 0.001,
+                        "currency": "CNY",
+                        "quote_type": 1
+                    },
+                    "contractProtect": {
+                        "spread": 20,
+                        "time_interval": 600
+                    },
+                    "contractAccess": null
+                }
+            ]
+        }
+    },
+    "success": true
+})";
+
+    // 2. 创建一个词法分析器，并添加词法规则
+    sf_lex lex;
+    lex.add_rules({
+                          {"string", R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
+                          {"left_square_bracket", R"(\[)"},
+                          {"right_square_bracket", R"(\])"},
+                          {"left_curly_bracket", R"(\{)"},
+                          {"right_curly_bracket", R"(\})"},
+                          {"comma", R"(,)"},
+                          {"colon", R"(:)"},
+                          {"ws", R"([\r\n\t ]+)"},
+                          {"number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
+                          {"true", R"(true)"},
+                          {"false", R"(false)"},
+                          {"null", R"(null)"}
+                  });
+
+    // 3.词法分析
+    std::vector<sf_lex_result_t> lex_result;
+    if (lex.parse(json_str, lex_result))
+    {
+        // 4. 移除词法分析结果中的空白(ws)
+        lex_result.erase(std::remove_if(lex_result.begin(), lex_result.end(), [](const sf_lex_result_t &r)
+        {
+            return r.id == "ws";
+        }), lex_result.end());
+        for (auto &p:lex_result)
+        {
+            std::cout << p.matched_str << "(" << p.id << ")" << std::flush;
+        }
+
+        std::cout << std::endl << std::endl;
+
+        // 5. 生成语法分析器，添加语法规则
+        sf_yacc yacc;
+        yacc.add_rules({
+                               {
+                                       "value",
+                                       {
+                                               {
+                                                       {"object"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"array"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"number"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"true"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"false"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"null"},
+                                                       nullptr
+                                               }
+                                       }
+                               },
+                               {
+                                   // 6. 表示 文法 object 可由 "left_curly_bracket",  "right_curly_bracket" （即{}）或者
+                                   // "left_curly_bracket",  "members",  "right_curly_bracket"（即{"hello":"world"}）推导出来
+                                   // 用通俗一点的话说，一个json对象，可以是空对象，或者一个或多个键值对构成
+                                       "object",
+                                       {
+                                               {
+                                                       {"left_curly_bracket",  "right_curly_bracket"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"left_curly_bracket",  "members",  "right_curly_bracket"},
+                                                       nullptr
+                                               }
+                                       }
+                               },
+                               {
+                                       "members",
+                                       {
+                                               {
+                                                       {"member"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"members",             "comma",    "member"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"members",             "comma",    "members"},
+                                                       nullptr
+                                               }
+                                       }
+                               },
+                               {
+                                       "member",
+                                       {
+                                               {
+                                                       {"string",              "colon", "array"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string",              "colon",    "object"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string",   "colon", "string"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string", "colon", "number"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string", "colon", "true"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string", "colon", "false"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"string", "colon", "null"},
+                                                       nullptr
+                                               }
+
+                                       }
+                               },
+                               {
+                                       "array",
+                                       {
+                                               {
+                                                       {"left_square_bracket", "right_square_bracket"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"left_square_bracket", "values", "right_square_bracket"},
+                                                       nullptr
+                                               }
+                                       }
+                               },
+                               {
+                                       "values",
+                                       {
+                                               {
+                                                       {"value"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values",            "comma",    "string"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values",            "comma",    "number"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values",            "comma",    "object"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values",            "comma",    "array"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values",            "comma",    "true"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values",            "comma",    "false"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values",            "comma",    "null"},
+                                                       nullptr
+                                               },
+                                               {
+                                                       {"values","comma","values"},
+                                                       nullptr
+                                               }
+                                       }
+                               }
+                       });
+
+        // 7. 添加终结符号，即json最终解析出来的结果应该是value 或者 array 或者 object
+        yacc.add_termanate_ids({"value", "array", "object"});
+        // 8. 语法分析，使用词法分析的结果作为输入
+        std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
+        yacc.parse(lex_result, yacc_result);
+        {
+            for (auto &p:yacc_result)
+            {
+                std::cout << "(" << p->id << ")【" << p->text << "】" << std::flush;
+            }
+        }
+    }
+
+
+}
+```
+
+使用步骤：
+
+对照上述代码，实现一个`json`的词法与语法分析。
+
+1. 测试数据，一个相对比较复杂的`json`。
+
+2. 生成一个词法分析器。设置词法规则。
+
+    ``词法分析器的规则设置函数参数为一个集合，每一项包含一个关键字`id`和一个正则表达式，表示符合该正则表达式的字符串可归约为指定的`id`。``
+
+3. 词法分析，如果成功，回生成一个词法分析结果集合。
+
+4. 移除词法分析结果中的空白结果（`json`中的空白没什么用，但是如果是`python`这类的语言，就不能移除空白了）.
+
+5. 生成语法分析器，添加语法规则。
+
+6. 语法规则的参数相对比较复杂。
+
+    ``整体是一个规则集合，每条记录包含一个关键字`id`，以及可以推导出此`id`的若干条语法/词法规则序列以及推导出来是生成用户数据的回调函数（示例只是为了给`json`做语法解析，而不是真的要处理`json`数据，所以回调函数留空，详细的使用方法，可以参考`sf_json`的实现代码）。
+
+7. 进行语法分析，如果成功，则会返回语法分析结果（如果失败也会返回结果，可以通过查看结果判断语法规则是否出错）。
+
+该分析器使用需要懂一些编译原理的相关知识，如果了解一些语法词法推导，使用还是很轻松的。
+
+#### `json`处理。
+
+```cpp
+#include <sf_json.h>
+#include "sf_json.hpp"
+#include <iostream>
+
+using namespace skyfire;
+using namespace std;
+
+int main()
+{
+    // 1. 使用字面值操作符解析json
+    auto json1 = R"({"name": "wmb","data": [1,2,3,"666"]})"_json;
+    auto json2 = R"({"age":25, "address":"西安"})"_json;
+    auto json3 = R"({"company":"saming"})"_json;
+    // 2. 输出json
+    cout<<json1<<endl;
+    cout<<json2<<endl;
+    cout<<json3<<endl;
+    cout<<"---------"<<endl;
+    // 3. 合并json
+    json1.join(json2);
+    json1.join(json3.clone());
+    cout<<json1<<endl;
+    cout<<json2<<endl;
+    cout<<json3<<endl;
+    cout<<"---------"<<endl;
+    // 4. sf_json底层使用指针，数据属于浅拷贝，所以改变json2的值同样会影响json1的值
+    json2["address"] = "北京";
+    cout<<json1<<endl;
+    cout<<json2<<endl;
+    cout<<json3<<endl;
+    cout<<"---------"<<endl;
+    // 5. json3与json1进行合并时，使用clone()创建了副本（深拷贝）,操作json3不会影响json1
+    json3["company"]="lenovo";
+    cout<<json1<<endl;
+    cout<<json2<<endl;
+    cout<<json3<<endl;
+    cout<<"---------"<<endl;
+}
+```
+
+使用例子：
+
+1. 使用字面值操作符解析`json`。
+
+2. 输出`json`。
+
+3. 合并`json`。
+
+4. `sf_json`底层使用指针，数据属于浅拷贝，所以改变`json2`的值同样会影响`json1`的值。
+
+5. `json3`与`json1`进行合并时，使用`clone()`创建了副本（深拷贝）,操作`json3`不会影响`json1`。
+
+对`json`的更多操作请参阅API文档。
 
 #### 更多
 

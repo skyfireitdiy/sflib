@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include "sf_yacc.h"
 
 namespace skyfire
@@ -129,13 +128,6 @@ namespace skyfire
                     }
                     yacc_result.erase(begin_iter, end_iter);
                     yacc_result.insert(yacc_result.begin() + pos, new_node);
-
-                    for (auto &p:yacc_result)
-                    {
-                        std::cout << p->id << " ";
-                    }
-                    std::cout << std::endl;
-
                     break;
                 }
             }
