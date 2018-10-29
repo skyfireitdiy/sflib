@@ -862,7 +862,7 @@ namespace skyfire
 
     inline bool sf_json::has(const std::string &key)
     {
-        return value__->type == sf_json_type ::object?value__->object_value.count(key)!=0:0;
+        return value__->type == sf_json_type ::object?value__->object_value.count(key)!=0:false;
     }
 
     inline bool sf_json::has(const char *c_key)
