@@ -393,6 +393,20 @@ namespace skyfire
         return std::any_cast<sf_json>(yacc_result[0]->user_data);
     }
 
+    std::set<std::string> sf_json::keys() const
+    {
+        std::set<std::string> ret;
+        if(value__->type != sf_json_type::object)
+        {
+            return ret;
+        }
+        for(auto &p:value__->object_value)
+        {
+            ret.insert(p.first);
+        }
+        return ret;
+    }
+
     inline sf_json::sf_json() : value__(std::make_shared<sf_json_value>())
     {
         value__->type = sf_json_type::null;
@@ -870,7 +884,7 @@ namespace skyfire
         return has(std::string(c_key));
     }
 
-    inline sf_json operator ""_json(const char *str, unsigned long)
+    inline sf_json operator ""_json(const char *str, unsigned int)
     {
         return sf_json::from_string(str);
     }

@@ -312,6 +312,12 @@ namespace skyfire
          * @return 是否为null
          */
         bool is_null();
+
+        /**
+         * 返回object的key列表
+         * @return key列表
+         */
+        std::set<std::string> keys() const;
     };
 
 
@@ -328,6 +334,6 @@ namespace skyfire
      * @param str 字符串
      * @return 长度
      */
-    sf_json operator ""_json(const char *str, unsigned long);
+    sf_json operator ""_json(const char *str, unsigned int);
 
 }
