@@ -15,8 +15,10 @@ namespace skyfire
 
     private:
         std::shared_ptr<sf_json_value> value__;
+
         sf_json(const std::shared_ptr<sf_json_value> &value);
-        void value_copy__(const std::shared_ptr<sf_json_value > &src, std::shared_ptr<sf_json_value>& dst) const;
+
+        void value_copy__(const std::shared_ptr<sf_json_value> &src, std::shared_ptr<sf_json_value> &dst) const;
 
     public:
 
@@ -85,6 +87,7 @@ namespace skyfire
          * 转为object
          */
         void convert_to_object();
+
         /**
          * 转为array
          */
@@ -120,30 +123,35 @@ namespace skyfire
          * @return 值
          */
         const sf_json operator[](const std::string &key) const;
+
         /**
          * 获取对象值
          * @param key 键
          * @return 值
          */
         sf_json operator[](const std::string &key);
+
         /**
          * 获取对象值
          * @param c_key 键
          * @return 值
          */
         const sf_json operator[](const char *c_key) const;
+
         /**
          * 获取对象值
          * @param c_key 键
          * @return 值
          */
-        sf_json operator[](const char *c_key) ;
+        sf_json operator[](const char *c_key);
+
         /**
          * 获取数组值
          * @param key 索引
          * @return 值
          */
         const sf_json operator[](int key) const;
+
         /**
          * 获取数组值
          * @param key 索引
@@ -156,21 +164,25 @@ namespace skyfire
          * @return 字符串
          */
         explicit operator std::string() const;
+
         /**
          * 转换为bool
          * @return bool值
          */
         operator bool() const;
+
         /**
          * 转换为long double
          * @return long double值
          */
         operator long double() const;
+
         /**
          * 转换为long long
          * @return long long值
          */
         operator long long() const;
+
         /**
          * 转换为int
          * @return int值
@@ -182,43 +194,49 @@ namespace skyfire
          * @param value 值
          * @return json对象
          */
-        sf_json & operator=(long double value);
+        sf_json &operator=(long double value);
+
         /**
          * 赋值运算符
          * @param value 值
          * @return json对象
          */
-        sf_json & operator=(long long value);
+        sf_json &operator=(long long value);
+
         /**
          * 赋值运算符
          * @param value 值
          * @return json对象
          */
-        sf_json & operator=(int value);
+        sf_json &operator=(int value);
+
         /**
          * 赋值运算符
          * @param value 值
          * @return json对象
          */
-        sf_json & operator=(bool value);
+        sf_json &operator=(bool value);
+
         /**
          * 赋值运算符
          * @param value 值
          * @return json对象
          */
-        sf_json & operator=(const std::string &value);
+        sf_json &operator=(const std::string &value);
+
         /**
          * 赋值运算符
          * @param value 值
          * @return json对象
          */
-        sf_json & operator=(const char * value);
+        sf_json &operator=(const char *value);
+
         /**
          * 赋值运算符
          * @param value 值
          * @return json对象
          */
-        sf_json & operator=(const sf_json& value);
+        sf_json &operator=(const sf_json &value);
 
         /**
          * 数组追加元素
@@ -238,10 +256,12 @@ namespace skyfire
          * @return 是否合并成功
          */
         bool join(const sf_json &other);
+
         /**
          * 清空（不会改变type）
          */
         void clear();
+
         /**
          * 修改数组大小
          * @param size 大小
@@ -259,14 +279,14 @@ namespace skyfire
          * @param c_key 键
          * @return 是否存在
          */
-        bool has(const std::string& key);
+        bool has(const std::string &key);
 
         /**
          * 是否有某个键
          * @param c_key 键
          * @return 是否存在
          */
-        bool has(const char* c_key);
+        bool has(const char *c_key);
 
         /**
          * 删除数组元素
@@ -280,6 +300,7 @@ namespace skyfire
          * @param len 长度
          */
         void remove(int pos, int len);
+
         /**
          * 删除对象元素
          * @param key 键
@@ -293,13 +314,14 @@ namespace skyfire
         bool is_null();
     };
 
+
     /**
      * 流输出
      * @param os 流
      * @param json json对象
      * @return 流
      */
-    std::ostream& operator<<(std::ostream &os, const sf_json& json);
+    std::ostream &operator<<(std::ostream &os, const sf_json &json);
 
     /**
      * json字面值操作符

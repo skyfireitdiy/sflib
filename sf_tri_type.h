@@ -51,6 +51,13 @@ namespace skyfire
          * @return 类型对象
          */
 		T& operator*();
+
+        /**
+         * 解引用操作符
+         * @return 类型对象指针
+         */
+        T *operator->();
+
         /**
          * @brief operator bool 判断是否赋值
          */

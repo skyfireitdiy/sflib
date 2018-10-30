@@ -50,7 +50,13 @@ namespace skyfire
 		return init__;
 	}
 
-	inline sf_tri_type<void>::sf_tri_type(bool init) : init__(init)
+    template<typename T>
+    T *sf_tri_type<T>::operator->()
+    {
+        return &data__;
+    }
+
+    inline sf_tri_type<void>::sf_tri_type(bool init) : init__(init)
 	{}
 
 	inline sf_tri_type<void>::operator bool() const {
