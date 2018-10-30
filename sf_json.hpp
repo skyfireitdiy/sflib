@@ -14,18 +14,18 @@ namespace skyfire
     {
         sf_lex lex;
         lex.add_rules({
-                              {"string",               R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
-                              {"left_square_bracket",  R"(\[)"},
-                              {"right_square_bracket", R"(\])"},
-                              {"left_curly_bracket",   R"(\{)"},
-                              {"right_curly_bracket",  R"(\})"},
-                              {"comma",                R"(,)"},
-                              {"colon",                R"(:)"},
-                              {"ws",                   R"([\r\n\t ]+)"},
-                              {"number",               R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
-                              {"true",                 R"(true)"},
-                              {"false",                R"(false)"},
-                              {"null",                 R"(null)"}
+                              {"string", R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
+                              {"[",      R"(\[)"},
+                              {"]",      R"(\])"},
+                              {"{",      R"(\{)"},
+                              {"}",      R"(\})"},
+                              {",",      R"(,)"},
+                              {":",      R"(:)"},
+                              {"ws",     R"([\r\n\t ]+)"},
+                              {"number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
+                              {"true",   R"(true)"},
+                              {"false",  R"(false)"},
+                              {"null",   R"(null)"}
                       });
 
         std::vector<sf_lex_result_t> lex_result;
@@ -99,7 +99,7 @@ namespace skyfire
                                        "object",
                                        {
                                                {
-                                                       {"left_curly_bracket",  "right_curly_bracket"},
+                                                       {"{",      "}"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -108,7 +108,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"left_curly_bracket",  "members",  "right_curly_bracket"},
+                                                       {"{",       "members", "}"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            return data[1]->user_data;
@@ -127,7 +127,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"members",             "comma",    "member"},
+                                                       {"members", ",",       "member"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -140,7 +140,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"members","comma","members"},
+                                                       {"members", ",", "members"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -158,7 +158,7 @@ namespace skyfire
                                        "member",
                                        {
                                                {
-                                                       {"string",              "colon", "array"},
+                                                       {"string", ":", "array"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -171,7 +171,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"string",              "colon",    "object"},
+                                                       {"string",  ":",       "object"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -183,7 +183,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"string",   "colon", "string"},
+                                                       {"string",  ":", "string"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -194,7 +194,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"string", "colon", "number"},
+                                                       {"string", ":", "number"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -207,7 +207,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"string", "colon", "true"},
+                                                       {"string", ":", "true"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -217,7 +217,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"string", "colon", "false"},
+                                                       {"string", ":", "false"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -227,7 +227,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"string", "colon", "null"},
+                                                       {"string", ":", "null"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -244,7 +244,7 @@ namespace skyfire
                                        "array",
                                        {
                                                {
-                                                       {"left_square_bracket", "right_square_bracket"},
+                                                       {"[",      "]"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -253,7 +253,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"left_square_bracket", "values", "right_square_bracket"},
+                                                       {"[",       "values",  "]"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            return data[1]->user_data;
@@ -275,7 +275,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",            "comma",    "string"},
+                                                       {"values",  ",",       "string"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -288,7 +288,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",            "comma",    "number"},
+                                                       {"values",  ",", "number"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -303,7 +303,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",            "comma",    "object"},
+                                                       {"values", ",", "object"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -316,7 +316,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",            "comma",    "array"},
+                                                       {"values", ",", "array"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -329,7 +329,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",            "comma",    "true"},
+                                                       {"values", ",", "true"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -342,7 +342,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",            "comma",    "false"},
+                                                       {"values", ",", "false"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -355,7 +355,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",            "comma",    "null"},
+                                                       {"values", ",", "null"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -368,7 +368,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values","comma","values"},
+                                                       {"values", ",", "values"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
