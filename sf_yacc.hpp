@@ -128,6 +128,7 @@ namespace skyfire
                     }
                     yacc_result.erase(begin_iter, end_iter);
                     yacc_result.insert(yacc_result.begin() + pos, new_node);
+
                     break;
                 }
             }
