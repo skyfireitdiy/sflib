@@ -99,6 +99,20 @@ namespace skyfire
         std::string msg;                    // 消息
     };
 
+    namespace
+    {
+        /**
+         * 各种level对应的字符串
+         */
+        std::map<SF_LOG_LEVEL, std::string> logger_level_str__{
+                {SF_DEBUG_LEVEL, "DEBUG"},
+                {SF_INFO_LEVEL,  "INFO "},
+                {SF_WARN_LEVEL,  "WARN "},
+                {SF_ERROR_LEVEL, "ERROR"},
+                {SF_FATAL_LEVEL, "FATAL"},
+        };
+    }
+
     /**
      *  @brief 默认日志格式
      */
@@ -157,7 +171,7 @@ namespace skyfire
 
         void empty_func__(){}
 
-        std::string format(std::string format_str, const sf_logger_info_t__& log_info);
+        static std::string format(std::string format_str, const sf_logger_info_t__ &log_info);
 
     private:
         std::deque<sf_logger_info_t__> log_deque__;
@@ -171,14 +185,6 @@ namespace skyfire
         bool check_key_can_use__(int key);
 
         int make_random_logger_id__();
-
-        std::map<SF_LOG_LEVEL, std::string> logger_level_str__{
-                {SF_DEBUG_LEVEL, "DEBUG"},
-                {SF_INFO_LEVEL,  "INFO "},
-                {SF_WARN_LEVEL,  "WARN "},
-                {SF_ERROR_LEVEL, "ERROR"},
-                {SF_FATAL_LEVEL, "FATAL"},
-        };
 
 
         sf_logger__();
