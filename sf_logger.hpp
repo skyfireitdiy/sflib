@@ -249,7 +249,6 @@ void sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, 
     cond__.notify_one();
 }
 
-inline
 template<typename...U>
 void sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const QString &tmp, const U &...tmp2)
 {
