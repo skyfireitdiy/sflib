@@ -21,8 +21,10 @@
 
 namespace skyfire
 {
-    template<typename _Base>
-    int sf_logger__<_Base>::add_level_func(SF_LOG_LEVEL level, std::function<void(const sf_logger_info_t__ &)> func) {
+    inline int sf_logger::add_level_func(SF_LOG_LEVEL level, std::function<void( const sf_logger_info_t__ &
+
+    )> func)
+{
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0)
         {
@@ -33,8 +35,9 @@ namespace skyfire
         return key;
     }
 
-    template<typename _Base>
-    int sf_logger__<_Base>::add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::string format_str) {
+inline
+int sf_logger::add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::string format_str)
+{
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0)
         {
@@ -48,8 +51,9 @@ namespace skyfire
         return key;
     }
 
-    template<typename _Base>
-    int sf_logger__<_Base>::add_level_file(SF_LOG_LEVEL level, const std::string &filename, std::string format_str) {
+inline
+int sf_logger::add_level_file(SF_LOG_LEVEL level, const std::string &filename, std::string format_str)
+{
         std::shared_ptr<std::ofstream> ofs = std::make_shared<std::ofstream>(filename, std::ios::app);
         if(*ofs)
         {
@@ -70,16 +74,18 @@ namespace skyfire
         }
     }
 
-    template<typename _Base>
-    void sf_logger__<_Base>::remove_filter(int key) {
+inline
+void sf_logger::remove_filter(int key)
+{
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         for(auto &p:logger_func_set__){
             p.second.erase(key);
         }
     }
 
-    template<typename _Base>
-    bool sf_logger__<_Base>::check_key_can_use__(int key) {
+inline
+bool sf_logger::check_key_can_use__(int key)
+{
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         for(const auto &p: logger_func_set__){
             for(const auto &q:p.second){
@@ -90,8 +96,9 @@ namespace skyfire
         return true;
     }
 
-    template<typename _Base>
-    int sf_logger__<_Base>::make_random_logger_id__() {
+inline
+int sf_logger::make_random_logger_id__()
+{
 
         auto make_rand = []{
 #ifdef SF_LOGGER_STANDALONE
@@ -108,10 +115,10 @@ namespace skyfire
         return tmp_key;
     }
 
-    template<typename _Base>
+
     template<typename T>
-    void sf_logger__<_Base>::logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func,
-                                    const T &dt) {
+    inline void sf_logger::logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func,
+                                  const T &dt) {
         sf_logger_info_t__ log_info;
         log_info.level = level;
         log_info.file = file;
@@ -123,8 +130,9 @@ namespace skyfire
         logout__(oss, log_info, dt);
     }
 
-    template<typename _Base>
-    sf_logger__<_Base>::sf_logger__() {
+inline
+sf_logger::sf_logger()
+{
         add_level_stream(SF_DEBUG_LEVEL, &std::cout);
         std::thread([=]()
                     {
@@ -163,16 +171,19 @@ namespace skyfire
                     }).detach();
     }
 
-    template<typename _Base>
+
     template<typename T, typename... U>
-    void sf_logger__<_Base>::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const T &tmp, const U &... tmp2) {
+    inline void
+    sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const T &tmp, const U &... tmp2)
+    {
         oss << "[" << tmp << "]";
         logout__(oss, log_info, tmp2...);
     }
 
-    template<typename _Base>
+
     template<typename T>
-    void sf_logger__<_Base>::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const T &tmp) {
+    inline void sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const T &tmp)
+    {
         oss << "[" << tmp << "]";
         log_info.msg = oss.str();
         {
@@ -182,8 +193,9 @@ namespace skyfire
         cond__.notify_one();
     }
 
-    template<typename _Base>
-    std::string sf_logger__<_Base>::make_time_str__() {
+inline
+std::string sf_logger::make_time_str__()
+{
         auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         tm tm_d;
         tm *ptm = &tm_d;
@@ -197,10 +209,10 @@ namespace skyfire
         return os.str();
     }
 
-    template<typename _Base>
+
     template<typename... T>
-    void sf_logger__<_Base>::logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func,
-                                    const T &... dt) {
+    inline void sf_logger::logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func,
+                                  const T &... dt) {
         sf_logger_info_t__ log_info;
         log_info.level = level;
         log_info.file = file;
@@ -212,8 +224,8 @@ namespace skyfire
         logout__(oss, log_info, dt...);
     }
 
-    template<typename _Base>
-    void sf_logger__<_Base>::stop_logger()
+inline
+void sf_logger::stop_logger()
     {
         run__ = false;
         cond__.notify_all();
@@ -225,30 +237,30 @@ namespace skyfire
     }
 
 #ifdef QT_CORE_LIB
-    template<typename _Base>
-    void sf_logger__<_Base>::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const QString &tmp)
+inline
+void sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const QString &tmp)
+{
+    oss << "[" <<  tmp.toStdString() << "]";
+    log_info.msg = oss.str();
     {
-        oss << "[" <<  tmp.toStdString() << "]";
-        log_info.msg = oss.str();
-        {
-            std::unique_lock<std::mutex> lck(deque_mu__);
-            log_deque__.push_back(log_info);
-        }
-        cond__.notify_one();
+        std::unique_lock<std::mutex> lck(deque_mu__);
+        log_deque__.push_back(log_info);
     }
+    cond__.notify_one();
+}
 
-    template<typename _Base>
-    template<typename...U>
-    void sf_logger__<_Base>::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const QString &tmp, const U &...tmp2)
-    {
-        oss << "[" << tmp.toStdString() << "]";
-        logout__(oss, log_info, tmp2...);
-    }
+inline
+template<typename...U>
+void sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const QString &tmp, const U &...tmp2)
+{
+    oss << "[" << tmp.toStdString() << "]";
+    logout__(oss, log_info, tmp2...);
+}
 
 #endif
 
-    template <typename _Base>
-    inline std::string sf_logger__<_Base>::format(std::string format_str, const sf_logger_info_t__& log_info)
+
+inline std::string sf_logger::format(std::string format_str, const sf_logger_info_t__ &log_info)
     {
         auto replace = [](std::string& str,const std::string &from, const std::string &to)
         {

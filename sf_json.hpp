@@ -884,7 +884,7 @@ namespace skyfire
         return has(std::string(c_key));
     }
 
-    inline sf_json operator ""_json(const char *str, unsigned int)
+    inline sf_json operator ""_json(const char *str, std::size_t)
     {
         return sf_json::from_string(str);
     }

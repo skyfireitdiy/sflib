@@ -334,6 +334,6 @@ namespace skyfire
      * @param str 字符串
      * @return 长度
      */
-    sf_json operator ""_json(const char *str, unsigned int);
+    sf_json operator ""_json(const char *str, std::size_t);
 
 }

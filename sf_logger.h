@@ -120,13 +120,11 @@ namespace skyfire
 
     /**
      * 日志类
-     * @tparam _Base 基类（默认为empty_class）
      */
-    template<typename _Base = sf_empty_class>
-    class sf_logger__ : public _Base
+    class sf_logger
     {
     public:
-        SF_SINGLE_TON(sf_logger__)
+        SF_SINGLE_TON(sf_logger)
 
         /**
          * 添加指定等级的回调函数
@@ -187,7 +185,7 @@ namespace skyfire
         int make_random_logger_id__();
 
 
-        sf_logger__();
+        sf_logger();
 
 
         template<typename T, typename...U>
@@ -204,7 +202,6 @@ namespace skyfire
 
         static std::string make_time_str__();
     };
-    using sf_logger = sf_logger__<>;
 
 
 #ifdef SF_DEBUG
