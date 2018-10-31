@@ -44,6 +44,7 @@ add_executable(test_tcpserver test/test_tcp_server/test_tcp_server.cpp ${headers
 add_executable(test_finally test/test_finally/test_finally.cpp ${headers})
 add_executable(test_grammer test/test_grammer/test_grammer.cpp ${headers})
 add_executable(test_json test/test_json/test_json.cpp ${headers})
+add_executable(test_lisp test/test_lisp/test_lisp.cpp ${headers})
 
 
 IF (WIN32)
