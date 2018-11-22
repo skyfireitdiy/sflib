@@ -13,7 +13,7 @@ namespace skyfire
     inline sf_json sf_json::from_string(const std::string &json_str)
     {
         sf_lex lex;
-        lex.add_rules({
+        lex.set_rules({
                               {"string", R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
                               {"[",      R"(\[)"},
                               {"]",      R"(\])"},

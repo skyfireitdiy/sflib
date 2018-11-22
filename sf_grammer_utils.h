@@ -69,8 +69,6 @@ namespace skyfire
         return a.id==b.id;
     }
 
-
-    constexpr char sf_yacc_begin_mark[] = "__SF_YACC_BEGIN_MARK__";
     constexpr char sf_yacc_end_mark[] = "__SF_YACC_END_MARK__";
 
 }

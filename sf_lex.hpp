@@ -6,11 +6,6 @@
 
 namespace skyfire
 {
-    inline void sf_lex::add_rule(const sf_lex_rule_t &rule)
-    {
-        rules__.push_back(rule);
-    }
-
     inline bool sf_lex::parse(std::string content, std::vector<sf_lex_result_t> &result)
     {
         result.clear();
@@ -58,9 +53,9 @@ namespace skyfire
         return true;
     }
 
-    inline void sf_lex::add_rules(const std::vector<sf_lex_rule_t> &rule)
+    inline void sf_lex::set_rules(const std::vector<sf_lex_rule_t> &rule)
     {
-        rules__.insert(rules__.end(), rule.begin(), rule.end());
+        rules__ = rule;
     }
 
     inline std::vector<sf_lex_rule_t> sf_lex::get_rules() const

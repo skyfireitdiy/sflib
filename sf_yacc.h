@@ -15,38 +15,28 @@ namespace skyfire
     {
 
         std::set<std::string> terminate_ids__;
-
-        std::vector<std::pair<std::pair<sf_yacc_state_node_t,std::string>, sf_yacc_state_node_t>> state_machine__;
-
-        std::unordered_set<std::string> term_words__;
+        std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> dfa__;
 
         static std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> nfa_to_dfa(
                 const std::vector<std::pair<std::pair<sf_yacc_state_node_t, std::string>, sf_yacc_state_node_t>> &old_machine,
                 const std::unordered_set<std::string> &term_words);
 
-        static std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> dfa_to_string(const std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> &dfa);
+        static std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> dfa_optimization(
+                const std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> &dfa);
 
         static std::string state_to_string(const std::set<sf_yacc_state_node_t> &state);
+
+        static std::vector<std::pair<std::pair<sf_yacc_state_node_t,std::string>, sf_yacc_state_node_t>> make_nfa(const std::vector<sf_yacc_rule> &rules);
+
+        static std::unordered_set<std::string> make_term_words(const std::vector<sf_yacc_rule> &rules);
 
     public:
 
         /**
-         * 添加语法规则
-         * @param rule 语法规则
-         */
-        void add_rule(sf_yacc_rule rule);
-
-        /**
-         * 批量添加语法规则
+         * 设置语法规则
          * @param rules 规则集合
          */
-        void add_rules(const std::vector<sf_yacc_rule> &rules);
-
-        /**
-         * 添加终止规则
-         * @param id 终止规则id
-         */
-        void add_terminate_id(const std::string &id);
+        void set_rules(const std::vector<sf_yacc_rule> &rules);
 
         /**
          * 批量添加终止规则

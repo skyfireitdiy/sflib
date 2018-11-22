@@ -9,93 +9,21 @@ using namespace std;
 
 namespace skyfire
 {
-    inline void sf_yacc::add_rule(sf_yacc_rule rule)
+    inline void sf_yacc::set_rules(const std::vector<sf_yacc_rule> &rules)
     {
-        for (auto &p:rule.rules)
-        {
-            if (!p.rule.empty())
-            {
-                p.rule.emplace_back(sf_yacc_end_mark);
-            }
-        }
-        for (auto i:sf_range(rule.rules.size()))
-        {
-            if (rule.rules[i].rule.empty())
-                continue;
-            state_machine__.push_back({{{sf_yacc_begin_mark,nullptr},                       rule.rules[i].rule[0]},
-                                       {rule.id + "_" + std::to_string(i) + "_0", nullptr}});
-            for (auto j:sf_range(rule.rules[i].rule.size() - 1))
-            {
-                state_machine__.push_back(
-                        {{{rule.id + "_" + std::to_string(i) + "_" + std::to_string(j),nullptr},     rule.rules[i].rule[j + 1]},
-                         {rule.id + "_" + std::to_string(i) + "_" + std::to_string(j + 1), nullptr}});
-            }
-            state_machine__.back() = {{{rule.id + "_" + std::to_string(i) + "_" +
-                                       std::to_string(rule.rules[i].rule.size() - 2), nullptr}, rule.rules[i].rule[
-                                                                                              rule.rules[i].rule.size() -
-                                                                                              1]},
-                                      {rule.id,                                       rule.rules[i].callback}};
-        }
-
-        for (auto &p:rule.rules)
-        {
-            for (auto &q:p.rule)
-            {
-                term_words__.insert(q);
-            }
-        }
-    }
-
-    void sf_yacc::add_rules(const std::vector<sf_yacc_rule> &rules)
-    {
-        for (auto &p: rules)
-        {
-            add_rule(p);
-        }
+        dfa__ = dfa_optimization(nfa_to_dfa(make_nfa(rules), make_term_words(rules)));
     }
 
 
     inline bool sf_yacc::parse(std::vector<sf_lex_result_t> lex_result,
                                std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result)
     {
-        auto new_machine = nfa_to_dfa(state_machine__, term_words__);
-
-        cout << new_machine.size() << endl;
-
-        auto dfa_str = dfa_to_string(new_machine);
-
-
-        for (auto &p:state_machine__)
-        {
-            cout << p.first.first.id << "," << p.first.second << "-->" << p.second.id << endl;
-        }
-
-        cout << "--------graph-------" << endl;
-
-        for (auto &p:state_machine__)
-        {
-            cout << "\"" << p.first.first.id << "\"->\"" << p.second.id << "\"[label=\"" << p.first.second << "\"]"
-                 << endl;
-        }
-
-        cout << "=======================" << endl;
-        for (auto &p:dfa_str)
-        {
-            cout << p.first.first << "," << p.first.second << "-->" << p.second.id << endl;
-        }
-
-        cout << "--------graph-------" << endl;
-
-        for (auto &p:dfa_str)
+        for (auto &p:dfa__)
         {
             cout << "\"" << p.first.first << "\"->\"" << p.second.id << "\"[label=\"" << p.first.second << "\"]"
                  << endl;
         }
-    }
-
-    inline void sf_yacc::add_terminate_id(const std::string &id)
-    {
-        terminate_ids__.insert(id);
+        return false;
     }
 
     inline void sf_yacc::add_terminate_ids(const std::set<std::string> &ids)
@@ -118,7 +46,7 @@ namespace skyfire
     }
 
 
-    inline std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> sf_yacc::dfa_to_string(
+    inline std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> sf_yacc::dfa_optimization(
             const std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> &dfa)
     {
         std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> ret;
@@ -137,7 +65,7 @@ namespace skyfire
         return ret;
     }
 
-    std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>>
+    inline std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>>
     sf_yacc::nfa_to_dfa(
             const std::vector<std::pair<std::pair<sf_yacc_state_node_t, std::string>, sf_yacc_state_node_t>> &old_machine,
             const std::unordered_set<std::string> &term_words)
@@ -145,7 +73,11 @@ namespace skyfire
         std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> new_machine;
 
         std::vector<std::set<sf_yacc_state_node_t>> state;
-        state.push_back({{sf_yacc_begin_mark, nullptr}});
+        state.reserve(term_words.size());
+        for (auto &p:term_words)
+        {
+            state.push_back({{p, nullptr}});
+        }
 
         for (int i = 0; i < state.size(); ++i)
         {
@@ -155,9 +87,9 @@ namespace skyfire
                 for (auto &p:term_words)
                 {
                     std::set<sf_yacc_state_node_t> new_state;
-                    auto conv = std::pair < sf_yacc_state_node_t, std::string>(q, p);
-                    auto old_iter = old_machine.begin()-1;
-                    while ((old_iter = std::find_if(old_iter+1, old_machine.end(), [&](auto item)
+                    auto conv = std::pair<sf_yacc_state_node_t, std::string>(q, p);
+                    auto old_iter = old_machine.begin() - 1;
+                    while ((old_iter = std::find_if(old_iter + 1, old_machine.end(), [&](auto item)
                     {
                         return item.first == conv;
                     })) != old_machine.end())
@@ -174,30 +106,71 @@ namespace skyfire
                 }
             }
         }
+        return new_machine;
+    }
 
-        for(auto &p:term_words)
+
+    inline std::vector<std::pair<std::pair<sf_yacc_state_node_t, std::string>, sf_yacc_state_node_t>>
+    sf_yacc::make_nfa(const std::vector<sf_yacc_rule> &rules)
+    {
+        std::vector<std::pair<std::pair<sf_yacc_state_node_t, std::string>, sf_yacc_state_node_t>> nfa;
+        for (auto rule:rules)
         {
-            decltype(new_machine) new_rule;
-            std::pair<std::set<sf_yacc_state_node_t>, std::string> equal_state {{{sf_yacc_begin_mark,nullptr}}, p};
-            for(auto &q:new_machine)
+            for (auto &p:rule.rules)
             {
-                if(q.first == equal_state)
+                if (p.rule.size() == 1)
                 {
-                    auto next_state = q.second;
-                    for(auto &r:new_machine)
-                    {
-                        if(r.first.first == next_state)
-                        {
-                            new_rule.push_back({{{{p,nullptr}},r.first.second},r.second});
-                        }
-                    }
-                    break;
+                    p.rule.emplace_back(sf_yacc_end_mark);
                 }
             }
-            new_machine.insert(new_machine.end(),new_rule.begin(),new_rule.end());
+            for (auto i:sf_range(rule.rules.size()))
+            {
+                if (rule.rules[i].rule.empty())
+                    continue;
+                for (auto j:sf_range(rule.rules[i].rule.size() - 1))
+                {
+                    nfa.push_back(
+                            {{{(j == 0 ? rule.rules[i].rule[0] : rule.id + "_" + std::to_string(i) + "_" +
+                                                                 std::to_string(j)), nullptr}, rule.rules[i].rule[j +
+                                                                                                                  1]},
+                             {rule.id + "_" + std::to_string(i) + "_" + std::to_string(j + 1), nullptr}});
+                }
+                nfa.back() =
+                        {
+                                {
+                                        {
+                                                (rule.rules[i].rule.size() == 2 ?
+                                                 rule.rules[i].rule[0] :
+                                                 rule.id + "_" + std::to_string(i) + "_" +
+                                                 std::to_string(rule.rules[i].rule.size() - 2)),
+                                                nullptr
+                                        },
+                                                 rule.rules[i].rule[rule.rules[i].rule.size() - 1]
+                                },
+                                {
+                                        rule.id, rule.rules[i].callback
+                                }
+                        };
+            }
         }
+        return nfa;
+    }
 
-        return new_machine;
+    inline std::unordered_set<std::string> sf_yacc::make_term_words(const vector<sf_yacc_rule> &rules)
+    {
+        std::unordered_set<std::string> ret;
+        for (auto &p:rules)
+        {
+            for (auto &q:p.rules)
+            {
+                for (auto &r:q.rule)
+                {
+                    ret.insert(r);
+                }
+            }
+        }
+        ret.insert(sf_yacc_end_mark);
+        return ret;
     }
 
 }

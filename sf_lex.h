@@ -14,17 +14,12 @@ namespace skyfire
         std::vector<sf_lex_rule_t> rules__;
 
     public:
-        /**
-         * 添加规则
-         * @param rule 规则
-         */
-        void add_rule(const sf_lex_rule_t& rule);
 
         /**
-         * 批量添加规则
+         * 设置规则
          * @param rule 规则集合
          */
-        void add_rules(const std::vector<sf_lex_rule_t> &rule);
+        void set_rules(const std::vector<sf_lex_rule_t> &rule);
 
         /**
          * 解析
