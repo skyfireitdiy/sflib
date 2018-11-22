@@ -3,6 +3,8 @@
 #include "sf_grammer_utils.h"
 #include <vector>
 #include <set>
+#include <unordered_set>
+
 
 namespace skyfire
 {
@@ -11,12 +13,20 @@ namespace skyfire
      */
     class sf_yacc
     {
-        std::vector<sf_yacc_rule> rules__;
+
         std::set<std::string> terminate_ids__;
 
-        static int
-        rule_matched__(const std::vector<std::string> &rules,
-                       const std::vector<std::shared_ptr<sf_yacc_result_t>> &results);
+        std::vector<std::pair<std::pair<sf_yacc_state_node_t,std::string>, sf_yacc_state_node_t>> state_machine__;
+
+        std::unordered_set<std::string> term_words__;
+
+        static std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> nfa_to_dfa(
+                const std::vector<std::pair<std::pair<sf_yacc_state_node_t, std::string>, sf_yacc_state_node_t>> &old_machine,
+                const std::unordered_set<std::string> &term_words);
+
+        static std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> dfa_to_string(const std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> &dfa);
+
+        static std::string state_to_string(const std::set<sf_yacc_state_node_t> &state);
 
     public:
 
@@ -24,7 +34,7 @@ namespace skyfire
          * 添加语法规则
          * @param rule 语法规则
          */
-        void add_rule(const sf_yacc_rule &rule);
+        void add_rule(sf_yacc_rule rule);
 
         /**
          * 批量添加语法规则
@@ -42,7 +52,7 @@ namespace skyfire
          * 批量添加终止规则
          * @param ids 终止规则id集合
          */
-        void add_termanate_ids(const std::set<std::string> &ids);
+        void add_terminate_ids(const std::set <std::string> &ids);
 
         /**
          * 语法分析
@@ -50,7 +60,7 @@ namespace skyfire
          * @param yacc_result 语法分析结果
          * @return 是否分析完成
          */
-        bool parse(const std::vector<sf_lex_result_t> &lex_result,
+        bool parse(std::vector<sf_lex_result_t> lex_result,
                    std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result);
 
     };

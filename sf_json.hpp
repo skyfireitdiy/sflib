@@ -384,7 +384,7 @@ namespace skyfire
                                }
                        });
 
-        yacc.add_termanate_ids({"value", "array", "object"});
+        yacc.add_terminate_ids({"array", "object"});
         std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
         if (!yacc.parse(lex_result, yacc_result))
         {

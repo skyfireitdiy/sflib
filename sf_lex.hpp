@@ -62,4 +62,19 @@ namespace skyfire
     {
         rules__.insert(rules__.end(), rule.begin(), rule.end());
     }
+
+    inline std::vector<sf_lex_rule_t> sf_lex::get_rules() const
+    {
+        return rules__;
+    }
+
+    inline std::unordered_set<std::string> sf_lex::get_real_term() const
+    {
+        std::unordered_set<std::string> ret;
+        for(auto &p:rules__)
+        {
+            ret.insert(p.id);
+        }
+        return ret;
+    }
 }

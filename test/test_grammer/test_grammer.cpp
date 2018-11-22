@@ -98,12 +98,12 @@ int main()
     sf_lex lex;
     lex.add_rules({
                           {"string", R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
-                          {"left_square_bracket", R"(\[)"},
-                          {"right_square_bracket", R"(\])"},
-                          {"left_curly_bracket", R"(\{)"},
-                          {"right_curly_bracket", R"(\})"},
-                          {"comma", R"(,)"},
-                          {"colon", R"(:)"},
+                          {"[", R"(\[)"},
+                          {"]", R"(\])"},
+                          {"{", R"(\{)"},
+                          {"}", R"(\})"},
+                          {",", R"(,)"},
+                          {":", R"(:)"},
                           {"ws", R"([\r\n\t ]+)"},
                           {"number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
                           {"true", R"(true)"},
@@ -164,17 +164,17 @@ int main()
                                        }
                                },
                                {
-                                   // 6. 表示 文法 object 可由 "left_curly_bracket",  "right_curly_bracket" （即{}）或者
-                                   // "left_curly_bracket",  "members",  "right_curly_bracket"（即{"hello":"world"}）推导出来
+                                   // 6. 表示 文法 object 可由 "{",  "}" （即{}）或者
+                                   // "{",  "members",  "}"（即{"hello":"world"}）推导出来
                                    // 用通俗一点的话说，一个json对象，可以是空对象，或者一个或多个键值对构成
                                        "object",
                                        {
                                                {
-                                                       {"left_curly_bracket",  "right_curly_bracket"},
+                                                       {"{",  "}"},
                                                        nullptr
                                                },
                                                {
-                                                       {"left_curly_bracket",  "members",  "right_curly_bracket"},
+                                                       {"{",  "members",  "}"},
                                                        nullptr
                                                }
                                        }
@@ -187,11 +187,7 @@ int main()
                                                        nullptr
                                                },
                                                {
-                                                       {"members",             "comma",    "member"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"members",             "comma",    "members"},
+                                                       {"members",             ",",    "member"},
                                                        nullptr
                                                }
                                        }
@@ -200,45 +196,20 @@ int main()
                                        "member",
                                        {
                                                {
-                                                       {"string",              "colon", "array"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string",              "colon",    "object"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string",   "colon", "string"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "number"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "true"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "false"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "null"},
+                                                       {"string",              ":", "value"},
                                                        nullptr
                                                }
-
                                        }
                                },
                                {
                                        "array",
                                        {
                                                {
-                                                       {"left_square_bracket", "right_square_bracket"},
+                                                       {"[", "]"},
                                                        nullptr
                                                },
                                                {
-                                                       {"left_square_bracket", "values", "right_square_bracket"},
+                                                       {"[", "values", "]"},
                                                        nullptr
                                                }
                                        }
@@ -251,35 +222,7 @@ int main()
                                                        nullptr
                                                },
                                                {
-                                                       {"values",            "comma",    "string"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "number"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "object"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "array"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "true"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "false"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "null"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values","comma","values"},
+                                                       {"values",            ",",    "value"},
                                                        nullptr
                                                }
                                        }
@@ -287,7 +230,7 @@ int main()
                        });
 
         // 7. 添加终结符号，即json最终解析出来的结果应该是value 或者 array 或者 object
-        yacc.add_termanate_ids({"value", "array", "object"});
+        yacc.add_terminate_ids({"array", "object"});
         // 8. 语法分析，使用词法分析的结果作为输入
         std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
         yacc.parse(lex_result, yacc_result);

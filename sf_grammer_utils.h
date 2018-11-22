@@ -55,4 +55,22 @@ namespace skyfire
     };
 
 
+    struct sf_yacc_state_node_t{
+        std::string id;
+        std::function<std::any(const std::vector<std::shared_ptr<sf_yacc_result_t>> &)> callback;
+    };
+
+    inline bool operator<(const sf_yacc_state_node_t& a,const sf_yacc_state_node_t& b)
+    {
+        return a.id<b.id;
+    }
+    inline bool operator==(const sf_yacc_state_node_t& a,const sf_yacc_state_node_t& b)
+    {
+        return a.id==b.id;
+    }
+
+
+    constexpr char sf_yacc_begin_mark[] = "__SF_YACC_BEGIN_MARK__";
+    constexpr char sf_yacc_end_mark[] = "__SF_YACC_END_MARK__";
+
 }

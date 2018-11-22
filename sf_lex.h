@@ -2,6 +2,7 @@
 
 #include "sf_grammer_utils.h"
 #include <vector>
+#include <unordered_set>
 
 namespace skyfire
 {
@@ -32,6 +33,18 @@ namespace skyfire
          * @return 是否解析成功
          */
         bool parse(std::string content, std::vector<sf_lex_result_t> &result);
+
+        /**
+         * 获取规则
+         * @return 规则
+         */
+        std::vector<sf_lex_rule_t> get_rules() const;
+
+        /**
+         * 获取终结符
+         * @return 终结符
+         */
+        std::unordered_set<std::string> get_real_term() const;
     };
 
 
