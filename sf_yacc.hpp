@@ -3,32 +3,53 @@
 #include "sf_yacc.h"
 #include "sf_range.hpp"
 
-#include <iostream>
-
-using namespace std;
-
 namespace skyfire
 {
     inline void sf_yacc::set_rules(const std::vector<sf_yacc_rule> &rules)
     {
-        dfa__ = dfa_optimization(nfa_to_dfa(make_nfa(rules), make_term_words(rules)));
+        term_words__ = make_term_words(rules);
+        dfa__ = dfa_optimize(nfa_to_dfa(make_nfa(rules), term_words__));
     }
 
-
-    inline bool sf_yacc::parse(std::vector<sf_lex_result_t> lex_result,
+    inline bool sf_yacc::parse(const std::vector<sf_lex_result_t> &lex_result,
                                std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result)
     {
-        for (auto &p:dfa__)
+        auto prepare_items = make_yacc_result_from_lex_result(lex_result);
+        yacc_result.clear();
+
+        // NOTE 这里故意不+1
+        for (int i = 0; i < prepare_items.size();)
         {
-            cout << "\"" << p.first.first << "\"->\"" << p.second.id << "\"[label=\"" << p.first.second << "\"]"
-                 << endl;
+            if (reduce_new_node(yacc_result, prepare_items[i], dfa__, term_words__))
+            {
+                ++i;
+                continue;
+            }
+            if (self_reduce_two(yacc_result, dfa__, term_words__))
+                continue;
+            if (self_reduce_one(yacc_result, dfa__))
+                continue;
+            if (add_new_node(yacc_result, prepare_items[i], dfa__))
+            {
+                ++i;
+                continue;
+            }
+            return false;
         }
-        return false;
+
+        if (yacc_result.size() != 1)
+            return false;
+        while (terminate_ids__.count(yacc_result[0]->id) == 0)
+        {
+            if (!self_reduce_one(yacc_result, dfa__))
+                return false;
+        }
+        return true;
     }
 
-    inline void sf_yacc::add_terminate_ids(const std::set<std::string> &ids)
+    inline void sf_yacc::add_terminate_ids(const std::unordered_set<std::string> &ids)
     {
-        terminate_ids__.insert(ids.begin(), ids.end());
+        terminate_ids__ = ids;
     }
 
     inline std::string sf_yacc::state_to_string(const std::set<sf_yacc_state_node_t> &state)
@@ -46,7 +67,7 @@ namespace skyfire
     }
 
 
-    inline std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> sf_yacc::dfa_optimization(
+    inline std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> sf_yacc::dfa_optimize(
             const std::vector<std::pair<std::pair<std::set<sf_yacc_state_node_t>, std::string>, std::set<sf_yacc_state_node_t>>> &dfa)
     {
         std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> ret;
@@ -156,7 +177,7 @@ namespace skyfire
         return nfa;
     }
 
-    inline std::unordered_set<std::string> sf_yacc::make_term_words(const vector<sf_yacc_rule> &rules)
+    inline std::unordered_set<std::string> sf_yacc::make_term_words(const std::vector<sf_yacc_rule> &rules)
     {
         std::unordered_set<std::string> ret;
         for (auto &p:rules)
@@ -171,6 +192,132 @@ namespace skyfire
         }
         ret.insert(sf_yacc_end_mark);
         return ret;
+    }
+
+    inline std::vector<std::shared_ptr<sf_yacc_result_t>>
+    sf_yacc::make_yacc_result_from_lex_result(const std::vector<sf_lex_result_t> &lex_result)
+    {
+        std::vector<std::shared_ptr<sf_yacc_result_t>> ret;
+        for (auto &p:lex_result)
+        {
+            auto tmp = std::make_shared<sf_yacc_result_t>();
+            tmp->id = p.id;
+            tmp->text = p.matched_str;
+            ret.emplace_back(tmp);
+        }
+        return ret;
+    }
+
+    inline bool sf_yacc::self_reduce_one(std::vector<std::shared_ptr<sf_yacc_result_t>> &result,
+                                         const std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> &dfa)
+    {
+        if (result.empty())
+            return false;
+        auto left = result.back();
+        auto conv = std::make_pair(left->id, std::string(sf_yacc_end_mark));
+        auto iter = std::find_if(dfa.begin(), dfa.end(), [&](auto &item)
+        {
+            return item.first == conv;
+        });
+        if (iter == dfa.end())
+            return false;
+        auto new_node = std::make_shared<sf_yacc_result_t>();
+        new_node->id = iter->second.id;
+        new_node->text = left->text;
+        new_node->children.push_back(left);
+        new_node->user_data = left->user_data;
+        if (iter->second.callback)
+        {
+            new_node->user_data = iter->second.callback(new_node->children);
+        }
+        result.resize(result.size() - 1);
+        result.push_back(new_node);
+        return true;
+    }
+
+    inline bool sf_yacc::self_reduce_two(std::vector<std::shared_ptr<sf_yacc_result_t>> &result,
+                                         const std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> &dfa,
+                                         const std::unordered_set<std::string> &term_words)
+    {
+        if (result.size() < 2)
+            return false;
+        auto left = *(result.end() - 2);
+        auto right = *(result.end() - 1);
+        auto conv = std::make_pair(left->id, right->id);
+        auto iter = std::find_if(dfa.begin(), dfa.end(), [&](auto &item)
+        {
+            return item.first == conv;
+        });
+        if (iter == dfa.end())
+            return false;
+        auto new_node = std::make_shared<sf_yacc_result_t>();
+        new_node->id = iter->second.id;
+        new_node->text = left->text + right->text;
+        if (term_words.count(left->id) == 0)
+        {
+            new_node->children = left->children;
+        } else
+        {
+            new_node->children.push_back(left);
+        }
+        new_node->children.push_back(right);
+        if (iter->second.callback)
+        {
+            new_node->user_data = iter->second.callback(new_node->children);
+        }
+        result.resize(result.size() - 2);
+        result.push_back(new_node);
+        return true;
+    }
+
+    inline bool sf_yacc::reduce_new_node(std::vector<std::shared_ptr<sf_yacc_result_t>> &result,
+                                         const std::shared_ptr<sf_yacc_result_t> &r_node,
+                                         const std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> &dfa,
+                                         const std::unordered_set<std::string> &term_words)
+    {
+        if (result.empty())
+            return false;
+        auto left = result.back();
+        auto right = r_node;
+        auto conv = std::make_pair(left->id, right->id);
+        auto iter = std::find_if(dfa.begin(), dfa.end(), [&](auto &item)
+        {
+            return item.first == conv;
+        });
+        if (iter == dfa.end())
+            return false;
+        auto new_node = std::make_shared<sf_yacc_result_t>();
+        new_node->id = iter->second.id;
+        new_node->text = left->text + right->text;
+        if (term_words.count(left->id) == 0)
+        {
+            new_node->children = left->children;
+        } else
+        {
+            new_node->children.push_back(left);
+        }
+        new_node->children.push_back(right);
+        if (iter->second.callback)
+        {
+            new_node->user_data = iter->second.callback(new_node->children);
+        }
+        result.resize(result.size() - 1);
+        result.push_back(new_node);
+        return true;
+    }
+
+    inline bool sf_yacc::add_new_node(std::vector<std::shared_ptr<sf_yacc_result_t>> &result,
+                                      const std::shared_ptr<sf_yacc_result_t> &r_node,
+                                      const std::vector<std::pair<std::pair<std::string, std::string>, sf_yacc_state_node_t>> &dfa)
+    {
+        auto iter = std::find_if(dfa.begin(), dfa.end(), [&](auto &item)
+        {
+            return item.first.first == r_node->id;
+        });
+        if (iter == dfa.end())
+            return false;
+        result.push_back(r_node);
+        return true;
     }
 
 }

@@ -122,7 +122,7 @@ namespace skyfire
          * @param key 键
          * @return 值
          */
-        const sf_json operator[](const std::string &key) const;
+        const sf_json at(const std::string &key) const;
 
         /**
          * 获取对象值
@@ -136,7 +136,7 @@ namespace skyfire
          * @param c_key 键
          * @return 值
          */
-        const sf_json operator[](const char *c_key) const;
+        const sf_json at(const char *c_key) const;
 
         /**
          * 获取对象值
@@ -150,7 +150,7 @@ namespace skyfire
          * @param key 索引
          * @return 值
          */
-        const sf_json operator[](int key) const;
+        const sf_json at(int key) const;
 
         /**
          * 获取数组值

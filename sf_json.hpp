@@ -38,7 +38,7 @@ namespace skyfire
             return r.id == "ws";
         }), lex_result.end());
         sf_yacc yacc;
-        yacc.add_rules({
+        yacc.set_rules({
                                {
                                        "value",
                                        {
@@ -138,19 +138,6 @@ namespace skyfire
                                                            json.join(js2);
                                                            return json;
                                                        }
-                                               },
-                                               {
-                                                       {"members", ",", "members"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_object();
-                                                           sf_json js1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json js2 = std::any_cast<sf_json>(data[2]->user_data);
-                                                           json.join(js1);
-                                                           json.join(js2);
-                                                           return json;
-                                                       }
                                                }
                                        }
                                },
@@ -158,86 +145,17 @@ namespace skyfire
                                        "member",
                                        {
                                                {
-                                                       {"string", ":", "array"},
+                                                       {"string", ":", "value"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
                                                            json.convert_to_object();
                                                            auto json1 = std::any_cast<sf_json>(data[2]->user_data);
-
                                                            json[sf_json::json_string_to_string(
                                                                    data[0]->text)] = json1;
                                                            return json;
                                                        }
-                                               },
-                                               {
-                                                       {"string",  ":",       "object"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_object();
-                                                           json[sf_json::json_string_to_string(
-                                                                   data[0]->text)] = std::any_cast<sf_json>(
-                                                                   data[2]->user_data);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"string",  ":", "string"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_object();
-                                                           json[sf_json::json_string_to_string(data[0]->text)] = sf_json::json_string_to_string(
-                                                                   data[2]->text);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"string", ":", "number"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_object();
-                                                           long double tmp_num;
-                                                           sscanf(data[2]->text.c_str(), "%Lf", &tmp_num);
-                                                           json[sf_json::json_string_to_string(
-                                                                   data[0]->text)] = tmp_num;
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"string", ":", "true"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_object();
-                                                           json[sf_json::json_string_to_string(data[0]->text)] = true;
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"string", ":", "false"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_object();
-                                                           json[sf_json::json_string_to_string(data[0]->text)] = false;
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"string", ":", "null"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_object();
-                                                           json[sf_json::json_string_to_string(
-                                                                   data[0]->text)] = sf_json();
-                                                           return json;
-                                                       }
                                                }
-
                                        }
                                },
                                {
@@ -275,35 +193,7 @@ namespace skyfire
                                                        }
                                                },
                                                {
-                                                       {"values",  ",",       "string"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2(sf_json::json_string_to_string(data[2]->text));
-                                                           json.join(json1);
-                                                           json.append(json2);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"values",  ",", "number"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           long double tmp_num;
-                                                           sscanf(data[2]->text.c_str(), "%Lf", &tmp_num);
-                                                           sf_json json2(tmp_num);
-                                                           json.join(json1);
-                                                           json.append(json2);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"values", ",", "object"},
+                                                       {"values",  ",",       "value"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            sf_json json;
@@ -312,71 +202,6 @@ namespace skyfire
                                                            sf_json json2 = std::any_cast<sf_json>(data[2]->user_data);
                                                            json.join(json1);
                                                            json.append(json2);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"values", ",", "array"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2 = std::any_cast<sf_json>(data[2]->user_data);
-                                                           json.join(json1);
-                                                           json.append(json2);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"values", ",", "true"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2(true);
-                                                           json.join(json1);
-                                                           json.append(json2);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"values", ",", "false"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2(false);
-                                                           json.join(json1);
-                                                           json.append(json2);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"values", ",", "null"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2();
-                                                           json.join(json1);
-                                                           json.append(json2);
-                                                           return json;
-                                                       }
-                                               },
-                                               {
-                                                       {"values", ",", "values"},
-                                                       [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
-                                                       {
-                                                           sf_json json;
-                                                           json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2 = std::any_cast<sf_json>(data[2]->user_data);
-                                                           json.join(json1);
-                                                           json.join(json2);
                                                            return json;
                                                        }
                                                }
@@ -473,7 +298,7 @@ namespace skyfire
     }
 
 
-    inline const sf_json sf_json::operator[](const std::string &key) const
+    inline const sf_json sf_json::at(const std::string &key) const
     {
         if (value__->type != sf_json_type::object)
         {
@@ -499,7 +324,7 @@ namespace skyfire
         return sf_json(value__->object_value[key]);
     }
 
-    inline const sf_json sf_json::operator[](int key) const
+    inline const sf_json sf_json::at(int key) const
     {
         if (value__->type != sf_json_type::array)
         {
@@ -756,7 +581,11 @@ namespace skyfire
     {
         if(&value != this)
         {
-            value__ = value.value__;
+            value__->object_value = value.value__->object_value;
+            value__->array_value = value.value__->array_value;
+            value__->type = value.value__->type;
+            value__->number_value = value.value__->number_value;
+            value__->string_value = value.value__->string_value;
         }
         return *this;
     }
@@ -784,9 +613,9 @@ namespace skyfire
         }
     }
 
-    inline const sf_json sf_json::operator[](const char *c_str) const
+    inline const sf_json sf_json::at(const char *c_str) const
     {
-        return operator[](std::string(c_str));
+        return at(std::string(c_str));
     }
 
     inline sf_json sf_json::operator[](const char *c_str)

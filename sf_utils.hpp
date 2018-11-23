@@ -214,6 +214,8 @@ namespace skyfire
 
     inline void sf_string_replace(std::string& str,const std::string &from, const std::string &to)
     {
+        if(str.empty())
+            return;
         size_t start_pos = 0;
         while ((start_pos = str.find(from, start_pos)) != std::string::npos)
         {
