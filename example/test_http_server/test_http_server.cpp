@@ -105,8 +105,8 @@ int main() {
     // 5. 添加一个websocket路由，地址为/ws，回调函数为websocket_route
     server->add_router(make_websocket_router("/ws", websocket_route));
 
-    // 6. 设置一个静态资源路由，位置为"../test/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
-    server->add_router(make_static_router(R"(../test/test_http_server/testWebsite)", {{"*"s}}, "utf-8", true));
+    // 6. 设置一个静态资源路由，位置为"../example/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
+    server->add_router(make_static_router(R"(../example/test_http_server/testWebsite)", {{"*"s}}, "utf-8", true));
 
     // 7. 启动服务
     server->start();
