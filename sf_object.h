@@ -19,12 +19,16 @@
 #pragma once
 
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <thread>
 #include <functional>
+#include <any>
 #include "sf_empty_class.hpp"
 #include "sf_msg_queue.hpp"
 #include "sf_eventloop.hpp"
+#include "sf_object_global_meta_info.h"
+#include "sf_object_class_meta_helper.h"
 
 /*
  * SF_REG_SIGNAL 注册信号的宏
@@ -126,6 +130,8 @@ public:                                                                         
 (objptr)->__sf_signal_unbind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,bind_id);    \
 
 
+#define sf_meta_class(x) sf_object_class_meta_helper class_meta_##__LINE__{[=]{sf_object_global_meta_info::get_instance()->add_meta<x>(#x);}};
+
 namespace skyfire
 {
     /**
@@ -133,6 +139,9 @@ namespace skyfire
      */
     class sf_object
     {
+    private:
+        std::unordered_map<std::string, std::function<void(std::any)>> member_set_callback__;
+
     public:
         template<typename _VectorType, typename _FuncType>
         int __sf_bind_helper(std::recursive_mutex &mu,_VectorType &vec, _FuncType func, bool mul_thread);
@@ -150,10 +159,13 @@ namespace skyfire
         void __sf_aop_unbind_helper(std::recursive_mutex &mu,_VectorType &vec, int bind_id);
 
 
+
         virtual ~sf_object();
 
     protected:
         sf_msg_queue* __p_msg_queue__ = sf_msg_queue::get_instance();
+
+        friend class sf_object_mem_meta_helper;
     };
 
 }

@@ -1,0 +1,38 @@
+{
+  "objects": [
+    {
+      "id": "student",
+      "scope": "singleton",
+      "class": "person",
+      "property": {
+        "name": {
+          "type": "value",
+          "value": "skyfire"
+        },
+        "age": {
+          "type": "value",
+          "data": 25
+        },
+        "parent": {
+          "type": "ref",
+          "data": "teacher"
+        }
+      }
+    },
+    {
+      "id": "teacher",
+      "scope": "singleton",
+      "class": "person",
+      "property": {
+        "name": {
+          "type": "value",
+          "data": "my_teacher"
+        },
+        "age": {
+          "type": "value",
+          "data": 70
+        }
+      }
+    }
+  ]
+}

@@ -45,6 +45,8 @@ add_executable(test_finally example/test_finally/test_finally.cpp ${headers})
 add_executable(test_grammer example/test_grammer/test_grammer.cpp ${headers})
 add_executable(test_json example/test_json/test_json.cpp ${headers})
 add_executable(test_factory example/test_factory/test_factory.cpp ${headers})
+add_executable(test_object_manager example/test_object_manager/test_object_manager.cpp ${headers})
+
 
 
 

@@ -19,6 +19,7 @@
 #pragma once
 
 #include "sf_object.h"
+#include "sf_object_global_meta_info.hpp"
 
 namespace skyfire
 {
