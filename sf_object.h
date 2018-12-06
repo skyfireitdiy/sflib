@@ -28,7 +28,8 @@
 #include "sf_msg_queue.hpp"
 #include "sf_eventloop.hpp"
 #include "sf_object_global_meta_info.h"
-#include "sf_object_class_meta_helper.h"
+#include "sf_json.h"
+
 
 /*
  * SF_REG_SIGNAL 注册信号的宏
@@ -129,8 +130,18 @@ public:                                                                         
 #define sf_unbind_signal(objptr,name,bind_id)                                                                           \
 (objptr)->__sf_signal_unbind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,bind_id);    \
 
+#define _CONSTR(a,b) a##b
+#define CONSTR(a,b) _CONSTR(a,b)
 
-#define sf_meta_class(x) sf_object_class_meta_helper class_meta_##__LINE__{[=]{sf_object_global_meta_info::get_instance()->add_meta<x>(#x);}};
+#define sf_class(x) sf_object_class_meta_helper CONSTR(class_meta_,__LINE__){[]{sf_object_global_meta_info::get_instance()->add_meta<x>(#x);}};
+
+
+#define sf_member(type,name) type name;                                                                                 \
+sf_object_mem_meta_helper CONSTR(mem_meta_,__LINE__){dynamic_cast<sf_object*>(this),#name,std::function<void(sf_json)>([=](sf_json value){                                            \
+    type tmp_value = static_cast<type>(value);                                                                        \
+    name = tmp_value;                                                                                                   \
+})};                                                                                                                     \
+
 
 namespace skyfire
 {
@@ -139,8 +150,6 @@ namespace skyfire
      */
     class sf_object
     {
-    private:
-        std::unordered_map<std::string, std::function<void(std::any)>> member_set_callback__;
 
     public:
         template<typename _VectorType, typename _FuncType>
@@ -162,10 +171,12 @@ namespace skyfire
 
         virtual ~sf_object();
 
-    protected:
+    private:
+        std::unordered_map<std::string, std::function<void(sf_json)>> member_set_callback__;
         sf_msg_queue* __p_msg_queue__ = sf_msg_queue::get_instance();
 
         friend class sf_object_mem_meta_helper;
+        friend class sf_object_global_meta_info;
     };
 
 }

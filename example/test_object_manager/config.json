@@ -1,36 +1,31 @@
 {
   "objects": [
     {
-      "id": "student",
+      "id": "my_student",
       "scope": "singleton",
-      "class": "person",
+      "class": "student",
       "property": {
         "name": {
-          "type": "value",
           "value": "skyfire"
         },
         "age": {
-          "type": "value",
-          "data": 25
+          "value": 25
         },
-        "parent": {
-          "type": "ref",
-          "data": "teacher"
+        "works": {
+          "ref": "my_work"
         }
       }
     },
     {
-      "id": "teacher",
+      "id": "my_work",
       "scope": "singleton",
-      "class": "person",
+      "class": "work",
       "property": {
         "name": {
-          "type": "value",
-          "data": "my_teacher"
+          "value":"拧螺丝"
         },
-        "age": {
-          "type": "value",
-          "data": 70
+        "time": {
+          "value": 20
         }
       }
     }

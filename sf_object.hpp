@@ -20,6 +20,10 @@
 
 #include "sf_object.h"
 #include "sf_object_global_meta_info.hpp"
+#include "sf_object_class_meta_helper.hpp"
+#include "sf_object_mem_meta_helper.hpp"
+#include "sf_object_manager.hpp"
+#include "sf_json.hpp"
 
 namespace skyfire
 {

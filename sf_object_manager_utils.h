@@ -37,6 +37,6 @@ namespace skyfire
     
     struct object_manager_meta_t
     {
-        std::vector<object_item_meta_t> objects;
+        std::unordered_map<std::string,object_item_meta_t> objects;
     };
 }

@@ -3,6 +3,9 @@
 #include "sf_nocopy.h"
 #include "sf_single_instance.h"
 #include "sf_object_factory.h"
+#include "sf_json.h"
+#include <memory>
+#include <string>
 
 namespace skyfire
 {
@@ -19,7 +22,10 @@ namespace skyfire
     public:
         template <typename T>
         void add_meta(const std::string& class_name);
-        template <typename T, typename V>
-        bool set_value(const std::shared_ptr<T> object, const std::string& key,V && value);
+        template <typename T>
+        bool set_value(std::shared_ptr<T> object, const std::string& key,sf_json  value);
+
+        template <typename T>
+        std::shared_ptr<T> get_object(const std::string &key);
     };
 }
