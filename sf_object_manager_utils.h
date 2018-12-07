@@ -4,7 +4,6 @@
 #include <vector>
 #include <any>
 #include <unordered_map>
-#include "sf_json.hpp"
 
 namespace skyfire
 {
@@ -13,19 +12,8 @@ namespace skyfire
         singleton,
         prototype
     };
-
-    enum class object_value_type_t{
-        value,
-        ref
-    };
     
-    struct object_property_t
-    {
-        object_value_type_t type;
-        sf_json data;
-    };  
-    
-    using object_properties_t = std::unordered_map<std::string, object_property_t>;
+    using object_properties_t = std::unordered_map<std::string, std::any>;
     
     struct object_item_meta_t
     {

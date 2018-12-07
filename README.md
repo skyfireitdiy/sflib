@@ -51,6 +51,8 @@
 * 对象工厂`sf_object_factory`
 
     `提供工厂模式的简单实现。`
+
+* 控制反转实现
     
 ### 特点
 
@@ -1184,6 +1186,8 @@ int main()
 
 #### `json`处理。
 
+使用例子：
+
 ```cpp
 #include <sf_json.h>
 #include "sf_json.hpp"
@@ -1225,7 +1229,6 @@ int main()
 }
 ```
 
-使用例子：
 
 1. 使用字面值操作符解析`json`。
 
@@ -1238,6 +1241,114 @@ int main()
 5. `json3`与`json1`进行合并时，使用`clone()`创建了副本（深拷贝）,操作`json3`不会影响`json1`。
 
 对`json`的更多操作请参阅API文档。
+
+
+#### 控制反转,依赖注入
+
+使用例子
+
+```cpp
+#include "sf_object.hpp"
+
+using namespace skyfire;
+using namespace std;
+
+class work : public sf_object
+{
+private:
+    sf_meta_value(string,name);
+    sf_meta_value(int,time);
+};
+sf_class(work)
+
+class student : public sf_object
+{
+private:
+    sf_meta_value(string, name)
+    sf_meta_value(int, age)
+    sf_meta_ref(work,works)
+    sf_meta_pointer(work,works2)
+};
+sf_class(student)
+
+
+int main()
+{
+    // 1.创建一个manager
+    sf_object_manager manager;
+    // 2.加载配置文件
+    auto ret = manager.load_config("/home/skyfire/CLionProjects/sflib/example/test_object_manager/config.json");
+
+    if(!ret){
+        cout<<"加载配置文件失败";
+        return 0;
+    }
+
+    // 3. 获取my_work对象，类型是work
+    auto wk = manager.get_object<work>("my_work");
+
+    // 4.将my_work序列化为json
+    cout<<wk->to_json()<<endl;
+
+    // 5. 修改my_work的属性
+    wk->set_name("skyfire");
+
+
+    cout<<wk->to_json()<<endl;
+
+    // 6. 再次获取my_work对象，此时获取到的与上一次一致
+    wk = manager.get_object<work>("my_work");
+    cout<<wk->to_json()<<endl;
+
+    // 7. 获取student对象，此时student中的works属性与上面的my_work一致
+    auto st = manager.get_object<student>("my_student");
+    cout<<st->to_json()<<endl;
+
+}
+```
+
+要支持依赖注入，必须从`sf_object`派生，并且使用`sf_meta_value`,`sf_meta_ref`,`sf_meta_pointer`定义成员函数，其中`sf_meta_value`为基础类型（数字、字符串、布尔），`sf_meta_ref`表示其他`sf_object`类型，`sf_meta_pointer`会创建一个`sf_object`的智能指针`shared_ptr`，暂不支持容器，后期考虑支持。
+
+程序加载一个`json`格式的配置文件，配置文件负责依赖注入，配置文件如下：
+
+```json
+{
+  "objects": [
+    {
+      "id": "my_student",
+      "scope": "singleton",
+      "class": "student",
+      "property": {
+        "name":  "skyfire",
+        "age": 25,
+        "works": "my_work",
+        "works2" : "my_work2"
+      }
+    },
+    {
+      "id": "my_work",
+      "scope": "singleton",
+      "class": "work",
+      "property": {
+        "name":"拧螺丝",
+        "time": 20
+      }
+    },
+    {
+      "id": "my_work2",
+      "scope": "prototype",
+      "class": "work",
+      "property": {
+        "name":"开车",
+        "time": 60
+      }
+    }
+  ]
+}
+```
+
+配置文件中定义了三个对象，`id`表示一个唯一的对象，`scope`可以制定是否为单例，如果值为`singleton`，则为单例，只在第一次获取对象的时候创建一次，否则每次获取都会创建。然后指定一些属性，需要与源文件中`sf_meta_xxx`配合，当源文件字段为`sf_meta_value`时，此处就是值，否则为其他对象的`id`。
+
 
 #### 更多
 

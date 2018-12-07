@@ -25,6 +25,7 @@
 #include "sf_object_manager.hpp"
 #include "sf_json.hpp"
 
+
 namespace skyfire
 {
 
@@ -90,4 +91,19 @@ namespace skyfire
         }), vec.end());
     }
 
+    inline sf_object::__mem_value_type_t__ sf_object::__get_mem_value_type(const std::string &key){
+        if(mem_value_type__.count(key))
+            return mem_value_type__[key];
+        return sf_object::__mem_value_type_t__ ::none;
+    }
+
+    inline sf_json sf_object::to_json() {
+        sf_json js;
+        js.convert_to_object();
+        for(auto &p:to_json_callback__)
+        {
+            js.join(p.second());
+        }
+        return js;
+    }
 }

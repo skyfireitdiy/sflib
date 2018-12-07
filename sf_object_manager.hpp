@@ -8,12 +8,10 @@
 
 #include <fstream>
 
-#include <iostream>
-using namespace std;
 
 namespace skyfire
 {
-    bool sf_object_manager::load_config(const std::string &file_path) {
+    inline bool sf_object_manager::load_config(const std::string &file_path) {
         std::ifstream fi(file_path);
         if(!fi) {
             return false;
@@ -29,7 +27,6 @@ namespace skyfire
         {
             return false;
         }
-        cout<<config<<endl;
         if(config.has("objects"))
         {
             auto items = config["objects"];
@@ -45,17 +42,7 @@ namespace skyfire
                 auto keys = properties.keys();
                 for(auto &p:keys)
                 {
-                    object_property_t tmp_property;
-
-                    if(properties[p].has("ref"))
-                    {
-                        tmp_property.type = object_value_type_t ::ref;
-                        tmp_property.data = properties[p]["ref"];
-                    } else{
-                        tmp_property.type = object_value_type_t ::value;
-                        tmp_property.data = properties[p]["value"];
-                    }
-                    tmp_item.properties[p] = tmp_property;
+                    tmp_item.properties[p] = properties[p];
                 }
                 
                 meta__.objects[tmp_item.id]=tmp_item;
@@ -64,35 +51,38 @@ namespace skyfire
         return true;
     }
 
-    template<typename T>
-    std::shared_ptr<T> sf_object_manager::get_object(const std::string& key)
+    inline std::shared_ptr<sf_object> sf_object_manager::get_object__(const std::string &key)
     {
         if(meta__.objects.count(key) == 0){
-            cout<<"return nullptr"<<endl;
             return nullptr;
         }
-        cout<<"has key"<<endl;
         auto item = meta__.objects[key];
 
         if(item.scope == object_item_scope_t::singleton)
         {
-            cout<<"singleton"<<endl;
             if(singleton_data__.count(key)!= 0){
-                return std::any_cast<std::shared_ptr<T>>(singleton_data__[key]);
+                return (singleton_data__[key]);
             }
         }
-        cout<<"get object"<<endl;
-        auto obj = sf_object_global_meta_info::get_instance()->get_object<T>(item._class);
+        auto obj = sf_object_global_meta_info::get_instance()->get_object(item._class);
         for(auto &p:item.properties)
         {
-            cout<<"set property " + p.first<<endl;
-            if(p.second.type == object_value_type_t::value){
-                sf_object_global_meta_info::get_instance()->set_value<T>(obj,p.first, p.second.data);
+            switch (obj->__get_mem_value_type(p.first))
+            {
+                case sf_object::__mem_value_type_t__ ::value:
+                    sf_object_global_meta_info::get_instance()->set_value(obj,p.first, p.second);
+                    break;
+                case sf_object::__mem_value_type_t__ ::ref:
+                    sf_object_global_meta_info::get_instance()->set_ref(obj, p.first, get_object__(
+                            static_cast<std::string>(std::any_cast<sf_json>(p.second))));
+                    break;
+                case sf_object::__mem_value_type_t__ ::pointer:
+                    sf_object_global_meta_info::get_instance()->set_pointer(obj, p.first, get_object__(
+                            static_cast<std::string>(std::any_cast<sf_json>(p.second))));
+                    break;
+                default:
+                    break;
             }
-//            else
-//            {
-//                sf_object_global_meta_info::get_instance()->set_value<T>(obj,p.first, get_object<std::any>(std::static_cast<std::string>(p.second.data)));
-//            }
         }
         if(item.scope == object_item_scope_t::singleton)
         {
@@ -100,4 +90,11 @@ namespace skyfire
         }
         return obj;
     }
+
+    template<typename T>
+    std::shared_ptr<T> sf_object_manager::get_object(const std::string &key) {
+        return std::dynamic_pointer_cast<T>(get_object__(key));
+    }
+
+
 }

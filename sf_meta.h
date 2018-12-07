@@ -148,4 +148,12 @@ namespace skyfire {
 
     template<int N>
     auto make_placeholders();
+
+
+    template <typename T>
+    class sf_is_shared_ptr: public std::false_type{};
+
+    template <typename T>
+    class sf_is_shared_ptr<std::shared_ptr<T>> : public std::true_type{};
+
 }

@@ -28,13 +28,14 @@
 #include "sf_msg_queue.hpp"
 #include "sf_eventloop.hpp"
 #include "sf_object_global_meta_info.h"
-#include "sf_json.h"
+#include "sf_json.hpp"
+#include "sf_meta.h"
 
 
 /*
  * SF_REG_SIGNAL 注册信号的宏
  */
-#define SF_REG_SIGNAL(name,...)                                                                                         \
+#define SF_REG_SIGNAL(name, ...)                                                                                         \
 public:                                                                                                                \
 std::recursive_mutex __mu_##name##_signal_;                                                                             \
 std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>__##name##_signal_func_vec__;                     \
@@ -108,75 +109,150 @@ public:                                                                         
 /*
  * sf_aop_before_unbind AOP调用前反注册
  */
-#define sf_aop_before_unbind(objptr,name,bind_id)                                                                       \
+#define sf_aop_before_unbind(objptr, name, bind_id)                                                                       \
 (objptr)->__sf_aop_unbind_helper((objptr)->__mu_##name##_aop__,(objptr)->__##name##_aop_before_func_vec__,bind_id);     \
 
 /*
  * sf_aop_after_unbind AOP调用后反注册
  */
-#define sf_aop_after_unbind(objptr,name,bind_id)                                                                        \
+#define sf_aop_after_unbind(objptr, name, bind_id)                                                                        \
 (objptr)->__sf_aop_unbind_helper((objptr)->__mu_##name##_aop__,(objptr)->__##name##_aop_after_func_vec__,bind_id);      \
 
 /*
  * sf_bind_signal 信号绑定
  */
-#define sf_bind_signal(objptr,name,func,mul_thread)                                                                     \
+#define sf_bind_signal(objptr, name, func, mul_thread)                                                                     \
 (objptr)->__sf_bind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,func,mul_thread)      \
 
 
 /*
  * sf_unbind_signal 信号解绑
  */
-#define sf_unbind_signal(objptr,name,bind_id)                                                                           \
+#define sf_unbind_signal(objptr, name, bind_id)                                                                           \
 (objptr)->__sf_signal_unbind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,bind_id);    \
 
-#define _CONSTR(a,b) a##b
-#define CONSTR(a,b) _CONSTR(a,b)
-
-#define sf_class(x) sf_object_class_meta_helper CONSTR(class_meta_,__LINE__){[]{sf_object_global_meta_info::get_instance()->add_meta<x>(#x);}};
+#define _CONSTR(a, b) a##b
+#define CONSTR(a, b) _CONSTR(a,b)
 
 
-#define sf_member(type,name) type name;                                                                                 \
-sf_object_mem_meta_helper CONSTR(mem_meta_,__LINE__){dynamic_cast<sf_object*>(this),#name,std::function<void(sf_json)>([=](sf_json value){                                            \
-    type tmp_value = static_cast<type>(value);                                                                        \
-    name = tmp_value;                                                                                                   \
-})};                                                                                                                     \
+#define _SF_MAKE_VALUE_JSON(name) std::function<sf_json()>([=]()->sf_json{                                             \
+    sf_json js;                                                                                                         \
+    js[#name] = name;                                                                                                   \
+    return js;                                                                                                          \
+})                                                                                                                     \
 
 
-namespace skyfire
-{
+#define _SF_MAKE_REF_JSON(name) std::function<sf_json()>([=]()->sf_json{                                               \
+    sf_json js;                                                                                                         \
+    js[#name] = name.to_json();                                                                                         \
+    return js;                                                                                                          \
+})                                                                                                                     \
+
+
+
+#define _SF_MAKE_POINTER_JSON(name) std::function<sf_json()>([=]()->sf_json{                                               \
+    sf_json js;                                                                                                         \
+    js[#name] = name->to_json();                                                                                         \
+    return js;                                                                                                          \
+})                                                                                                                     \
+
+#define _SF_GETTER(type, name) type get_##name() const {                                                                  \
+    return name;                                                                                                        \
+}                                                                                                                       \
+
+
+#define _SF_SETTER(type, name) void set_##name(const type& t){                                                            \
+    this->name = t;                                                                                                      \
+}                                                                                                                       \
+
+
+#define sf_class(x) namespace{sf_object_class_meta_helper CONSTR(class_meta_,__LINE__){[]{sf_object_global_meta_info::get_instance()->add_meta<x>(#x);}};}
+
+
+#define sf_meta_value(type, name) private:\
+        type name;                                                                                 \
+        sf_object_mem_meta_helper CONSTR(mem_meta_,__LINE__){dynamic_cast<sf_object*>(this),#name,std::function<void(std::any)>([=](std::any value){   \
+            type tmp_value = static_cast<type>(std::any_cast<sf_json>(value));                                                                          \
+            name = tmp_value;                                                                                                   \
+        }),nullptr,nullptr,_SF_MAKE_VALUE_JSON(name)};                                                                          \
+    public: \
+        _SF_GETTER(type, name)                                                                                                 \
+        _SF_SETTER(type, name)                                                                                                  \
+
+#define sf_meta_ref(type, name) private:\
+        type name;                                                                                 \
+        sf_object_mem_meta_helper CONSTR(mem_meta_,__LINE__){dynamic_cast<sf_object*>(this),#name,nullptr,                  \
+        std::function<void(std::shared_ptr<sf_object>)>([=](std::shared_ptr<sf_object> value){                               \
+            std::shared_ptr<type> tmp_value = std::dynamic_pointer_cast<type>(value);                                         \
+            name = *tmp_value;                                                                                                 \
+        }),nullptr,_SF_MAKE_REF_JSON(name)};                                                                                    \
+    public: \
+        _SF_GETTER(type, name)                                                                                                 \
+        _SF_SETTER(type, name)                                                                                                  \
+
+
+#define sf_meta_pointer(type, name) private:\
+        std::shared_ptr<type> name;                                                                \
+        sf_object_mem_meta_helper CONSTR(mem_meta_,__LINE__){dynamic_cast<sf_object*>(this),#name,nullptr,                      \
+        nullptr,std::function<void(std::shared_ptr<sf_object>)>([=](std::shared_ptr<sf_object> value){                           \
+                std::shared_ptr<type> tmp_value = std::dynamic_pointer_cast<type>(value);                                         \
+                name = tmp_value;                                                                                                  \
+        }),_SF_MAKE_POINTER_JSON(name)};                                                                          \
+    public: \
+        _SF_GETTER(std::shared_ptr<type>, name)                                                                                                 \
+        _SF_SETTER(std::shared_ptr<type>, name)                                                                                                  \
+
+
+namespace skyfire {
     /**
      *  @brief 元对象
      */
-    class sf_object
-    {
+    class sf_object {
 
     public:
+
+        enum class __mem_value_type_t__ {
+            value,
+            ref,
+            pointer,
+            none
+        };
+
         template<typename _VectorType, typename _FuncType>
-        int __sf_bind_helper(std::recursive_mutex &mu,_VectorType &vec, _FuncType func, bool mul_thread);
+        int __sf_bind_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func, bool mul_thread);
 
         template<typename _VectorType>
-        void __sf_signal_unbind_helper(std::recursive_mutex &mu,_VectorType &vec, int bind_id);
+        void __sf_signal_unbind_helper(std::recursive_mutex &mu, _VectorType &vec, int bind_id);
 
         template<typename _VectorType, typename _FuncType>
-        int __sf_aop_before_add_helper(std::recursive_mutex &mu,_VectorType &vec, _FuncType func);
+        int __sf_aop_before_add_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func);
 
         template<typename _VectorType, typename _FuncType>
-        int __sf_aop_after_add_helper(std::recursive_mutex &mu,_VectorType &vec, _FuncType func);
+        int __sf_aop_after_add_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func);
+
 
         template<typename _VectorType>
-        void __sf_aop_unbind_helper(std::recursive_mutex &mu,_VectorType &vec, int bind_id);
+        void __sf_aop_unbind_helper(std::recursive_mutex &mu, _VectorType &vec, int bind_id);
 
+        __mem_value_type_t__ __get_mem_value_type(const std::string &key);
 
+        virtual sf_json to_json();
 
         virtual ~sf_object();
 
     private:
-        std::unordered_map<std::string, std::function<void(sf_json)>> member_set_callback__;
-        sf_msg_queue* __p_msg_queue__ = sf_msg_queue::get_instance();
+        std::unordered_map<std::string, std::function<void(std::any)>> member_value_callback__;
+        std::unordered_map<std::string, std::function<void(std::shared_ptr<sf_object>)>> member_ref_callback__;
+        std::unordered_map<std::string, std::function<void(std::shared_ptr<sf_object>)>> member_pointer_callback__;
+        std::unordered_map<std::string, std::function<sf_json()>> to_json_callback__;
+        std::unordered_map<std::string, __mem_value_type_t__> mem_value_type__;
 
         friend class sf_object_mem_meta_helper;
+
         friend class sf_object_global_meta_info;
+
+    protected:
+        sf_msg_queue *__p_msg_queue__ = sf_msg_queue::get_instance();
     };
 
 }

@@ -5,15 +5,10 @@
       "scope": "singleton",
       "class": "student",
       "property": {
-        "name": {
-          "value": "skyfire"
-        },
-        "age": {
-          "value": 25
-        },
-        "works": {
-          "ref": "my_work"
-        }
+        "name":  "skyfire",
+        "age": 25,
+        "works": "my_work",
+        "works2" : "my_work2"
       }
     },
     {
@@ -21,12 +16,17 @@
       "scope": "singleton",
       "class": "work",
       "property": {
-        "name": {
-          "value":"拧螺丝"
-        },
-        "time": {
-          "value": 20
-        }
+        "name":"拧螺丝",
+        "time": 20
+      }
+    },
+    {
+      "id": "my_work2",
+      "scope": "prototype",
+      "class": "work",
+      "property": {
+        "name":"开车",
+        "time": 60
       }
     }
   ]
