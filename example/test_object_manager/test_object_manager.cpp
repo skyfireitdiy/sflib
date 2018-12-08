@@ -1,5 +1,7 @@
 #include "sf_object.hpp"
 
+#include <vector>
+
 using namespace skyfire;
 using namespace std;
 
@@ -8,6 +10,7 @@ class work : public sf_object
 private:
     sf_meta_value(string,name);
     sf_meta_value(int,time);
+    sf_meta_container_value(vector,int,vi)
 };
 sf_class(work)
 
@@ -27,7 +30,7 @@ int main()
     // 1.创建一个manager
     sf_object_manager manager;
     // 2.加载配置文件
-    auto ret = manager.load_config("/home/skyfire/CLionProjects/sflib/example/test_object_manager/config.json");
+    auto ret = manager.load_config("/home/skyfire/code/sflib/example/test_object_manager/config.json");
 
     if(!ret){
         cout<<"加载配置文件失败";

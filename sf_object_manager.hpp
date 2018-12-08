@@ -80,6 +80,9 @@ namespace skyfire
                     sf_object_global_meta_info::get_instance()->set_pointer(obj, p.first, get_object__(
                             static_cast<std::string>(std::any_cast<sf_json>(p.second))));
                     break;
+                case sf_object::__mem_value_type_t__ ::container_value:
+                    sf_object_global_meta_info::get_instance()->set_container_value(obj,p.first, p.second);
+                    break;
                 default:
                     break;
             }
