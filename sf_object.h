@@ -166,6 +166,28 @@ public:                                                                         
     return js;                                                                                                          \
 })
 
+#define _SF_MAKE_CONTAINER_REF_JSON(name) std::function<sf_json()>([=]()->sf_json{                                             \
+    sf_json js;                                                                                                         \
+    js[#name] = sf_json();                                                                                                   \
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        js[#name].append(p.to_json());\
+    }\
+    return js;                                                                                                          \
+})
+
+
+
+#define _SF_MAKE_CONTAINER_POINTER_JSON(name) std::function<sf_json()>([=]()->sf_json{                                             \
+    sf_json js;                                                                                                         \
+    js[#name] = sf_json();                                                                                                   \
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        js[#name].append(p->to_json());\
+    }\
+    return js;                                                                                                          \
+})
+
 
 #define _SF_GETTER(type, name) type get_##name() const {                                                                  \
     return name;                                                                                                        \
@@ -180,7 +202,20 @@ public:                                                                         
 #define SF_GS(type,name) _SF_GETTER(type,name) _SF_SETTER(type,name)
 
 
-#define sf_class(x) namespace{sf_object_meta_run CONSTR(class_meta_,__LINE__){[]{sf_object_global_meta_info::get_instance()->add_meta<x>(#x);}};}
+#define sf_class(x) namespace{\
+                        sf_object_meta_run CONSTR(class_meta_,__LINE__){\
+                            []{\
+                                sf_object_global_meta_info::get_instance()->add_meta<x>(#x);\
+                            }\
+                        };\
+                    }
+
+
+#define sf_reg_class(x) sf_object_meta_run CONSTR(class_reg_meta_,__LINE__){\
+                            [=](){\
+                                __class_name__ = #x;\
+                            }\
+                        };\
 
 
 #define sf_meta_value(type, name) \
@@ -267,6 +302,54 @@ public:                                                                         
 
 
 
+#define sf_meta_container_ref(container_type, type, name) \
+    private:\
+        container_type<type> name;\
+        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::container_ref;\
+                member_container_ref_callback__[#name]= \
+                    [=](std::vector<std::shared_ptr<sf_object>> value){\
+                        std::vector<type> tmp_vec;\
+                        for(auto &p: value){\
+                            tmp_vec.push_back(*std::dynamic_pointer_cast<type>(p));\
+                        }\
+                        name = container_type<type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_CONTAINER_REF_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS(container_type<type>,name)
+
+
+
+#define sf_meta_container_pointer(container_type, type, name) \
+    private:\
+        container_type<std::shared_ptr<type>> name;\
+        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::container_pointer;\
+                member_container_pointer_callback__[#name]= \
+                    [=](std::vector<std::shared_ptr<sf_object>> value){\
+                        std::vector<std::shared_ptr<type>> tmp_vec;\
+                        for(auto &p: value){\
+                            tmp_vec.push_back(std::dynamic_pointer_cast<type>(p));\
+                        }\
+                        name = container_type<std::shared_ptr<type>>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_CONTAINER_POINTER_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS(container_type<std::shared_ptr<type>>,name)
+
+
+
+
+
+
+
 namespace skyfire {
     /**
      *  @brief 元对象
@@ -307,14 +390,18 @@ namespace skyfire {
 
         virtual ~sf_object();
 
+        _SF_GETTER(std::string, __class_name__)
+        _SF_GETTER(std::string, __object_id__)
+
+
     public:
         std::unordered_map<std::string, std::function<void(std::any)>> member_value_callback__;
         std::unordered_map<std::string, std::function<void(std::shared_ptr<sf_object>)>> member_ref_callback__;
         std::unordered_map<std::string, std::function<void(std::shared_ptr<sf_object>)>> member_pointer_callback__;
 
         std::unordered_map<std::string, std::function<void(std::any)>> member_container_value_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_container_ref_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_container_pointer_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector<std::shared_ptr<sf_object>>)>> member_container_ref_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector<std::shared_ptr<sf_object>>)>> member_container_pointer_callback__;
 
         std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_value_value_callback__;
         std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_value_ref_callback__;
@@ -332,6 +419,9 @@ namespace skyfire {
         std::unordered_map<std::string, __mem_value_type_t__> mem_value_type__;
 
         friend class sf_object_global_meta_info;
+
+        std::string __class_name__;
+        std::string __object_id__;
 
     protected:
         sf_msg_queue *__p_msg_queue__ = sf_msg_queue::get_instance();

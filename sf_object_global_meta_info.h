@@ -27,7 +27,8 @@ namespace skyfire
         void add_meta(const std::string& class_name);
 
 #define _SET_VALUE_FUNC(func_name, container_name) \
-        inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, std::any value) {\
+        template<typename T>\
+        inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, T value) {\
             if(object->container_name.count(key) == 0)\
             {\
                 return false;\
@@ -39,7 +40,8 @@ namespace skyfire
 
 
 #define _SET_REF_FUNC(func_name, container_name) \
-        inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, std::shared_ptr<sf_object> value) {\
+        template<typename T> \
+        inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, T value) {\
             if(object->container_name.count(key) == 0)\
             {\
                 return false;\
@@ -56,6 +58,10 @@ namespace skyfire
         _SET_REF_FUNC(set_pointer,member_pointer_callback__)
 
         _SET_VALUE_FUNC(set_container_value, member_container_value_callback__)
+
+        _SET_REF_FUNC(set_container_ref, member_container_ref_callback__)
+
+        _SET_REF_FUNC(set_container_pointer, member_container_pointer_callback__)
 
 
 #undef _SET_VALUE_FUNC

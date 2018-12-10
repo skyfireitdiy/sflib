@@ -8,20 +8,26 @@ using namespace std;
 class work : public sf_object
 {
 private:
+    sf_reg_class(work)
     sf_meta_value(string,name);
     sf_meta_value(int,time);
-    sf_meta_container_value(vector,int,vi)
 };
+
 sf_class(work)
 
 class student : public sf_object
 {
 private:
+    sf_reg_class(student)
     sf_meta_value(string, name)
     sf_meta_value(int, age)
     sf_meta_ref(work,works)
     sf_meta_pointer(work,works2)
+    sf_meta_container_value(vector,int,vi)
+    sf_meta_container_ref(list, work, wlist)
+    sf_meta_container_pointer(list, work, wlist2)
 };
+
 sf_class(student)
 
 
@@ -30,7 +36,7 @@ int main()
     // 1.创建一个manager
     sf_object_manager manager;
     // 2.加载配置文件
-    auto ret = manager.load_config("/home/skyfire/code/sflib/example/test_object_manager/config.json");
+    auto ret = manager.load_config("/home/skyfire/CLionProjects/sflib/example/test_object_manager/config.json");
 
     if(!ret){
         cout<<"加载配置文件失败";

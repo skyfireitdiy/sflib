@@ -9,6 +9,10 @@
 #include <fstream>
 
 
+#include <iostream>
+
+using namespace std;
+
 namespace skyfire
 {
     inline bool sf_object_manager::load_config(const std::string &file_path) {
@@ -65,6 +69,8 @@ namespace skyfire
             }
         }
         auto obj = sf_object_global_meta_info::get_instance()->get_object(item._class);
+        obj->__object_id__ = key;
+
         for(auto &p:item.properties)
         {
             switch (obj->__get_mem_value_type(p.first))
@@ -83,10 +89,43 @@ namespace skyfire
                 case sf_object::__mem_value_type_t__ ::container_value:
                     sf_object_global_meta_info::get_instance()->set_container_value(obj,p.first, p.second);
                     break;
+                case sf_object::__mem_value_type_t__ ::container_ref:
+                {
+                    std::vector<std::shared_ptr<sf_object>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for(int i=0;i<sz;++i)
+                    {
+                        auto tp = get_object__(static_cast<std::string>(js[i]));
+                        if(tp) {
+                            data.push_back(tp);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_container_ref(obj,p.first, data);
+                }
+                    break;
+                case sf_object::__mem_value_type_t__ ::container_pointer:
+                {
+                    std::vector<std::shared_ptr<sf_object>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for(int i=0;i<sz;++i)
+                    {
+                        auto tp = get_object__(static_cast<std::string>(js[i]));
+                        if(tp) {
+                            data.push_back(tp);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_container_pointer(obj,p.first, data);
+                }
+                    break;
+
                 default:
                     break;
             }
         }
+
+
         if(item.scope == object_item_scope_t::singleton)
         {
             singleton_data__[key] = obj;

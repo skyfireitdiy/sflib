@@ -8,7 +8,10 @@
         "name":  "skyfire",
         "age": 25,
         "works": "my_work",
-        "works2" : "my_work2"
+        "works2" : "my_work2",
+        "vi": [1,2,3,4,5,6,7,8,9,10],
+        "wlist": ["my_work", "my_work", "my_work2", "my_work2"],
+        "wlist2": ["my_work", "my_work2"]
       }
     },
     {
@@ -17,8 +20,7 @@
       "class": "work",
       "property": {
         "name":"拧螺丝",
-        "time": 20,
-        "vi": [1,2,3,4,5,6,7,8,9,10]
+        "time": 20
       }
     },
     {
