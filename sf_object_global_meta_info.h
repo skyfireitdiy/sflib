@@ -63,6 +63,8 @@ namespace skyfire
 
         _SET_REF_FUNC(set_container_pointer, member_container_pointer_callback__)
 
+        _SET_VALUE_FUNC(set_associated_container_value, member_associated_container_value_value_callback__)
+
 
 #undef _SET_VALUE_FUNC
 #undef _SET_REF_FUNC

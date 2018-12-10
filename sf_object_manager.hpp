@@ -119,7 +119,9 @@ namespace skyfire
                     sf_object_global_meta_info::get_instance()->set_container_pointer(obj,p.first, data);
                 }
                     break;
-
+                case sf_object::__mem_value_type_t__ ::associated_container_value_value:
+                    sf_object_global_meta_info::get_instance()->set_associated_container_value(obj,p.first, p.second);
+                    break;
                 default:
                     break;
             }

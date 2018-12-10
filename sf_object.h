@@ -189,6 +189,21 @@ public:                                                                         
 })
 
 
+#define _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_VALUE_JSON(name) std::function<sf_json()>([=]()->sf_json{                   \
+    sf_json js;                                                                                                         \
+    js[#name] = sf_json();                                                                                                   \
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        sf_json tmp_js;\
+        tmp_js.convert_to_object();\
+        tmp_js["key"] = p.first;\
+        tmp_js["value"] = p.second;\
+        js[#name].append(tmp_js);\
+    }\
+    return js;                                                                                                          \
+})
+
+
 #define _SF_GETTER(type, name) type get_##name() const {                                                                  \
     return name;                                                                                                        \
 }                                                                                                                       \
@@ -200,6 +215,15 @@ public:                                                                         
 
 
 #define SF_GS(type,name) _SF_GETTER(type,name) _SF_SETTER(type,name)
+
+
+#define SF_GS_EXT(container,key_type,value_type, name) container<key_type,value_type> get_##name() const {\
+    return name;\
+}\
+void set_##name(const container<key_type,value_type>& t){\
+    this->name = t;\
+}\
+
 
 
 #define sf_class(x) namespace{\
@@ -345,7 +369,28 @@ public:                                                                         
         SF_GS(container_type<std::shared_ptr<type>>,name)
 
 
-
+#define sf_meta_associated_container_value_value(container_type, key_type, value_type, name) \
+    private:\
+        container_type<key_type, value_type> name;\
+        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_value_value;\
+                member_associated_container_value_value_callback__[#name]= \
+                    [=](std::any value){\
+                        auto js = std::any_cast<sf_json>(value);\
+                        int sz = js.size();\
+                        std::vector<std::pair<key_type,value_type>> tmp_vec(sz);\
+                        for(int i=0;i<sz;++i){\
+                            auto tmp_pair = std::make_pair(static_cast<key_type>(js[i]["key"]),static_cast<value_type>(js[i]["value"]));\
+                            tmp_vec[i]=tmp_pair;\
+                        }\
+                        name = container_type<key_type, value_type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_VALUE_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,key_type, value_type,name)
 
 
 
@@ -365,6 +410,9 @@ namespace skyfire {
             container_value,
             container_ref,
             container_pointer,
+            associated_container_value_value,
+            associated_container_value_ref,
+            associated_container_value_pointer,
             none
         };
 
