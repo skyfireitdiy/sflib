@@ -31,6 +31,56 @@
             "key": 3,
             "value": "my_work2"
           }
+        ],
+        "miw_pointer": [
+          {
+            "key": 200,
+            "value": "my_work"
+          },
+          {
+            "key": 300,
+            "value":"my_work2"
+          }
+        ],
+        "mwi_value" : [
+          {
+            "key": "my_work",
+            "value": 25
+          },
+          {
+            "key": "my_work2",
+            "value": 30
+          }
+        ],
+        "ww_map": [
+          {
+            "key": "my_work",
+            "value": "my_work2"
+          }
+        ],
+        "ww_pointer": [
+          {
+            "key": "my_work2",
+            "value": "my_work"
+          }
+        ],
+        "mwi_pv": [
+          {
+            "key": "my_work",
+            "value": "hahaha"
+          }
+        ],
+        "ww_pr": [
+          {
+            "key": "my_work",
+            "value": "my_work2"
+          }
+        ],
+        "ww_pp": [
+          {
+            "key": "my_work2",
+            "value": "my_work"
+          }
         ]
       }
     },

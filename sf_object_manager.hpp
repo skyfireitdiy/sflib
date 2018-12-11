@@ -71,70 +71,165 @@ namespace skyfire
         auto obj = sf_object_global_meta_info::get_instance()->get_object(item._class);
         obj->__object_id__ = key;
 
-        for(auto &p:item.properties)
-        {
-            switch (obj->__get_mem_value_type(p.first))
-            {
-                case sf_object::__mem_value_type_t__ ::value:
-                    sf_object_global_meta_info::get_instance()->set_value(obj,p.first, p.second);
+        for(auto &p:item.properties) {
+            switch (obj->__get_mem_value_type(p.first)) {
+                case sf_object::__mem_value_type_t__::value:
+                    sf_object_global_meta_info::get_instance()->set_value(obj, p.first, p.second);
                     break;
-                case sf_object::__mem_value_type_t__ ::ref:
+                case sf_object::__mem_value_type_t__::ref:
                     sf_object_global_meta_info::get_instance()->set_ref(obj, p.first, get_object__(
                             static_cast<std::string>(std::any_cast<sf_json>(p.second))));
                     break;
-                case sf_object::__mem_value_type_t__ ::pointer:
+                case sf_object::__mem_value_type_t__::pointer:
                     sf_object_global_meta_info::get_instance()->set_pointer(obj, p.first, get_object__(
                             static_cast<std::string>(std::any_cast<sf_json>(p.second))));
                     break;
-                case sf_object::__mem_value_type_t__ ::container_value:
-                    sf_object_global_meta_info::get_instance()->set_container_value(obj,p.first, p.second);
+                case sf_object::__mem_value_type_t__::container_value:
+                    sf_object_global_meta_info::get_instance()->set_container_value(obj, p.first, p.second);
                     break;
-                case sf_object::__mem_value_type_t__ ::container_ref:
-                {
+                case sf_object::__mem_value_type_t__::container_ref: {
                     std::vector<std::shared_ptr<sf_object>> data;
                     auto js = std::any_cast<sf_json>(p.second);
                     int sz = static_cast<int>(js.size());
-                    for(int i=0;i<sz;++i)
-                    {
+                    for (int i = 0; i < sz; ++i) {
                         auto tp = get_object__(static_cast<std::string>(js[i]));
-                        if(tp) {
+                        if (tp) {
                             data.push_back(tp);
                         }
                     }
-                    sf_object_global_meta_info::get_instance()->set_container_ref(obj,p.first, data);
+                    sf_object_global_meta_info::get_instance()->set_container_ref(obj, p.first, data);
                 }
                     break;
-                case sf_object::__mem_value_type_t__ ::container_pointer:
-                {
+                case sf_object::__mem_value_type_t__::container_pointer: {
                     std::vector<std::shared_ptr<sf_object>> data;
                     auto js = std::any_cast<sf_json>(p.second);
                     int sz = static_cast<int>(js.size());
-                    for(int i=0;i<sz;++i)
-                    {
+                    for (int i = 0; i < sz; ++i) {
                         auto tp = get_object__(static_cast<std::string>(js[i]));
-                        if(tp) {
+                        if (tp) {
                             data.push_back(tp);
                         }
                     }
-                    sf_object_global_meta_info::get_instance()->set_container_pointer(obj,p.first, data);
+                    sf_object_global_meta_info::get_instance()->set_container_pointer(obj, p.first, data);
                 }
                     break;
-                case sf_object::__mem_value_type_t__ ::associated_container_value_value:
-                    sf_object_global_meta_info::get_instance()->set_associated_container_value_value(obj,p.first, p.second);
+                case sf_object::__mem_value_type_t__::associated_container_base_base:
+                    sf_object_global_meta_info::get_instance()->set_associated_container_base_base(obj, p.first,
+                                                                                                     p.second);
                     break;
-                case sf_object::__mem_value_type_t__ ::associated_container_value_ref: {
+                case sf_object::__mem_value_type_t__::associated_container_base_value: {
                     std::vector<std::pair<std::any, std::shared_ptr<sf_object>>> data;
                     auto js = std::any_cast<sf_json>(p.second);
                     int sz = static_cast<int>(js.size());
                     for (int i = 0; i < sz; ++i) {
                         std::any k = js[i]["key"];
                         auto v = get_object__(static_cast<std::string>(js[i]["value"]));
-                        if(v){
-                            data.emplace_back(k,v);
+                        if (v) {
+                            data.emplace_back(k, v);
                         }
                     }
-                    sf_object_global_meta_info::get_instance()->set_associated_container_value_ref(obj,p.first,data);
+                    sf_object_global_meta_info::get_instance()->set_associated_container_base_value(obj, p.first, data);
                 }
+                    break;
+                case sf_object::__mem_value_type_t__::associated_container_base_pointer: {
+                    std::vector<std::pair<std::any, std::shared_ptr<sf_object>>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        std::any k = js[i]["key"];
+                        auto v = get_object__(static_cast<std::string>(js[i]["value"]));
+                        if (v) {
+                            data.emplace_back(k, v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_base_pointer(obj, p.first,
+                                                                                                       data);
+                }
+                    break;
+                case sf_object::__mem_value_type_t__::associated_container_value_base: {
+                    std::vector<std::pair<std::shared_ptr<sf_object>,std::any>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        auto k = get_object__(static_cast<std::string>(js[i]["key"]));
+                        std::any v = js[i]["value"];
+                        if (k) {
+                            data.emplace_back(k, v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_value_base(obj, p.first, data);
+                }
+                    break;
+                case sf_object::__mem_value_type_t__ ::associated_container_value_value:{
+                    std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        auto k = get_object__(static_cast<std::string>(js[i]["key"]));
+                        auto v = get_object__(static_cast<std::string>(js[i]["value"]));
+                        if (k && v) {
+                            data.emplace_back(k, v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_value_value(obj, p.first, data);
+                }
+                    break;
+                case sf_object::__mem_value_type_t__ ::associated_container_value_pointer:{
+                    std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        auto k = get_object__(static_cast<std::string>(js[i]["key"]));
+                        auto v = get_object__(static_cast<std::string>(js[i]["value"]));
+                        if (k && v) {
+                            data.emplace_back(k, v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_value_pointer(obj, p.first, data);
+                }
+                    break;
+                case sf_object::__mem_value_type_t__::associated_container_pointer_base: {
+                    std::vector<std::pair<std::shared_ptr<sf_object>,std::any>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        auto k = get_object__(static_cast<std::string>(js[i]["key"]));
+                        std::any v = js[i]["value"];
+                        if (k) {
+                            data.emplace_back(k, v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_pointer_base(obj, p.first, data);
+                }
+                    break;
+                case sf_object::__mem_value_type_t__::associated_container_pointer_value: {
+                    std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        auto k = get_object__(static_cast<std::string>(js[i]["key"]));
+                        auto v = get_object__(static_cast<std::string>(js[i]["value"]));
+                        if (k && v) {
+                            data.emplace_back(k, v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_pointer_value(obj, p.first, data);
+                }
+                    break;
+                case sf_object::__mem_value_type_t__::associated_container_pointer_pointer: {
+                    std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        auto k = get_object__(static_cast<std::string>(js[i]["key"]));
+                        auto v = get_object__(static_cast<std::string>(js[i]["value"]));
+                        if (k && v) {
+                            data.emplace_back(k, v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_pointer_pointer(obj, p.first, data);
+                }
+                    break;
                 default:
                     break;
             }

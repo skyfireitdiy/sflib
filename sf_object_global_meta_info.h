@@ -40,24 +40,35 @@ namespace skyfire
 
 
 
-        _SET_VALUE_FUNC(set_value,member_value_callback__)
+        _SET_VALUE_FUNC(set_value,member_base_callback__)
 
-        _SET_VALUE_FUNC(set_ref,member_ref_callback__)
+        _SET_VALUE_FUNC(set_ref,member_value_callback__)
 
         _SET_VALUE_FUNC(set_pointer,member_pointer_callback__)
 
-        _SET_VALUE_FUNC(set_container_value, member_container_value_callback__)
+        _SET_VALUE_FUNC(set_container_value, member_container_base_callback__)
 
-        _SET_VALUE_FUNC(set_container_ref, member_container_ref_callback__)
+        _SET_VALUE_FUNC(set_container_ref, member_container_value_callback__)
 
         _SET_VALUE_FUNC(set_container_pointer, member_container_pointer_callback__)
 
+        _SET_VALUE_FUNC(set_associated_container_base_base, member_associated_container_base_base_callback__)
+
+        _SET_VALUE_FUNC(set_associated_container_base_value, member_associated_container_base_value_callback__)
+
+        _SET_VALUE_FUNC(set_associated_container_base_pointer, member_associated_container_base_pointer_callback__)
+
+        _SET_VALUE_FUNC(set_associated_container_value_base, member_associated_container_value_base_callback__)
+
         _SET_VALUE_FUNC(set_associated_container_value_value, member_associated_container_value_value_callback__)
 
-        _SET_VALUE_FUNC(set_associated_container_value_ref, member_associated_container_value_ref_callback__)
+        _SET_VALUE_FUNC(set_associated_container_value_pointer, member_associated_container_value_pointer_callback__)
 
+        _SET_VALUE_FUNC(set_associated_container_pointer_base, member_associated_container_pointer_base_callback__)
 
+        _SET_VALUE_FUNC(set_associated_container_pointer_value, member_associated_container_pointer_value_callback__)
 
+        _SET_VALUE_FUNC(set_associated_container_pointer_pointer, member_associated_container_pointer_pointer_callback__)
 
 #undef _SET_VALUE_FUNC
 #undef _SET_REF_FUNC

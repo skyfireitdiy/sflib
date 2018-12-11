@@ -2,32 +2,41 @@
 
 #include <vector>
 
-using namespace skyfire;
 using namespace std;
 
-class work : public sf_object
+class work : public skyfire::sf_object
 {
 private:
     sf_reg_class(work)
-    sf_meta_value(string,name);
-    sf_meta_value(int,time);
+    m_base(string,name);
+    m_base(int,time);
+    bool operator<(const work& other) const{
+        return time<other.time;
+    }
 };
 
 sf_class(work)
 
-class student : public sf_object
+class student : public skyfire::sf_object
 {
 private:
     sf_reg_class(student)
-    sf_meta_value(string, name)
-    sf_meta_value(int, age)
-    sf_meta_ref(work,works)
-    sf_meta_pointer(work,works2)
-    sf_meta_container_value(vector,int,vi)
-    sf_meta_container_ref(list, work, wlist)
-    sf_meta_container_pointer(list, work, wlist2)
-    sf_meta_associated_container_value_value(map,int,string,mis_value)
-    sf_meta_associated_container_value_ref(map,int,work,miw_value)
+    m_base(string, name)
+    m_base(int, age)
+    m_value(work,works)
+    m_pointer(work,works2)
+    mc_base(vector,int,vi)
+    mc_value(list, work, wlist)
+    mc_pointer(list, work, wlist2)
+    mac_bb(map,int,string,mis_value)
+    mac_bv(map,int,work,miw_value)
+    mac_bp(map,int,work,miw_pointer)
+    mac_vb(map,work,int,mwi_value)
+    mac_vv(map, work, work, ww_map)
+    mac_vp(map,work,work,ww_pointer);
+    mac_pb(map,work,string,mwi_pv);
+    mac_pv(map, work,work , ww_pr);
+    mac_pp(map, work,work , ww_pp);
 };
 
 sf_class(student)
@@ -36,7 +45,7 @@ sf_class(student)
 int main()
 {
     // 1.创建一个manager
-    sf_object_manager manager;
+    skyfire::sf_object_manager manager;
     // 2.加载配置文件
     auto ret = manager.load_config("/home/skyfire/CLionProjects/sflib/example/test_object_manager/config.json");
 

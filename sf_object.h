@@ -134,41 +134,41 @@ public:                                                                         
 #define CONSTR(a, b) _CONSTR(a,b)
 
 
-#define _SF_MAKE_VALUE_JSON(name) std::function<sf_json()>([=]()->sf_json{                                             \
-    sf_json js;                                                                                                         \
+#define _SF_MAKE_BASE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{                                             \
+    skyfire::sf_json js;                                                                                                         \
     js[#name] = name;                                                                                                   \
     return js;                                                                                                          \
 })                                                                                                                     \
 
 
-#define _SF_MAKE_REF_JSON(name) std::function<sf_json()>([=]()->sf_json{                                               \
-    sf_json js;                                                                                                         \
+#define _SF_MAKE_VALUE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{                                               \
+    skyfire::sf_json js;                                                                                                         \
     js[#name] = name.to_json();                                                                                         \
     return js;                                                                                                          \
 })                                                                                                                     \
 
 
 
-#define _SF_MAKE_POINTER_JSON(name) std::function<sf_json()>([=]()->sf_json{                                               \
-    sf_json js;                                                                                                         \
+#define _SF_MAKE_POINTER_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{                                               \
+    skyfire::sf_json js;                                                                                                         \
     js[#name] = name->to_json();                                                                                         \
     return js;                                                                                                          \
 })                                                                                                                     \
 
 
-#define _SF_MAKE_CONTAINER_VALUE_JSON(name) std::function<sf_json()>([=]()->sf_json{                                             \
-    sf_json js;                                                                                                         \
-    js[#name] = sf_json();                                                                                                   \
+#define _SF_MAKE_CONTAINER_BASE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{                                             \
+    skyfire::sf_json js;                                                                                                         \
+    js[#name] = skyfire::sf_json();                                                                                                   \
     js[#name].convert_to_array();\
     for(auto &p:name){\
-        js[#name].append(sf_json(p));\
+        js[#name].append(skyfire::sf_json(p));\
     }\
     return js;                                                                                                          \
 })
 
-#define _SF_MAKE_CONTAINER_REF_JSON(name) std::function<sf_json()>([=]()->sf_json{                                             \
-    sf_json js;                                                                                                         \
-    js[#name] = sf_json();                                                                                                   \
+#define _SF_MAKE_CONTAINER_VALUE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{                                             \
+    skyfire::sf_json js;                                                                                                         \
+    js[#name] = skyfire::sf_json();                                                                                                   \
     js[#name].convert_to_array();\
     for(auto &p:name){\
         js[#name].append(p.to_json());\
@@ -178,9 +178,9 @@ public:                                                                         
 
 
 
-#define _SF_MAKE_CONTAINER_POINTER_JSON(name) std::function<sf_json()>([=]()->sf_json{                                             \
-    sf_json js;                                                                                                         \
-    js[#name] = sf_json();                                                                                                   \
+#define _SF_MAKE_CONTAINER_POINTER_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{                                             \
+    skyfire::sf_json js;                                                                                                         \
+    js[#name] = skyfire::sf_json();                                                                                                   \
     js[#name].convert_to_array();\
     for(auto &p:name){\
         js[#name].append(p->to_json());\
@@ -189,12 +189,12 @@ public:                                                                         
 })
 
 
-#define _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_VALUE_JSON(name) std::function<sf_json()>([=]()->sf_json{                   \
-    sf_json js;                                                                                                         \
-    js[#name] = sf_json();                                                                                                   \
+#define _SF_MAKE_ASSOCIATED_CONTAINER_BASE_BASE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{                   \
+    skyfire::sf_json js;                                                                                                         \
+    js[#name] = skyfire::sf_json();                                                                                                   \
     js[#name].convert_to_array();\
     for(auto &p:name){\
-        sf_json tmp_js;\
+        skyfire::sf_json tmp_js;\
         tmp_js.convert_to_object();\
         tmp_js["key"] = p.first;\
         tmp_js["value"] = p.second;\
@@ -205,11 +205,11 @@ public:                                                                         
 
 
 
-#define _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_REF_JSON(name) std::function<sf_json()>([=]()->sf_json{\
-    sf_json js;\
+#define _SF_MAKE_ASSOCIATED_CONTAINER_BASE_VALUE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
     js[#name].convert_to_array();\
     for(auto &p:name){\
-        sf_json t;\
+        skyfire::sf_json t;\
         t.convert_to_object();\
         t["key"] = p.first;\
         t["value"] = p.second.to_json();\
@@ -218,6 +218,105 @@ public:                                                                         
     return js;\
 })\
 
+
+
+#define _SF_MAKE_ASSOCIATED_CONTAINER_BASE_POINTER_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        skyfire::sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first;\
+        t["value"] = p.second->to_json();\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
+
+
+#define _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_BASE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        skyfire::sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first.to_json();\
+        t["value"] = p.second;\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
+
+
+#define _SF_MAKE_associated_container_base_base_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        skyfire::sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first.to_json();\
+        t["value"] = p.second.to_json();\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
+
+
+#define _SF_MAKE_associated_container_base_pointer_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        skyfire::sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first.to_json();\
+        t["value"] = p.second->to_json();\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
+
+
+#define _SF_MAKE_ASSOCIATED_CONTAINER_POINTER_BASE_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        skyfire::sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first->to_json();\
+        t["value"] = p.second;\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
+
+
+#define _SF_MAKE_associated_container_pointer_base_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        skyfire::sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first->to_json();\
+        t["value"] = p.second.to_json();\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
+
+
+
+#define _SF_MAKE_ASSOCIATED_CONTAINER_POINTER_POINTER_JSON(name) std::function<skyfire::sf_json()>([=]()->skyfire::sf_json{\
+    skyfire::sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        skyfire::sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first->to_json();\
+        t["value"] = p.second->to_json();\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
 
 
 
@@ -244,33 +343,33 @@ void set_##name(const container<key_type,value_type>& t){\
 
 
 #define sf_class(x) namespace{\
-                        sf_object_meta_run CONSTR(class_meta_,__LINE__){\
+                        skyfire::sf_object_meta_run CONSTR(class_meta_,__LINE__){\
                             []{\
-                                sf_object_global_meta_info::get_instance()->add_meta<x>(#x);\
+                                skyfire::sf_object_global_meta_info::get_instance()->add_meta<x>(#x);\
                             }\
                         };\
                     }
 
 
-#define sf_reg_class(x) sf_object_meta_run CONSTR(class_reg_meta_,__LINE__){\
+#define sf_reg_class(x) skyfire::sf_object_meta_run CONSTR(class_reg_meta_,__LINE__){\
                             [=](){\
                                 __class_name__ = #x;\
                             }\
                         };\
 
 
-#define sf_meta_value(type, name) \
+#define m_base(type, name) \
     private:\
         type name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
             [=](){ \
                 mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::value;\
-                member_value_callback__[#name]= \
+                member_base_callback__[#name]= \
                     [=](std::any value){\
-                        type tmp_value = static_cast<type>(std::any_cast<sf_json>(value));\
+                        type tmp_value = static_cast<type>(std::any_cast<skyfire::sf_json>(value));\
                         name = tmp_value;\
                     };\
-                to_json_callback__[#name] = _SF_MAKE_VALUE_JSON(name);\
+                to_json_callback__[#name] = _SF_MAKE_BASE_JSON(name);\
             }\
         };\
     public: \
@@ -278,18 +377,18 @@ void set_##name(const container<key_type,value_type>& t){\
 
 
 
-#define sf_meta_ref(type, name)\
+#define m_value(type, name)\
     private:\
         type name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){ \
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){ \
             [=](){\
                 mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::ref;\
-                member_ref_callback__[#name] = \
+                member_value_callback__[#name] = \
                     [=](std::shared_ptr<sf_object> value){\
                         std::shared_ptr<type> tmp_value = std::dynamic_pointer_cast<type>(value);\
                         name = *tmp_value;\
                     };\
-                to_json_callback__[#name]  =_SF_MAKE_REF_JSON(name);\
+                to_json_callback__[#name]  =_SF_MAKE_VALUE_JSON(name);\
             }\
         };\
     public: \
@@ -299,10 +398,10 @@ void set_##name(const container<key_type,value_type>& t){\
 
 
 
-#define sf_meta_pointer(type, name) \
+#define m_pointer(type, name) \
     private:\
         std::shared_ptr<type> name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
             [=](){\
                 mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::pointer;\
                 member_pointer_callback__[#name] = \
@@ -319,19 +418,42 @@ void set_##name(const container<key_type,value_type>& t){\
 
 
 
-#define sf_meta_container_value(container_type, type, name) \
+#define mc_base(container_type, type, name) \
     private:\
         container_type<type> name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
             [=](){ \
                 mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::container_value;\
-                member_container_value_callback__[#name]= \
+                member_container_base_callback__[#name]= \
                     [=](std::any value){\
-                        sf_json tmp_json = std::any_cast<sf_json>(value);\
+                        skyfire::sf_json tmp_json = std::any_cast<skyfire::sf_json>(value);\
                         int sz = tmp_json.size();\
                         std::vector<type> tmp_vec(sz);\
                         for(int i=0;i<sz;++i){\
                             tmp_vec[i] = static_cast<type>(tmp_json[i]);\
+                        }\
+                        name = container_type<type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_CONTAINER_BASE_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS(container_type<type>,name)
+
+
+
+#define mc_value(container_type, type, name) \
+    private:\
+        container_type<type> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::container_ref;\
+                member_container_value_callback__[#name]= \
+                    [=](std::vector<std::shared_ptr<sf_object>> value){\
+                        int sz = value.size();\
+                        std::vector<type> tmp_vec(sz);\
+                        for(int i=0;i<sz;++i){\
+                            tmp_vec[i]=(*std::dynamic_pointer_cast<type>(value[i]));\
                         }\
                         name = container_type<type>(tmp_vec.begin(),tmp_vec.end());\
                     };\
@@ -343,39 +465,18 @@ void set_##name(const container<key_type,value_type>& t){\
 
 
 
-#define sf_meta_container_ref(container_type, type, name) \
-    private:\
-        container_type<type> name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
-            [=](){ \
-                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::container_ref;\
-                member_container_ref_callback__[#name]= \
-                    [=](std::vector<std::shared_ptr<sf_object>> value){\
-                        std::vector<type> tmp_vec;\
-                        for(auto &p: value){\
-                            tmp_vec.push_back(*std::dynamic_pointer_cast<type>(p));\
-                        }\
-                        name = container_type<type>(tmp_vec.begin(),tmp_vec.end());\
-                    };\
-                to_json_callback__[#name] = _SF_MAKE_CONTAINER_REF_JSON(name);\
-            }\
-        };\
-    public: \
-        SF_GS(container_type<type>,name)
-
-
-
-#define sf_meta_container_pointer(container_type, type, name) \
+#define mc_pointer(container_type, type, name) \
     private:\
         container_type<std::shared_ptr<type>> name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
             [=](){ \
                 mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::container_pointer;\
                 member_container_pointer_callback__[#name]= \
                     [=](std::vector<std::shared_ptr<sf_object>> value){\
-                        std::vector<std::shared_ptr<type>> tmp_vec;\
-                        for(auto &p: value){\
-                            tmp_vec.push_back(std::dynamic_pointer_cast<type>(p));\
+                        int sz = value.size();\
+                        std::vector<std::shared_ptr<type>> tmp_vec(sz);\
+                        for(int i=0;i<sz;++i){\
+                            tmp_vec[i]=(std::dynamic_pointer_cast<type>(value[i]));\
                         }\
                         name = container_type<std::shared_ptr<type>>(tmp_vec.begin(),tmp_vec.end());\
                     };\
@@ -386,15 +487,15 @@ void set_##name(const container<key_type,value_type>& t){\
         SF_GS(container_type<std::shared_ptr<type>>,name)
 
 
-#define sf_meta_associated_container_value_value(container_type, key_type, value_type, name) \
+#define mac_bb(container_type, key_type, value_type, name) \
     private:\
         container_type<key_type, value_type> name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
             [=](){ \
-                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_value_value;\
-                member_associated_container_value_value_callback__[#name]= \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_base_base;\
+                member_associated_container_base_base_callback__[#name]= \
                     [=](std::any value){\
-                        auto js = std::any_cast<sf_json>(value);\
+                        auto js = std::any_cast<skyfire::sf_json>(value);\
                         int sz = js.size();\
                         std::vector<std::pair<key_type,value_type>> tmp_vec(sz);\
                         for(int i=0;i<sz;++i){\
@@ -403,7 +504,7 @@ void set_##name(const container<key_type,value_type>& t){\
                         }\
                         name = container_type<key_type, value_type>(tmp_vec.begin(),tmp_vec.end());\
                     };\
-                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_VALUE_JSON(name);\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_BASE_BASE_JSON(name);\
             }\
         };\
     public: \
@@ -412,27 +513,183 @@ void set_##name(const container<key_type,value_type>& t){\
 
 
 
-#define sf_meta_associated_container_value_ref(container_type, key_type, value_type, name) \
+#define mac_bv(container_type, key_type, value_type, name) \
     private:\
         container_type<key_type, value_type> name;\
-        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
             [=](){ \
-                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_value_ref;\
-                member_associated_container_value_ref_callback__[#name]= \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_base_value;\
+                member_associated_container_base_value_callback__[#name]= \
                     [=](std::vector<std::pair<std::any,std::shared_ptr<sf_object>>> value){\
                         std::vector<std::pair<key_type,value_type>> tmp_vec;\
                         for(auto &p:value){\
-                            auto t = std::make_pair(static_cast<key_type>(std::any_cast<sf_json>(p.first)),*std::dynamic_pointer_cast<value_type>(p.second));\
+                            auto t = std::make_pair(static_cast<key_type>(std::any_cast<skyfire::sf_json>(p.first)),*std::dynamic_pointer_cast<value_type>(p.second));\
                             tmp_vec.push_back(t);\
                         }\
                         name = container_type<key_type, value_type>(tmp_vec.begin(),tmp_vec.end());\
                     };\
-                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_REF_JSON(name);\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_BASE_VALUE_JSON(name);\
             }\
         };\
     public: \
         SF_GS_EXT(container_type,key_type, value_type,name)
 
+
+#define mac_bp(container_type, key_type, value_type, name) \
+    private:\
+        container_type<key_type, std::shared_ptr< value_type>> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_base_pointer;\
+                member_associated_container_base_pointer_callback__[#name]= \
+                    [=](std::vector<std::pair<std::any,std::shared_ptr<sf_object>>> value){\
+                        std::vector<std::pair<key_type,std::shared_ptr<value_type>>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(static_cast<key_type>(std::any_cast<skyfire::sf_json>(p.first)),std::dynamic_pointer_cast<value_type>(p.second));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<key_type, std::shared_ptr<value_type>>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_BASE_POINTER_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,key_type, std::shared_ptr<value_type>,name)
+
+
+
+#define mac_vb(container_type, key_type, value_type, name) \
+    private:\
+        container_type<key_type,value_type> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_value_base;\
+                member_associated_container_value_base_callback__[#name]= \
+                    [=](std::vector<std::pair<std::shared_ptr<sf_object>,std::any>> value){\
+                        std::vector<std::pair<key_type,value_type>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(*std::dynamic_pointer_cast<key_type>(p.first),static_cast<value_type>(std::any_cast<skyfire::sf_json>(p.second)));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<key_type, value_type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_BASE_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,key_type, value_type,name)
+
+
+#define mac_vv(container_type, key_type, value_type, name) \
+    private:\
+        container_type<key_type,value_type> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_value_value;\
+                member_associated_container_value_value_callback__[#name]= \
+                    [=](std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> value){\
+                        std::vector<std::pair<key_type,value_type>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(*std::dynamic_pointer_cast<key_type>(p.first),*std::dynamic_pointer_cast<value_type>(p.second));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<key_type, value_type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_associated_container_base_base_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,key_type, value_type,name)
+
+
+#define mac_vp(container_type, key_type, value_type, name) \
+    private:\
+        container_type<key_type,std::shared_ptr<value_type>> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_value_pointer;\
+                member_associated_container_value_pointer_callback__[#name]= \
+                    [=](std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> value){\
+                        std::vector<std::pair<key_type,std::shared_ptr<value_type>>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(*std::dynamic_pointer_cast<key_type>(p.first),std::dynamic_pointer_cast<value_type>(p.second));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<key_type, std::shared_ptr<value_type>>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_associated_container_base_pointer_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,key_type, std::shared_ptr<value_type>,name)
+
+
+
+#define mac_pb(container_type, key_type, value_type, name) \
+    private:\
+        container_type<std::shared_ptr<key_type>,value_type> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_pointer_base;\
+                member_associated_container_pointer_base_callback__[#name]= \
+                    [=](std::vector<std::pair<std::shared_ptr<sf_object>,std::any>> value){\
+                        std::vector<std::pair<std::shared_ptr<key_type>,value_type>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(std::dynamic_pointer_cast<key_type>(p.first),static_cast<value_type>(std::any_cast<skyfire::sf_json>(p.second)));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<std::shared_ptr<key_type>, value_type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_POINTER_BASE_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,std::shared_ptr<key_type>, value_type,name)
+
+
+
+#define mac_pv(container_type, key_type, value_type, name) \
+    private:\
+        container_type<std::shared_ptr<key_type>,value_type> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_pointer_value;\
+                member_associated_container_pointer_value_callback__[#name]= \
+                    [=](std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> value){\
+                        std::vector<std::pair<std::shared_ptr<key_type>,value_type>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(std::dynamic_pointer_cast<key_type>(p.first),*std::dynamic_pointer_cast<key_type>(p.second));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<std::shared_ptr<key_type>, value_type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_associated_container_pointer_base_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,std::shared_ptr<key_type>, value_type,name)
+
+
+#define mac_pp(container_type, key_type, value_type, name) \
+    private:\
+        container_type<std::shared_ptr<key_type>,std::shared_ptr<value_type>> name;\
+        skyfire::sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_pointer_pointer;\
+                member_associated_container_pointer_pointer_callback__[#name]= \
+                    [=](std::vector<std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>> value){\
+                        std::vector<std::pair<std::shared_ptr<key_type>,std::shared_ptr<value_type>>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(std::dynamic_pointer_cast<key_type>(p.first),std::dynamic_pointer_cast<key_type>(p.second));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<std::shared_ptr<key_type>, std::shared_ptr<value_type>>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_POINTER_POINTER_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,std::shared_ptr<key_type>, std::shared_ptr<value_type>,name)
 
 
 
@@ -451,9 +708,15 @@ namespace skyfire {
             container_value,
             container_ref,
             container_pointer,
+            associated_container_base_base,
+            associated_container_base_value,
+            associated_container_base_pointer,
+            associated_container_value_base,
             associated_container_value_value,
-            associated_container_value_ref,
             associated_container_value_pointer,
+            associated_container_pointer_base,
+            associated_container_pointer_value,
+            associated_container_pointer_pointer,
             none
         };
 
@@ -475,7 +738,7 @@ namespace skyfire {
 
         __mem_value_type_t__ __get_mem_value_type(const std::string &key);
 
-        virtual sf_json to_json();
+        virtual skyfire::sf_json to_json() const;
 
         virtual ~sf_object();
 
@@ -484,27 +747,27 @@ namespace skyfire {
 
 
     public:
-        std::unordered_map<std::string, std::function<void(std::any)>> member_value_callback__;
-        std::unordered_map<std::string, std::function<void(std::shared_ptr<sf_object>)>> member_ref_callback__;
+        std::unordered_map<std::string, std::function<void(std::any)>> member_base_callback__;
+        std::unordered_map<std::string, std::function<void(std::shared_ptr<sf_object>)>> member_value_callback__;
         std::unordered_map<std::string, std::function<void(std::shared_ptr<sf_object>)>> member_pointer_callback__;
 
-        std::unordered_map<std::string, std::function<void(std::any)>> member_container_value_callback__;
-        std::unordered_map<std::string, std::function<void(std::vector<std::shared_ptr<sf_object>>)>> member_container_ref_callback__;
+        std::unordered_map<std::string, std::function<void(std::any)>> member_container_base_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector<std::shared_ptr<sf_object>>)>> member_container_value_callback__;
         std::unordered_map<std::string, std::function<void(std::vector<std::shared_ptr<sf_object>>)>> member_container_pointer_callback__;
 
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_value_value_callback__;
-        std::unordered_map<std::string, std::function<void(std::vector<std::pair<std::any,std::shared_ptr<sf_object>>>)>> member_associated_container_value_ref_callback__;
-        std::unordered_map<std::string, std::function<void(std::vector<std::pair<std::any,std::shared_ptr<sf_object>>>)>> member_associated_container_value_pointer_callback__;
+        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_base_base_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector<std::pair<std::any,std::shared_ptr<sf_object>>>)>> member_associated_container_base_value_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector<std::pair<std::any,std::shared_ptr<sf_object>>>)>> member_associated_container_base_pointer_callback__;
 
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_ref_value_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_ref_ref_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_ref_pointer_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector< std::pair<std::shared_ptr<sf_object>,std::any>>)>> member_associated_container_value_base_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector< std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>>)>> member_associated_container_value_value_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector< std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>>)>> member_associated_container_value_pointer_callback__;
 
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_pointer_value_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_pointer_ref_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_pointer_pointer_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector< std::pair<std::shared_ptr<sf_object>,std::any>>)>> member_associated_container_pointer_base_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector< std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>>)>> member_associated_container_pointer_value_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector< std::pair<std::shared_ptr<sf_object>,std::shared_ptr<sf_object>>>)>> member_associated_container_pointer_pointer_callback__;
 
-        std::unordered_map<std::string, std::function<sf_json()>> to_json_callback__;
+        std::unordered_map<std::string, std::function<skyfire::sf_json()>> to_json_callback__;
         std::unordered_map<std::string, __mem_value_type_t__> mem_value_type__;
 
         friend class sf_object_global_meta_info;

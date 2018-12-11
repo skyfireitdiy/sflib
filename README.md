@@ -1256,18 +1256,18 @@ using namespace std;
 class work : public sf_object
 {
 private:
-    sf_meta_value(string,name);
-    sf_meta_value(int,time);
+    m_base(string,name);
+    m_base(int,time);
 };
 sf_class(work)
 
 class student : public sf_object
 {
 private:
-    sf_meta_value(string, name)
-    sf_meta_value(int, age)
-    sf_meta_ref(work,works)
-    sf_meta_pointer(work,works2)
+    m_base(string, name)
+    m_base(int, age)
+    m_value(work,works)
+    m_pointer(work,works2)
 };
 sf_class(student)
 
@@ -1307,7 +1307,7 @@ int main()
 }
 ```
 
-要支持依赖注入，必须从`sf_object`派生，并且使用`sf_meta_value`,`sf_meta_ref`,`sf_meta_pointer`定义成员函数，其中`sf_meta_value`为基础类型（数字、字符串、布尔），`sf_meta_ref`表示其他`sf_object`类型，`sf_meta_pointer`会创建一个`sf_object`的智能指针`shared_ptr`，暂不支持容器，后期考虑支持。
+要支持依赖注入，必须从`sf_object`派生，并且使用`m_base`,`m_value`,`m_pointer`定义成员函数，其中`m_base`为基础类型（数字、字符串、布尔），`m_value`表示其他`sf_object`类型，`m_pointer`会创建一个`sf_object`的智能指针`shared_ptr`，暂不支持容器，后期考虑支持。
 
 程序加载一个`json`格式的配置文件，配置文件负责依赖注入，配置文件如下：
 
@@ -1347,7 +1347,7 @@ int main()
 }
 ```
 
-配置文件中定义了三个对象，`id`表示一个唯一的对象，`scope`可以制定是否为单例，如果值为`singleton`，则为单例，只在第一次获取对象的时候创建一次，否则每次获取都会创建。然后指定一些属性，需要与源文件中`sf_meta_xxx`配合，当源文件字段为`sf_meta_value`时，此处就是值，否则为其他对象的`id`。
+配置文件中定义了三个对象，`id`表示一个唯一的对象，`scope`可以制定是否为单例，如果值为`singleton`，则为单例，只在第一次获取对象的时候创建一次，否则每次获取都会创建。然后指定一些属性，需要与源文件中`sf_meta_xxx`配合，当源文件字段为`m_base`时，此处就是值，否则为其他对象的`id`。
 
 
 #### 更多
