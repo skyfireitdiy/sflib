@@ -27,6 +27,7 @@ private:
     sf_meta_container_ref(list, work, wlist)
     sf_meta_container_pointer(list, work, wlist2)
     sf_meta_associated_container_value_value(map,int,string,mis_value)
+    sf_meta_associated_container_value_ref(map,int,work,miw_value)
 };
 
 sf_class(student)

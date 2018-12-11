@@ -204,6 +204,23 @@ public:                                                                         
 })
 
 
+
+#define _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_REF_JSON(name) std::function<sf_json()>([=]()->sf_json{\
+    sf_json js;\
+    js[#name].convert_to_array();\
+    for(auto &p:name){\
+        sf_json t;\
+        t.convert_to_object();\
+        t["key"] = p.first;\
+        t["value"] = p.second.to_json();\
+        js[#name].append(t);\
+    }\
+    return js;\
+})\
+
+
+
+
 #define _SF_GETTER(type, name) type get_##name() const {                                                                  \
     return name;                                                                                                        \
 }                                                                                                                       \
@@ -395,6 +412,30 @@ void set_##name(const container<key_type,value_type>& t){\
 
 
 
+#define sf_meta_associated_container_value_ref(container_type, key_type, value_type, name) \
+    private:\
+        container_type<key_type, value_type> name;\
+        sf_object_meta_run CONSTR(mem_meta_,__LINE__){\
+            [=](){ \
+                mem_value_type__[#name] = sf_object::__mem_value_type_t__ ::associated_container_value_ref;\
+                member_associated_container_value_ref_callback__[#name]= \
+                    [=](std::vector<std::pair<std::any,std::shared_ptr<sf_object>>> value){\
+                        std::vector<std::pair<key_type,value_type>> tmp_vec;\
+                        for(auto &p:value){\
+                            auto t = std::make_pair(static_cast<key_type>(std::any_cast<sf_json>(p.first)),*std::dynamic_pointer_cast<value_type>(p.second));\
+                            tmp_vec.push_back(t);\
+                        }\
+                        name = container_type<key_type, value_type>(tmp_vec.begin(),tmp_vec.end());\
+                    };\
+                to_json_callback__[#name] = _SF_MAKE_ASSOCIATED_CONTAINER_VALUE_REF_JSON(name);\
+            }\
+        };\
+    public: \
+        SF_GS_EXT(container_type,key_type, value_type,name)
+
+
+
+
 namespace skyfire {
     /**
      *  @brief 元对象
@@ -452,8 +493,8 @@ namespace skyfire {
         std::unordered_map<std::string, std::function<void(std::vector<std::shared_ptr<sf_object>>)>> member_container_pointer_callback__;
 
         std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_value_value_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_value_ref_callback__;
-        std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_value_pointer_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector<std::pair<std::any,std::shared_ptr<sf_object>>>)>> member_associated_container_value_ref_callback__;
+        std::unordered_map<std::string, std::function<void(std::vector<std::pair<std::any,std::shared_ptr<sf_object>>>)>> member_associated_container_value_pointer_callback__;
 
         std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_ref_value_callback__;
         std::unordered_map<std::string, std::function<void(std::any)>> member_associated_container_ref_ref_callback__;

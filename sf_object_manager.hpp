@@ -120,8 +120,21 @@ namespace skyfire
                 }
                     break;
                 case sf_object::__mem_value_type_t__ ::associated_container_value_value:
-                    sf_object_global_meta_info::get_instance()->set_associated_container_value(obj,p.first, p.second);
+                    sf_object_global_meta_info::get_instance()->set_associated_container_value_value(obj,p.first, p.second);
                     break;
+                case sf_object::__mem_value_type_t__ ::associated_container_value_ref: {
+                    std::vector<std::pair<std::any, std::shared_ptr<sf_object>>> data;
+                    auto js = std::any_cast<sf_json>(p.second);
+                    int sz = static_cast<int>(js.size());
+                    for (int i = 0; i < sz; ++i) {
+                        std::any k = js[i]["key"];
+                        auto v = get_object__(static_cast<std::string>(js[i]["value"]));
+                        if(v){
+                            data.emplace_back(k,v);
+                        }
+                    }
+                    sf_object_global_meta_info::get_instance()->set_associated_container_value_ref(obj,p.first,data);
+                }
                 default:
                     break;
             }

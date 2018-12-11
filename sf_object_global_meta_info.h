@@ -39,31 +39,24 @@ namespace skyfire
 
 
 
-#define _SET_REF_FUNC(func_name, container_name) \
-        template<typename T> \
-        inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, T value) {\
-            if(object->container_name.count(key) == 0)\
-            {\
-                return false;\
-            }\
-            object->container_name[key](value);\
-            return true;\
-        }\
-
 
         _SET_VALUE_FUNC(set_value,member_value_callback__)
 
-        _SET_REF_FUNC(set_ref,member_ref_callback__)
+        _SET_VALUE_FUNC(set_ref,member_ref_callback__)
 
-        _SET_REF_FUNC(set_pointer,member_pointer_callback__)
+        _SET_VALUE_FUNC(set_pointer,member_pointer_callback__)
 
         _SET_VALUE_FUNC(set_container_value, member_container_value_callback__)
 
-        _SET_REF_FUNC(set_container_ref, member_container_ref_callback__)
+        _SET_VALUE_FUNC(set_container_ref, member_container_ref_callback__)
 
-        _SET_REF_FUNC(set_container_pointer, member_container_pointer_callback__)
+        _SET_VALUE_FUNC(set_container_pointer, member_container_pointer_callback__)
 
-        _SET_VALUE_FUNC(set_associated_container_value, member_associated_container_value_value_callback__)
+        _SET_VALUE_FUNC(set_associated_container_value_value, member_associated_container_value_value_callback__)
+
+        _SET_VALUE_FUNC(set_associated_container_value_ref, member_associated_container_value_ref_callback__)
+
+
 
 
 #undef _SET_VALUE_FUNC
