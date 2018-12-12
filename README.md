@@ -533,7 +533,7 @@ int main()
 
 6. 使用`sf_debug,sf_info,sf_warn,sf_error,sf_fatal`打印日志。（更多内容见API文档）
 
-#### 远程过程调动（RPC）框架使用
+#### 远程过程调用（RPC）框架使用
 
 
 服务器端
