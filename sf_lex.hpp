@@ -2,7 +2,7 @@
 
 
 #include "sf_lex.h"
-#include <regex>
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

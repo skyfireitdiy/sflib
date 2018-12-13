@@ -3,7 +3,8 @@
 #include "sf_json_utils.h"
 #include "sf_lex.h"
 #include "sf_yacc.h"
-#include <ostream>
+#include "sf_define.h"
+#include "sf_stdc++.h"
 
 namespace skyfire
 {
@@ -58,6 +59,12 @@ namespace skyfire
          * @param number 数字
          */
         sf_json(long double number);
+
+        /**
+         * 使用双精度浮点数数字构造一个json数值对象
+         * @param number
+         */
+        sf_json(double number);
 
         /**
          * 使用浮长整数数字构造一个json数值对象
@@ -176,6 +183,12 @@ namespace skyfire
          * @return long double值
          */
         operator long double() const;
+
+        /**
+         * 转换为double
+         * @return double值
+         */
+        operator double() const;
 
         /**
          * 转换为long long
@@ -336,4 +349,127 @@ namespace skyfire
      */
     sf_json operator ""_json(const char *str, std::size_t);
 
+
+    /**
+     * 转为json
+     * @tparam T 类型
+     * @param t 对象
+     * @return json对象
+     */
+    template <typename T>
+    sf_json to_json(const T& t);
+
+    /**
+     * 从json加载对象
+     * @tparam T 对象类型
+     * @param js json对象
+     * @param value 对象
+     */
+
+    template <typename T>
+    void from_json(const sf_json& js, T& value);
+
+    /**
+     * 转换pair为json
+     * @tparam K 键类型
+     * @tparam V 值类型
+     * @param value 对象
+     * @return json对象
+     */
+    template <typename K,typename V>
+    sf_json to_json(const std::pair<K,V> & value);
+
+    /**
+     * 从json加载对象
+     * @tparam K
+     * @tparam V
+     * @param js
+     * @param value
+     */
+    template <typename K,typename V>
+    void from_json(const sf_json& js, std::pair<K,V>& value);
+
+    /**
+     * 转换tuple对象为json
+     * @tparam ARGS tuple类型
+     * @param value 对象
+     * @return json对象
+     */
+    template <typename ... ARGS>
+    sf_json to_json(const std::tuple<ARGS...>& value);
+
+    /**
+     * 从json加载tuple对象
+     * @tparam ARGS tuple类型
+     * @param js json对象
+     * @param value 对象
+     */
+    template<typename... ARGS>
+    void from_json(const sf_json &js, std::tuple<ARGS...> &value);
+
+    template <int N, typename ...ARGS, typename ... Ret>
+    std::enable_if_t<N != sizeof...(ARGS), void> from_json_tuple_helper__(const sf_json &js, std::tuple<ARGS...> &data, Ret ... ret);
+
+    template <int N, int , typename ...ARGS, typename ... Ret>
+    std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(const sf_json &js, std::tuple<ARGS...> &data, Ret ... ret);
+
+    template <typename ... ARGS>
+    sf_json to_json_tuple_helper__(const ARGS &... value);
+
+#define SF_CONTAINER_JSON_EXTERN(container) \
+    template <typename T>\
+    sf_json to_json(const container<T> &value);\
+    template <typename T>\
+    void from_json(const sf_json& js, container<T>& value);\
+
+
+#define SF_ASSOCIATED_CONTAINER_JSON_EXTERN(container) \
+    template<typename K, typename V>\
+    sf_json to_json(const container<K,V> &value);\
+    template <typename K,typename V>\
+    void from_json(const sf_json& js, container<K,V> &value);\
+
+
+    SF_CONTAINER_JSON_EXTERN(std::vector)
+    SF_CONTAINER_JSON_EXTERN(std::list)
+    SF_CONTAINER_JSON_EXTERN(std::deque)
+    SF_CONTAINER_JSON_EXTERN(std::queue)
+    SF_CONTAINER_JSON_EXTERN(std::set)
+    SF_CONTAINER_JSON_EXTERN(std::multiset)
+    SF_CONTAINER_JSON_EXTERN(std::unordered_set)
+    SF_CONTAINER_JSON_EXTERN(std::unordered_multiset)
+
+    SF_ASSOCIATED_CONTAINER_JSON_EXTERN(std::map)
+    SF_ASSOCIATED_CONTAINER_JSON_EXTERN(std::multimap)
+    SF_ASSOCIATED_CONTAINER_JSON_EXTERN(std::unordered_map)
+    SF_ASSOCIATED_CONTAINER_JSON_EXTERN(std::unordered_multimap)
+
+
+
+#undef SF_CONTAINER_JSON_EXTERN
+#undef SF_ASSOCIATED_CONTAINER_JSON_EXTERN
+
+
+    template<typename T>
+    sf_json sf_to_json_helper__(const std::string &key, const T& value) ;
+
+    template<typename T, typename... ARGS>
+    sf_json sf_to_json_helper__(const std::string &key, const T& value, const ARGS&... args) ;
+
+    template<typename T>
+    void sf_from_json_helper__(const sf_json &js, const std::string &key, T &value) ;
+
+    template<typename T, typename... ARGS>
+    void sf_from_json_helper__(const sf_json &js, const std::string &key, T &value, ARGS&&... args);
+
 }
+
+
+#define SF_JSONIFY(ClassName, ...) \
+inline skyfire::sf_json to_json(const ClassName &obj){ \
+    return skyfire::sf_to_json_helper__(SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));\
+}\
+inline void from_json(const skyfire::sf_json &js, ClassName &obj){\
+    skyfire::sf_from_json_helper__(js,SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));\
+}\
+

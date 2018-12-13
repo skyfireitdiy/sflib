@@ -1,9 +1,7 @@
 #pragma once
 
 #include "sf_grammer_utils.h"
-#include <vector>
-#include <set>
-#include <unordered_set>
+#include "sf_stdc++.h"
 
 
 namespace skyfire

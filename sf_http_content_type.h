@@ -13,8 +13,7 @@
 
 #pragma once
 
-#include <map>
-#include <string>
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

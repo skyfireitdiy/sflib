@@ -17,6 +17,7 @@
 
 #pragma once
 
+#ifdef SF_LOGGER_STANDALONE
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -33,6 +34,9 @@
 #include <climits>
 #include <shared_mutex>
 #include <thread>
+#else
+#include "sf_stdc++.h"
+#endif
 
 #ifdef QT_CORE_LIB
 #include <QString>

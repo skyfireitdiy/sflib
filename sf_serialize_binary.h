@@ -17,18 +17,7 @@
 
 #pragma once
 
-#include <type_traits>
-#include <vector>
-#include <exception>
-#include <string>
-#include <cstring>
-#include <list>
-#include <deque>
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <unordered_set>
-#include <tuple>
+#include "sf_stdc++.h"
 #include "sf_type.hpp"
 #include "sf_define.h"
 
@@ -41,81 +30,43 @@ namespace skyfire
     typename std::enable_if<std::is_pod<_Pod_Type>::value, size_t>::type
     sf_deserialize_binary(const byte_array &data, _Pod_Type &obj, size_t begin_pos);
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::vector <_Type> &value);
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::vector <_Type> &obj, size_t begin_pos);
+#define SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(container)\
+    template<typename _Type>\
+    byte_array sf_serialize_binary(const container <_Type> &value);\
+    template<typename _Type>\
+    size_t sf_deserialize_binary(const byte_array &data, container <_Type> &obj, size_t begin_pos);\
+    
+    
+#define SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(container)\
+    template<typename _TypeKey, typename _TypeValue>\
+    byte_array sf_serialize_binary(const container <_TypeKey, _TypeValue> &obj);\
+    template<typename _TypeKey, typename _TypeValue>\
+    size_t\
+    sf_deserialize_binary(const byte_array &data, container <_TypeKey, _TypeValue> &obj, size_t begin_pos);\
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::list <_Type> &value);
+    
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::list <_Type> &obj, size_t begin_pos);
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::vector)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::list)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::deque)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::queue)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::set)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::multiset)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_set)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_multiset)
+    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::basic_string)
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::deque <_Type> &value);
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::deque <_Type> &obj, size_t begin_pos);
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::multimap)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_multimap)
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::set <_Type> &value);
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::set <_Type> &obj, size_t begin_pos);
+#undef SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN
+#undef SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::unordered_set <_Type> &value);
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::unordered_set <_Type> &obj, size_t begin_pos);
-
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::multiset <_Type> &value);
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::multiset <_Type> &obj, size_t begin_pos);
-
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::basic_string <_Type> &value);
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::basic_string <_Type> &obj, size_t begin_pos);
-
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::unordered_multiset <_Type> &value);
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::unordered_multiset <_Type> &obj, size_t begin_pos);
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::unordered_multimap <_TypeKey, _TypeValue> &obj);
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::unordered_multimap <_TypeKey, _TypeValue> &obj, size_t begin_pos);
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::unordered_map <_TypeKey, _TypeValue> &obj);
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::unordered_map <_TypeKey, _TypeValue> &obj, size_t begin_pos);
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::multimap <_TypeKey, _TypeValue> &obj);
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::multimap <_TypeKey, _TypeValue> &obj, size_t begin_pos);
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::map <_TypeKey, _TypeValue> &obj);
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::map <_TypeKey, _TypeValue> &obj, size_t begin_pos);
 
     template<typename _First_Type, typename... _Types>
     byte_array sf_serialize_binary(const _First_Type &first, const _Types &... value);

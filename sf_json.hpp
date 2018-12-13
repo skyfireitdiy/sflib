@@ -6,6 +6,7 @@
 #include "sf_json.h"
 #include "sf_utils.hpp"
 #include "sf_define.h"
+#include "sf_meta.hpp"
 
 
 namespace skyfire
@@ -255,6 +256,11 @@ namespace skyfire
         value__->number_value = number;
     }
 
+    inline sf_json::sf_json(double number): sf_json(static_cast<long double>(number))
+    {
+
+    }
+
     inline sf_json::sf_json(const sf_json &json):sf_json()
     {
         value__=json.value__;
@@ -439,6 +445,7 @@ namespace skyfire
         return *this;
     }
 
+
     inline void sf_json::append(const sf_json &value)
     {
         convert_to_array();
@@ -576,6 +583,14 @@ namespace skyfire
                 return 0;
         }
     }
+
+
+    inline sf_json::operator double() const
+    {
+        return static_cast<double>(operator long double());
+    }
+
+
 
     inline sf_json &sf_json::operator=(const sf_json& value)
     {
@@ -723,5 +738,170 @@ namespace skyfire
         return os<<json.to_string();
     }
 
+    template<typename T>
+    sf_json to_json(const T &t) {
+        return sf_json(t);
+    }
+
+
+
+    template<typename T>
+    sf_json sf_to_json_helper__(const std::string &key, const T& value) {
+        sf_json js;
+        js.convert_to_object();
+        js[key] = to_json(value);
+        return js;
+    }
+
+    template<typename T, typename... ARGS>
+    sf_json sf_to_json_helper__(const std::string &key, const T& value, const ARGS&... args) {
+        sf_json js;
+        js.convert_to_object();
+        js[key] = to_json(value);
+        js.join(sf_to_json_helper__(args...));
+        return js;
+    }
+
+    template<typename T>
+    void sf_from_json_helper__(const sf_json &js, const std::string &key, T &value) {
+        from_json(js.at(key),value);
+    }
+
+    template<typename T, typename... ARGS>
+    void sf_from_json_helper__(const sf_json &js, const std::string &key, T &value, ARGS&&... args) {
+        from_json(js.at(key),value);
+        sf_from_json_helper__(js,std::forward<ARGS>(args)...);
+    }
+
+
+    template<typename... ARGS>
+    void from_json(const sf_json &js, std::tuple<ARGS...> &value) {
+        from_json_tuple_helper__<0>(js,value);
+    }
+
+    template<typename T>
+    void from_json(const sf_json &js, T& value) {
+        value = static_cast<T>(js);
+    }
+
+    template<typename K, typename V>
+    sf_json to_json(const std::pair<K, V> &value) {
+        sf_json js;
+        js.convert_to_object();
+        js["key"] = to_json(value.first);
+        js["value"] = to_json(value.second);
+        return js;
+    }
+
+    template<typename K, typename V>
+    void from_json(const sf_json &js, std::pair<K, V> &value) {
+        K k;
+        V v;
+        from_json(js.at("key",k));
+        from_json(js.at("value",v));
+        value = {k,v};
+    }
+
+    template<typename... ARGS>
+    sf_json to_json(const std::tuple<ARGS...> &value) {
+        return sf_invoke(to_json_tuple_helper__<ARGS...>, value);
+    }
+
+
+
+    template<typename... ARGS>
+    sf_json to_json_tuple_helper__(const ARGS &... value) {
+        sf_json js;
+        js.convert_to_array();
+        (js.append(sf_json(value)),...);
+        return js;
+    }
+
+    template<int N, typename... ARGS, typename... Ret>
+    std::enable_if_t<N != sizeof... (ARGS), void> from_json_tuple_helper__(const sf_json &js, std::tuple<ARGS...> &data, Ret... ret) {
+        std::remove_reference_t<decltype(std::get<N>(data))> t_data;
+        from_json(js.at(N),t_data);
+        from_json_tuple_helper__<N+1>(js,data,ret..., t_data);
+    }
+
+    template<int N, typename... ARGS, typename... Ret>
+    std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(const sf_json &js, std::tuple<ARGS...> &data, Ret... ret) {
+        data = {ret ...};
+    }
+
+
+
+
+#define SF_CONTAINER_JSON_IMPL(container) \
+    template <typename T>\
+    sf_json to_json(const container<T> &value)\
+    {\
+        sf_json js;\
+        js.convert_to_array();\
+        for(auto &p:value)\
+        {\
+            js.append(to_json(p));\
+        }\
+        return js;\
+    }\
+    template<typename T>\
+    void from_json(const sf_json& js, container<T>& value)\
+    {\
+        std::vector<T> data;\
+        int sz = js.size();\
+        for(int i=0;i<sz;++i){\
+            data.push_back(from_json<T>(js.at(i)));\
+        }\
+        value = container<T> {data.begin(),data.end()};\
+    }\
+
+
+#define SF_ASSOCIATED_CONTAINER_JSON_IMPL(container) \
+    template<typename K, typename V>\
+    sf_json to_json(const container<K,V> &value){\
+        sf_json js;\
+        js.convert_to_array();\
+        for(auto &p:value){\
+            sf_json tmp_js;\
+            tmp_js.convert_to_object();\
+            tmp_js["key"] = to_json(p.first);\
+            tmp_js["value"] = to_json(p.second);\
+            js.append(tmp_js);\
+        }\
+        return js;\
+    }\
+    template<typename K,typename V>\
+    void from_json(const sf_json& js,container<K,V> &value)\
+    {\
+        std::vector<std::pair<K,V>> data;\
+        int sz = js.size();\
+        for(int i=0;i<sz;++i){\
+            data.push_back(std::make_pair(from_json<K>(js.at(i).at("key")), from_json<V>(js.at(i).at("value"))));\
+        }\
+        value = container<K,V> {data.begin(),data.end()};\
+    }\
+
+
+    SF_CONTAINER_JSON_IMPL(std::vector)
+    SF_CONTAINER_JSON_IMPL(std::list)
+    SF_CONTAINER_JSON_IMPL(std::deque)
+    SF_CONTAINER_JSON_IMPL(std::queue)
+    SF_CONTAINER_JSON_IMPL(std::set)
+    SF_CONTAINER_JSON_IMPL(std::multiset)
+    SF_CONTAINER_JSON_IMPL(std::unordered_set)
+    SF_CONTAINER_JSON_IMPL(std::unordered_multiset)
+
+    SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::map)
+    SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::multimap)
+    SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::unordered_map)
+    SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::unordered_multimap)
+
+
+
+
+#undef SF_CONTAINER_JSON_IMPL
+#undef SF_ASSOCIATED_CONTAINER_JSON_IMPL
 
 }
+
+

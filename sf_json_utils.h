@@ -1,9 +1,6 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <map>
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

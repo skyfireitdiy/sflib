@@ -13,16 +13,13 @@
 
 #pragma once
 
-#include <string>
-#include <fstream>
+#include "sf_stdc++.h"
 #include <openssl/evp.h>
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/sha.h>
 #include <zlib.h>
 #include <zconf.h>
-#include <fstream>
-#include <cstring>
 #include <sys/stat.h>
 #include <sys/types.h>
 

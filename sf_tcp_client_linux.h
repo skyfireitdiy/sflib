@@ -22,11 +22,7 @@
 #include <arpa/inet.h>
 
 
-#include <string>
-#include <functional>
-#include <memory>
-#include <cstring>
-#include <thread>
+#include "sf_stdc++.h"
 
 #include "sf_tcp_client_interface.h"
 

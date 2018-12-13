@@ -21,7 +21,7 @@
 #include "sf_define.h"
 #include "sf_tcp_nat_traversal_utils.hpp"
 #include "sf_random.hpp"
-#include <climits>
+#include "sf_stdc++.h"
 #include <zconf.h>
 
 

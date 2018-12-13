@@ -16,12 +16,7 @@
  */
 
 #pragma once
-#include <map>
-#include <thread>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <sstream>
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

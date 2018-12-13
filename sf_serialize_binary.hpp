@@ -53,216 +53,76 @@ namespace skyfire {
         return begin_pos + sizeof(_Pod_Type);
     }
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::vector<_Type> &value) {
-        byte_array ret;
-        size_t len = value.size();
-        auto tmp_ret = sf_serialize_binary(len);
-        ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());
-        for (auto const &p : value) {
-            tmp_ret = sf_serialize_binary(p);
-            ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());
-        }
-        return ret;
-    }
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::vector<_Type> &obj,
-                                 size_t begin_pos) {
-        obj.clear();
-        size_t len;
-        auto offset = sf_deserialize_binary(data, len, begin_pos);
-        obj.resize(len);
-        for (auto i = 0; i < len; ++i) {
-            offset = sf_deserialize_binary(data, obj[i], offset);
-        }
-        return offset;
-    }
+#define SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(container)\
+    template<typename _Type>\
+    byte_array sf_serialize_binary(const container<_Type> &value) {\
+        std::vector<_Type> tmp_obj(value.begin(), value.end());\
+        return sf_serialize_binary(tmp_obj);\
+    }\
+    template<typename _Type>\
+    size_t sf_deserialize_binary(const byte_array &data, container<_Type> &obj,\
+                                 size_t begin_pos) {\
+        std::vector<_Type> tmp_obj;\
+        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);\
+        obj = container<_Type>(tmp_obj.begin(), tmp_obj.end());\
+        return ret;\
+    }\
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::list<_Type> &value) {
-        std::vector<_Type> tmp_obj(value.begin(), value.end());
-        return sf_serialize_binary(tmp_obj);
-    }
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::list<_Type> &obj,
-                                 size_t begin_pos) {
-        std::vector<_Type> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::list<_Type>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
+#define SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(container) \
+    template<typename _TypeKey, typename _TypeValue>\
+    byte_array sf_serialize_binary(const container<_TypeKey, _TypeValue> &obj) {\
+        byte_array ret;\
+        size_t len = obj.size();\
+        auto tmp_ret = sf_serialize_binary(len);\
+        ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());\
+        for (auto const &p : obj) {\
+            tmp_ret = sf_serialize_binary(p.first);\
+            ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());\
+            tmp_ret = sf_serialize_binary(p.second);\
+            ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());\
+        }\
+        return ret;\
+    }\
+    template<typename _TypeKey, typename _TypeValue>\
+    size_t\
+    sf_deserialize_binary(const byte_array &data, container<_TypeKey, _TypeValue> &obj,\
+                          size_t begin_pos) {\
+        obj.clear();\
+        size_t len;\
+        auto offset = sf_deserialize_binary(data, len, begin_pos);\
+        _TypeKey key;\
+        _TypeValue value;\
+        std::vector<std::pair<_TypeKey,_TypeValue>> tmp_data;\
+        for (auto i = 0; i < len; ++i) {\
+            offset = sf_deserialize_binary(data, key, offset);\
+            offset = sf_deserialize_binary(data, value, offset);\
+            tmp_data.emplace_back({key, value});\
+        }\
+        obj = container<_TypeKey, _TypeValue>{tmp_data.begin(), tmp_data.end()};\
+        return offset;\
+    }\
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::deque<_Type> &value) {
-        std::vector<_Type> tmp_obj(value.begin(), value.end());
-        return sf_serialize_binary(tmp_obj);
-    }
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::deque<_Type> &obj,
-                                 size_t begin_pos) {
-        std::vector<_Type> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::deque<_Type>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::vector)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::list)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::deque)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::queue)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::set)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::multiset)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_set)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_multiset)
+    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::basic_string)
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::set<_Type> &value) {
-        std::vector<_Type> tmp_obj(value.begin(), value.end());
-        return sf_serialize_binary(tmp_obj);
-    }
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::multimap)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_multimap)
 
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::set<_Type> &obj,
-                                 size_t begin_pos) {
-        std::vector<_Type> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::set<_Type>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
 
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::unordered_set<_Type> &value) {
-        std::vector<_Type> tmp_obj(value.begin(), value.end());
-        return sf_serialize_binary(tmp_obj);
-    }
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::unordered_set<_Type> &obj,
-                                 size_t begin_pos) {
-        std::vector<_Type> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::unordered_set<_Type>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
-
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::multiset<_Type> &value) {
-        std::vector<_Type> tmp_obj(value.begin(), value.end());
-        return sf_serialize_binary(tmp_obj);
-    }
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::multiset<_Type> &obj,
-                                 size_t begin_pos) {
-        std::vector<_Type> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::multiset<_Type>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
-
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::basic_string<_Type> &value) {
-        std::vector<char> tmp_obj(value.begin(), value.end());
-        return sf_serialize_binary(tmp_obj);
-    }
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::basic_string<_Type> &obj,
-                                 size_t begin_pos) {
-        std::vector<char> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::basic_string<_Type>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
-
-    template<typename _Type>
-    byte_array sf_serialize_binary(const std::unordered_multiset<_Type> &value) {
-        std::vector<_Type> tmp_obj(value.begin(), value.end());
-        return sf_serialize_binary(tmp_obj);
-    }
-
-    template<typename _Type>
-    size_t sf_deserialize_binary(const byte_array &data, std::unordered_multiset<_Type> &obj,
-                                 size_t begin_pos) {
-        std::vector<_Type> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::unordered_multiset<_Type>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::unordered_multimap<_TypeKey, _TypeValue> &obj) {
-        byte_array ret;
-        size_t len = obj.size();
-        auto tmp_ret = sf_serialize_binary(len);
-        ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());
-        for (auto const &p : obj) {
-            tmp_ret = sf_serialize_binary(p.first);
-            ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());
-            tmp_ret = sf_serialize_binary(p.second);
-            ret.insert(ret.end(), tmp_ret.begin(), tmp_ret.end());
-        }
-        return ret;
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::unordered_multimap<_TypeKey, _TypeValue> &obj,
-                          size_t begin_pos) {
-        obj.clear();
-        size_t len;
-        auto offset = sf_deserialize_binary(data, len, begin_pos);
-        _TypeKey key;
-        _TypeValue value;
-        for (auto i = 0; i < len; ++i) {
-            offset = sf_deserialize_binary(data, key, offset);
-            offset = sf_deserialize_binary(data, value, offset);
-            obj.insert({key, value});
-        }
-        return offset;
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::unordered_map<_TypeKey, _TypeValue> &obj) {
-        std::unordered_multimap<_TypeKey, _TypeValue> tmp_obj(obj.begin(), obj.end());
-        return sf_serialize_binary(tmp_obj);
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::unordered_map<_TypeKey, _TypeValue> &obj,
-                          size_t begin_pos) {
-        std::unordered_multimap<_TypeKey, _TypeValue> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::unordered_map<_TypeKey, _TypeValue>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::multimap<_TypeKey, _TypeValue> &obj) {
-        std::unordered_multimap<_TypeKey, _TypeValue> tmp_obj(obj.begin(), obj.end());
-        return sf_serialize_binary(tmp_obj);
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::multimap<_TypeKey, _TypeValue> &obj,
-                          size_t begin_pos) {
-        std::unordered_multimap<_TypeKey, _TypeValue> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::multimap<_TypeKey, _TypeValue>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    byte_array sf_serialize_binary(const std::map<_TypeKey, _TypeValue> &obj) {
-        std::unordered_multimap<_TypeKey, _TypeValue> tmp_obj(obj.begin(), obj.end());
-        return sf_serialize_binary(tmp_obj);
-    }
-
-    template<typename _TypeKey, typename _TypeValue>
-    size_t
-    sf_deserialize_binary(const byte_array &data, std::map<_TypeKey, _TypeValue> &obj,
-                          size_t begin_pos) {
-        std::unordered_multimap<_TypeKey, _TypeValue> tmp_obj;
-        auto ret = sf_deserialize_binary(data, tmp_obj, begin_pos);
-        obj = std::map<_TypeKey, _TypeValue>(tmp_obj.begin(), tmp_obj.end());
-        return ret;
-    }
+#undef SF_CONTAINTER_SERIALIZE_BINARAY_IMPL
+#undef SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL
 
     template<typename _First_Type, typename... _Types>
     byte_array sf_serialize_binary(const _First_Type &first, const _Types &... value) {

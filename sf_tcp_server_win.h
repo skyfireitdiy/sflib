@@ -14,11 +14,7 @@
 #pragma once
 
 #include <winsock2.h>
-#include <string>
-#include <vector>
-#include <functional>
-#include <memory>
-#include <map>
+#include "sf_stdc++.h"
 #include "sf_tcp_utils.hpp"
 #include "sf_nocopy.h"
 #include "sf_object.hpp"

@@ -17,9 +17,7 @@
 
 #pragma once
 
-#include <condition_variable>
-#include <mutex>
-#include <atomic>
+#include "sf_stdc++.h"
 
 #include "sf_single_instance.hpp"
 #include "sf_msg_queue.hpp"

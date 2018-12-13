@@ -13,8 +13,7 @@
 
 #pragma once
 
-#include <random>
-#include <memory>
+#include "sf_stdc++.h"
 
 #include "sf_nocopy.h"
 #include "sf_single_instance.hpp"

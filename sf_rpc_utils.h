@@ -15,7 +15,7 @@
 
 #include "sf_serialize_binary.hpp"
 #include "sf_type.h"
-#include <string>
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

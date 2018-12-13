@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <string>
+#include "sf_stdc++.h"
 #include "sf_serialize_binary.hpp"
 
 namespace skyfire

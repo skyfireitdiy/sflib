@@ -18,12 +18,7 @@
 
 #pragma once
 
-#include <map>
-#include <unordered_map>
-#include <vector>
-#include <thread>
-#include <functional>
-#include <any>
+#include "sf_stdc++.h"
 #include "sf_empty_class.hpp"
 #include "sf_msg_queue.hpp"
 #include "sf_eventloop.hpp"

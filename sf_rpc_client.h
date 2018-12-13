@@ -23,13 +23,7 @@
 #include "sf_timer.hpp"
 #include "sf_tri_type.hpp"
 #include "sf_define.h"
-#include <string>
-#include <functional>
-#include <tuple>
-#include <memory>
-#include <mutex>
-#include <condition_variable>
-#include <chrono>
+#include "sf_stdc++.h"
 
 
 namespace skyfire {
