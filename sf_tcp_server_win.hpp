@@ -220,7 +220,7 @@ namespace skyfire {
             return false;
         }
 
-        if (::listen(listen_sock__, SOMAXCONN) == SOCKET_ERROR) {
+        if (::listen(listen_sock__, max_tcp_connection) == SOCKET_ERROR) {
             close();
             return false;
         }

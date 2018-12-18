@@ -47,6 +47,8 @@ namespace skyfire
 
 #pragma pack()
 
+    constexpr int max_tcp_connection = 1000000;
+
     /**
      * 生成数据包
      * @tparam T 数据类型

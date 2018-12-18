@@ -44,7 +44,7 @@ namespace skyfire
         int cur_fd_count__ = -1;
         int epoll_fd__ = -1;
         bool raw__ = false;
-        epoll_event evs[SOMAXCONN];
+        epoll_event evs[max_tcp_connection];
         epoll_event ev;
 
     public:

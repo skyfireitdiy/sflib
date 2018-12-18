@@ -46,7 +46,7 @@ int sf_logger::add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::strin
         auto key = make_random_logger_id__();
         logger_func_set__[level][key] = [=](const sf_logger_info_t__ &log_info)
         {
-            *os<<format(format_str, log_info);
+            *os<<format(format_str, log_info)<<std::flush;
         };
         return key;
     }
@@ -65,7 +65,7 @@ int sf_logger::add_level_file(SF_LOG_LEVEL level, const std::string &filename, s
 
             auto key = make_random_logger_id__();
             logger_func_set__[level][key] = [=](const sf_logger_info_t__ &log_info){
-                *ofs<<format(format_str, log_info);
+                *ofs<<format(format_str, log_info)<<std::flush;
             };
             return key;
 
