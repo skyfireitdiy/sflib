@@ -98,7 +98,7 @@ namespace skyfire
             std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
             if (websocket_context__.count(sock) != 0)
             {
-                // sf_debug("websocket connection");
+                sf_debug("websocket connection");
                 websocket_data_coming__(sock, data);
                 return;
             }
@@ -109,7 +109,7 @@ namespace skyfire
             // sf_debug("Request",to_string(data));
             if (request_context__.count(sock) == 0)
             {
-                // sf_debug("http connection");
+                sf_debug("http connection");
                 request_context__[sock] = sf_request_context_t();
             }
             request_context__[sock].buffer += data;
@@ -170,11 +170,13 @@ namespace skyfire
                 // 筛选Websocket请求
                 if (sf_equal_nocase_string(req_header.get_header_value("Upgrade"), "websocket"))
                 {
+                    sf_debug("new websocket request");
                     build_websocket_context_data__(sock, request);
                 }
                 return;
             }
 
+            sf_debug("new http request");
             if (request_callback__)
             {
                 http_handler__(sock,request);
@@ -694,8 +696,10 @@ namespace skyfire
     {
         if (!server__->listen(config__.host, config__.port))
         {
+            sf_debug("listen error");
             return false;
         }
+        sf_debug("listen succeed!", config__.port);
         std::vector<std::thread> thread_vec;
         for (auto i = 0; i < config__.thread_count; ++i)
         {

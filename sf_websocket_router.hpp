@@ -57,6 +57,7 @@ namespace skyfire {
     }
 
     inline bool sf_websocket_router::run_route(const sf_websocket_param_t &context) {
+        sf_debug("context.url", context.url, "url__", url__);
         if (context.url == url__) {
             callback__(context);
             return true;

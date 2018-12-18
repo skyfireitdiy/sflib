@@ -11,6 +11,7 @@
 * 发布日期：2018-10-22
 */
 
+#define SF_DEBUG
 #include "sf_http_static_router.hpp"
 #include "sf_http_server.hpp"
 
@@ -68,6 +69,7 @@ void websocket_route(const sf_websocket_param_t& param)
 {
     // 如果类型为文本，返回hello:原内容
     if(param.type == websocket_data_type::TextData){
+        std::cout<<"received:"<<param.text_msg<<std::endl;
         param.p_server->send_websocket_data(param.sock,"hello:" + param.text_msg);
     } else{
         std::cout<<"binary data"<<std::endl;
@@ -80,7 +82,7 @@ int main() {
     sf_http_server_config config;
     config.host = "0.0.0.0";        // 监听ip
     config.port = 8080;             // 端口
-    config.thread_count = 8;        // 线程数量
+    config.thread_count = 1;        // 线程数量
     config.request_timeout = 30;    // http请求超时
     // 2. 根据配置生成一个http server
     auto server = sf_http_server::make_server(config);

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "sf_http_server.h"
+#include "sf_http_utils.hpp"
 
 namespace skyfire
 {
@@ -78,7 +79,7 @@ namespace skyfire
     inline void
     sf_http_server::default_websocket_text_data_callback__(SOCKET sock, const std::string &url, const std::string &data) {
         sf_websocket_param_t param;
-        param.url = url;
+        sf_parse_url(url,param.url,param.param,param.frame);
         param.sock = sock;
         param.text_msg = data;
         param.type = websocket_data_type ::TextData;
@@ -93,7 +94,7 @@ namespace skyfire
     inline void sf_http_server::default_websocket_binary_data_callback__(SOCKET sock, const std::string &url,
                                                                   const byte_array &data) {
         sf_websocket_param_t param;
-        param.url = url;
+        sf_parse_url(url,param.url,param.param,param.frame);
         param.sock = sock;
         param.binary_data = data;
         param.type = websocket_data_type ::BinaryData;
