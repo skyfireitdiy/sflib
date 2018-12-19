@@ -16,63 +16,16 @@
  */
 
 #pragma once
-
-#ifdef SF_LOGGER_STANDALONE
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <mutex>
-#include <map>
-#include <ctime>
-#include <iomanip>
-#include <functional>
-#include <thread>
-#include <condition_variable>
-#include <deque>
-#include <atomic>
-#include <unordered_map>
-#include <climits>
-#include <shared_mutex>
-#include <thread>
-#else
 #include "sf_stdc++.h"
-#endif
+#include "sf_thread_pool.h"
 
 #ifdef QT_CORE_LIB
 #include <QString>
 #endif
 
-// 独立使用
-
-#ifdef SF_LOGGER_STANDALONE
-namespace skyfire{
-    class sf_empty_class{};
-
-}
-
-#define SF_SINGLE_TON(ClassName)								\
-ClassName(const ClassName&) = delete;							\
-ClassName(ClassName&&) = delete;								\
-ClassName& operator=(const ClassName&) = delete;				\
-static ClassName* get_instance()								\
-{																\
-	static std::mutex init_mutex;								\
-	static ClassName* instance__{ nullptr };					\
-	if(instance__==nullptr){									\
-		std::lock_guard<std::mutex> lck(init_mutex);			\
-		if (instance__ == nullptr)								\
-		{														\
-			instance__ = new ClassName;							\
-		}														\
-	}															\
-	return instance__;											\
-}																\
-
-#else
 #include "sf_random.hpp"
 #include "sf_single_instance.hpp"
 #include "sf_empty_class.hpp"
-#endif
 
 namespace skyfire
 {
@@ -183,6 +136,7 @@ namespace skyfire
         std::map<int, std::unordered_map<int ,std::function<void(const sf_logger_info_t__ &)>>> logger_func_set__;
         std::atomic<bool> run__ {true};
         std::recursive_mutex func_set_mutex__;
+        sf_thread_pool pool__;
 
         bool check_key_can_use__(int key);
 

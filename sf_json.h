@@ -48,35 +48,13 @@ namespace skyfire
          */
         sf_json(const std::string &str);
 
+
         /**
          * 使用c字符串构造一个json字符串对象
          * @param c_str c字符串
          */
         sf_json(const char *c_str);
 
-        /**
-         * 使用浮点数数字构造一个json数值对象
-         * @param number 数字
-         */
-        sf_json(long double number);
-
-        /**
-         * 使用双精度浮点数数字构造一个json数值对象
-         * @param number
-         */
-        sf_json(double number);
-
-        /**
-         * 使用浮长整数数字构造一个json数值对象
-         * @param number 数字
-         */
-        sf_json(long long number);
-
-        /**
-         * 使用整数数字构造一个json数值对象
-         * @param number 数字
-         */
-        sf_json(int number);
 
         /**
          * 使用json对象构造一个json对象
@@ -178,50 +156,32 @@ namespace skyfire
          */
         operator bool() const;
 
-        /**
-         * 转换为long double
-         * @return long double值
-         */
-        operator long double() const;
 
         /**
-         * 转换为double
-         * @return double值
+         * 构造函数（算术类型）
+         * @tparam T 类型
+         * @param number 数字
          */
-        operator double() const;
+        template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
+        sf_json(T number);
 
         /**
-         * 转换为long long
-         * @return long long值
+         * 隐式转换（算术类型）
+         * @tparam T 类型
+         * @return 数字
          */
-        operator long long() const;
+        template <typename T, typename  = std::enable_if_t<std::is_arithmetic_v<T>, void>>
+        operator T() const;
 
         /**
-         * 转换为int
-         * @return int值
-         */
-        operator int() const;
-
-        /**
-         * 赋值运算符
+         * 赋值（算术类型）
+         * @tparam T 类型
          * @param value 值
-         * @return json对象
+         * @return sf_json对象
          */
-        sf_json &operator=(long double value);
+        template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
+        sf_json &operator=(T value);
 
-        /**
-         * 赋值运算符
-         * @param value 值
-         * @return json对象
-         */
-        sf_json &operator=(long long value);
-
-        /**
-         * 赋值运算符
-         * @param value 值
-         * @return json对象
-         */
-        sf_json &operator=(int value);
 
         /**
          * 赋值运算符

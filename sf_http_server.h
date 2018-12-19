@@ -45,7 +45,7 @@ namespace skyfire
 
     private:
         // WARNING 这个函数不应该直接被调用，而是应该使用make_server函数
-        explicit sf_http_server(const sf_http_server_config& config);
+        explicit sf_http_server(const sf_http_server_config& config = sf_http_server_config{});
 
     public:
         /**

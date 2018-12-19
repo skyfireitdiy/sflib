@@ -18,6 +18,7 @@
 #pragma once
 
 #include "sf_logger.h"
+#include "sf_thread_pool.hpp"
 
 namespace skyfire
 {
@@ -138,29 +139,32 @@ sf_logger::sf_logger()
                     {
                         while (true)
                         {
-                            std::unique_lock<std::mutex> lck(cond_mu__);
-                            cond__.wait(lck);
+
+                            {
+                                std::unique_lock<std::mutex> lck(cond_mu__);
+                                cond__.wait(lck);
+                            }
                             {
                                 std::deque<sf_logger_info_t__> tmp_info;
                                 {
                                     std::unique_lock<std::mutex> de_lck(deque_mu__);
-                                    tmp_info=std::move(log_deque__);
+                                    tmp_info = std::move(log_deque__);
                                     log_deque__.clear();
+                                    pool__.add_task(
+                                            [=]() {
+                                                for (auto &log: tmp_info) {
+                                                    std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
+                                                    for (auto &level_func:logger_func_set__) {
+                                                        if (log.level >= level_func.first) {
+                                                            for (auto &func:level_func.second) {
+                                                                func.second(log);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
                                 }
-                                for (auto &log: tmp_info)
-                                {
-                                    std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-                                    for (auto &level_func:logger_func_set__)
-                                    {
-                                        if (log.level >= level_func.first)
-                                        {
-                                            for (auto &func:level_func.second)
-                                            {
-                                                func.second(log);
-                                            }
-                                        }
-                                    }
-                                }
+
                             }
                             if(!run__){
                                 run__ = true;

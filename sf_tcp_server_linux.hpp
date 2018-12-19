@@ -33,6 +33,7 @@ namespace skyfire
     inline bool sf_tcp_server::send(int sock, const byte_array &data)
     {
         auto send_data = data;
+        sf_debug("raw send", send_data.size());
         return write(sock, send_data.data(), send_data.size()) == send_data.size();
     }
 
@@ -106,14 +107,14 @@ namespace skyfire
 
         std::thread([=]
                     {
-
+                        epoll_event *evs = new epoll_event[max_tcp_connection];
                         byte_array recv_buf(SF_DEFAULT_BUFFER_SIZE);
                         sf_pkg_header_t header{};
                         while (true)
                         {
                             int wait_fds = 0;
                             sf_debug("wait epoll event");
-                            if ((wait_fds = epoll_wait(epoll_fd__, evs, max_tcp_connection, -1)) == -1)
+                            if ((wait_fds = epoll_wait(epoll_fd__, evs, cur_fd_count__, -1)) == -1)
                             {
                                 break;
                             }
@@ -130,10 +131,12 @@ namespace skyfire
                                     if ((conn_fd = accept(listen_fd__, (struct sockaddr *) &client_addr, &len)) ==
                                         -1)
                                     {
+                                        sf_debug("accept error");
                                         break;
                                     }
                                     if (fcntl(conn_fd, F_SETFL, fcntl(conn_fd, F_GETFD, 0) | O_NONBLOCK) == -1)
                                     {
+                                        sf_debug("set no block error");
                                         close(conn_fd);
                                         continue;
                                     }
@@ -141,6 +144,7 @@ namespace skyfire
                                     ev.data.fd = conn_fd;
                                     if (epoll_ctl(epoll_fd__, EPOLL_CTL_ADD, conn_fd, &ev) < 0)
                                     {
+                                        sf_debug("add to epoll error");
                                         close(conn_fd);
                                         continue;
                                     }
@@ -159,7 +163,7 @@ namespace skyfire
                                         auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(),
                                                                                 SF_DEFAULT_BUFFER_SIZE));
                                         sf_debug("read", count_read);
-                                        if (count_read <= 0)
+                                        if (count_read < 0)
                                         {
                                             closed(static_cast<SOCKET>(evs[i].data.fd));
                                             close(evs[i].data.fd);
@@ -168,6 +172,12 @@ namespace skyfire
 
                                             sf_debug("close connection");
                                             close(evs[i].data.fd);
+                                            break;
+                                        }
+
+                                        if(count_read == 0)
+                                        {
+                                            sf_debug("read finished");
                                             break;
                                         }
 
@@ -229,6 +239,7 @@ namespace skyfire
 
                             }
                         }
+                        delete [] evs;
                     }).detach();
         return true;
     }

@@ -15,6 +15,7 @@
 
 #include "sf_stdc++.h"
 #include "sf_serialize_binary.hpp"
+#include "sf_json.hpp"
 
 namespace skyfire {
 
@@ -22,10 +23,13 @@ namespace skyfire {
      * @brief  http服务器配置项
      */
     struct sf_http_server_config {
-        std::string host;               // 主机ip地址
-        unsigned short port;          // http端口
-        size_t thread_count;            // 线程数量
-        int request_timeout;            // 连接超时
-        std::string tmp_file_path;      // 临时文件路径
+        std::string host    = "0.0.0.0";               // 主机ip地址
+        unsigned short port = 80;          // http端口
+        size_t thread_count = 8;            // 线程数量
+        int request_timeout = 30;            // 连接超时
+        std::string tmp_file_path = ".";      // 临时文件路径
     };
+
+    SF_JSONIFY(sf_http_server_config, host, port, thread_count, request_timeout, tmp_file_path)
 }
+

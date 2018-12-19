@@ -250,16 +250,6 @@ namespace skyfire
 
 
 
-    inline sf_json::sf_json(long double number):sf_json()
-    {
-        value__->type = sf_json_type::number;
-        value__->number_value = number;
-    }
-
-    inline sf_json::sf_json(double number): sf_json(static_cast<long double>(number))
-    {
-
-    }
 
     inline sf_json::sf_json(const sf_json &json):sf_json()
     {
@@ -423,7 +413,8 @@ namespace skyfire
         }
     }
 
-    inline sf_json &sf_json::operator=(long double value)
+    template <typename T, typename>
+    sf_json &sf_json::operator=(T value)
     {
         if (value__->type != sf_json_type::number)
         {
@@ -433,6 +424,8 @@ namespace skyfire
         value__->number_value = value;
         return *this;
     }
+
+
 
     inline sf_json &sf_json::operator=(const std::string &value)
     {
@@ -566,30 +559,6 @@ namespace skyfire
     }
 
 
-    inline sf_json::operator long double() const
-    {
-        switch (value__->type)
-        {
-            case sf_json_type::array:
-            case sf_json_type::object:
-            case sf_json_type::null:
-            case sf_json_type::string:
-                return 0;
-            case sf_json_type::boolean:
-                return value__->number_value != 0;
-            case sf_json_type::number:
-                return value__->number_value;
-            default:
-                return 0;
-        }
-    }
-
-
-    inline sf_json::operator double() const
-    {
-        return static_cast<double>(operator long double());
-    }
-
 
 
     inline sf_json &sf_json::operator=(const sf_json& value)
@@ -651,26 +620,6 @@ namespace skyfire
         return sf_json(value__->array_value[key]);
     }
 
-    inline sf_json::operator long long() const
-    {
-        return static_cast<long long>(operator long double());
-    }
-
-    inline sf_json::sf_json(long long number):sf_json(static_cast<long double>(number))
-    {
-    }
-
-    sf_json &sf_json::operator=(long long value)
-    {
-        if (value__->type != sf_json_type::number)
-        {
-            value__->type = sf_json_type::number;
-            clear();
-        }
-        value__->number_value = value;
-        return *this;
-    }
-
     sf_json &sf_json::operator=(bool value)
     {
         if (value__->type != sf_json_type::boolean)
@@ -687,20 +636,6 @@ namespace skyfire
         return value__->type == sf_json_type::null;
     }
 
-    inline sf_json::sf_json(int number):sf_json(static_cast<long double>(number))
-    {
-
-    }
-
-    inline sf_json::operator int() const
-    {
-        return static_cast<int>(operator long double());
-    }
-
-    inline sf_json &sf_json::operator=(int value)
-    {
-        return operator=(static_cast<long double>(value));
-    }
 
     inline sf_json &sf_json::operator=(const char *value)
     {
@@ -728,6 +663,7 @@ namespace skyfire
         return has(std::string(c_key));
     }
 
+
     inline sf_json operator ""_json(const char *str, std::size_t)
     {
         return sf_json::from_string(str);
@@ -743,6 +679,32 @@ namespace skyfire
         return sf_json(t);
     }
 
+
+    template <typename T, typename>
+    sf_json::operator T() const
+    {
+        switch (value__->type)
+        {
+            case sf_json_type::array:
+            case sf_json_type::object:
+            case sf_json_type::null:
+            case sf_json_type::string:
+                return 0;
+            case sf_json_type::boolean:
+                return value__->number_value != 0;
+            case sf_json_type::number:
+                return value__->number_value;
+            default:
+                return 0;
+        }
+    }
+
+    template <typename T, typename>
+    sf_json::sf_json(T number)
+    {
+        value__->type = sf_json_type::number;
+        value__->number_value = number;
+    }
 
 
     template<typename T>
