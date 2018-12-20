@@ -1,7 +1,6 @@
 #pragma once
 
 #include "sf_yacc.h"
-#include "sf_range.hpp"
 
 namespace skyfire
 {
@@ -18,7 +17,7 @@ namespace skyfire
         yacc_result.clear();
 
         // NOTE 这里故意不+1
-        for (int i = 0; i < prepare_items.size();)
+        for (auto i = 0; i < prepare_items.size();)
         {
             if (reduce_new_node(yacc_result, prepare_items[i], dfa__, term_words__))
             {
@@ -100,7 +99,7 @@ namespace skyfire
             state.push_back({{p, nullptr}});
         }
 
-        for (int i = 0; i < state.size(); ++i)
+        for (auto i = 0; i < state.size(); ++i)
         {
             std::set<sf_yacc_state_node_t> state_backup = state[i];
             for (auto &q:state_backup)
@@ -144,18 +143,18 @@ namespace skyfire
                     p.rule.emplace_back(sf_yacc_end_mark);
                 }
             }
-            for (auto i:sf_range(rule.rules.size()))
+            for (auto i = 0;i< rule.rules.size();++i)
             {
                 if (rule.rules[i].rule.empty())
                     continue;
-                for (auto j:sf_range(rule.rules[i].rule.size() - 1))
-                {
-                    nfa.push_back(
-                            {{{(j == 0 ? rule.rules[i].rule[0] : rule.id + "_" + std::to_string(i) + "_" +
-                                                                 std::to_string(j)), nullptr}, rule.rules[i].rule[j +
-                                                                                                                  1]},
-                             {rule.id + "_" + std::to_string(i) + "_" + std::to_string(j + 1), nullptr}});
-                }
+				for (auto j = 0; j < rule.rules[i].rule.size() - 1; ++j)
+				{
+					nfa.push_back(
+						{ {{(j == 0 ? rule.rules[i].rule[0] : rule.id + "_" + std::to_string(i) + "_" +
+															 std::to_string(j)), nullptr}, rule.rules[i].rule[j +
+																											  1]},
+						 {rule.id + "_" + std::to_string(i) + "_" + std::to_string(j + 1), nullptr} });
+				}
                 nfa.back() =
                         {
                                 {

@@ -184,17 +184,16 @@ namespace skyfire {
 
         exit_flag__ = false;
 
-        DWORD ret;
         completion_port__ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
         if (completion_port__ == nullptr) {
             close();
             return false;
         }
 
-        for (auto i : sf_range(thread_count__)) {
+		for (auto i = 0; i < thread_count__;++i) {
             std::thread([=] { server_work_thread__(completion_port__); }).detach();
         }
-        listen_sock__ = WSASocket(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
+        listen_sock__ = WSASocketW(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
         if (listen_sock__ == INVALID_SOCKET) {
             close();
             return false;
@@ -211,7 +210,9 @@ namespace skyfire {
 
         sockaddr_in internet_addr{};
         internet_addr.sin_family = AF_INET;
-        internet_addr.sin_addr.s_addr = inet_addr(ip.c_str());
+
+		sf_safe_inet_addr(AF_INET, ip.c_str(), internet_addr.sin_addr.s_addr);
+
         internet_addr.sin_port = htons(port);
 
         if (SOCKET_ERROR ==
@@ -272,13 +273,13 @@ namespace skyfire {
 
     inline void sf_tcp_server::close() {
         exit_flag__ = true;
-        if (completion_port__ != nullptr) {
-            for (auto i : sf_range(thread_count__)) {
-                PostQueuedCompletionStatus(completion_port__, 0, 0, nullptr);
-            }
-            CloseHandle(completion_port__);
-            completion_port__ = INVALID_HANDLE_VALUE;
-        }
+		if (completion_port__ != nullptr) {
+			for (auto i = 0; i < thread_count__; ++i) {
+				PostQueuedCompletionStatus(completion_port__, 0, 0, nullptr);
+			}
+			CloseHandle(completion_port__);
+			completion_port__ = INVALID_HANDLE_VALUE;
+		}
         sock_data_buffer__.clear();
         if (listen_sock__ != INVALID_SOCKET) {
             shutdown(listen_sock__,SD_BOTH);

@@ -40,19 +40,19 @@ namespace skyfire {
          * @param max 最大值
          * @return 随机数
          */
-        int get_int(int min, int max);
+        int get_int(int min, int max) const;
         /**
          * 获取随机浮点数
          * @param min 最小值
          * @param max 最大值
          * @return 随机数
          */
-        double get_double(double min, double max);
+        double get_double(double min, double max) const;
         /**
          * 获取uuid字符串
          * @return uuid字符串
          */
-        std::string get_uuid_str();
+        std::string get_uuid_str() const;
     };
 
 }

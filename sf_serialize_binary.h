@@ -31,14 +31,14 @@ namespace skyfire
     sf_deserialize_binary(const byte_array &data, _Pod_Type &obj, size_t begin_pos);
 
 
-#define SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(container)\
+#define SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(container)\
     template<typename _Type>\
     byte_array sf_serialize_binary(const container <_Type> &value);\
     template<typename _Type>\
     size_t sf_deserialize_binary(const byte_array &data, container <_Type> &obj, size_t begin_pos);\
     
     
-#define SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(container)\
+#define SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_EXTERN(container)\
     template<typename _TypeKey, typename _TypeValue>\
     byte_array sf_serialize_binary(const container <_TypeKey, _TypeValue> &obj);\
     template<typename _TypeKey, typename _TypeValue>\
@@ -47,25 +47,25 @@ namespace skyfire
 
     
 
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::vector)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::list)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::deque)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::queue)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::set)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::multiset)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_set)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_multiset)
-    SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::basic_string)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::vector)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::list)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::deque)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::queue)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::set)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::multiset)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::unordered_set)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::unordered_multiset)
+    SF_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::basic_string)
 
 
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::map)
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::multimap)
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_map)
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN(std::unordered_multimap)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::multimap)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::unordered_map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_EXTERN(std::unordered_multimap)
 
 
-#undef SF_CONTAINTER_SERIALIZE_BINARAY_EXTERN
-#undef SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_EXTERN
+#undef SF_CONTAINTER_SERIALIZE_BINARY_EXTERN
+#undef SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_EXTERN
 
 
     template<typename _First_Type, typename... _Types>

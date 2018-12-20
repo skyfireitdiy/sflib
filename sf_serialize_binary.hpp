@@ -54,7 +54,7 @@ namespace skyfire {
     }
 
 
-#define SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(container)\
+#define SF_CONTAINTER_SERIALIZE_BINARY_IMPL(container)\
     template<typename _Type>\
     byte_array sf_serialize_binary(const container<_Type> &value) {\
         std::vector<_Type> tmp_obj(value.begin(), value.end());\
@@ -70,7 +70,7 @@ namespace skyfire {
     }\
 
 
-#define SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(container) \
+#define SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_IMPL(container) \
     template<typename _TypeKey, typename _TypeValue>\
     byte_array sf_serialize_binary(const container<_TypeKey, _TypeValue> &obj) {\
         byte_array ret;\
@@ -105,24 +105,24 @@ namespace skyfire {
     }\
 
 
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::vector)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::list)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::deque)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::queue)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::set)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::multiset)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_set)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_multiset)
-    SF_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::basic_string)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::vector)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::list)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::deque)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::queue)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::set)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::multiset)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::unordered_set)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::unordered_multiset)
+    SF_CONTAINTER_SERIALIZE_BINARY_IMPL(std::basic_string)
 
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::map)
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::multimap)
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_map)
-    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL(std::unordered_multimap)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_IMPL(std::map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_IMPL(std::multimap)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_IMPL(std::unordered_map)
+    SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_IMPL(std::unordered_multimap)
 
 
-#undef SF_CONTAINTER_SERIALIZE_BINARAY_IMPL
-#undef SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARAY_IMPL
+#undef SF_CONTAINTER_SERIALIZE_BINARY_IMPL
+#undef SF_ASSOCIATED_CONTAINTER_SERIALIZE_BINARY_IMPL
 
     template<typename _First_Type, typename... _Types>
     byte_array sf_serialize_binary(const _First_Type &first, const _Types &... value) {

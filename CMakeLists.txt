@@ -2,20 +2,21 @@ cmake_minimum_required(VERSION 3.7)
 
 project(sflib)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+
+include_directories(.)
 
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
-
 include_directories(
-        ${OPENSSL_INCLUDE_DIRS}
-        ${ZLIB_INCLUDE_DIRS}
-        .
+    ${OPENSSL_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIRS}
+)
+link_directories(
+    ${ZLIB_LIBRARUES}
 )
 
-link_directories(
-        ${ZLIB_LIBRARUES}
-)
+
 
 file(GLOB headers
         *.h
@@ -58,7 +59,7 @@ IF (WIN32)
     target_link_libraries(test_tcp_nat_traversal_server ws2_32)
     target_link_libraries(test_tcp_nat_traversal_client ws2_32)
     target_link_libraries(test_tcpserver ws2_32)
-    target_link_libraries(test_httpserver ws2_32 ${OPENSSL_LIBRARIES} z)
+    target_link_libraries(test_httpserver PRIVATE ws2_32 OpenSSL::SSL OpenSSL::Crypto ZLIB::ZLIB)
 ELSE()
     target_link_libraries(test_rpc_server pthread)
     target_link_libraries(test_rpc_client pthread)

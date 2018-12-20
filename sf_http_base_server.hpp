@@ -469,7 +469,7 @@ namespace skyfire
         body = byte_array(
                 websocket_context__[sock].buffer.begin() + resolve_pos + sizeof(T),
                 websocket_context__[sock].buffer.begin() + resolve_pos + sizeof(T) +
-                len
+                static_cast<int>(len)
         );
         if (sf_with_mask(*header))
         {
@@ -478,7 +478,7 @@ namespace skyfire
         }
         fin = sf_is_fin(*header);
         op_code = sf_get_op_code(*header);
-        resolve_pos += sizeof(T) + len;
+        resolve_pos += sizeof(T) + static_cast<int>(len);
         sf_debug("resolve_pos", resolve_pos);
         return true;
     }

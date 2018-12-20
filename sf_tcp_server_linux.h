@@ -28,7 +28,6 @@
 #include "sf_nocopy.h"
 #include "sf_object.hpp"
 #include "sf_type.hpp"
-#include "sf_range.hpp"
 #include "sf_serialize_binary.hpp"
 #include "sf_logger.hpp"
 #include "sf_tcp_server_interface.h"

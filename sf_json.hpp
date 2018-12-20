@@ -7,6 +7,7 @@
 #include "sf_utils.hpp"
 #include "sf_define.h"
 #include "sf_meta.hpp"
+#include "sf_msvc_safe.h"
 
 
 namespace skyfire
@@ -69,7 +70,7 @@ namespace skyfire
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
                                                            long double tmp_num;
-                                                           sscanf(data[0]->text.c_str(), "%Lf", &tmp_num);
+                                                           sf_safe_scanf(data[0]->text.c_str(), "%Lf", &tmp_num);
                                                            return sf_json(tmp_num);
                                                        }
                                                },
@@ -544,7 +545,7 @@ namespace skyfire
             case sf_json_type::number:
             {
                 char buffer[SF_DEFAULT_BUFFER_SIZE];
-                sprintf(buffer,"%Lg",value__->number_value);
+                sf_safe_sprintf(buffer,sizeof(buffer),"%Lg",value__->number_value);
                 ret+=buffer;
                 break;
             }
@@ -693,7 +694,7 @@ namespace skyfire
             case sf_json_type::boolean:
                 return value__->number_value != 0;
             case sf_json_type::number:
-                return value__->number_value;
+                return static_cast<T>(value__->number_value);
             default:
                 return 0;
         }

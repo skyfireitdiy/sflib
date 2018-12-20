@@ -67,7 +67,7 @@ namespace skyfire
             num = 1;
         }
         thread_count__ += num;
-        for (auto i = 0; i < num; ++i)
+        for (decltype(num) i = 0; i < num; ++i)
         {
             auto p_thread = std::make_shared<std::thread>(thread_run__, this);
             thread_vec__.push_back(p_thread);

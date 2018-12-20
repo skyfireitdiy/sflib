@@ -14,6 +14,8 @@
 #pragma once
 
 #include "sf_http_static_router.h"
+#include "sf_stdc++.h"
+#include "sf_msvc_safe.h"
 
 namespace skyfire
 {
@@ -101,8 +103,13 @@ namespace skyfire
                                         bool error_flag = false;
                                         for(auto& range_str:range_list)
                                         {
-                                            long long start=LONG_LONG_MAX, end=-1;
-                                            if (sscanf(range_str.c_str(), "%lld-%lld", &start, &end) < 1)
+#ifdef _MSC_VER
+											long long start = LLONG_MAX;
+#else
+											long long start = LONG_LONG_MAX;
+#endif // _MSC_VER
+                                            long long end = -1;
+                                            if (sf_safe_scanf(range_str.c_str(), "%lld-%lld", &start, &end) < 1)
                                             {
                                                 error_flag = true;
                                                 _401_res();
@@ -121,8 +128,13 @@ namespace skyfire
                                         }
                                     } else
                                     {
-                                        long long start = LONG_LONG_MAX, end=-1;
-                                        if (sscanf(range_list[0].c_str(), "%lld-%lld", &start, &end) < 1)
+#ifdef _MSC_VER
+										long long start = LLONG_MAX;
+#else
+										long long start = LONG_LONG_MAX;
+#endif // _MSC_VER
+                                    	long long end=-1;
+                                        if (sf_safe_scanf(range_list[0].c_str(), "%lld-%lld", &start, &end) < 1)
                                         {
                                             _401_res();
                                         } else

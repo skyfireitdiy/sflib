@@ -69,6 +69,7 @@ namespace skyfire
 		return x;
 	}
 
+
 	template<typename T>
 	typename sf_range_impl__<T>::const_iterator sf_range_impl__<T>::end() const {
 		return { max_count__,begin__,step__ };
