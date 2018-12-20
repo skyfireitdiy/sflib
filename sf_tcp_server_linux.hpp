@@ -104,7 +104,7 @@ namespace skyfire
 
         epoll_fd__ = epoll_create(max_tcp_connection);    //!> create
         ev_map__[listen_fd__] = epoll_event();
-        ev_map__[listen_fd__].events = EPOLLIN | EPOLLET ;      //!> accept Read!
+        ev_map__[listen_fd__].events = EPOLLIN |EPOLLET;      //!> accept Read!
         ev_map__[listen_fd__].data.fd = listen_fd__;                 //!> 将listen_fd 加入
         if (epoll_ctl(epoll_fd__, EPOLL_CTL_ADD, listen_fd__, &ev_map__[listen_fd__]) < 0)
         {
@@ -136,7 +136,7 @@ namespace skyfire
                                     int conn_fd = 0;
                                     sockaddr_in client_addr{};
                                     socklen_t len = sizeof(client_addr);
-                                    if ((conn_fd = accept(listen_fd__, (struct sockaddr *) &client_addr, &len)) > 0) {
+                                    while ((conn_fd = accept(listen_fd__, (struct sockaddr *) &client_addr, &len)) > 0) {
                                         new_connection_filter__(conn_fd);
 
                                         if (fcntl(conn_fd, F_SETFL, fcntl(conn_fd, F_GETFD, 0) | O_NONBLOCK) == -1) {
@@ -156,43 +156,52 @@ namespace skyfire
 
                                         sf_debug("new connection", conn_fd);
                                         new_connection(conn_fd);
-                                        continue;
                                     }
-                                    else {
-                                        sf_debug("accept error");
-                                        epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, listen_fd__, &ev_map__[listen_fd__]);
-                                        ev_map__.erase(listen_fd__);
-                                        break;
+                                    {
+                                        if(errno == EAGAIN || errno == EINTR)
+                                        {
+                                            sf_debug("read finished");
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            sf_debug("accept error");
+                                            epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, listen_fd__, &ev_map__[listen_fd__]);
+                                            ev_map__.erase(listen_fd__);
+                                            break;
+                                        }
                                     }
 
                                 }
                                 if (evs[i].events & EPOLLIN)
                                 {
-                                    while (true)
+                                    while(true)
                                     {
                                         recv_buf.resize(SF_DEFAULT_BUFFER_SIZE);
                                         sf_debug("start read");
                                         auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(),
                                                                                 SF_DEFAULT_BUFFER_SIZE));
                                         sf_debug("read", count_read);
-                                        if (count_read < 0)
-                                        {
-                                            disconnect_sock_filter__(evs[i].data.fd);
-                                            closed(static_cast<SOCKET>(evs[i].data.fd));
-                                            close(evs[i].data.fd);
-                                            epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd, &ev_map__[evs[i].data.fd]);
-                                            ev_map__.erase(evs[i].data.fd);
-                                            --cur_fd_count__;
-                                            sf_debug("close connection");
-                                            break;
-                                        }
 
-                                        if(count_read == 0)
+                                        if (count_read <= 0)
                                         {
-                                            sf_debug("read finished");
-                                            break;
+                                            if(errno == EAGAIN || errno == EINTR)
+                                            {
+                                                sf_debug("read finished");
+                                                break;
+                                            } else
+                                            {
+                                                disconnect_sock_filter__(evs[i].data.fd);
+                                                closed(static_cast<SOCKET>(evs[i].data.fd));
+                                                close(evs[i].data.fd);
+                                                epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd,
+                                                          &ev_map__[evs[i].data.fd]);
+                                                ev_map__.erase(evs[i].data.fd);
+                                                --cur_fd_count__;
+                                                sf_debug("close connection");
+                                                break;
+                                            }
                                         }
-
 
                                         recv_buf.resize(static_cast<unsigned long>(count_read));
                                         if (raw__)
