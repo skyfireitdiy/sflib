@@ -43,7 +43,7 @@ namespace skyfire
         int cur_fd_count__ = -1;
         int epoll_fd__ = -1;
         bool raw__ = false;
-        epoll_event ev;
+        std::map<SOCKET,epoll_event> ev_map__;
 
     public:
         sf_tcp_server(bool raw = false);

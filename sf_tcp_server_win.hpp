@@ -14,7 +14,8 @@
 #pragma once
 
 #include "sf_tcp_server_win.h"
-#include "sf_tcp_client_interface.hpp"
+#include "sf_tcp_server_interface.hpp"
+#include "sf_net_utils.hpp"
 #include "sf_logger.hpp"
 
 namespace skyfire {
@@ -101,7 +102,9 @@ namespace skyfire {
 
                 if (raw__) {
                     sf_debug("recv raw",p_io_data->buffer.size());
-                    raw_data_coming(p_handle_data->socket, p_io_data->buffer);
+                    auto tmp_data = p_io_data->buffer;
+                    after_raw_recv_filter__(p_handle_data->socket,tmp_data);
+                    raw_data_coming(p_handle_data->socket, tmp_data);
                 } else {
                     sf_pkg_header_t header{};
                     sock_data_buffer__[p_handle_data->socket].insert(
@@ -119,14 +122,16 @@ namespace skyfire {
                         }
                         if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >=
                             header.length) {
+                            auto data = byte_array(
+                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+                                    sizeof(header),
+                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+                                    sizeof(header) + header.length);
+                            after_recv_filter__(p_handle_data->socket, header, data);
                             data_coming(
                                     p_handle_data->socket,
                                     header,
-                                    byte_array(
-                                            sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
-                                            sizeof(header),
-                                            sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
-                                            sizeof(header) + header.length)
+                                    data
                             );
                             read_pos += sizeof(header) + header.length;
                         } else {
@@ -182,7 +187,7 @@ namespace skyfire {
             return false;
         }
 
-        exit_flag__ = false;
+        exit_flag__ = false;;
 
         completion_port__ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
         if (completion_port__ == nullptr) {
@@ -198,6 +203,8 @@ namespace skyfire {
             close();
             return false;
         }
+
+        listen_sock_filter__(listen_sock__);
 
         int op = 1;
         if(SOCKET_ERROR == setsockopt(listen_sock__,
@@ -236,6 +243,7 @@ namespace skyfire {
                     break;
                 }
 
+                new_connection_filter__(accept_socket);
                 new_connection(accept_socket);
 
                 auto *p_handle_data = new sf_per_handle_data_t;
@@ -300,9 +308,11 @@ namespace skyfire {
         header.type = type;
         header.length = data.size();
         make_header_checksum(header);
+        auto tmp_data = data;
+        before_send_filter__(sock,header,tmp_data);
         auto p_io_data = new sf_per_io_operation_data_t;
         ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
-        p_io_data->buffer = make_pkg(header) + data;
+        p_io_data->buffer = make_pkg(header) + tmp_data;
         p_io_data->data_trans_count = 0;
         p_io_data->is_send = true;
         p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
@@ -320,9 +330,12 @@ namespace skyfire {
     inline bool sf_tcp_server::send(SOCKET sock, const byte_array &data) {
         DWORD sendBytes;
 
+        auto tmp_data = data;
+        before_raw_send_filter__(sock,tmp_data);
+
         auto p_io_data = new sf_per_io_operation_data_t;
         ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
-        p_io_data->buffer = data;
+        p_io_data->buffer = tmp_data;
         p_io_data->data_trans_count = 0;
         p_io_data->is_send = true;
         p_io_data->wsa_buffer.buf = p_io_data->buffer.data();

@@ -18,7 +18,8 @@
 #include "sf_type.h"
 #include "sf_tcp_utils.h"
 #include "sf_net_utils.h"
-#include <string>
+#include "sf_server_socket_filter.h"
+#include "sf_stdc++.h"
 
 namespace skyfire
 {
@@ -43,6 +44,21 @@ namespace skyfire
          * 关闭信号
          */
         SF_REG_SIGNAL(closed, SOCKET);
+
+
+    private:
+
+        std::vector<std::shared_ptr<sf_server_socket_filter>> filters__;
+
+    protected:
+        void after_raw_recv_filter__(SOCKET sock,byte_array &data);
+        void after_recv_filter__(SOCKET sock,sf_pkg_header_t &header, byte_array &data);
+        void before_raw_send_filter__(SOCKET sock,byte_array &data);
+        void before_send_filter__(SOCKET sock,sf_pkg_header_t &header, byte_array &data);
+        void new_connection_filter__(SOCKET sock);
+        void listen_sock_filter__(SOCKET sock);
+        void disconnect_sock_filter__(SOCKET sock);
+
     public:
         /**
          * 获取原始socket
