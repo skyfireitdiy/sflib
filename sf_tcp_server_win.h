@@ -36,6 +36,11 @@ namespace skyfire {
     struct sf_per_handle_data_t {
         SOCKET socket;
 		byte_array sock_data_buffer;
+		std::shared_ptr<std::mutex> mu_sending = std::make_shared<std::mutex>();
+		bool sending;
+		std::shared_ptr<std::mutex> mu_out_buffer = std::make_shared<std::mutex>();
+		std::deque<byte_array> data_buffer_out;
+		std::shared_ptr<std::mutex> read_lock = std::make_shared<std::mutex>();
     };
 
 

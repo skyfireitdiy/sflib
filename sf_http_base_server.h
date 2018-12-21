@@ -54,6 +54,9 @@ namespace skyfire {
         std::unordered_map<SOCKET, sf_multipart_data_context_t> multipart_data_context__;
         std::recursive_mutex mu_multipart_data_context__;
 
+        std::mutex mu_sock_lock_map__;
+        std::unordered_map<SOCKET, std::shared_ptr<std::mutex>> sock_lock_map__;
+
         void raw_data_coming__(SOCKET sock, const byte_array &data);
 
         template <typename T>

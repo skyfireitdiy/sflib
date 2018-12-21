@@ -41,6 +41,7 @@ namespace skyfire
         byte_array data_buffer_in;
         std::shared_ptr<std::mutex> mu_out_buffer = std::make_shared<std::mutex>();
         std::deque<byte_array> data_buffer_out;
+        std::shared_ptr<std::mutex> read_lock = std::make_shared<std::mutex>();
     };
 
     class sf_tcp_server : public sf_tcp_server_interface

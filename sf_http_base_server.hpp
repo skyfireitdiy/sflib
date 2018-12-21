@@ -93,6 +93,16 @@ namespace skyfire
     {
         sf_debug("Socket", sock, "Data size", data.size());
 
+        {
+            std::unique_lock<std::mutex> lck(mu_sock_lock_map__);
+            if(sock_lock_map__.count(sock) == 0)
+            {
+                sock_lock_map__[sock] = std::make_shared<std::mutex>();
+            }
+        }
+
+        std::unique_lock<std::mutex> lck_solve(*sock_lock_map__[sock]);
+
         // 过滤websocket消息
         {
             std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);

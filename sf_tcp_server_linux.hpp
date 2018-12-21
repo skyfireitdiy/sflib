@@ -37,8 +37,11 @@ namespace skyfire
         if(sock_context__.count(sock) == 0)
             return false;
 
+        auto send_data = data;
+        before_raw_send_filter__(sock, send_data);
+
         std::lock_guard<std::mutex> lck(*sock_context__[sock].mu_out_buffer);
-        sock_context__[sock].data_buffer_out.push_back(data);
+        sock_context__[sock].data_buffer_out.push_back(send_data);
 
         sock_context__[sock].ev.events |= EPOLLOUT;
         return epoll_ctl(epoll_fd__, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
@@ -46,6 +49,8 @@ namespace skyfire
 
     inline bool sf_tcp_server::send(int sock, int type, const byte_array &data)
     {
+        if(sock_context__.count(sock) == 0)
+            return false;
         sf_pkg_header_t header{};
         header.type = type;
         header.length = data.size();
@@ -53,7 +58,13 @@ namespace skyfire
         auto tmp_data = data;
         before_send_filter__(sock,header, tmp_data);
         auto send_data = make_pkg(header) + tmp_data;
-        return send(sock, send_data);
+
+        std::lock_guard<std::mutex> lck(*sock_context__[sock].mu_out_buffer);
+        sock_context__[sock].data_buffer_out.push_back(send_data);
+
+        sock_context__[sock].ev.events |= EPOLLOUT;
+        return epoll_ctl(epoll_fd__, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
+
     }
 
     inline void sf_tcp_server::close(SOCKET sock)
@@ -192,6 +203,7 @@ namespace skyfire
                                 }
                                 else if (evs[i].events & EPOLLIN)
                                 {
+                                    std::unique_lock<std::mutex> lck(*sock_context__[evs[i].data.fd].read_lock);
                                     while(true)
                                     {
                                         recv_buf.resize(SF_DEFAULT_BUFFER_SIZE);
