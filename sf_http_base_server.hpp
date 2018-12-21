@@ -185,6 +185,7 @@ namespace skyfire
         } else
         {
             sf_debug("invalid request", to_string(request_context__[sock].buffer));
+            server__->close(sock);
         }
     }
 

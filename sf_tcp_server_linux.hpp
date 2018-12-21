@@ -18,6 +18,7 @@
 #include "sf_define.h"
 #include "sf_net_utils.hpp"
 #include "sf_tcp_server_interface.hpp"
+#include <sys/sysinfo.h>
 
 namespace skyfire
 {
@@ -123,7 +124,9 @@ namespace skyfire
             return false;
         }
 
-        std::thread([=]
+        thread_count__ = get_nprocs() * 2 + 2;
+
+        auto work_thread = [=]
                     {
                         std::vector<epoll_event> evs(max_tcp_connection);
                         byte_array recv_buf(SF_DEFAULT_BUFFER_SIZE);
@@ -155,15 +158,18 @@ namespace skyfire
                                             continue;
                                         }
 
-                                        sock_context__[conn_fd] = sock_data_context_t{};
-                                        sock_context__[conn_fd].ev.events = EPOLLIN | EPOLLET;
-                                        sock_context__[conn_fd].ev.data.fd = conn_fd;
+                                        {
+                                            sock_context__[conn_fd] = sock_data_context_t{};
+                                            sock_context__[conn_fd].ev.events = EPOLLIN | EPOLLET;
+                                            sock_context__[conn_fd].ev.data.fd = conn_fd;
 
-                                        if (epoll_ctl(epoll_fd__, EPOLL_CTL_ADD, conn_fd, &sock_context__[conn_fd].ev) <
-                                            0) {
-                                            sf_debug("add to epoll error");
-                                            close(conn_fd);
-                                            continue;
+                                            if (epoll_ctl(epoll_fd__, EPOLL_CTL_ADD, conn_fd,
+                                                          &sock_context__[conn_fd].ev) <
+                                                0) {
+                                                sf_debug("add to epoll error");
+                                                close(conn_fd);
+                                                continue;
+                                            }
                                         }
 
                                         sf_debug("new connection", conn_fd);
@@ -175,9 +181,11 @@ namespace skyfire
                                         continue;
                                     } else {
                                         sf_debug("accept error");
-                                        epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, listen_fd__,
-                                                  &sock_context__[listen_fd__].ev);
-                                        sock_context__.erase(listen_fd__);
+                                        {
+                                            epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, listen_fd__,
+                                                      &sock_context__[listen_fd__].ev);
+                                            sock_context__.erase(listen_fd__);
+                                        }
                                         break;
                                     }
 
@@ -203,9 +211,11 @@ namespace skyfire
                                                 disconnect_sock_filter__(evs[i].data.fd);
                                                 closed(static_cast<SOCKET>(evs[i].data.fd));
                                                 close(evs[i].data.fd);
-                                                epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd,
-                                                          &sock_context__[evs[i].data.fd].ev);
-                                                sock_context__.erase(evs[i].data.fd);
+                                                {
+                                                    epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd,
+                                                              &sock_context__[evs[i].data.fd].ev);
+                                                    sock_context__.erase(evs[i].data.fd);
+                                                }
                                                 sf_debug("read error / connection closed");
                                                 break;
                                             }
@@ -326,7 +336,13 @@ namespace skyfire
                                 }
                             }
                         }
-                    }).detach();
+                    };
+
+        for(int i=0;i<thread_count__;++i) {
+            std::thread(work_thread).detach();
+        }
+
+        std::thread(work_thread).detach();
         return true;
     }
 

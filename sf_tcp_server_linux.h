@@ -50,6 +50,8 @@ namespace skyfire
         int epoll_fd__ = -1;
         bool raw__ = false;
 
+        int thread_count__ = 4;
+
         std::map<SOCKET, sock_data_context_t> sock_context__;
 
     public:
