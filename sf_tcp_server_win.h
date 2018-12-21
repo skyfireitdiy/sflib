@@ -30,10 +30,12 @@ namespace skyfire {
         byte_array buffer;
         DWORD data_trans_count{};
         bool is_send{};
+		int req_id{};
     };
 
     struct sf_per_handle_data_t {
         SOCKET socket;
+		byte_array sock_data_buffer;
     };
 
 
@@ -46,7 +48,15 @@ namespace skyfire {
         SOCKET listen_sock__ = INVALID_SOCKET;
         HANDLE completion_port__ = INVALID_HANDLE_VALUE;
         int thread_count__ = 4;
-        std::map<SOCKET, byte_array> sock_data_buffer__;
+
+		std::atomic<long long> req_num__{ 0 };
+
+		std::map<SOCKET, sf_per_handle_data_t> handle_data__;
+
+		std::map<long long,sf_per_io_operation_data_t> io_data__;
+
+		sf_per_io_operation_data_t* make_req__();
+
     public:
 
         SOCKET get_raw_socket() override;
@@ -70,8 +80,9 @@ namespace skyfire {
         ~sf_tcp_server() override;
 
 
-        void server_work_thread__(LPVOID completion_port_id);
+        void server_work_thread__(const LPVOID completion_port_id);
 
 
     };
+
 }

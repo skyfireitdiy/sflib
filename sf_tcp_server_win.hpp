@@ -24,8 +24,8 @@ namespace skyfire {
         return listen_sock__;
     }
 
-    inline void sf_tcp_server::server_work_thread__(LPVOID completion_port_id) {
-        auto completion_port = (HANDLE) completion_port_id;
+    inline void sf_tcp_server::server_work_thread__(const LPVOID completion_port_id) {
+	    const auto completion_port = static_cast<HANDLE>(completion_port_id);
         DWORD bytesTransferred;
         sf_per_handle_data_t *p_handle_data = nullptr;
         sf_per_io_operation_data_t *p_io_data = nullptr;
@@ -34,47 +34,66 @@ namespace skyfire {
         DWORD flags = 0;
 
         while (true) {
-            int result = GetQueuedCompletionStatus(completion_port, &bytesTransferred, (PULONG_PTR) &p_handle_data,
-                                                   (LPOVERLAPPED *) &p_io_data, WSA_INFINITE);
+	        const auto result = GetQueuedCompletionStatus(completion_port, &bytesTransferred, reinterpret_cast<PULONG_PTR>(&p_handle_data),
+                                                   reinterpret_cast<LPOVERLAPPED *>(&p_io_data), WSA_INFINITE);
+			// 监听socket出错响应
+			auto handle_listen_sock_error = [&]
+			{
+				disconnect_sock_filter__(p_handle_data->socket);
+				close(p_handle_data->socket);
+				closed(p_handle_data->socket);
+				handle_data__.erase(p_handle_data->socket);
+				io_data__.erase(p_io_data->req_id);
+			};
+
+			// 其他socket出错响应
+			auto handle_client_sock_error = [&]
+			{
+				if (p_handle_data)
+				{
+					disconnect_sock_filter__(p_handle_data->socket);
+					close(p_handle_data->socket);
+					closed(p_handle_data->socket);
+					handle_data__.erase(p_handle_data->socket);
+				}
+				if (p_io_data)
+				{
+					io_data__.erase(p_io_data->req_id);
+				}
+			};
+
+			// 退出标记
             if (exit_flag__) {
                 if (p_handle_data != nullptr) {
-                    closed(p_handle_data->socket);
-                    delete p_handle_data;
-                    delete p_io_data;
-                    sock_data_buffer__.erase(p_handle_data->socket);
+					handle_listen_sock_error();
                 }
                 break;
             }
 
+			// result为0，请求出错
             if (result == 0) {
                 if (p_handle_data != nullptr) {
-                    closed(p_handle_data->socket);
-                    delete p_handle_data;
-                    delete p_io_data;
-                    sock_data_buffer__.erase(p_handle_data->socket);
+					handle_listen_sock_error();
                 }
-
                 continue;
             }
 
+			// 出错
             if (p_handle_data == nullptr || p_io_data == nullptr) {
-                if(p_handle_data)
-                {
-                    closed(p_handle_data->socket);
-                }
-                delete p_handle_data;
-                delete p_io_data;
+				handle_client_sock_error();
                 continue;
             }
+			// 关闭
             if (bytesTransferred == 0) {
-                closed(p_handle_data->socket);
-                delete p_handle_data;
-                delete p_io_data;
+				handle_client_sock_error();
                 continue;
             }
+
+			// 发送
             if (p_io_data->is_send) {
                 p_io_data->data_trans_count += bytesTransferred;
 
+				// 没发完
                 if (p_io_data->data_trans_count != p_io_data->buffer.size()) {
                     ZeroMemory(&p_io_data->overlapped, sizeof(p_io_data->overlapped));
                     p_io_data->wsa_buffer.buf = p_io_data->buffer.data() + p_io_data->data_trans_count;
@@ -84,19 +103,17 @@ namespace skyfire {
                                 &(p_io_data->overlapped),
                                 nullptr) == SOCKET_ERROR) {
                         if (WSAGetLastError() != ERROR_IO_PENDING) {
-                            closed(p_handle_data->socket);
-                            delete p_handle_data;
-                            delete p_io_data;
-                            continue;
+							handle_client_sock_error();
                         }
                     }
                 }
                 else
                 {
                     // 释放资源，否则会有内存泄露
-                    delete p_io_data;
+					io_data__.erase(p_io_data->req_id);
                 }
             } else {
+				// 接收
                 p_io_data->data_trans_count = bytesTransferred;
                 p_io_data->buffer.resize(bytesTransferred);
 
@@ -107,25 +124,28 @@ namespace skyfire {
                     raw_data_coming(p_handle_data->socket, tmp_data);
                 } else {
                     sf_pkg_header_t header{};
-                    sock_data_buffer__[p_handle_data->socket].insert(
-                            sock_data_buffer__[p_handle_data->socket].end(),
+                    p_handle_data->sock_data_buffer.insert(
+                            p_handle_data->sock_data_buffer.end(),
                             p_io_data->buffer.begin(),
                             p_io_data->buffer.end());
                     size_t read_pos = 0;
-                    while (sock_data_buffer__[p_handle_data->socket].size() - read_pos >= sizeof(sf_pkg_header_t)) {
+                    auto need_close = false;
+					// 循环解析
+                    while (p_handle_data->sock_data_buffer.size() - read_pos >= sizeof(sf_pkg_header_t)) {
                         memmove_s(&header, sizeof(header),
-                                  sock_data_buffer__[p_handle_data->socket].data() + read_pos,
+							p_handle_data->sock_data_buffer.data() + read_pos,
                                   sizeof(header));
                         if (!check_header_checksum(header)) {
-                            close(p_handle_data->socket);
+							handle_client_sock_error();
+							need_close = true;
                             break;
                         }
-                        if (sock_data_buffer__[p_handle_data->socket].size() - read_pos - sizeof(header) >=
+                        if (p_handle_data->sock_data_buffer.size() - read_pos - sizeof(header) >=
                             header.length) {
                             auto data = byte_array(
-                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+								p_handle_data->sock_data_buffer.begin() + read_pos +
                                     sizeof(header),
-                                    sock_data_buffer__[p_handle_data->socket].begin() + read_pos +
+								p_handle_data->sock_data_buffer.begin() + read_pos +
                                     sizeof(header) + header.length);
                             after_recv_filter__(p_handle_data->socket, header, data);
                             data_coming(
@@ -138,10 +158,15 @@ namespace skyfire {
                             break;
                         }
                     }
+					if(need_close)
+					{
+						continue;
+					}
+
                     if (read_pos != 0) {
-                        sock_data_buffer__[p_handle_data->socket].erase(
-                                sock_data_buffer__[p_handle_data->socket].begin(),
-                                sock_data_buffer__[p_handle_data->socket].begin() + read_pos);
+						p_handle_data->sock_data_buffer.erase(
+							p_handle_data->sock_data_buffer.begin(),
+							p_handle_data->sock_data_buffer.begin() + read_pos);
                     }
                 }
 
@@ -154,13 +179,11 @@ namespace skyfire {
 
                 flags = 0;
 
+				// 重新发一个读取请求
                 if (WSARecv(p_handle_data->socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags,
                             &(p_io_data->overlapped), nullptr) == SOCKET_ERROR) {
                     if (WSAGetLastError() != ERROR_IO_PENDING) {
-                        closed(p_handle_data->socket);
-                        delete p_handle_data;
-                        delete p_io_data;
-                        continue;
+						handle_client_sock_error();
                     }
                 }
             }
@@ -168,8 +191,8 @@ namespace skyfire {
     }
 
     inline sf_tcp_server::sf_tcp_server(bool raw) {
-        DWORD ret;
-        WSADATA wsa_data{};
+        // 初始化WinSock，线程数量等
+	    WSADATA wsa_data{};
 
         if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
             return;
@@ -189,15 +212,19 @@ namespace skyfire {
 
         exit_flag__ = false;;
 
+		// 创建完成端口
         completion_port__ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
         if (completion_port__ == nullptr) {
             close();
             return false;
         }
 
+		// 启动工作线程
 		for (auto i = 0; i < thread_count__;++i) {
             std::thread([=] { server_work_thread__(completion_port__); }).detach();
         }
+
+		// 创建监听套接字
         listen_sock__ = WSASocketW(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
         if (listen_sock__ == INVALID_SOCKET) {
             close();
@@ -206,6 +233,7 @@ namespace skyfire {
 
         listen_sock_filter__(listen_sock__);
 
+		// 设置地址复用
         int op = 1;
         if(SOCKET_ERROR == setsockopt(listen_sock__,
                                       SOL_SOCKET,
@@ -215,24 +243,26 @@ namespace skyfire {
             return false;
         }
 
+		// 创建地址信息
         sockaddr_in internet_addr{};
         internet_addr.sin_family = AF_INET;
-
 		sf_safe_inet_addr(AF_INET, ip.c_str(), internet_addr.sin_addr.s_addr);
-
         internet_addr.sin_port = htons(port);
 
+		// 绑定端口
         if (SOCKET_ERROR ==
             ::bind(listen_sock__, reinterpret_cast<sockaddr *>(&internet_addr), sizeof(internet_addr))) {
             close();
             return false;
         }
 
+		// 监听
         if (::listen(listen_sock__, max_tcp_connection) == SOCKET_ERROR) {
             close();
             return false;
         }
 
+		// 启动线程accept
         std::thread([=]() {
             while (true) {
                 SOCKET accept_socket;
@@ -243,17 +273,26 @@ namespace skyfire {
                     break;
                 }
 
+				// 成功等待到新连接
                 new_connection_filter__(accept_socket);
                 new_connection(accept_socket);
 
-                auto *p_handle_data = new sf_per_handle_data_t;
+				handle_data__[accept_socket] = sf_per_handle_data_t();
+
+				auto *p_handle_data = &handle_data__[accept_socket];
+
                 p_handle_data->socket = accept_socket;
                 if (CreateIoCompletionPort((HANDLE) accept_socket, completion_port__,
                                            (ULONG_PTR) p_handle_data, 0) == nullptr) {
                     break;
                 }
-                auto *p_io_data = new sf_per_io_operation_data_t;
-                ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+
+				// 生成新的请求数据
+
+				auto p_io_data = make_req__();
+
+				// 填充请求数据
+            	ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
                 p_io_data->data_trans_count = 0;
                 p_io_data->buffer.resize(SF_DEFAULT_BUFFER_SIZE);
                 p_io_data->is_send = false;
@@ -261,19 +300,37 @@ namespace skyfire {
                 p_io_data->wsa_buffer.len = SF_DEFAULT_BUFFER_SIZE;
                 DWORD tmp_int = 0;
                 DWORD flags = 0;
+
+				// 投递一个接收请求
                 if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),
                             nullptr) ==
                     SOCKET_ERROR) {
-                    if (WSAGetLastError() != ERROR_IO_PENDING) {
-                        delete p_handle_data;
-                        delete p_io_data;
-                        continue;
-                    }
+					if (WSAGetLastError() != ERROR_IO_PENDING) {
+						if (p_handle_data)
+						{
+							disconnect_sock_filter__(p_handle_data->socket);
+							close(p_handle_data->socket);
+							closed(p_handle_data->socket);
+							handle_data__.erase(p_handle_data->socket);
+						}
+						if (p_io_data)
+						{
+							io_data__.erase(p_io_data->req_id);
+						}
+					}
                 }
             }
         }).detach();
         return true;
     }
+
+	inline sf_per_io_operation_data_t* sf_tcp_server::make_req__()
+	{
+		const auto req_id = req_num__++;
+		io_data__[req_id] = sf_per_io_operation_data_t{};
+		io_data__[req_id].req_id = req_id;
+		return &io_data__[req_id];
+	}
 
     inline std::shared_ptr<sf_tcp_server> sf_tcp_server::make_server(bool raw) {
         return std::make_shared<sf_tcp_server>(raw);
@@ -288,12 +345,17 @@ namespace skyfire {
 			CloseHandle(completion_port__);
 			completion_port__ = INVALID_HANDLE_VALUE;
 		}
-        sock_data_buffer__.clear();
         if (listen_sock__ != INVALID_SOCKET) {
             shutdown(listen_sock__,SD_BOTH);
             closesocket(listen_sock__);
             listen_sock__ = INVALID_SOCKET;
         }
+		for(auto &p:handle_data__)
+		{
+			close(p.first);
+		}
+		handle_data__.clear();
+		io_data__.clear();
     }
 
     inline void sf_tcp_server::close(SOCKET sock) {
@@ -304,13 +366,13 @@ namespace skyfire {
     inline bool sf_tcp_server::send(SOCKET sock, int type, const byte_array &data) {
         DWORD sendBytes;
 
-        sf_pkg_header_t header;
+		sf_pkg_header_t header{};
         header.type = type;
         header.length = data.size();
         make_header_checksum(header);
         auto tmp_data = data;
         before_send_filter__(sock,header,tmp_data);
-        auto p_io_data = new sf_per_io_operation_data_t;
+		auto p_io_data = make_req__();
         ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
         p_io_data->buffer = make_pkg(header) + tmp_data;
         p_io_data->data_trans_count = 0;
@@ -320,7 +382,7 @@ namespace skyfire {
         if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
                     nullptr) == SOCKET_ERROR) {
             if (WSAGetLastError() != ERROR_IO_PENDING) {
-                delete p_io_data;
+				io_data__.erase(p_io_data->req_id);
                 return false;
             }
         }
@@ -333,7 +395,7 @@ namespace skyfire {
         auto tmp_data = data;
         before_raw_send_filter__(sock,tmp_data);
 
-        auto p_io_data = new sf_per_io_operation_data_t;
+		auto p_io_data = make_req__();
         ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
         p_io_data->buffer = tmp_data;
         p_io_data->data_trans_count = 0;
@@ -343,7 +405,7 @@ namespace skyfire {
         if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
                     nullptr) == SOCKET_ERROR) {
             if (WSAGetLastError() != ERROR_IO_PENDING) {
-                delete p_io_data;
+				io_data__.erase(p_io_data->req_id);
                 return false;
             }
         }
@@ -351,7 +413,7 @@ namespace skyfire {
     }
 
     inline sf_tcp_server::~sf_tcp_server() {
-        close();
+	    sf_tcp_server::close();
         WSACleanup();
     }
 
