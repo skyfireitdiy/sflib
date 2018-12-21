@@ -103,7 +103,9 @@ namespace skyfire {
                                 &(p_io_data->overlapped),
                                 nullptr) == SOCKET_ERROR) {
                         if (WSAGetLastError() != ERROR_IO_PENDING) {
+							write_error(p_handle_data->socket);
 							handle_client_sock_error();
+							sf_debug("write error");
                         }
                     }
                 }
@@ -111,6 +113,8 @@ namespace skyfire {
                 {
                     // 释放资源，否则会有内存泄露
 					io_data__.erase(p_io_data->req_id);
+					write_finished(p_handle_data->socket);
+					sf_debug("write finished");
                 }
             } else {
 				// 接收
