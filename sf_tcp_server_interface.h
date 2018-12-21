@@ -45,6 +45,15 @@ namespace skyfire
          */
         SF_REG_SIGNAL(closed, SOCKET);
 
+        /**
+         * 写成功信号
+         */
+        SF_REG_SIGNAL(write_finished, SOCKET);
+
+        /**
+         * 写失败信号
+         */
+        SF_REG_SIGNAL(write_error, SOCKET);
 
     private:
 
@@ -60,6 +69,9 @@ namespace skyfire
         void disconnect_sock_filter__(SOCKET sock);
 
     public:
+
+        void add_server_socket_filter(std::shared_ptr<sf_server_socket_filter> filter);
+
         /**
          * 获取原始socket
          * @return 原始socket

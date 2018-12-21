@@ -71,4 +71,8 @@ namespace skyfire
         }
     }
 
+    void sf_tcp_server_interface::add_server_socket_filter(shared_ptr<sf_server_socket_filter> filter) {
+        filters__.push_back(filter);
+    }
+
 }

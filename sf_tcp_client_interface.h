@@ -39,6 +39,21 @@ namespace skyfire
          * 关闭信号
          */
         SF_REG_SIGNAL(closed)
+
+        /**
+         * 写入成功
+         */
+        SF_REG_SIGNAL(write_finished)
+
+        /**
+         * 写入出错
+         */
+        SF_REG_SIGNAL(write_error)
+
+    private:
+
+
+
     public:
         /**
          * 获取原始socket

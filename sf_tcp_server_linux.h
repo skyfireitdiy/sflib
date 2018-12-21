@@ -35,15 +35,22 @@
 
 namespace skyfire
 {
+
+    struct sock_data_context_t{
+        epoll_event ev;
+        byte_array data_buffer_in;
+        std::shared_ptr<std::mutex> mu_out_buffer = std::make_shared<std::mutex>();
+        std::deque<byte_array> data_buffer_out;
+    };
+
     class sf_tcp_server : public sf_tcp_server_interface
     {
     private:
         int listen_fd__ = -1;
-        std::map<int, byte_array> sock_data_buffer__;
-        int cur_fd_count__ = -1;
         int epoll_fd__ = -1;
         bool raw__ = false;
-        std::map<SOCKET,epoll_event> ev_map__;
+
+        std::map<SOCKET, sock_data_context_t> sock_context__;
 
     public:
         sf_tcp_server(bool raw = false);
