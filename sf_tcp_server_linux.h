@@ -31,6 +31,7 @@
 #include "sf_serialize_binary.hpp"
 #include "sf_logger.hpp"
 #include "sf_tcp_server_interface.h"
+#include <sys/sysinfo.h>
 
 
 namespace skyfire
@@ -41,19 +42,22 @@ namespace skyfire
         byte_array data_buffer_in;
         std::shared_ptr<std::mutex> mu_out_buffer = std::make_shared<std::mutex>();
         std::deque<byte_array> data_buffer_out;
-        std::shared_ptr<std::mutex> read_lock = std::make_shared<std::mutex>();
+    };
+
+    struct epoll_context_t{
+        int epoll_fd;
+        std::map<SOCKET, sock_data_context_t> sock_context__;
     };
 
     class sf_tcp_server : public sf_tcp_server_interface
     {
     private:
         int listen_fd__ = -1;
-        int epoll_fd__ = -1;
         bool raw__ = false;
+        bool manage_clients__ {true};
+        int thread_count__ = get_nprocs() * 2 + 2;
 
-        int thread_count__ = 4;
-
-        std::map<SOCKET, sock_data_context_t> sock_context__;
+        std::vector<epoll_context_t> epoll_data__;
 
     public:
         sf_tcp_server(bool raw = false);
@@ -64,7 +68,6 @@ namespace skyfire
 
         bool listen(const std::string &ip, unsigned short port) override;
 
-
         void close() override;
         
         void close(SOCKET sock) override;
@@ -74,6 +77,14 @@ namespace skyfire
         bool send(int sock, const byte_array &data) override;
 
         SOCKET get_raw_socket() override;
+
+        void work_thread(int index, bool listen_thread = false, SOCKET listen_fd = -1);
+
+        bool in_dispatch(SOCKET fd);
+
+        int find_fd_epoll_index(SOCKET fd);
+
+        void set_manage_clients(bool flag);
     };
 
 }

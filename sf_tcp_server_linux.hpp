@@ -18,7 +18,6 @@
 #include "sf_define.h"
 #include "sf_net_utils.hpp"
 #include "sf_tcp_server_interface.hpp"
-#include <sys/sysinfo.h>
 
 namespace skyfire
 {
@@ -34,23 +33,40 @@ namespace skyfire
 
     inline bool sf_tcp_server::send(int sock, const byte_array &data)
     {
-        if(sock_context__.count(sock) == 0)
+        auto index = find_fd_epoll_index(sock);
+        if(index == -1)
+        {
+            sf_debug("not found fd", sock);
             return false;
+        }
+
+        auto& sock_context__ = epoll_data__[index].sock_context__;
+
+        sf_debug("find index", index);
 
         auto send_data = data;
         before_raw_send_filter__(sock, send_data);
 
         std::lock_guard<std::mutex> lck(*sock_context__[sock].mu_out_buffer);
+        sf_debug("index",index,"sock",sock,"push data");
         sock_context__[sock].data_buffer_out.push_back(send_data);
 
         sock_context__[sock].ev.events |= EPOLLOUT;
-        return epoll_ctl(epoll_fd__, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
+        return epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
     }
 
     inline bool sf_tcp_server::send(int sock, int type, const byte_array &data)
     {
-        if(sock_context__.count(sock) == 0)
+        auto index = find_fd_epoll_index(sock);
+        if(index == -1)
+        {
+            sf_debug("not found fd", sock);
             return false;
+        }
+        auto& sock_context__ = epoll_data__[index].sock_context__;
+
+        sf_debug("find index", index);
+
         sf_pkg_header_t header{};
         header.type = type;
         header.length = data.size();
@@ -61,9 +77,9 @@ namespace skyfire
 
         std::lock_guard<std::mutex> lck(*sock_context__[sock].mu_out_buffer);
         sock_context__[sock].data_buffer_out.push_back(send_data);
-
+        sf_debug("index",index,"sock",sock,"push data");
         sock_context__[sock].ev.events |= EPOLLOUT;
-        return epoll_ctl(epoll_fd__, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
+        return epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
 
     }
 
@@ -78,12 +94,15 @@ namespace skyfire
         shutdown(listen_fd__, SHUT_RDWR);
         ::close(listen_fd__);
         listen_fd__ = -1;
-        for(auto &p:sock_context__)
+        for(auto &t:epoll_data__)
         {
-            epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, p.first,
-                      &p.second.ev);
+            for (auto &p:t.sock_context__)
+            {
+                epoll_ctl(t.epoll_fd, EPOLL_CTL_DEL, p.first,
+                          &p.second.ev);
+            }
+            t.sock_context__.clear();
         }
-        sock_context__.clear();
     }
 
     inline bool sf_tcp_server::listen(const std::string &ip, unsigned short port)
@@ -123,258 +142,263 @@ namespace skyfire
             return false;
         }
 
+        epoll_data__.assign(static_cast<unsigned long>(thread_count__), epoll_context_t{});
 
-        epoll_fd__ = epoll_create(max_tcp_connection);    //!> create
+        std::thread(&sf_tcp_server::work_thread, this, 0, true, listen_fd__).detach();
 
-        sock_context__[listen_fd__] = sock_data_context_t{};
-        sock_context__[listen_fd__].ev.events = EPOLLIN | EPOLLET;
-        sock_context__[listen_fd__].ev.data.fd = listen_fd__;
-
-
-        if (epoll_ctl(epoll_fd__, EPOLL_CTL_ADD, listen_fd__, &sock_context__[listen_fd__].ev) < 0)
+        if(manage_clients__)
         {
-            return false;
+            for (int i = 1; i < thread_count__; ++i)
+            {
+                std::thread(&sf_tcp_server::work_thread, this, i, false, -1).detach();
+            }
+        }
+        return true;
+    }
+
+    inline void sf_tcp_server::work_thread(int index, bool listen_thread, SOCKET listen_fd)
+    {
+        sf_debug("start thread", index);
+        epoll_data__[index].epoll_fd = epoll_create(max_tcp_connection);
+        auto &sock_context__ = epoll_data__[index].sock_context__;
+
+        if(listen_thread)
+        {
+            sock_context__[listen_fd] = sock_data_context_t{};
+            sock_context__[listen_fd].ev.events = EPOLLIN | EPOLLET;
+            sock_context__[listen_fd].ev.data.fd = listen_fd;
+
+            if (epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_ADD, listen_fd,
+                          &sock_context__[listen_fd].ev) <
+                0)
+            {
+                sf_debug("add to epoll error");
+                close(listen_fd);
+                return;
+            }
         }
 
-        thread_count__ = get_nprocs() * 2 + 2;
-
-        auto work_thread = [=]
+        std::vector<epoll_event> evs(max_tcp_connection);
+        byte_array recv_buf(SF_DEFAULT_BUFFER_SIZE);
+        sf_pkg_header_t header{};
+        while (true)
         {
-            std::vector<epoll_event> evs(max_tcp_connection);
-            byte_array recv_buf(SF_DEFAULT_BUFFER_SIZE);
-            sf_pkg_header_t header{};
-            while (true)
+            int wait_fds = 0;
+            sf_debug("wait epoll event", index,sock_context__.size());
+            if ((wait_fds = epoll_wait(epoll_data__[index].epoll_fd, evs.data(), max_tcp_connection, -1)) == -1)
             {
-                int wait_fds = 0;
-                sf_debug("wait epoll event", sock_context__.size());
-                if ((wait_fds = epoll_wait(epoll_fd__, evs.data(), max_tcp_connection, 1000)) == -1)
+                if (errno == EINTR)
                 {
-                    if (errno == EINTR)
-                    {
-                        continue;
-                    }
-                    break;
-                }
-
-                if(wait_fds==0){
                     continue;
                 }
+                break;
+            }
 
-                sf_debug("new epoll event", wait_fds);
+            if(wait_fds==0){
+                continue;
+            }
 
-                for (auto i = 0; i < wait_fds; ++i)
+            sf_debug("new epoll event", wait_fds, index);
+
+            for (auto i = 0; i < wait_fds; ++i)
+            {
+                if (evs[i].data.fd == listen_fd__ && (evs[i].events & EPOLLIN))
                 {
-                    if (evs[i].data.fd == listen_fd__ && (evs[i].events & EPOLLIN))
+                    int conn_fd = 0;
+                    sockaddr_in client_addr{};
+                    socklen_t len = sizeof(client_addr);
+                    while ((conn_fd = accept(listen_fd__, (struct sockaddr *) &client_addr, &len)) >
+                           0)
                     {
-                        int conn_fd = 0;
-                        sockaddr_in client_addr{};
-                        socklen_t len = sizeof(client_addr);
-                        while ((conn_fd = accept(listen_fd__, (struct sockaddr *) &client_addr, &len)) >
-                               0)
+                        new_connection_filter__(conn_fd);
+                        if(manage_clients__)
                         {
-                            new_connection_filter__(conn_fd);
-
                             if (fcntl(conn_fd, F_SETFL, fcntl(conn_fd, F_GETFD, 0) | O_NONBLOCK) == -1)
                             {
                                 sf_debug("set no block error");
                                 close(conn_fd);
                                 continue;
                             }
-
+                            if (!in_dispatch(conn_fd))
                             {
-                                sock_context__[conn_fd] = sock_data_context_t{};
-                                sock_context__[conn_fd].ev.events = EPOLLIN | EPOLLET;
-                                sock_context__[conn_fd].ev.data.fd = conn_fd;
-
-                                if (epoll_ctl(epoll_fd__, EPOLL_CTL_ADD, conn_fd,
-                                              &sock_context__[conn_fd].ev) <
-                                    0)
-                                {
-                                    sf_debug("add to epoll error");
-                                    close(conn_fd);
-                                    continue;
-                                }
+                                continue;
                             }
+                        }
+                        sf_debug("new connection", conn_fd, index);
+                        new_connection(conn_fd);
+                    }
 
-                            sf_debug("new connection", conn_fd);
-                            new_connection(conn_fd);
+                    if (errno == EAGAIN || errno == EINTR)
+                    {
+                        sf_debug("accept finished", index);
+                        continue;
+                    } else
+                    {
+                        sf_debug("accept error");
+                        {
+                            epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, listen_fd__,
+                                      &sock_context__[listen_fd__].ev);
+                            sock_context__.erase(listen_fd__);
+                        }
+                        break;
+                    }
+
+                } else if (evs[i].events & EPOLLIN)
+                {
+                    while (true)
+                    {
+                        recv_buf.resize(SF_DEFAULT_BUFFER_SIZE);
+                        sf_debug("start read");
+                        auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(),
+                                                                SF_DEFAULT_BUFFER_SIZE));
+                        sf_debug("read", count_read);
+
+                        if (count_read <= 0)
+                        {
+                            if ((errno == EAGAIN || errno == EINTR) && count_read < 0)
+                            {
+                                sf_debug("read finished", errno);
+                                break;
+                            } else
+                            {
+                                disconnect_sock_filter__(evs[i].data.fd);
+                                closed(static_cast<SOCKET>(evs[i].data.fd));
+                                close(evs[i].data.fd);
+                                {
+                                    epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, evs[i].data.fd,
+                                              &sock_context__[evs[i].data.fd].ev);
+                                    sock_context__.erase(evs[i].data.fd);
+                                }
+                                sf_debug("read error / connection closed");
+                                break;
+                            }
                         }
 
-                        if (errno == EAGAIN || errno == EINTR)
+                        recv_buf.resize(static_cast<unsigned long>(count_read));
+                        if (raw__)
                         {
-                            sf_debug("accept finished");
-                            continue;
+                            sf_debug("raw data", recv_buf.size());
+                            after_raw_recv_filter__(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
+                            raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
+                            sf_debug("after reslove");
                         } else
                         {
-                            sf_debug("accept error");
+                            sock_context__[evs[i].data.fd].data_buffer_in.insert(
+                                    sock_context__[evs[i].data.fd].data_buffer_in.end(),
+                                    recv_buf.begin(),
+                                    recv_buf.end());
+                            size_t read_pos = 0;
+                            while (sock_context__[evs[i].data.fd].data_buffer_in.size() - read_pos >=
+                                   sizeof(sf_pkg_header_t))
                             {
-                                epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, listen_fd__,
-                                          &sock_context__[listen_fd__].ev);
-                                sock_context__.erase(listen_fd__);
-                            }
-                            break;
-                        }
-
-                    } else if (evs[i].events & EPOLLIN)
-                    {
-                        std::unique_lock<std::mutex> lck(*sock_context__[evs[i].data.fd].read_lock);
-                        while (true)
-                        {
-                            recv_buf.resize(SF_DEFAULT_BUFFER_SIZE);
-                            sf_debug("start read");
-                            auto count_read = static_cast<int>(read(evs[i].data.fd, recv_buf.data(),
-                                                                    SF_DEFAULT_BUFFER_SIZE));
-                            sf_debug("read", count_read);
-
-                            if (count_read <= 0)
-                            {
-                                if ((errno == EAGAIN || errno == EINTR) && count_read < 0)
-                                {
-                                    sf_debug("read finished", errno);
-                                    break;
-                                } else
+                                memmove(&header,
+                                        sock_context__[evs[i].data.fd].data_buffer_in.data() + read_pos,
+                                        sizeof(header));
+                                if (!check_header_checksum(header))
                                 {
                                     disconnect_sock_filter__(evs[i].data.fd);
-                                    closed(static_cast<SOCKET>(evs[i].data.fd));
                                     close(evs[i].data.fd);
-                                    {
-                                        epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, evs[i].data.fd,
-                                                  &sock_context__[evs[i].data.fd].ev);
-                                        sock_context__.erase(evs[i].data.fd);
-                                    }
-                                    sf_debug("read error / connection closed");
+                                    closed(static_cast<SOCKET>(evs[i].data.fd));
                                     break;
                                 }
-                            }
-
-                            recv_buf.resize(static_cast<unsigned long>(count_read));
-                            if (raw__)
-                            {
-                                sf_debug("raw data", recv_buf.size());
-                                after_raw_recv_filter__(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
-                                raw_data_coming(static_cast<SOCKET>(evs[i].data.fd), recv_buf);
-                                sf_debug("after reslove");
-                            } else
-                            {
-                                sock_context__[evs[i].data.fd].data_buffer_in.insert(
-                                        sock_context__[evs[i].data.fd].data_buffer_in.end(),
-                                        recv_buf.begin(),
-                                        recv_buf.end());
-                                size_t read_pos = 0;
-                                while (sock_context__[evs[i].data.fd].data_buffer_in.size() - read_pos >=
-                                       sizeof(sf_pkg_header_t))
+                                if (sock_context__[evs[i].data.fd].data_buffer_in.size() - read_pos -
+                                    sizeof(header) >=
+                                    header.length)
                                 {
-                                    memmove(&header,
-                                            sock_context__[evs[i].data.fd].data_buffer_in.data() + read_pos,
-                                            sizeof(header));
-                                    if (!check_header_checksum(header))
-                                    {
-                                        disconnect_sock_filter__(evs[i].data.fd);
-                                        close(evs[i].data.fd);
-                                        closed(static_cast<SOCKET>(evs[i].data.fd));
-                                        break;
-                                    }
-                                    if (sock_context__[evs[i].data.fd].data_buffer_in.size() - read_pos -
-                                        sizeof(header) >=
-                                        header.length)
-                                    {
-                                        byte_array data = {byte_array(
-                                                sock_context__[evs[i].data.fd].data_buffer_in.begin() +
-                                                read_pos +
-                                                sizeof(header),
-                                                sock_context__[evs[i].data.fd].data_buffer_in.begin() +
-                                                read_pos +
-                                                sizeof(header) + header.length)};
-                                        read_pos += sizeof(header) + header.length;
+                                    byte_array data = {byte_array(
+                                            sock_context__[evs[i].data.fd].data_buffer_in.begin() +
+                                            read_pos +
+                                            sizeof(header),
+                                            sock_context__[evs[i].data.fd].data_buffer_in.begin() +
+                                            read_pos +
+                                            sizeof(header) + header.length)};
+                                    read_pos += sizeof(header) + header.length;
 
-                                        after_recv_filter__(static_cast<SOCKET>(evs[i].data.fd), header, data);
+                                    after_recv_filter__(static_cast<SOCKET>(evs[i].data.fd), header, data);
 
-                                        data_coming(
-                                                static_cast<SOCKET>(evs[i].data.fd), header,
-                                                data
-                                        );
+                                    data_coming(
+                                            static_cast<SOCKET>(evs[i].data.fd), header,
+                                            data
+                                    );
 
-                                    } else
-                                    {
-                                        break;
-                                    }
-                                }
-                                if (read_pos != 0)
-                                {
-                                    sock_context__[evs[i].data.fd].data_buffer_in.erase(
-                                            sock_context__[evs[i].data.fd].data_buffer_in.begin(),
-                                            sock_context__[evs[i].data.fd].data_buffer_in.begin() + read_pos);
-                                }
-                            }
-                        }
-                    } else if (evs[i].events & EPOLLOUT)
-                    {
-                        SOCKET fd = evs[i].data.fd;
-                        if (sock_context__[fd].data_buffer_out.empty())
-                        {
-                            break;
-                        }
-                        std::lock_guard<std::mutex> lck(*sock_context__[fd].mu_out_buffer);
-                        while (true)
-                        {
-                            if (sock_context__[fd].data_buffer_out.empty())
-                                break;
-                            auto p = sock_context__[fd].data_buffer_out.front();
-                            auto data_size = p.size();
-                            auto n = data_size;
-                            decltype(n) tmp_write;
-                            bool error_flag = false;
-                            while (n > 0)
-                            {
-                                tmp_write = static_cast<unsigned long>(write(fd, p.data() + data_size - n, n));
-                                if (tmp_write < n)
-                                {
-                                    if (tmp_write == -1 && errno != EAGAIN)
-                                    {
-                                        write_error(fd);
-                                        error_flag = true;
-                                    }
-                                    break;
-                                }
-                                n -= tmp_write;
-                            }
-                            if (error_flag)
-                            {
-                                sf_debug("write error");
-                                disconnect_sock_filter__(fd);
-                                close(fd);
-                                closed(fd);
-                                epoll_ctl(epoll_fd__, EPOLL_CTL_DEL, fd, &sock_context__[fd].ev);
-                                sock_context__.erase(fd);
-                                break;
-                            } else
-                            {
-                                if (n == 0)
-                                {
-                                    sock_context__[fd].data_buffer_out.pop_front();
-                                    write_finished(fd);
-                                    sock_context__[fd].ev.events &= ~EPOLLOUT;
-                                    epoll_ctl(epoll_fd__, EPOLL_CTL_MOD, fd, &sock_context__[fd].ev);
-                                    sf_debug("write_finished");
                                 } else
                                 {
-                                    sf_debug("write pendding");
-                                    sock_context__[fd].data_buffer_out.front() = {
-                                            sock_context__[fd].data_buffer_out.front().begin() + n,
-                                            sock_context__[fd].data_buffer_out.front().end()};
                                     break;
                                 }
+                            }
+                            if (read_pos != 0)
+                            {
+                                sock_context__[evs[i].data.fd].data_buffer_in.erase(
+                                        sock_context__[evs[i].data.fd].data_buffer_in.begin(),
+                                        sock_context__[evs[i].data.fd].data_buffer_in.begin() + read_pos);
+                            }
+                        }
+                    }
+                } else if (evs[i].events & EPOLLOUT)
+                {
+                    sf_debug("ready write");
+                    SOCKET fd = evs[i].data.fd;
+                    if (sock_context__[fd].data_buffer_out.empty())
+                    {
+                        sf_debug("index",index, "sock",fd,"empty");
+                        break;
+                    }
+                    std::lock_guard<std::mutex> lck(*sock_context__[fd].mu_out_buffer);
+                    while (true)
+                    {
+                        if (sock_context__[fd].data_buffer_out.empty())
+                            break;
+                        auto p = sock_context__[fd].data_buffer_out.front();
+                        auto data_size = p.size();
+                        auto n = data_size;
+                        decltype(n) tmp_write;
+                        bool error_flag = false;
+                        while (n > 0)
+                        {
+                            tmp_write = static_cast<unsigned long>(write(fd, p.data() + data_size - n, n));
+                            if (tmp_write < n)
+                            {
+                                if (tmp_write == -1 && errno != EAGAIN)
+                                {
+                                    write_error(fd);
+                                    error_flag = true;
+                                }
+                                break;
+                            }
+                            n -= tmp_write;
+                        }
+                        sf_debug("write finished");
+                        if (error_flag)
+                        {
+                            sf_debug("write error");
+                            disconnect_sock_filter__(fd);
+                            close(fd);
+                            closed(fd);
+                            epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, fd, &sock_context__[fd].ev);
+                            sock_context__.erase(fd);
+                            break;
+                        } else
+                        {
+                            if (n == 0)
+                            {
+                                sock_context__[fd].data_buffer_out.pop_front();
+                                write_finished(fd);
+                                sock_context__[fd].ev.events &= ~EPOLLOUT;
+                                epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, fd, &sock_context__[fd].ev);
+                                sf_debug("write_finished");
+                            } else
+                            {
+                                sf_debug("write pendding");
+                                sock_context__[fd].data_buffer_out.front() = {
+                                        sock_context__[fd].data_buffer_out.front().begin() + n,
+                                        sock_context__[fd].data_buffer_out.front().end()};
+                                break;
                             }
                         }
                     }
                 }
             }
-        };
-        for (int i = 0; i < thread_count__; ++i)
-        {
-            std::thread(work_thread).detach();
         }
-        return true;
     }
 
     inline std::shared_ptr<sf_tcp_server> sf_tcp_server::make_server(bool raw)
@@ -386,4 +410,55 @@ namespace skyfire
     {
         close();
     }
+
+    inline bool sf_tcp_server::in_dispatch(SOCKET fd)
+    {
+        int index = 0;
+        auto min_fd_count = epoll_data__[0].sock_context__.size();
+        for(int i=0;i<epoll_data__.size();++i)
+        {
+            auto ct = epoll_data__[i].sock_context__.size();
+            sf_debug("index",i,"count",ct);
+            if(min_fd_count>ct)
+            {
+                min_fd_count = ct;
+                index = i;
+            }
+        }
+
+        sf_debug("add new fd",fd,index);
+
+        auto &sock_context__ = epoll_data__[index].sock_context__;
+        sock_context__[fd] = sock_data_context_t{};
+        sock_context__[fd].ev.events = EPOLLIN | EPOLLET;
+        sock_context__[fd].ev.data.fd = fd;
+
+        if (epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_ADD, fd,
+                      &sock_context__[fd].ev) <
+            0)
+        {
+            sf_debug("add to epoll error");
+            close(fd);
+            return false;
+        }
+        return true;
+    }
+
+    inline int sf_tcp_server::find_fd_epoll_index(SOCKET fd)
+    {
+        for(int i=0;i<epoll_data__.size();++i)
+        {
+            if(epoll_data__[i].sock_context__.count(fd) != 0)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    inline void sf_tcp_server::set_manage_clients(bool flag)
+    {
+        manage_clients__ = flag;
+    }
+
 }
