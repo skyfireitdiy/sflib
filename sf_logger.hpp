@@ -102,11 +102,7 @@ int sf_logger::make_random_logger_id__()
 {
 
         auto make_rand = []{
-#ifdef SF_LOGGER_STANDALONE
-            return rand();
-#else
             return sf_random::get_instance()->get_int(0, INT_MAX);
-#endif
         };
         int tmp_key = make_rand();
         while(!check_key_can_use__(tmp_key))
@@ -139,34 +135,30 @@ sf_logger::sf_logger()
                     {
                         while (true)
                         {
-
+                            std::deque<sf_logger_info_t__> tmp_info;
                             {
-                                std::unique_lock<std::mutex> lck(cond_mu__);
-                                cond__.wait(lck);
+                                std::unique_lock<std::mutex> lck(deque_mu__);
+                                cond__.wait(lck, [&]
+                                { return !log_deque__.empty(); });
+                                tmp_info = std::move(log_deque__);
+                                log_deque__.clear();
                             }
+                            for (auto &log: tmp_info)
                             {
-                                std::deque<sf_logger_info_t__> tmp_info;
+                                std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
+                                for (auto &level_func:logger_func_set__)
                                 {
-                                    std::unique_lock<std::mutex> de_lck(deque_mu__);
-                                    tmp_info = std::move(log_deque__);
-                                    log_deque__.clear();
-                                    pool__.add_task(
-                                            [=]() {
-                                                for (auto &log: tmp_info) {
-                                                    std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-                                                    for (auto &level_func:logger_func_set__) {
-                                                        if (log.level >= level_func.first) {
-                                                            for (auto &func:level_func.second) {
-                                                                func.second(log);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            });
+                                    if (log.level >= level_func.first)
+                                    {
+                                        for (auto &func:level_func.second)
+                                        {
+                                            func.second(log);
+                                        }
+                                    }
                                 }
-
                             }
-                            if(!run__){
+                            if (!run__)
+                            {
                                 run__ = true;
                                 break;
                             }
@@ -191,7 +183,7 @@ sf_logger::sf_logger()
         oss << "[" << tmp << "]";
         log_info.msg = oss.str();
         {
-            std::unique_lock<std::mutex> lck(deque_mu__);
+            std::lock_guard<std::mutex> lck(deque_mu__);
             log_deque__.push_back(log_info);
         }
         cond__.notify_one();
@@ -247,7 +239,7 @@ void sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, 
     oss << "[" <<  tmp.toStdString() << "]";
     log_info.msg = oss.str();
     {
-        std::unique_lock<std::mutex> lck(deque_mu__);
+        std::lock_guard<std::mutex> lck(deque_mu__);
         log_deque__.push_back(log_info);
     }
     cond__.notify_one();

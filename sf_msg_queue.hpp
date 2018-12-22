@@ -58,7 +58,7 @@ namespace skyfire
     }
 
     inline void sf_msg_queue::wait_msg() {
-        std::unique_lock<std::mutex> lck(wait_mu__);
+        std::unique_lock<std::mutex> lck(mu_func_data_op__);
         wait_cond__.wait(lck);
     }
 

@@ -39,7 +39,6 @@ namespace skyfire
         std::list<std::pair<void*,std::function<void()>>> func_data__;
         std::mutex mu_func_data_op__;
 
-        std::mutex wait_mu__;
         std::condition_variable wait_cond__;
     public:
         /**

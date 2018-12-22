@@ -17,7 +17,6 @@
 
 #pragma once
 #include "sf_stdc++.h"
-#include "sf_thread_pool.h"
 
 #ifdef QT_CORE_LIB
 #include <QString>
@@ -130,13 +129,11 @@ namespace skyfire
 
     private:
         std::deque<sf_logger_info_t__> log_deque__;
-        std::mutex cond_mu__;
         std::condition_variable cond__;
         std::mutex deque_mu__;
         std::map<int, std::unordered_map<int ,std::function<void(const sf_logger_info_t__ &)>>> logger_func_set__;
         std::atomic<bool> run__ {true};
         std::recursive_mutex func_set_mutex__;
-        sf_thread_pool pool__;
 
         bool check_key_can_use__(int key);
 
