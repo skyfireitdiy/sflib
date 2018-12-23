@@ -143,7 +143,7 @@ namespace skyfire {
                             }
                         }
                     } else {
-					    std::unique_lock<std::mutex> lck(p_handle_data->mu_sending);
+					    std::unique_lock<std::mutex> lck(*p_handle_data->mu_sending);
 					    p_handle_data->sending = false;
 					}
                 }
@@ -420,7 +420,7 @@ namespace skyfire {
 
         if(!handle_data__[sock].sending)
         {
-            std::unique_lock<std::mutex> lck(*handle_data__[sock].mu_sending)
+			std::unique_lock<std::mutex> lck(*handle_data__[sock].mu_sending);
             {
                 if(!handle_data__[sock].sending)
                 {

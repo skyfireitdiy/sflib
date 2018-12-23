@@ -58,6 +58,7 @@ namespace skyfire
     private:
 
         std::vector<std::shared_ptr<sf_server_socket_filter>> filters__;
+		bool manage_clients__{ true };
 
     protected:
         void after_raw_recv_filter__(SOCKET sock,byte_array &data);
@@ -118,5 +119,10 @@ namespace skyfire
          * @return 获取结果
          */
         bool get_server_addr(sf_addr_info_t &addr);
+		/**
+		 * 设置是否管理客户端连接
+		 * @param flag 是否管理
+		 */
+		void set_manage_clients(bool flag);
     };
 }

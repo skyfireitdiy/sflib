@@ -455,10 +455,4 @@ namespace skyfire
         }
         return -1;
     }
-
-    inline void sf_tcp_server::set_manage_clients(bool flag)
-    {
-        manage_clients__ = flag;
-    }
-
 }

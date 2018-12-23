@@ -54,7 +54,6 @@ namespace skyfire
     private:
         int listen_fd__ = -1;
         bool raw__ = false;
-        bool manage_clients__ {true};
         int thread_count__ = get_nprocs() * 2 + 2;
 
         std::vector<epoll_context_t> epoll_data__;
@@ -84,7 +83,6 @@ namespace skyfire
 
         int find_fd_epoll_index(SOCKET fd);
 
-        void set_manage_clients(bool flag);
     };
 
 }
