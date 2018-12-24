@@ -34,6 +34,13 @@ namespace skyfire
         return SOCKET_ERROR != ::bind(sock__,reinterpret_cast<sockaddr*>(&address), sizeof(address));
     }
 
+    inline sf_tcp_client::sf_tcp_client(SOCKET sock, bool raw)
+    {
+        sock__ = sock;
+        inited__ = true;
+        raw__ = raw;
+    }
+
     inline sf_tcp_client::sf_tcp_client(bool raw) {
         WSADATA wsa_data{};
         if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0)
@@ -65,6 +72,10 @@ namespace skyfire
 
     inline std::shared_ptr<sf_tcp_client> sf_tcp_client::make_client(bool raw) {
         return std::make_shared<sf_tcp_client>(raw);
+    }
+
+    inline std::shared_ptr<sf_tcp_client> sf_tcp_client::make_client(SOCKET sock, bool raw) {
+        return std::make_shared<sf_tcp_client>(sock, raw);
     }
 
     sf_tcp_client::~sf_tcp_client() {

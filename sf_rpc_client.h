@@ -21,7 +21,7 @@
 #include "sf_nocopy.h"
 #include "sf_serialize_binary.hpp"
 #include "sf_timer.hpp"
-#include "sf_tri_type.hpp"
+#include "sf_assigned_type.hpp"
 #include "sf_define.h"
 #include "sf_stdc++.h"
 
@@ -93,7 +93,7 @@ namespace skyfire {
           * @return 返回值
           */
         template<typename _Ret=void, typename ... __SF_RPC_ARGS__>
-        sf_tri_type<_Ret> call(const std::string &func_id, __SF_RPC_ARGS__ ... args);
+        sf_assigned_type<_Ret> call(const std::string &func_id, __SF_RPC_ARGS__ ... args);
 
         /**
           * @brief async_call 异步调用

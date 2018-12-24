@@ -99,7 +99,7 @@ namespace skyfire {
     }
 
     template<typename _Ret, typename... __SF_RPC_ARGS__>
-    sf_tri_type<_Ret> sf_rpc_client::call(const std::string &func_id, __SF_RPC_ARGS__... args) {
+    sf_assigned_type<_Ret> sf_rpc_client::call(const std::string &func_id, __SF_RPC_ARGS__... args) {
         static_assert(!std::is_reference<_Ret>::value, "Param can't be reference");
         static_assert(!std::is_pointer<_Ret>::value, "Param can't be pointer");
         static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
@@ -127,20 +127,20 @@ namespace skyfire {
                 std::cout<<"4"<<std::endl;
                 __rpc_data__.erase(call_id);
                 std::cout<<"5"<<std::endl;
-                return sf_tri_type<__Ret>();
+                return sf_assigned_type<__Ret>();
             }
             std::cout<<"6"<<std::endl;
         }
         // 连接断开
         if (!__rpc_data__[call_id]->back_finished) {
-            return sf_tri_type<__Ret>();
+            return sf_assigned_type<__Ret>();
         }
         if constexpr (std::is_same<_Ret, void>::value) {
                 std::cout<<"ok"<<std::endl;
             __rpc_data__.erase(call_id);
-            return sf_tri_type<void>(true);
+            return sf_assigned_type<void>(true);
         } else {
-            sf_tri_type<__Ret> ret;
+            sf_assigned_type<__Ret> ret;
             __Ret tmp_ret;
             sf_rpc_res_context_t res;
             sf_deserialize_binary(__rpc_data__[call_id]->data, res, 0);

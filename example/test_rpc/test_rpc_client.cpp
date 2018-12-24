@@ -41,7 +41,7 @@ int main()
     std::cout<<"call finished"<<std::endl;
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
-    // 4.同步调用，返回sf_tri_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
+    // 4.同步调用，返回sf_assigned_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
     data = *client->call<std::vector<int>>("add_one"s, data);
     disp_vec(data);
     std::cout<<"---------"<<std::endl;

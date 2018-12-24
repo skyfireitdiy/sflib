@@ -4,7 +4,7 @@
 * @author skyfire
 * @mail skyfireitdiy@hotmail.com
 * @see http://github.com/skyfireitdiy/sflib
-* @file sf_tri_type.h
+* @file sf_assigned_type.h
 
 * sflib第一版本发布
 * 版本号1.0.0
@@ -12,7 +12,7 @@
 */
 
 /*
- * sf_tri_type tri类型
+ * sf_assigned_type tri类型
  */
 
 #pragma once
@@ -24,27 +24,27 @@ namespace skyfire
 	 * @tparam T 包装类型
 	 */
 	template<typename T>
-	class sf_tri_type
+	class sf_assigned_type
 	{
 	public:
         /**
-         * @brief sf_tri_type 创建tri类型
+         * @brief sf_assigned_type 创建tri类型
          */
-		sf_tri_type();
+		sf_assigned_type();
 
         /**
-         * @brief sf_tri_type 构造函数
+         * @brief sf_assigned_type 构造函数
          * @param a 要保存的对象
          */
 		template<typename ... Args>
-		explicit sf_tri_type(Args...a);
+		explicit sf_assigned_type(Args...a);
 
         /**
          * @brief operator = 赋值运算符
          * @param other 其他类型
-         * @return sf_tri_type对象
+         * @return sf_assigned_type对象
          */
-		sf_tri_type& operator=(const T &other);
+		sf_assigned_type& operator=(const T &other);
 
         /**
          * @brief operator * 解引用操作符
@@ -69,10 +69,10 @@ namespace skyfire
 
 
 	template <>
-	class sf_tri_type<void>
+	class sf_assigned_type<void>
 	{
 	public:
-		sf_tri_type(bool init = false);
+		sf_assigned_type(bool init = false);
 		operator bool() const;
 
 	private:

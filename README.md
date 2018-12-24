@@ -619,7 +619,7 @@ int main()
     std::cout<<"call finished"<<std::endl;
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
-    // 4.同步调用，返回sf_tri_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
+    // 4.同步调用，返回sf_assigned_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
     data = *client->call<std::vector<int>>("add_one"s, data);
     disp_vec(data);
     std::cout<<"---------"<<std::endl;
@@ -637,7 +637,7 @@ int main()
 
 3. 使用`call<>`进行同步调用无返回值函数，参数为过程`id`和参数列表。
 
-4. 使用`call<Type>`同步调用返回值类型为`Type`的函数，实际返回的类型为`sf_tri_type<Type>`包装后类型，使用`bool()`可以判断值的合法性，使用`*`解引用获取原始值。
+4. 使用`call<Type>`同步调用返回值类型为`Type`的函数，实际返回的类型为`sf_assigned_type<Type>`包装后类型，使用`bool()`可以判断值的合法性，使用`*`解引用获取原始值。
 
 5. 使用`async_call<Type>`进行异步调用，调用方式为`async_call<Type>(过程id,异步回调函数,参数列表...)`。回调函数会在RPC调用返回时被调用，参数类型为`Type`
 
