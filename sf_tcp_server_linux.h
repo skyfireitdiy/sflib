@@ -60,30 +60,37 @@ namespace skyfire
 
 		std::vector<std::thread> thread_vec__;
 
+        void work_thread(int index, bool listen_thread = false, SOCKET listen_fd = -1);
+
+        bool in_dispatch(SOCKET fd);
+
+        int find_fd_epoll_index(SOCKET fd);
+
+        bool handle_accept(int index);
+
+        void handle_read(int index,const  epoll_event &ev);
+
+        void handle_write(int index, const epoll_event &ev);
+
     public:
+        SOCKET get_raw_socket() override;
+
         sf_tcp_server(bool raw = false);
 
-        ~sf_tcp_server();
+        ~sf_tcp_server() override;
+
 
         static std::shared_ptr<sf_tcp_server> make_server(bool raw = false);
 
         bool listen(const std::string &ip, unsigned short port) override;
 
         void close() override;
-        
+
         void close(SOCKET sock) override;
 
-        bool send(int sock, int type, const byte_array &data) override;
+        bool send(SOCKET sock, int type, const byte_array &data) override;
 
-        bool send(int sock, const byte_array &data) override;
-
-        SOCKET get_raw_socket() override;
-
-        void work_thread(int index, bool listen_thread = false, SOCKET listen_fd = -1);
-
-        bool in_dispatch(SOCKET fd);
-
-        int find_fd_epoll_index(SOCKET fd);
+        bool send(SOCKET sock, const byte_array &data) override;
 
     };
 

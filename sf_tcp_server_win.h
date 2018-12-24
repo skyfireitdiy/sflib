@@ -64,11 +64,15 @@ namespace skyfire {
 
 		sf_per_io_operation_data_t* make_req__();
 
+		void server_work_thread__(const LPVOID completion_port_id);
+
     public:
 
         SOCKET get_raw_socket() override;
 
         sf_tcp_server(bool raw = false);
+
+		~sf_tcp_server() override;
 
 
         static std::shared_ptr<sf_tcp_server> make_server(bool raw = false);
@@ -82,13 +86,6 @@ namespace skyfire {
         bool send(SOCKET sock, int type, const byte_array &data) override;
 
         bool send(SOCKET sock, const byte_array &data) override;
-
-
-        ~sf_tcp_server() override;
-
-
-        void server_work_thread__(const LPVOID completion_port_id);
-
 
     };
 

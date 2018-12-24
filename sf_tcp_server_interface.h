@@ -58,9 +58,11 @@ namespace skyfire
     private:
 
         std::vector<std::shared_ptr<sf_server_socket_filter>> filters__;
-		bool manage_clients__{ true };
 
     protected:
+
+        bool manage_clients__{ true };
+
         void after_raw_recv_filter__(SOCKET sock,byte_array &data);
         void after_recv_filter__(SOCKET sock,sf_pkg_header_t &header, byte_array &data);
         void before_raw_send_filter__(SOCKET sock,byte_array &data);
