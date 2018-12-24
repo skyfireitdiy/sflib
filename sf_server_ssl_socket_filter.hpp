@@ -40,6 +40,6 @@ namespace skyfire
     void sf_ssl_server_socket_filter::listen_sock_filter(SOCKET &sock) {}
 
     void sf_ssl_server_socket_filter::new_connection_filter(SOCKET &sock) {
-        SSL_set_accept_state()
+
     }
 }

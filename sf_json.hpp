@@ -220,9 +220,9 @@ namespace skyfire
         return std::any_cast<sf_json>(yacc_result[0]->user_data);
     }
 
-    std::set<std::string> sf_json::keys() const
+    std::unordered_set<std::string> sf_json::keys() const
     {
-        std::set<std::string> ret;
+        std::unordered_set<std::string> ret;
         if(value__->type != sf_json_type::object)
         {
             return ret;

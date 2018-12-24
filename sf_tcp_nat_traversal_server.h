@@ -28,7 +28,7 @@ namespace skyfire {
     class sf_tcp_nat_traversal_server : public sf_nocopy<sf_object> {
     private:
         // 保存客户端列表
-        std::set<SOCKET> clients__;
+        std::unordered_set<SOCKET> clients__;
         // Server
         std::shared_ptr<sf_tcp_server> server__{sf_tcp_server::make_server()};
         // 当前已运行

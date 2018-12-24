@@ -60,7 +60,7 @@ namespace skyfire
         /**
          * 各种level对应的字符串
          */
-        std::map<SF_LOG_LEVEL, std::string> logger_level_str__{
+        std::unordered_map<SF_LOG_LEVEL, std::string> logger_level_str__{
                 {SF_DEBUG_LEVEL, "DEBUG"},
                 {SF_INFO_LEVEL,  "INFO "},
                 {SF_WARN_LEVEL,  "WARN "},
@@ -131,7 +131,7 @@ namespace skyfire
         std::deque<sf_logger_info_t__> log_deque__;
         std::condition_variable cond__;
         std::mutex deque_mu__;
-        std::map<int, std::unordered_map<int ,std::function<void(const sf_logger_info_t__ &)>>> logger_func_set__;
+        std::unordered_map<int, std::unordered_map<int ,std::function<void(const sf_logger_info_t__ &)>>> logger_func_set__;
         std::atomic<bool> run__ {true};
         std::recursive_mutex func_set_mutex__;
 

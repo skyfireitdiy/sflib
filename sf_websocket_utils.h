@@ -146,7 +146,7 @@ namespace skyfire {
     struct sf_websocket_param_t {
         SOCKET sock;                                        // socket
         std::string url;                                    // url
-        std::map<std::string,std::string> param;            // param
+        std::unordered_map<std::string,std::string> param;            // param
         std::string frame;                                  // frame
         websocket_data_type type;                           // 数据类型
         std::string text_msg;                               // 文本（当type为websocket_data_type::Text时有效）

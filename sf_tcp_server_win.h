@@ -58,9 +58,9 @@ namespace skyfire {
 
 		std::atomic<long long> req_num__{ 0 };
 
-		std::map<SOCKET, sf_per_handle_data_t> handle_data__;
+		std::unordered_map<SOCKET, sf_per_handle_data_t> handle_data__;
 
-		std::map<long long,sf_per_io_operation_data_t> io_data__;
+		std::unordered_map<long long,sf_per_io_operation_data_t> io_data__;
 
 		sf_per_io_operation_data_t* make_req__();
 

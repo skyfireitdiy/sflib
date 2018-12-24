@@ -27,6 +27,6 @@ namespace skyfire
         long double number_value;                                                   // 数值类型（bool类型）
         std::string string_value;                                                   // 字符串类型
         std::vector<std::shared_ptr<sf_json_value>> array_value;                    // 数组类型
-        std::map<std::string, std::shared_ptr<sf_json_value>> object_value;         // 对象类型
+        std::unordered_map<std::string, std::shared_ptr<sf_json_value>> object_value;         // 对象类型
     };
 }

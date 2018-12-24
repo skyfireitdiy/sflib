@@ -180,7 +180,7 @@ namespace skyfire
     }
 
     void
-    sf_http_request::parse_cookies(const sf_http_header &header_data, std::map<std::string, std::string> &cookies)
+    sf_http_request::parse_cookies(const sf_http_header &header_data, std::unordered_map<std::string, std::string> &cookies)
     {
         cookies.clear();
         if(!header_data.has_key("Cookie"))
@@ -204,7 +204,7 @@ namespace skyfire
         }
     }
 
-    std::map<std::string, std::string> sf_http_request::get_cookies() const
+    std::unordered_map<std::string, std::string> sf_http_request::get_cookies() const
     {
         return cookies__;
     }

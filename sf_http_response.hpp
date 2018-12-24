@@ -109,7 +109,7 @@ namespace skyfire
         cookies__.erase(key);
     }
 
-    std::map<std::string, sf_http_cookie_t> sf_http_response::get_cookies() const
+    std::unordered_map<std::string, sf_http_cookie_t> sf_http_response::get_cookies() const
     {
         return cookies__;
     }

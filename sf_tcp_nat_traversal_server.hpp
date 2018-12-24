@@ -140,7 +140,7 @@ namespace skyfire {
     }
 
     inline void sf_tcp_nat_traversal_server::on_update_client_list__(SOCKET sock) {
-        std::set<unsigned long long> tmp_data{clients__.begin(), clients__.end()};
+        std::unordered_set<unsigned long long> tmp_data{clients__.begin(), clients__.end()};
         auto data = sf_serialize_binary(tmp_data);
         if (sock == -1) {
             for (auto &p:clients__) {

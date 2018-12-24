@@ -88,7 +88,7 @@ namespace skyfire {
     private:
         std::shared_ptr<sf_tcp_server> p_server__ = sf_tcp_server::make_server();
 
-        std::map<std::string, std::list<SOCKET>> msg_map__;
+        std::unordered_map<std::string, std::list<SOCKET>> msg_map__;
 
         void reg_msg__(SOCKET sock, const std::string &msg_name);
 

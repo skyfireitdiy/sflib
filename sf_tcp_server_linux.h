@@ -46,7 +46,7 @@ namespace skyfire
 
     struct epoll_context_t{
         int epoll_fd;
-        std::map<SOCKET, sock_data_context_t> sock_context__;
+        std::unordered_map<SOCKET, sock_data_context_t> sock_context__;
     };
 
     class sf_tcp_server : public sf_tcp_server_interface

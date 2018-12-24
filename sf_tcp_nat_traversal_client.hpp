@@ -193,7 +193,7 @@ namespace skyfire {
         return -1;
     }
 
-    inline std::set<unsigned long long int> sf_tcp_nat_traversal_client::get_clients() {
+    inline std::unordered_set<unsigned long long int> sf_tcp_nat_traversal_client::get_clients() {
         return client_list__;
     }
 

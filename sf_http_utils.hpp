@@ -79,8 +79,8 @@ namespace skyfire
     }
 
 
-    inline std::map<std::string, std::string> sf_parse_param(std::string param_str) {
-        std::map<std::string, std::string> param;
+    inline std::unordered_map<std::string, std::string> sf_parse_param(std::string param_str) {
+        std::unordered_map<std::string, std::string> param;
         unsigned long url_pos;
         while((url_pos = param_str.find('&')) != std::string::npos)
         {
@@ -105,7 +105,7 @@ namespace skyfire
     }
 
 
-    inline void sf_parse_url(const std::string &raw_url, std::string &url, std::map<std::string,std::string>& param,
+    inline void sf_parse_url(const std::string &raw_url, std::string &url, std::unordered_map<std::string,std::string>& param,
                              std::string frame)
     {
         auto frame_pos = raw_url.find('#');

@@ -21,7 +21,7 @@ namespace skyfire
         /**
          * @brief  http Content-Type映射表
          */
-        std::map<std::string, std::string> sf_http_content_type{
+        std::unordered_map<std::string, std::string> sf_http_content_type{
                 {"001",     "application/x-001"},
                 {"323",     "text/h323"},
                 {"907",     "drawing/907"},

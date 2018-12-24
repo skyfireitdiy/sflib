@@ -50,9 +50,9 @@ namespace skyfire {
 
     private:
         std::shared_ptr<sf_tcp_client> client__{sf_tcp_client::make_client()};
-        std::set<unsigned long long> client_list__;
+        std::unordered_set<unsigned long long> client_list__;
         unsigned long long self_id__;
-        std::map<int, sf_p2p_connect_context_t__> connect_context_map__;
+        std::unordered_map<int, sf_p2p_connect_context_t__> connect_context_map__;
         sf_addr_info_t server_addr__;
 
         void on_new_connect_required__(sf_tcp_nat_traversal_context_t__ &context);
@@ -91,7 +91,7 @@ namespace skyfire {
          * 获取终端集合
          * @return 终端集合
          */
-        std::set<unsigned long long> get_clients();
+        std::unordered_set<unsigned long long> get_clients();
 
         /**
          * 来源，连接远程peer端

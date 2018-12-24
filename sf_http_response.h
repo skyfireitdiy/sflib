@@ -83,7 +83,7 @@ namespace skyfire
         sf_http_header header__;
         byte_array body__;
         response_type type__ = {response_type ::normal};
-        std::map<std::string,sf_http_cookie_t> cookies__;
+        std::unordered_map<std::string,sf_http_cookie_t> cookies__;
         response_file_info_t file_info__;
         std::vector<multipart_info_t> multipart_info_vec__;
     public:
@@ -137,7 +137,7 @@ namespace skyfire
          * 获取cookies
          * @return cookies
          */
-        std::map<std::string,sf_http_cookie_t> get_cookies() const;
+        std::unordered_map<std::string,sf_http_cookie_t> get_cookies() const;
 
         /**
          * 获取响应类型

@@ -290,7 +290,7 @@ namespace skyfire
          * 返回object的key列表
          * @return key列表
          */
-        std::set<std::string> keys() const;
+        std::unordered_set<std::string> keys() const;
     };
 
 

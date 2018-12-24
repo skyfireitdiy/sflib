@@ -39,7 +39,7 @@ namespace skyfire
                 {
                     // sf_debug(raw_url);
                     std::string url;
-                    std::map<std::string, std::string> param;
+                    std::unordered_map<std::string, std::string> param;
                     std::string frame;
                     sf_parse_url(raw_url, url, param, frame);
                     auto abspath = path + url;

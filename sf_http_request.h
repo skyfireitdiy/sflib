@@ -37,7 +37,7 @@ namespace skyfire{
         bool multipart_data__ = false;
         sf_multipart_data_context_t multipart_data_context__;
         bool parse_request__();
-        std::map<std::string,std::string> cookies__;
+        std::unordered_map<std::string,std::string> cookies__;
 
     public:
 
@@ -93,7 +93,7 @@ namespace skyfire{
          * 获取cookies
          * @return cookies
          */
-        std::map<std::string,std::string> get_cookies() const;
+        std::unordered_map<std::string,std::string> get_cookies() const;
 
         /**
          * 分割请求
@@ -126,6 +126,6 @@ namespace skyfire{
          * @param header_data 头数据
          * @param cookies cookie
          */
-        static void parse_cookies(const sf_http_header &header_data, std::map<std::string,std::string>& cookies);
+        static void parse_cookies(const sf_http_header &header_data, std::unordered_map<std::string,std::string>& cookies);
     };
 }
