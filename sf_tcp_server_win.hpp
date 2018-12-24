@@ -112,7 +112,6 @@ namespace skyfire {
                 else
                 {
                     // 释放资源，否则会有内存泄露
-					io_data__.erase(p_io_data->req_id);
 					write_finished(p_handle_data->socket);
 
 					std::unique_lock<std::mutex> lck(*p_handle_data->mu_out_buffer);
@@ -124,7 +123,7 @@ namespace skyfire {
                     {
 					    DWORD sendBytes;
                         ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
-                        p_io_data->buffer = p_handle_data->data_buffer_out.front();
+						p_io_data->buffer = p_handle_data->data_buffer_out.front();
                         p_io_data->data_trans_count = 0;
                         p_io_data->is_send = true;
                         p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
@@ -143,12 +142,13 @@ namespace skyfire {
                             }
                         }
                     } else {
+						io_data__.erase(p_io_data->req_id);
 					    std::unique_lock<std::mutex> lck(*p_handle_data->mu_sending);
 					    p_handle_data->sending = false;
 					}
                 }
             } else {
-                std::unique_lock<std::mutex> lck(*p_handle_data->read_lock);
+                // std::unique_lock<std::mutex> lck(*p_handle_data->read_lock);
 				// 接收
                 p_io_data->data_trans_count = bytesTransferred;
                 p_io_data->buffer.resize(bytesTransferred);
@@ -409,14 +409,14 @@ namespace skyfire {
         if(handle_data__.count(sock) == 0)
             return false;
 
-        DWORD sendBytes;
+        DWORD send_bytes;
 		sf_pkg_header_t header{};
         header.type = type;
         header.length = data.size();
         make_header_checksum(header);
         auto tmp_data = data;
         before_send_filter__(sock,header,tmp_data);
-        auto send_data = make_pkg(header) + tmp_data;
+        const auto send_data = make_pkg(header) + tmp_data;
 
         {
             std::unique_lock<std::mutex> lck(*handle_data__[sock].mu_out_buffer);
@@ -437,7 +437,7 @@ namespace skyfire {
                     p_io_data->is_send = true;
                     p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
                     p_io_data->wsa_buffer.len = p_io_data->buffer.size();
-                    if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
+                    if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &send_bytes, 0, &(p_io_data->overlapped),
                                 nullptr) == SOCKET_ERROR)
                     {
                         if (WSAGetLastError() != ERROR_IO_PENDING)
@@ -452,31 +452,45 @@ namespace skyfire {
         return true;
     }
 
-    inline bool sf_tcp_server::send(SOCKET sock, const byte_array &data) {
-        if(handle_data__.count(sock) == 0)
-            return false;
+	inline bool sf_tcp_server::send(SOCKET sock, const byte_array &data) {
+		if (handle_data__.count(sock) == 0)
+			return false;
 
-        DWORD sendBytes;
+		DWORD send_bytes;
 
-        auto tmp_data = data;
-        before_raw_send_filter__(sock,tmp_data);
+		auto tmp_data = data;
+		before_raw_send_filter__(sock, tmp_data);
+		{
+			std::unique_lock<std::mutex> lck(*handle_data__[sock].mu_out_buffer);
+			handle_data__[sock].data_buffer_out.push_back(tmp_data);
+		}
 
-		auto p_io_data = make_req__();
-        ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
-        p_io_data->buffer = tmp_data;
-        p_io_data->data_trans_count = 0;
-        p_io_data->is_send = true;
-        p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
-        p_io_data->wsa_buffer.len = p_io_data->buffer.size();
-        if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &sendBytes, 0, &(p_io_data->overlapped),
-                    nullptr) == SOCKET_ERROR) {
-            if (WSAGetLastError() != ERROR_IO_PENDING) {
-				io_data__.erase(p_io_data->req_id);
-                return false;
-            }
-        }
-        return true;
-    }
+		if (!handle_data__[sock].sending)
+		{
+			std::unique_lock<std::mutex> lck(*handle_data__[sock].mu_sending);
+			{
+				if (!handle_data__[sock].sending)
+				{
+					// handle_data__[sock].sending = true;
+					auto p_io_data = make_req__();
+					ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+					p_io_data->buffer = tmp_data;
+					p_io_data->data_trans_count = 0;
+					p_io_data->is_send = true;
+					p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
+					p_io_data->wsa_buffer.len = p_io_data->buffer.size();
+					if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &send_bytes, 0, &(p_io_data->overlapped),
+						nullptr) == SOCKET_ERROR) {
+						if (WSAGetLastError() != ERROR_IO_PENDING) {
+							io_data__.erase(p_io_data->req_id);
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 
     inline sf_tcp_server::~sf_tcp_server() {
 	    sf_tcp_server::close();
