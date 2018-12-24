@@ -257,7 +257,7 @@ namespace skyfire {
 
 		// 启动工作线程
 		for (auto i = 0; i < thread_count__;++i) {
-            std::thread([=] { server_work_thread__(completion_port__); }).detach();
+			thread_vec__.emplace_back(std::thread(&sf_tcp_server::server_work_thread__, this, completion_port__));
         }
 
 		// 创建监听套接字
@@ -299,7 +299,7 @@ namespace skyfire {
         }
 
 		// 启动线程accept
-        std::thread([=]() {
+		thread_vec__.emplace_back(std::thread([=]() {
             while (true) {
                 SOCKET accept_socket;
                 sockaddr_in addr;
@@ -356,7 +356,7 @@ namespace skyfire {
 					}
                 }
             }
-        }).detach();
+		}));
         return true;
     }
 
@@ -392,6 +392,10 @@ namespace skyfire {
 		}
 		handle_data__.clear();
 		io_data__.clear();
+		for(auto &p:thread_vec__)
+		{
+			p.join();
+		}
     }
 
     inline void sf_tcp_server::close(SOCKET sock) {

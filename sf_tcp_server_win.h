@@ -54,6 +54,8 @@ namespace skyfire {
         HANDLE completion_port__ = INVALID_HANDLE_VALUE;
         int thread_count__ = 4;
 
+		std::vector<std::thread> thread_vec__;
+
 		std::atomic<long long> req_num__{ 0 };
 
 		std::map<SOCKET, sf_per_handle_data_t> handle_data__;

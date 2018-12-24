@@ -103,6 +103,10 @@ namespace skyfire
             }
             t.sock_context__.clear();
         }
+		for(auto &p:thread_vec__)
+		{
+			p.join();
+		}
     }
 
     inline bool sf_tcp_server::listen(const std::string &ip, unsigned short port)
@@ -144,13 +148,13 @@ namespace skyfire
 
         epoll_data__.assign(static_cast<unsigned long>(thread_count__), epoll_context_t{});
 
-        std::thread(&sf_tcp_server::work_thread, this, 0, true, listen_fd__).detach();
+		thread_vec__.emplace_back(std::thread(&sf_tcp_server::work_thread, this, 0, true, listen_fd__));
 
         if(manage_clients__)
         {
             for (int i = 1; i < thread_count__; ++i)
             {
-                std::thread(&sf_tcp_server::work_thread, this, i, false, -1).detach();
+				thread_vec__.emplace_back(std::thread(&sf_tcp_server::work_thread, this, i, false, -1));
             }
         }
         return true;

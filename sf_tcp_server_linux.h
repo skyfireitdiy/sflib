@@ -58,6 +58,8 @@ namespace skyfire
 
         std::vector<epoll_context_t> epoll_data__;
 
+		std::vector<std::thread> thread_vec__;
+
     public:
         sf_tcp_server(bool raw = false);
 
