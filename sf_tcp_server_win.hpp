@@ -313,47 +313,48 @@ namespace skyfire {
                 new_connection_filter__(accept_socket);
                 new_connection(accept_socket);
 
-				handle_data__[accept_socket] = sf_per_handle_data_t();
+                if(manage_clients__) {
 
-				auto *p_handle_data = &handle_data__[accept_socket];
+                    handle_data__[accept_socket] = sf_per_handle_data_t();
 
-                p_handle_data->socket = accept_socket;
-                if (CreateIoCompletionPort((HANDLE) accept_socket, completion_port__,
-                                           (ULONG_PTR) p_handle_data, 0) == nullptr) {
-                    break;
-                }
+                    auto *p_handle_data = &handle_data__[accept_socket];
 
-				// 生成新的请求数据
+                    p_handle_data->socket = accept_socket;
+                    if (CreateIoCompletionPort((HANDLE) accept_socket, completion_port__,
+                                               (ULONG_PTR) p_handle_data, 0) == nullptr) {
+                        break;
+                    }
 
-				auto p_io_data = make_req__();
+                    // 生成新的请求数据
 
-				// 填充请求数据
-            	ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
-                p_io_data->data_trans_count = 0;
-                p_io_data->buffer.resize(SF_DEFAULT_BUFFER_SIZE);
-                p_io_data->is_send = false;
-                p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
-                p_io_data->wsa_buffer.len = SF_DEFAULT_BUFFER_SIZE;
-                DWORD tmp_int = 0;
-                DWORD flags = 0;
+                    auto p_io_data = make_req__();
 
-				// 投递一个接收请求
-                if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),
-                            nullptr) ==
-                    SOCKET_ERROR) {
-					if (WSAGetLastError() != ERROR_IO_PENDING) {
-						if (p_handle_data)
-						{
-							disconnect_sock_filter__(p_handle_data->socket);
-							close(p_handle_data->socket);
-							closed(p_handle_data->socket);
-							handle_data__.erase(p_handle_data->socket);
-						}
-						if (p_io_data)
-						{
-							io_data__.erase(p_io_data->req_id);
-						}
-					}
+                    // 填充请求数据
+                    ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
+                    p_io_data->data_trans_count = 0;
+                    p_io_data->buffer.resize(SF_DEFAULT_BUFFER_SIZE);
+                    p_io_data->is_send = false;
+                    p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
+                    p_io_data->wsa_buffer.len = SF_DEFAULT_BUFFER_SIZE;
+                    DWORD tmp_int = 0;
+                    DWORD flags = 0;
+
+                    // 投递一个接收请求
+                    if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),
+                                nullptr) ==
+                        SOCKET_ERROR) {
+                        if (WSAGetLastError() != ERROR_IO_PENDING) {
+                            if (p_handle_data) {
+                                disconnect_sock_filter__(p_handle_data->socket);
+                                close(p_handle_data->socket);
+                                closed(p_handle_data->socket);
+                                handle_data__.erase(p_handle_data->socket);
+                            }
+                            if (p_io_data) {
+                                io_data__.erase(p_io_data->req_id);
+                            }
+                        }
+                    }
                 }
             }
 		}));
