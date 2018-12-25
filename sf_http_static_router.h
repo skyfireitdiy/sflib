@@ -13,13 +13,11 @@
 
 #pragma once
 
-#include <fstream>
 #include <memory>
 #include <string>
 #include "sf_http_router.hpp"
 #include "sf_define.h"
 #include "sf_http_utils.hpp"
-#include "sf_http_content_type.h"
 #include "sf_logger.hpp"
 
 
@@ -40,8 +38,8 @@ namespace skyfire {
     make_static_router(std::string path, const std::vector<std::string> &methods = {{"*"s}},
                        std::string charset = "utf-8",
                        bool deflate = true,
-                       unsigned long long max_file_size = DEFAULT_HTTP_MAX_FILE_SIZE,
-                       int priority = DEFAULT_HTTP_STATIC_PRIORITY
+                       unsigned long long max_file_size = default_http_max_file_size,
+                       int priority = default_http_static_priority
 
     );
 }

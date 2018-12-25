@@ -14,21 +14,20 @@
 #pragma once
 
 #include "sf_stdc++.h"
-#include "sf_tcp_client.hpp"
-#include "sf_tcp_server.hpp"
+#include "sf_tcp_client.h"
+#include "sf_tcp_server.h"
 #include "sf_type.hpp"
 #include "sf_serialize_binary.hpp"
-#include "sf_net_utils.hpp"
 #include "sf_object.hpp"
 #include "sf_nocopy.h"
-#include "sf_logger.hpp"
 
 namespace skyfire {
 
     /**
      * @brief nat穿透连接上下文
      */
-    struct sf_tcp_nat_traversal_context_t__ {
+    struct sf_tcp_nat_traversal_context_t__ final
+    {
         int connect_id;
         unsigned long long src_id;
         sf_addr_info_t src_addr;
@@ -93,14 +92,14 @@ namespace skyfire {
          * @param data 数据
          * @return 是否成功
          */
-        bool send(int type, const byte_array &data);
+        bool send(int type, const byte_array &data) const;
 
         /**
          * 发送数据
          * @param data 数据
          * @return 是否成功
          */
-        bool send(const byte_array &data);
+        bool send(const byte_array &data) const;
 
         friend sf_tcp_nat_traversal_client;
     };

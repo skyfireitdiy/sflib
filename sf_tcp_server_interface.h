@@ -73,7 +73,7 @@ namespace skyfire
 
     public:
 
-        void add_server_socket_filter(std::shared_ptr<sf_server_socket_filter> filter);
+        void add_server_socket_filter(std::shared_ptr<sf_server_socket_filter>&& filter);
 
         /**
          * 获取原始socket

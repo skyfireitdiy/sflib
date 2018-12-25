@@ -19,8 +19,6 @@
 #endif
 #endif
 
-#include <cctype>
-
 #define SF_PRIVATE_ARGS_GLUE(x, y) x y
 #define SF_PRIVATE_MACRO_VAR_ARGS_IMPL_COUNT(_1,_2,_3,_4,_5,_6,_7,_8,_9, _10, N, ...) N
 #define SF_PRIVATE_MACRO_VAR_ARGS_IMPL(args) SF_PRIVATE_MACRO_VAR_ARGS_IMPL_COUNT args
@@ -86,7 +84,7 @@ namespace skyfire {
 
 
     // 网络缓冲区大小
-    constexpr std::size_t SF_DEFAULT_BUFFER_SIZE = 4096;
+    constexpr std::size_t sf_default_buffer_size = 4096;
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,13 +92,13 @@ namespace skyfire {
     // TCP相关定义
 
     // 用户可用的起始位置
-    constexpr int TCP_PKG_TYPE_USER = 0x70000000;
+    constexpr int tcp_pkg_type_user = 0x70000000;
 
     // RPC请求包类型
-    constexpr int RPC_REQ_TYPE = 0x0000ffff;
+    constexpr int rpc_req_type = 0x0000ffff;
 
     // RPC响应包类型
-    constexpr int RPC_RES_TYPE = 0x0000fffe;
+    constexpr int rpc_res_type = 0x0000fffe;
 
 
 
@@ -109,43 +107,43 @@ namespace skyfire {
     // NAT穿透获取客户端列表
     enum sf_nat_pkg_type
     {
-        TYPE_NAT_TRAVERSAL_GET_LIST = 0x00010001,
+        type_nat_traversal_get_list = 0x00010001,
 
         // NAT穿透客户端列表
-        TYPE_NAT_TRAVERSAL_LIST = 0x00010002,
+        type_nat_traversal_list = 0x00010002,
 
         // NAT穿透客户端注册
-        TYPE_NAT_TRAVERSAL_REG = 0x00010003,
+        type_nat_traversal_reg = 0x00010003,
 
         // NAT穿透请求连接远端peer
-        TYPE_NAT_TRAVERSAL_REQUIRE_CONNECT_PEER = 0x00010004,
+        type_nat_traversal_require_connect_peer = 0x00010004,
 
         // NAT设置client id
-        TYPE_NAT_TRAVERSAL_SET_ID = 0x00010005,
+        type_nat_traversal_set_id = 0x00010005,
 
         // NAT穿透错误
-        TYPE_NAT_TRAVERSAL_ERROR = 0x00010005,
+        type_nat_traversal_error = 0x00010005,
 
         // NAT穿透新连接请求
-        TYPE_NAT_TRAVERSAL_NEW_CONNECT_REQUIRED = 0x00010006,
+        type_nat_traversal_new_connect_required = 0x00010006,
 
         // NAT穿透服务器回复B的地址
-        TYPE_NAT_TRAVERSAL_SERVER_REPLY_B_ADDR = 0x00010007,
+        type_nat_traversal_server_reply_b_addr = 0x00010007,
 
         // NAT穿透B端回复地址
-        TYPE_NAT_TRAVERSAL_B_REPLY_ADDR = 0x00010008,
+        type_nat_traversal_b_reply_addr = 0x00010008,
 
         // NAT穿透连接成功
-        TYPE_NAT_TRAVERSAL_CONNECTED = 0x00010009
+        type_nat_traversal_connected = 0x00010009
     };
 
 
     // http
     //////////////////////////////////////////////////////////////////////////////////////////////////
     // http静态目录路由优先级
-    constexpr int DEFAULT_HTTP_STATIC_PRIORITY  = 100;
+    constexpr int default_http_static_priority  = 100;
     // 默认http文件最大大小1M
-    constexpr unsigned long long DEFAULT_HTTP_MAX_FILE_SIZE = 1024*1024;
+    constexpr unsigned long long default_http_max_file_size = 1024*1024;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -154,22 +152,22 @@ namespace skyfire {
     enum sf_error_code
     {
         // 无错误
-        SF_ERR_OK = 0,
+        sf_err_ok = 0,
 
         // 资源不存在
-        SF_ERR_NOT_EXIST = 0x00010001,
+        sf_err_not_exist = 0x00010001,
 
         // 连接断开
-        SF_ERR_DISCONNECT = 0x00010002,
+        sf_err_disconnect = 0x00010002,
 
         // 远程错误
-        SF_ERR_REMOTE_ERR = 0x00010003,
+        sf_err_remote_err = 0x00010003,
 
         // 监听错误
-        SF_ERR_LISTEN_ERR = 0x00010004,
+        sf_err_listen_err = 0x00010004,
 
         // 绑定错误
-        SF_ERR_BIND_ERR = 0x00010005,
+        sf_err_bind_err = 0x00010005,
     };
 }
 

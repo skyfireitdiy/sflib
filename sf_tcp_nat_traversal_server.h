@@ -13,19 +13,18 @@
 
 #pragma once
 
-#include <set>
 #include "sf_nocopy.h"
 #include "sf_object.hpp"
-#include "sf_tcp_client.hpp"
-#include "sf_tcp_server.hpp"
-#include "sf_define.h"
+#include "sf_tcp_client.h"
+#include "sf_tcp_server.h"
+#include "sf_stdc++.h"
 #include "sf_tcp_nat_traversal_utils.hpp"
 
 namespace skyfire {
     /**
      * nat穿透服务器类
      */
-    class sf_tcp_nat_traversal_server : public sf_nocopy<sf_object> {
+    class sf_tcp_nat_traversal_server final : public sf_nocopy<sf_object> {
     private:
         // 保存客户端列表
         std::unordered_set<SOCKET> clients__;
@@ -34,7 +33,7 @@ namespace skyfire {
         // 当前已运行
         bool running__ = false;
 
-        void on_new_connnection__(SOCKET sock);
+        static void on_new_connnection__(SOCKET sock);
 
         void on_disconnect__(SOCKET sock);
 
@@ -42,11 +41,11 @@ namespace skyfire {
 
         void on_update_client_list__(SOCKET sock = static_cast<SOCKET>(-1));
 
-        void on_nat_traversal_b_reply_addr(sf_tcp_nat_traversal_context_t__ &context, SOCKET sock);
+        void on_nat_traversal_b_reply_addr(sf_tcp_nat_traversal_context_t__ &context, SOCKET sock) const;
 
         void on_msg_coming__(SOCKET sock, const sf_pkg_header_t &header, const byte_array &data);
 
-        void on_client_require_connect_to_peer_client__(sf_tcp_nat_traversal_context_t__ &context);
+        void on_client_require_connect_to_peer_client__(sf_tcp_nat_traversal_context_t__ &context) const;
 
     public:
         /**

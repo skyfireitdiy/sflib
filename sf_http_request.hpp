@@ -15,13 +15,10 @@
 #pragma once
 
 #include "sf_http_request.h"
-#include "sf_random.hpp"
-#include "sf_type.hpp"
 #include "sf_http_request_line.h"
 #include "sf_utils.hpp"
 #include "sf_http_utils.hpp"
 #include "sf_logger.hpp"
-#include "sf_http_header.hpp"
 
 namespace skyfire
 {
@@ -30,7 +27,7 @@ namespace skyfire
                                                  std::vector<std::string> &header_lines, byte_array &body)
     {
         auto raw_string = to_string(raw);
-        auto pos = raw_string.find("\r\n\r\n");
+        const auto pos = raw_string.find("\r\n\r\n");
         if (pos == std::string::npos)
             return false;
         body = byte_array(raw.begin() + pos + 4, raw.end());
@@ -138,10 +135,10 @@ namespace skyfire
 
         for (auto &line:header_lines)
         {
-            auto pos = line.find(':');
+	        const auto pos = line.find(':');
             if (pos == std::string::npos)
                 return false;
-            std::string key(line.begin(), line.begin() + pos);
+	        const std::string key(line.begin(), line.begin() + pos);
             std::string value(line.begin() + pos + 1, line.end());
             value = sf_string_trim(value);
             header.set_header(key, value);
@@ -160,17 +157,17 @@ namespace skyfire
         return !!(si >> request_line_para.http_version);
     }
 
-    bool sf_http_request::is_multipart_data() const
+    inline bool sf_http_request::is_multipart_data() const
     {
         return multipart_data__;
     }
 
-    sf_multipart_data_context_t sf_http_request::get_multipart_data_context() const
+    inline sf_multipart_data_context_t sf_http_request::get_multipart_data_context() const
     {
         return multipart_data_context__;
     }
 
-    sf_http_request::sf_http_request(sf_multipart_data_context_t multipart_data)
+    inline sf_http_request::sf_http_request(sf_multipart_data_context_t multipart_data)
     {
         valid__ = true;
         request_line__ = multipart_data.request_line;
@@ -179,7 +176,7 @@ namespace skyfire
         multipart_data_context__ = multipart_data;
     }
 
-    void
+    inline void
     sf_http_request::parse_cookies(const sf_http_header &header_data, std::unordered_map<std::string, std::string> &cookies)
     {
         cookies.clear();
@@ -187,7 +184,7 @@ namespace skyfire
         {
             return;
         }
-        auto cookie_str = header_data.get_header_value("Cookie");
+        const auto cookie_str = header_data.get_header_value("Cookie");
         auto str_list = sf_split_string(cookie_str,";");
         for(auto &p:str_list)
         {
@@ -204,7 +201,7 @@ namespace skyfire
         }
     }
 
-    std::unordered_map<std::string, std::string> sf_http_request::get_cookies() const
+    inline std::unordered_map<std::string, std::string> sf_http_request::get_cookies() const
     {
         return cookies__;
     }

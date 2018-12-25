@@ -17,10 +17,8 @@
 
 #pragma once
 
-#include "sf_tcp_server.hpp"
+#include "sf_tcp_server.h"
 #include "sf_nocopy.h"
-#include "sf_serialize_binary.hpp"
-#include "sf_meta.hpp"
 #include "sf_rpc_utils.h"
 #include <string>
 #include <functional>
@@ -79,12 +77,12 @@ namespace skyfire {
          * @param port 端口
          * @return 是否成功
          */
-        bool listen(const std::string &ip, unsigned short port);
+        bool listen(const std::string &ip, unsigned short port) const;
 
         /**
          * @brief close 关闭RPC服务器
          */
-        void close();
+        void close() const;
 
         friend std::shared_ptr<sf_rpc_server>;
 

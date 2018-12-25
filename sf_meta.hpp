@@ -24,8 +24,8 @@ namespace skyfire {
 
     template<int N>
     auto make_placeholders() {
-        return typename
-        decltype(__sf_placeholders_type(std::placeholders::_1))::template type<N>{};
+        return
+	        decltype(__sf_placeholders_type(std::placeholders::_1))::type<N>{};
     }
 
     template<typename _Type, typename Tuple>

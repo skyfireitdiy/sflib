@@ -17,14 +17,16 @@
 
 namespace skyfire {
 
-    inline bool sf_tcp_nat_traversal_connection::send(const byte_array &data) {
+    inline bool sf_tcp_nat_traversal_connection::send(const byte_array &data) const
+    {
         if (type__ == sf_tcp_nat_traversal_connection_type::type_client_valid) {
             return client__->send(data);
         }
         return server__->send(sock__, data);
     }
 
-    inline bool sf_tcp_nat_traversal_connection::send(int type, const byte_array &data) {
+    inline bool sf_tcp_nat_traversal_connection::send(int type, const byte_array &data) const
+    {
         if (type__ == sf_tcp_nat_traversal_connection_type::type_client_valid) {
             return client__->send(type, data);
         }

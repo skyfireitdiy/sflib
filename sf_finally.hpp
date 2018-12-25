@@ -17,10 +17,11 @@
 #pragma once
 
 #include "sf_finally.h"
+#include "sf_stdc++.h"
 
 namespace skyfire
 {
-    inline sf_finally::sf_finally(std::function<void()> func) :func__(func)
+    inline sf_finally::sf_finally(std::function<void()> func) :func__(std::move(func))
     {
     }
 

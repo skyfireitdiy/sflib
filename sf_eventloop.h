@@ -19,7 +19,6 @@
 
 #include "sf_stdc++.h"
 
-#include "sf_single_instance.hpp"
 #include "sf_msg_queue.hpp"
 #include "sf_nocopy.h"
 
@@ -28,7 +27,7 @@ namespace skyfire
     /**
      *  @brief 消息循环
      */
-    class sf_eventloop : sf_nocopy<>
+    class sf_eventloop final : sf_nocopy<>
     {
     private:
         sf_msg_queue* __p_msg_queue__ = sf_msg_queue::get_instance();
@@ -47,12 +46,12 @@ namespace skyfire
         /**
          * @brief clear 清空事件
          */
-        void clear();
+        void clear() const;
 
         /**
          * @brief wake 激活事件（通常用于退出）
          */
-        void wake();
+        void wake() const;
 
         /**
          * @brief quit 退出事件循环

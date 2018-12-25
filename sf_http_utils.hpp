@@ -14,15 +14,12 @@
 #pragma once
 
 #include "sf_http_utils.h"
-#include "sf_tcp_utils.hpp"
-#include "sf_type.hpp"
-#include "sf_http_request_line.h"
 #include "sf_http_multipart.hpp"
 
 namespace skyfire
 {
 
-    inline unsigned char sf_to_hex(unsigned char x)
+    inline unsigned char sf_to_hex(const unsigned char x)
     {
         return static_cast<unsigned char>(x > 9 ? x + 55 : x + 48);
     }
@@ -63,15 +60,15 @@ namespace skyfire
     inline std::string sf_url_decode(const std::string &str)
     {
         std::string strTemp = "";
-        size_t length = str.length();
+        const auto length = str.length();
         for (size_t i = 0; i < length; i++)
         {
             if (str[i] == '+') strTemp += ' ';
             else if (str[i] == '%')
             {
-                unsigned char high = sf_from_hex((unsigned char)str[++i]);
-                unsigned char low = sf_from_hex((unsigned char)str[++i]);
-                strTemp += high*16 + low;
+	            const auto high = sf_from_hex(static_cast<unsigned char>(str[++i]));
+	            const auto low = sf_from_hex(static_cast<unsigned char>(str[++i]));
+                strTemp += std::to_string(high*16 + low);  // NOLINT(bugprone-string-integer-assignment)
             }
             else strTemp += str[i];
         }
@@ -91,24 +88,24 @@ namespace skyfire
             if((url_pos = tmp_param.find('=')) == std::string::npos)
                 continue;
             auto key = sf_url_decode(std::string(tmp_param.begin(), tmp_param.begin() + url_pos));
-            auto value = sf_url_decode(std::string(tmp_param.begin() + url_pos + 1, tmp_param.end()));
+            const auto value = sf_url_decode(std::string(tmp_param.begin() + url_pos + 1, tmp_param.end()));
             param[key] = value;
         }
         if(param_str.empty())
             return param;
         if((url_pos = param_str.find('=')) == std::string::npos)
             return param;
-        auto key = sf_url_decode(std::string(param_str.begin(), param_str.begin() + url_pos));
-        auto value = sf_url_decode(std::string(param_str.begin() + url_pos + 1, param_str.end()));
+        const auto key = sf_url_decode(std::string(param_str.begin(), param_str.begin() + url_pos));
+        const auto value = sf_url_decode(std::string(param_str.begin() + url_pos + 1, param_str.end()));
         param[key] = value;
         return param;
     }
 
 
     inline void sf_parse_url(const std::string &raw_url, std::string &url, std::unordered_map<std::string,std::string>& param,
-                             std::string frame)
+                             std::string& frame)
     {
-        auto frame_pos = raw_url.find('#');
+	    const auto frame_pos = raw_url.find('#');
         std::string raw_url_without_frame;
         if(frame_pos == std::string::npos) {
             raw_url_without_frame = raw_url;
@@ -118,19 +115,19 @@ namespace skyfire
             raw_url_without_frame = std::string(raw_url.begin(),raw_url.begin()+frame_pos);
             frame = std::string(raw_url.begin()+frame_pos+1,raw_url.end());
         }
-        auto url_pos = raw_url_without_frame.find('?');
+	    const auto url_pos = raw_url_without_frame.find('?');
         if(url_pos == std::string::npos){
             url = raw_url_without_frame;
             return;
         }
         url = std::string(raw_url_without_frame.begin(),raw_url_without_frame.begin()+url_pos);
-        auto param_str = std::string(raw_url_without_frame.begin()+url_pos+1,raw_url_without_frame.end());
+	    const auto param_str = std::string(raw_url_without_frame.begin()+url_pos+1,raw_url_without_frame.end());
         param = sf_parse_param(param_str);
     }
 
 
     inline std::string sf_to_header_key_format(std::string key) {
-        bool flag = false;
+	    auto flag = false;
         for (auto &k:key) {
             if (0 != isalnum(k)) {
                 if (!flag)
@@ -145,11 +142,10 @@ namespace skyfire
 
     inline std::string sf_make_http_time_str(const std::chrono::system_clock::time_point &tp)
     {
-        auto raw_time = std::chrono::system_clock::to_time_t(tp);
-
+        auto raw_time = std::chrono::system_clock::to_time_t(tp);    // NOLINT(cppcoreguidelines-pro-type-member-init)
 #ifdef _MSC_VER
-		std::tm _tmp_tm;
-		std::tm * time_info = &_tmp_tm;
+		std::tm _tmp_tm{};
+        const auto time_info = &_tmp_tm;
 		localtime_s(time_info, &raw_time);
 #else
 		std::tm *time_info = std::localtime(&raw_time);

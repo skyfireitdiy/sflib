@@ -61,7 +61,7 @@ namespace skyfire {
          * @param context websocket参数
          * @return 是否匹配上
          */
-        bool run_route(const sf_websocket_param_t &context);
+        bool run_route(const sf_websocket_param_t &context) const;
     };
 
     /**

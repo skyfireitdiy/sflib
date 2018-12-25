@@ -30,7 +30,7 @@
  * @param obj 对象
  * @param name 信号
  */
-#define sf_wait(obj, name)                                                        \
+#define SF_WAIT(obj, name)                                                        \
 {                                                                                \
     auto p_waiter = sf_make_waiter((obj)->__##name##_signal_func_vec__);         \
     auto bind_id = sf_bind_signal(obj,name,p_waiter->__make_quit_func(), true);  \
@@ -60,11 +60,6 @@ namespace skyfire {
          * @return 退出函数
          */
         auto __make_quit_func();
-
-        /**
-         * @brief sf_event_waiter 构造一个事件等待对象
-         */
-        sf_event_waiter();
 
         /**
          * @brief wait 等待

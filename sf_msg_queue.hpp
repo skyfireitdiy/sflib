@@ -53,7 +53,8 @@ namespace skyfire
         return ret;
     }
 
-    inline bool sf_msg_queue::empty() {
+    inline bool sf_msg_queue::empty() const
+    {
         return func_data__.empty();
     }
 

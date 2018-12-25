@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include "sf_stdc++.h"
 #include "sf_serialize_binary.hpp"
 
 namespace skyfire
@@ -22,7 +21,8 @@ namespace skyfire
     /**
      *  @brief 请求行数据
      */
-    struct sf_http_request_line {
+    struct sf_http_request_line final
+    {
         std::string method;             // 请求方法
         std::string url;                // 请求url
         std::string http_version;       // http版本，目前支持持HTTP/1.1

@@ -16,23 +16,19 @@
 #include "sf_http_base_server.h"
 #include "sf_http_server_config.h"
 #include "sf_eventloop.hpp"
-#include "sf_tcp_server.hpp"
+#include "sf_tcp_server.h"
 #include "sf_logger.hpp"
 #include "sf_object.hpp"
-#include "sf_http_request.hpp"
-#include "sf_http_response.hpp"
 #include "sf_http_utils.hpp"
 #include "sf_websocket_utils.hpp"
 #include "sf_http_content_type.h"
-
-#include <string>
 
 using namespace std::string_literals;
 
 namespace skyfire
 {
 
-    inline void sf_http_base_server::http_handler__(SOCKET sock, sf_http_request http_request)
+    inline void sf_http_base_server::http_handler__(const SOCKET sock, sf_http_request http_request)
     {
         bool keep_alive = true;
         sf_http_response res;
@@ -92,19 +88,6 @@ namespace skyfire
     inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array &data)
     {
         sf_debug("Socket", sock, "Data size", data.size());
-
-        {
-			if (sock_lock_map__.count(sock) == 0) {
-				std::unique_lock<std::mutex> lck(mu_sock_lock_map__);
-				if (sock_lock_map__.count(sock) == 0)
-				{
-					sock_lock_map__[sock] = std::make_shared<std::mutex>();
-				}
-			}
-        }
-
-        std::unique_lock<std::mutex> lck_solve(*sock_lock_map__[sock]);
-
         // 过滤websocket消息
         {
             std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
@@ -168,7 +151,7 @@ namespace skyfire
             }
 
 
-            auto connection_header = req_header.get_header_value("Connection");
+            const auto connection_header = req_header.get_header_value("Connection");
 
             auto connection_header_list = sf_split_string(connection_header, ",");
 
@@ -249,7 +232,6 @@ namespace skyfire
 
     inline void sf_http_base_server::close_request__(SOCKET sock)
     {
-		sock_lock_map__.erase(sock);
         {
             std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
             request_context__.erase(sock);
@@ -354,7 +336,7 @@ namespace skyfire
         {
             if(p.type == sf_http_response::multipart_info_t::multipart_info_type::file)
             {
-                auto file_size = sf_get_file_size(p.file_info.filename);
+	            const auto file_size = sf_get_file_size(p.file_info.filename);
                 if(file_size == -1)
                     return false;
                 if(p.file_info.begin>=file_size)
@@ -370,7 +352,7 @@ namespace skyfire
         return true;
     }
 
-    inline void sf_http_base_server::file_response__(SOCKET sock, sf_http_response &res)
+    inline void sf_http_base_server::file_response__(SOCKET sock, sf_http_response &res) const
     {
         auto file = res.get_file();
         auto file_size = sf_get_file_size(file.filename);
@@ -496,25 +478,21 @@ namespace skyfire
         return true;
     }
 
-    inline void sf_http_base_server::websocket_data_coming__(SOCKET sock, const byte_array &data)
+    inline void sf_http_base_server::websocket_data_coming__(const SOCKET sock, const byte_array &data)
     {
         std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
         websocket_context__[sock].buffer += data;
         sf_debug("buffer size", websocket_context__[sock].buffer.size());
-        int resolve_pos = 0;
+        auto resolve_pos = 0;
 
         while (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(sf_websocket_client_data_1_header_t))
         {
-            const sf_websocket_client_data_1_header_t *header1 = nullptr;
-            const sf_websocket_client_data_2_header_t *header2 = nullptr;
-            const sf_websocket_client_data_3_header_t *header3 = nullptr;
+	        const auto header1 = reinterpret_cast<const sf_websocket_client_data_1_header_t *>(
+	            websocket_context__[sock].buffer.data() +
+	            resolve_pos);
 
-            header1 = reinterpret_cast<const sf_websocket_client_data_1_header_t *>(
-                    websocket_context__[sock].buffer.data() +
-                    resolve_pos);
-
-            bool fin = false;
-            int op_code = -1;
+	        auto fin = false;
+	        auto op_code = -1;
             byte_array body;
 
             // TODO 根据不同的len，获取body
@@ -526,8 +504,8 @@ namespace skyfire
                 {
                     break;
                 }
-                header2 = reinterpret_cast<const sf_websocket_client_data_2_header_t *>(
-                        websocket_context__[sock].buffer.data() + resolve_pos);
+                const auto header2 = reinterpret_cast<const sf_websocket_client_data_2_header_t *>(
+	                websocket_context__[sock].buffer.data() + resolve_pos);
                 if (!analysis_websocket_pkg__(sock, header2, resolve_pos, len, body, fin, op_code))
                 {
                     break;
@@ -538,8 +516,8 @@ namespace skyfire
                 {
                     break;
                 }
-                header3 = reinterpret_cast<const sf_websocket_client_data_3_header_t *>(
-                        websocket_context__[sock].buffer.data() + resolve_pos);
+                const auto header3 = reinterpret_cast<const sf_websocket_client_data_3_header_t *>(
+	                websocket_context__[sock].buffer.data() + resolve_pos);
                 if (!analysis_websocket_pkg__(sock, header3, resolve_pos, len, body, fin, op_code))
                 {
                     break;
@@ -629,7 +607,6 @@ namespace skyfire
 
     inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
     {
-		sock_lock_map__.erase(sock);
         if (request_context__.count(sock) != 0)
             request_context__.erase(sock);
         {
@@ -706,29 +683,25 @@ namespace skyfire
         websocket_close_callback__ = std::move(websocket_close_callback);
     }
 
-    inline bool sf_http_base_server::start()
+    inline void sf_http_base_server::quit()
     {
-        if (!server__->listen(config__.host, config__.port))
-        {
-            sf_debug("listen error");
-            return false;
-        }
-        sf_debug("listen succeed!", config__.port);
-        std::vector<std::thread> thread_vec;
-        for (auto i = 0; i < config__.thread_count; ++i)
-        {
-            thread_vec.emplace_back(std::thread([=]
-                                                {
-                                                    sf_eventloop loop;
-                                                    loop.exec();
-                                                }));
-        }
-        for (auto &p:thread_vec)
-        {
-            p.join();
-        }
-        return true;
+		event_loop__.quit();
     }
+
+    inline bool sf_http_base_server::start()
+	{
+		if (!server__->listen(config__.host, config__.port))
+		{
+			sf_debug("listen error");
+			return false;
+		}
+		sf_debug("listen succeed!", config__.port);
+		std::thread([=]
+		{
+			event_loop__.exec();
+		}).join();
+		return true;
+	}
 
     template<typename T>
     bool sf_http_base_server::send_websocket_data(SOCKET sock, const T &data)
@@ -768,7 +741,7 @@ namespace skyfire
     }
 
     inline byte_array
-    sf_http_base_server::append_multipart_data__(sf_multipart_data_context_t &multipart_data, const byte_array &data)
+    sf_http_base_server::append_multipart_data__(sf_multipart_data_context_t &multipart_data, const byte_array &data) const
     {
         auto tmp_data = data;
         while (!tmp_data.empty())
@@ -778,7 +751,7 @@ namespace skyfire
                 multipart_data.multipart.push_back(
                         sf_http_multipart(multipart_data.boundary_str, config__.tmp_file_path));
             }
-            auto ret = multipart_data.multipart.back().append_data(tmp_data, tmp_data);
+            const auto ret = multipart_data.multipart.back().append_data(tmp_data, tmp_data);
             if (!ret)
             {
                 return tmp_data;

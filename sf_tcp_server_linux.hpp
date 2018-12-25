@@ -277,13 +277,13 @@ namespace skyfire {
 
     inline void sf_tcp_server::handle_read(int index, const epoll_event &ev) {
 
-        byte_array recv_buf(SF_DEFAULT_BUFFER_SIZE);
+        byte_array recv_buf(sf_default_buffer_size);
         sf_pkg_header_t header{};
         auto &sock_context__ = epoll_data__[index].sock_context__;
         while (true) {
             sf_debug("start read");
             auto count_read = static_cast<int>(read(ev.data.fd, recv_buf.data(),
-                                                    SF_DEFAULT_BUFFER_SIZE));
+                                                    sf_default_buffer_size));
             sf_debug("read", count_read);
 
             if (count_read <= 0) {

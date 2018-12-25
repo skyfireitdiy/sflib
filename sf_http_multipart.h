@@ -14,9 +14,7 @@
 #pragma once
 
 #include "sf_type.h"
-#include "sf_http_utils.h"
 #include "sf_http_header.h"
-#include "sf_stdc++.h"
 
 namespace skyfire
 {
@@ -24,7 +22,7 @@ namespace skyfire
     /**
      * @brief  http分块请求数据包
      */
-    class sf_http_multipart
+    class sf_http_multipart final
     {
     private:
         sf_http_header header__;

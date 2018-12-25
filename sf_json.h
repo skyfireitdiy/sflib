@@ -1,9 +1,6 @@
 #pragma once
 
 #include "sf_json_utils.h"
-#include "sf_lex.h"
-#include "sf_yacc.h"
-#include "sf_define.h"
 #include "sf_stdc++.h"
 
 namespace skyfire
@@ -11,13 +8,13 @@ namespace skyfire
     /**
      * @brief json库
      */
-    class sf_json
+    class sf_json final
     {
 
     private:
         std::shared_ptr<sf_json_value> value__;
 
-        sf_json(const std::shared_ptr<sf_json_value> &value);
+        explicit sf_json(const std::shared_ptr<sf_json_value> &value);
 
         void value_copy__(const std::shared_ptr<sf_json_value> &src, std::shared_ptr<sf_json_value> &dst) const;
 
@@ -46,14 +43,14 @@ namespace skyfire
          * 使用字符串构造一个json字符串对象
          * @param str 标准字符串
          */
-        sf_json(const std::string &str);
+        explicit sf_json(const std::string &str);
 
 
         /**
          * 使用c字符串构造一个json字符串对象
          * @param c_str c字符串
          */
-        sf_json(const char *c_str);
+        explicit sf_json(const char *c_str);
 
 
         /**
@@ -66,22 +63,22 @@ namespace skyfire
          * 使用bool值构造一个json对象
          * @param boolean_value bool值
          */
-        sf_json(bool boolean_value);
+        explicit sf_json(bool boolean_value);
 
         /**
          * 转为object
          */
-        void convert_to_object();
+        void convert_to_object() const;
 
         /**
          * 转为array
          */
-        void convert_to_array();
+        void convert_to_array() const;
 
         /**
          * 转为null
          */
-        void convert_to_null();
+        void convert_to_null() const;
 
         /**
          * 获取类型
@@ -107,42 +104,42 @@ namespace skyfire
          * @param key 键
          * @return 值
          */
-        const sf_json at(const std::string &key) const;
+        sf_json at(const std::string &key) const;
 
         /**
          * 获取对象值
          * @param key 键
          * @return 值
          */
-        sf_json operator[](const std::string &key);
+        sf_json operator[](const std::string &key) const;
 
         /**
          * 获取对象值
          * @param c_key 键
          * @return 值
          */
-        const sf_json at(const char *c_key) const;
+        sf_json at(const char *c_key) const;
 
         /**
          * 获取对象值
          * @param c_key 键
          * @return 值
          */
-        sf_json operator[](const char *c_key);
+        sf_json operator[](const char *c_key) const;
 
         /**
          * 获取数组值
          * @param key 索引
          * @return 值
          */
-        const sf_json at(int key) const;
+        sf_json at(int key) const;
 
         /**
          * 获取数组值
          * @param key 索引
          * @return 值
          */
-        sf_json operator[](int key);
+        sf_json operator[](int key) const;
 
         /**
          * 转换为字符串
@@ -215,7 +212,7 @@ namespace skyfire
          * 数组追加元素
          * @param value 元素值
          */
-        void append(const sf_json &value);
+        void append(const sf_json &value) const;
 
         /**
          * 深拷贝，生成副本
@@ -228,18 +225,18 @@ namespace skyfire
          * @param other 另一个object或者array
          * @return 是否合并成功
          */
-        bool join(const sf_json &other);
+        bool join(const sf_json &other) const;
 
         /**
          * 清空（不会改变type）
          */
-        void clear();
+        void clear() const;
 
         /**
          * 修改数组大小
          * @param size 大小
          */
-        void resize(int size);
+        void resize(int size) const;
 
         /**
          * 获取数组大小
@@ -249,42 +246,42 @@ namespace skyfire
 
         /**
          * 是否有某个键
-         * @param c_key 键
+         * @param key 键
          * @return 是否存在
          */
-        bool has(const std::string &key);
+        bool has(const std::string &key) const;
 
         /**
          * 是否有某个键
          * @param c_key 键
          * @return 是否存在
          */
-        bool has(const char *c_key);
+        bool has(const char *c_key) const;
 
         /**
          * 删除数组元素
          * @param pos 位置
          */
-        void remove(int pos);
+        void remove(int pos) const;
 
         /**
          * 删除数组元素
          * @param pos 位置
          * @param len 长度
          */
-        void remove(int pos, int len);
+        void remove(int pos, int len) const;
 
         /**
          * 删除对象元素
          * @param key 键
          */
-        void remove(const std::string &key);
+        void remove(const std::string &key) const;
 
         /**
          * 是否为null
          * @return 是否为null
          */
-        bool is_null();
+        bool is_null() const;
 
         /**
          * 返回object的key列表

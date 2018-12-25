@@ -15,12 +15,9 @@
 
 #include "sf_nocopy.h"
 #include "sf_object.hpp"
-#include "sf_tcp_client.hpp"
-#include "sf_tcp_server.hpp"
-#include "sf_serialize_binary.hpp"
-#include "sf_define.h"
+#include "sf_tcp_client.h"
+#include "sf_tcp_server.h"
 #include "sf_tcp_nat_traversal_utils.hpp"
-#include "sf_random.hpp"
 #include "sf_stdc++.h"
 #include <zconf.h>
 
@@ -77,7 +74,7 @@ namespace skyfire {
          * 获取id
          * @return id
          */
-        unsigned long long int get_id();
+        unsigned long long int get_id() const;
 
         /**
          * 连接到穿透服务器，连接成功后会注册
@@ -91,7 +88,7 @@ namespace skyfire {
          * 获取终端集合
          * @return 终端集合
          */
-        std::unordered_set<unsigned long long> get_clients();
+        std::unordered_set<unsigned long long> get_clients() const;
 
         /**
          * 来源，连接远程peer端
@@ -104,7 +101,7 @@ namespace skyfire {
         /**
          * 关闭
          */
-        void close();
+        void close() const;
     };
 
 }

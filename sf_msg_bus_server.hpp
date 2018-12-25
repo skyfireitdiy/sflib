@@ -18,8 +18,9 @@
 #pragma once
 
 #include "sf_msg_bus_server.h"
-#include "sf_tcp_server.hpp"
+#include "sf_tcp_server.h"
 #include "sf_tcp_server_interface.hpp"
+#include "sf_msg_bus_utils.h"
 
 namespace skyfire {
 
@@ -27,10 +28,11 @@ namespace skyfire {
         return std::make_shared<sf_msg_bus_server>();
     }
 
-    inline void sf_msg_bus_server::on_disconnect__(SOCKET sock) {
+    inline void sf_msg_bus_server::on_disconnect__(const SOCKET sock) {
         std::vector<std::string> remove_msg;
         for (auto &p : msg_map__) {
-            std::remove(p.second.begin(), p.second.end(), sock);
+	        // ReSharper disable once CppNoDiscardExpression
+			[[maybe_unused]] auto tmp = std::remove(p.second.begin(), p.second.end(), sock);
             if (p.second.empty())
                 remove_msg.push_back(p.first);
         }
@@ -95,7 +97,7 @@ namespace skyfire {
         sf_msg_bus_t msg;
         msg.type = type;
         msg.data = data;
-        auto send_data = sf_serialize_binary(msg);
+        const auto send_data = sf_serialize_binary(msg);
         if (msg_map__.count(type) != 0) {
             for (auto &sock : msg_map__[type]) {
                 p_server__->send(sock, msg_bus_new_msg, send_data);
@@ -112,7 +114,8 @@ namespace skyfire {
         msg_map__.clear();
     }
 
-    inline bool sf_msg_bus_server::listen(const std::string &ip, unsigned short port) {
+    inline bool sf_msg_bus_server::listen(const std::string &ip, unsigned short port) const
+    {
         return p_server__->listen(ip, port);
     }
 
@@ -139,7 +142,7 @@ namespace skyfire {
         );
     }
 
-    inline bool sf_msg_bus_server::get_server_addr(sf_addr_info_t &addr)
+    inline bool sf_msg_bus_server::get_server_addr(sf_addr_info_t &addr) const
     {
         return p_server__->get_server_addr(addr);
     }

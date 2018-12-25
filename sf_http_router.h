@@ -12,10 +12,7 @@
 */
 
 #pragma once
-#include <map>
-#include <vector>
-#include <regex>
-#include <mutex>
+#include "sf_stdc++.h"
 #include "sf_router.hpp"
 #include "sf_http_response.hpp"
 #include "sf_http_request.hpp"
@@ -25,16 +22,16 @@ namespace skyfire
     /**
      * @brief  http路由
      */
-    class sf_http_router : public sf_router
+    class sf_http_router final : public sf_router
     {
     private:
         std::function<bool(const sf_http_request &,sf_http_response&,const std::string &)> route_callback__;
-        const int priority__;
+        const int priority__{} {};
         const std::vector<std::string> methods__;
         std::recursive_mutex methods_mu__;
 
         template <typename  FuncType, int N, typename ... Args>
-        typename std::enable_if<sizeof...(Args) == N, void>::type
+        static typename std::enable_if<sizeof...(Args) == N, void>::type
         callback_call_helper__(const sf_http_request &req,sf_http_response& res,FuncType func,const std::smatch &sm, Args ... args);
 
         template <typename  FuncType, int N, typename ... Args>

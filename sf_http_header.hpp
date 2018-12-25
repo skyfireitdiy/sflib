@@ -14,7 +14,6 @@
 #pragma once
 
 #include "sf_http_header.h"
-#include "sf_http_utils.hpp"
 
 namespace skyfire
 {
@@ -48,12 +47,12 @@ namespace skyfire
         header_data__[key] = value;
     }
 
-    sf_http_header_t sf_http_header::get_header() const
+    inline sf_http_header_t sf_http_header::get_header() const
     {
         return header_data__;
     }
 
-    void sf_http_header::set_header(const sf_http_header_t &header)
+    inline void sf_http_header::set_header(const sf_http_header_t &header)
     {
         header_data__ = header;
     }

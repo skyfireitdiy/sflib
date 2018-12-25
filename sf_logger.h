@@ -24,7 +24,6 @@
 
 #include "sf_random.hpp"
 #include "sf_single_instance.hpp"
-#include "sf_empty_class.hpp"
 
 namespace skyfire
 {
@@ -55,19 +54,17 @@ namespace skyfire
         std::string msg;                    // 消息
     };
 
-    namespace
-    {
-        /**
-         * 各种level对应的字符串
-         */
-        std::unordered_map<SF_LOG_LEVEL, std::string> logger_level_str__{
-                {SF_DEBUG_LEVEL, "DEBUG"},
-                {SF_INFO_LEVEL,  "INFO "},
-                {SF_WARN_LEVEL,  "WARN "},
-                {SF_ERROR_LEVEL, "ERROR"},
-                {SF_FATAL_LEVEL, "FATAL"},
-        };
-    }
+
+    /**
+     * 各种level对应的字符串
+     */
+    inline std::unordered_map<SF_LOG_LEVEL, std::string> logger_level_str__{
+            {SF_DEBUG_LEVEL, "DEBUG"},
+            {SF_INFO_LEVEL,  "INFO "},
+            {SF_WARN_LEVEL,  "WARN "},
+            {SF_ERROR_LEVEL, "ERROR"},
+            {SF_FATAL_LEVEL, "FATAL"},
+    };
 
     /**
      *  @brief 默认日志格式
@@ -123,7 +120,7 @@ namespace skyfire
 
         void stop_logger();
 
-        void empty_func__(){}
+        static void empty_func__() {}
 
         static std::string format(std::string format_str, const sf_logger_info_t__ &log_info);
 

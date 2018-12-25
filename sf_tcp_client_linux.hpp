@@ -83,12 +83,12 @@ namespace skyfire
         }
         std::thread([=]
                     {
-                        byte_array recv_buffer(SF_DEFAULT_BUFFER_SIZE);
+                        byte_array recv_buffer(sf_default_buffer_size);
                         byte_array data;
                         sf_pkg_header_t header;
                         while (true)
                         {
-                            auto len = read(sock__, recv_buffer.data(), SF_DEFAULT_BUFFER_SIZE);
+                            auto len = read(sock__, recv_buffer.data(), sf_default_buffer_size);
                             if (len <= 0)
                             {
 

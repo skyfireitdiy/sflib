@@ -51,7 +51,7 @@ namespace skyfire
          * @brief is_active 是否是活动的定时器
          * @return 是否活动
          */
-        bool is_active();
+        bool is_active() const;
 
     private:
         std::atomic<bool> running__ {false};

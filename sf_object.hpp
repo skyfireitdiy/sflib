@@ -19,8 +19,6 @@
 #pragma once
 
 #include "sf_object.h"
-#include "sf_object_global_meta_info.hpp"
-#include "sf_object_manager.hpp"
 #include "sf_json.hpp"
 #include "sf_object_meta_run.hpp"
 
@@ -101,7 +99,7 @@ namespace skyfire
         js.convert_to_object();
         for(auto &p:to_json_callback__)
         {
-            js.join(p.second());
+            [[maybe_unused]] auto t = js.join(p.second());
         }
         return js;
     }

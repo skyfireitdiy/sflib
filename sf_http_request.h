@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include "sf_stdc++.h"
 #include "sf_type.h"
 #include "sf_http_request_line.h"
 #include "sf_utils.h"
@@ -26,7 +25,7 @@ namespace skyfire{
     /**
      * @brief  http请求
      */
-    class sf_http_request
+    class sf_http_request final
     {
     private:
         const byte_array raw__;
@@ -119,7 +118,7 @@ namespace skyfire{
          * @param header 请求头
          * @return 是否解析成功
          */
-        static bool parse_header(const std::vector<std::string> header_lines, sf_http_header& header);
+        static bool parse_header(std::vector<std::string> header_lines, sf_http_header& header);
 
         /**
          * 解析cookies

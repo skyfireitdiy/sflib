@@ -17,13 +17,11 @@
 
 #pragma once
 
-#include "sf_tcp_client.hpp"
+#include "sf_tcp_client.h"
 #include "sf_nocopy.h"
-#include "sf_serialize_binary.hpp"
 #include "sf_timer.hpp"
-#include "sf_assigned_type.hpp"
-#include "sf_define.h"
 #include "sf_stdc++.h"
+#include "sf_assigned_type.h"
 
 
 namespace skyfire {
@@ -79,12 +77,12 @@ namespace skyfire {
          * @param port 端口
          * @return 是否连接成功
          */
-        bool connect_to_server(const std::string ip, unsigned short port);
+        bool connect_to_server(const std::string ip, unsigned short port) const;
 
         /**
          * @brief close 关闭RPC客户端
          */
-        void close();
+        void close() const;
 
         /**
           * @brief call 调用

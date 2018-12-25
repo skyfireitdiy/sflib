@@ -14,6 +14,7 @@
 #pragma once
 
 #include "sf_http_router.h"
+#include <utility>
 
 namespace skyfire
 {
@@ -27,34 +28,33 @@ namespace skyfire
 
     template<typename... StringType>
     sf_http_router::sf_http_router(const std::string &pattern, void (*callback)(const sf_http_request &,sf_http_response&,StringType...),
-                                   const std::vector<std::string> &methods, int priority):
+                                   const std::vector<std::string> &methods, const int priority):
             sf_http_router(pattern,std::function(callback),methods,priority)
     {
 
     }
 
-    template<typename... StringType>
-    sf_http_router::sf_http_router(const std::string &pattern,
-                                   std::function<void(const sf_http_request &, sf_http_response &,
-                                                      StringType...)> callback, const std::vector<std::string> &methods,
-                                   int priority):
-            priority__(priority),methods__(methods)
+    template <typename ... StringType>
+    sf_http_router::sf_http_router(const std::string& pattern,
+	    std::function<void(const sf_http_request&, sf_http_response&, StringType...)> callback,
+	    const std::vector<std::string>& methods, int priority):priority__(priority), methods__(std::move(methods))
     {
-        route_callback__ = [=](const sf_http_request &req,sf_http_response& res,const std::string &url)
-        {
-            sf_debug("call route");
-            std::regex re(pattern);
-            std::smatch sm;
-            if(!std::regex_match(url, sm, re))
-            {
-                sf_debug("match error", pattern, url);
-                return false;
-            }
-            callback_call_helper__<decltype(callback),sizeof...(StringType)>(req,res,callback,sm);
-            sf_debug("return true");
-            return true;
-        };
+		route_callback__ = [=](const sf_http_request &req, sf_http_response& res, const std::string &url)
+		{
+			sf_debug("call route");
+			std::regex re(pattern);
+			std::smatch sm;
+			if (!std::regex_match(url, sm, re))
+			{
+				sf_debug("match error", pattern, url);
+				return false;
+			}
+			callback_call_helper__<decltype(callback), sizeof...(StringType)>(req, res, callback, sm);
+			sf_debug("return true");
+			return true;
+		};
     }
+
 
     inline bool sf_http_router::run_route(const sf_http_request &req, sf_http_response &res, const std::string &url,
                                    const std::string &method) {
@@ -94,7 +94,7 @@ namespace skyfire
                                                                       StringType...),
                                                      const std::vector<std::string> &methods, int priority)
     {
-        return std::shared_ptr < sf_http_router > (new sf_http_router(pattern, callback, methods, priority));
+        return std::make_shared<sf_http_router>(pattern, callback, methods, priority);
     }
 
     template<typename ...StringType>
@@ -103,6 +103,6 @@ namespace skyfire
                                                                         StringType...)> callback,
                                                      const std::vector<std::string> &methods, int priority)
     {
-        return std::shared_ptr < sf_http_router > (new sf_http_router(pattern, callback, methods, priority));
+        return std::make_shared<sf_http_router>(pattern, callback, methods, priority);
     }
 }

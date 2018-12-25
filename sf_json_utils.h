@@ -21,7 +21,7 @@ namespace skyfire
     /**
      * json 值结构
      */
-    struct sf_json_value
+    struct sf_json_value final
     {
         sf_json_type type;                                                          // 类型
         long double number_value;                                                   // 数值类型（bool类型）

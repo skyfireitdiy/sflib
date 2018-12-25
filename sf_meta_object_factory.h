@@ -5,7 +5,7 @@
 namespace skyfire {
     class sf_object;
 
-    class sf_meta_object_factory : public sf_nocopy<> {
+    class sf_meta_object_factory final : public sf_nocopy<> {
 
     private:
         std::unordered_map<std::string, std::function<std::shared_ptr<sf_object>()>> factory__;
@@ -23,7 +23,7 @@ namespace skyfire {
 
         void set_after_create_callback(std::function<void(const std::string &)> after);
 
-        bool has(const std::string &key);
+        bool has(const std::string &key) const;
     };
 
 

@@ -10,12 +10,8 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
-
+#pragma once
 #include "sf_http_multipart.h"
-#include "sf_http_request.hpp"
-#include "sf_type.hpp"
-#include "sf_http_utils.hpp"
-#include "sf_utils.hpp"
 
 
 namespace skyfire
@@ -47,7 +43,7 @@ namespace skyfire
 
     inline bool sf_http_multipart::append_data(const byte_array &data, byte_array &ret)
     {
-        std::string new_boundary_str = "----" + boundary_str__;
+	    const auto new_boundary_str = "----" + boundary_str__;
         if(first_block)
         {
             auto tmp_data = to_string(data);
@@ -78,7 +74,7 @@ namespace skyfire
             });
             // NOTE 暂时忽略掉打开失败的情况
             auto body_str = to_string(body);
-            auto finish_pos = body_str.find(new_boundary_str);
+            const auto finish_pos = body_str.find(new_boundary_str);
             if(finish_pos == std::string::npos){
                 fp__->write(body.data(),body.size());
                 ret = byte_array();
@@ -106,7 +102,7 @@ namespace skyfire
         {
             auto body = data;
             auto body_str = to_string(body);
-            auto finish_pos = body_str.find(new_boundary_str);
+            const auto finish_pos = body_str.find(new_boundary_str);
             if(finish_pos == std::string::npos){
                 fp__->write(body.data(),body.size());
                 ret = byte_array();

@@ -29,6 +29,6 @@ int main()
     std::cout<<"开始"<<std::endl;
     timer.start(5000, true);
     // 1. 等待超时
-    sf_wait(&timer, timeout);
+    SF_WAIT(&timer, timeout);
     std::cout<<"结束"<<std::endl;
 }

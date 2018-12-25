@@ -43,36 +43,36 @@ namespace skyfire
         }
     }
 
-    void sf_tcp_server_interface::before_send_filter__(SOCKET sock,sf_pkg_header_t &header, byte_array &data) {
+    inline void sf_tcp_server_interface::before_send_filter__(SOCKET sock,sf_pkg_header_t &header, byte_array &data) {
         for(auto &p:filters__)
         {
             p->send_filter(sock,header,data);
         }
     }
 
-    void sf_tcp_server_interface::new_connection_filter__(SOCKET sock) {
+    inline void sf_tcp_server_interface::new_connection_filter__(SOCKET sock) {
         for(auto &p:filters__)
         {
             p->new_connection_filter(sock);
         }
     }
 
-    void sf_tcp_server_interface::listen_sock_filter__(SOCKET sock) {
+    inline void sf_tcp_server_interface::listen_sock_filter__(SOCKET sock) {
         for(auto &p:filters__)
         {
             p->listen_sock_filter(sock);
         }
     }
 
-    void sf_tcp_server_interface::disconnect_sock_filter__(SOCKET sock) {
+    inline void sf_tcp_server_interface::disconnect_sock_filter__(SOCKET sock) {
         for(auto &p:filters__)
         {
             p->disconnect_sock_filter(sock);
         }
     }
 
-    void sf_tcp_server_interface::add_server_socket_filter(shared_ptr<sf_server_socket_filter> filter) {
-        filters__.push_back(filter);
+    inline void sf_tcp_server_interface::add_server_socket_filter(shared_ptr<sf_server_socket_filter>&& filter) {  // NOLINT(performance-unnecessary-value-param)
+        filters__.emplace_back(std::move(filter));
     }
 
 	inline void sf_tcp_server_interface::set_manage_clients(bool flag)

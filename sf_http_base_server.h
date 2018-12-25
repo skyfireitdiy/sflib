@@ -16,13 +16,10 @@
 #include <vector>
 #include "sf_eventloop.h"
 #include "sf_tcp_server.h"
-#include "sf_logger.h"
-#include "sf_object.h"
 #include "sf_http_request.h"
 #include "sf_http_response.h"
 #include "sf_http_utils.h"
 #include "sf_websocket_utils.h"
-#include "sf_logger.h"
 #include "sf_http_server_config.h"
 #include <utility>
 #include <mutex>
@@ -39,6 +36,8 @@ namespace skyfire {
 
         std::shared_ptr<sf_tcp_server> server__ = std::make_shared<sf_tcp_server>(true);
 
+		sf_eventloop event_loop__;
+
         std::function<void(const sf_http_request&,sf_http_response&)> request_callback__;
         std::function<void(const sf_http_request&,sf_http_response&)> websocket_request_callback__;
         std::function<void(SOCKET,const std::string &url,const byte_array& data)> websocket_binary_data_callback__;
@@ -54,9 +53,6 @@ namespace skyfire {
         std::unordered_map<SOCKET, sf_multipart_data_context_t> multipart_data_context__;
         std::recursive_mutex mu_multipart_data_context__;
 
-        std::mutex mu_sock_lock_map__;
-        std::unordered_map<SOCKET, std::shared_ptr<std::mutex>> sock_lock_map__;
-
         void raw_data_coming__(SOCKET sock, const byte_array &data);
 
         template <typename T>
@@ -69,9 +65,9 @@ namespace skyfire {
 
         void on_socket_closed__(SOCKET sock);
 
-        byte_array append_multipart_data__(sf_multipart_data_context_t &multipart_data, const byte_array &data);
+        byte_array append_multipart_data__(sf_multipart_data_context_t &multipart_data, const byte_array &data) const;
 
-        void file_response__(SOCKET sock, sf_http_response &res) ;
+        void file_response__(SOCKET sock, sf_http_response &res) const;
 
         void normal_response__(SOCKET sock, sf_http_response &res) const;
 
@@ -132,6 +128,10 @@ namespace skyfire {
         void set_websocket_close_callback(std::function<void(SOCKET,const std::string &url)> websocket_close_callback);
 
     public:
+		/**
+		 * 退出服务器
+		 */
+		void quit();
 
         /**
          * 启动服务器，此函数会包含一个事件循环，因此在此处会阻塞，如果有其他逻辑需要处理，可以放置在后台线程

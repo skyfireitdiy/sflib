@@ -56,7 +56,7 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
     std::cout<<"msg:"<<std::flush;
     std::string msg;
     getline(std::cin,msg);
-    conn->send(TCP_PKG_TYPE_USER + 1,sf_serialize_binary(msg));
+    conn->send(tcp_pkg_type_user + 1,sf_serialize_binary(msg));
 }
 
 

@@ -12,7 +12,7 @@ namespace skyfire
 {
     class sf_object;
 
-    class sf_object_global_meta_info: public sf_nocopy<>
+    class sf_object_global_meta_info final : public sf_nocopy<>
     {
     public:
         SF_SINGLE_TON(sf_object_global_meta_info)
@@ -28,7 +28,7 @@ namespace skyfire
 
 #define _SET_VALUE_FUNC(func_name, container_name) \
         template<typename T>\
-        inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, T value) {\
+        static inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, T value) {\
             if(object->container_name.count(key) == 0)\
             {\
                 return false;\

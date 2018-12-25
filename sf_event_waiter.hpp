@@ -47,9 +47,6 @@ namespace skyfire {
         cond__.notify_one();
     }
 
-    template<typename... ARGS>
-    sf_event_waiter<ARGS...>::sf_event_waiter() {
-    }
 
     template<typename... ARGS>
     std::shared_ptr<sf_event_waiter<ARGS...>>

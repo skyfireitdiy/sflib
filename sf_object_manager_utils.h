@@ -15,7 +15,7 @@ namespace skyfire
     
     using object_properties_t = std::unordered_map<std::string, std::any>;
     
-    struct object_item_meta_t
+    struct object_item_meta_t final
     {
         std::string id;
         object_item_scope_t scope;
@@ -23,7 +23,7 @@ namespace skyfire
         object_properties_t properties;
     };
     
-    struct object_manager_meta_t
+    struct object_manager_meta_t final
     {
         std::unordered_map<std::string,object_item_meta_t> objects;
     };

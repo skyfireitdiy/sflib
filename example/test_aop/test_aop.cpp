@@ -21,7 +21,7 @@ class A : public sf_object
 public:
     // 2. 注册aop成员函数，会生成aop_xxx函数
     SF_REG_AOP(func, int , int)
-    int func(int a, int b)
+    int func(int a, int b) const
     {
         std::cout<<a+b<<std::endl;
         return a+b;

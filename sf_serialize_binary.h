@@ -19,7 +19,6 @@
 
 #include "sf_stdc++.h"
 #include "sf_type.hpp"
-#include "sf_define.h"
 
 namespace skyfire
 {
@@ -96,10 +95,10 @@ namespace skyfire
     template<typename... _Types>
     size_t sf_deserialize_binary(const byte_array &data, std::tuple<_Types...> &obj, size_t begin_pos);
 
-    class sf_serialize_binary_size_mismatch_exception : public std::exception
+    class sf_serialize_binary_size_mismatch_exception final : public std::exception
     {
     public:
-        sf_serialize_binary_size_mismatch_exception(const std::string &exception_message);
+	    explicit sf_serialize_binary_size_mismatch_exception(const std::string &exception_message);
         const char *what() const noexcept override;
     private:
         std::string _message;

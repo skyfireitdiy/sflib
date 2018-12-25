@@ -1,15 +1,10 @@
 #pragma once
 
 #include "sf_object_manager.h"
-#include "sf_single_instance.hpp"
 #include "sf_object_global_meta_info.hpp"
-
 #include "sf_json.hpp"
+#include "sf_stdc++.h"
 
-#include <fstream>
-
-
-#include <iostream>
 
 using namespace std;
 
@@ -38,9 +33,9 @@ namespace skyfire
             for(auto i = 0;i<item_size;++i)
             {
                 object_item_meta_t tmp_item;
-                tmp_item.id = (std::string)items[i]["id"];
-                tmp_item._class = (std::string) items[i]["class"];
-                tmp_item.scope = (std::string)items[i]["scope"] == "prototype" ? object_item_scope_t ::prototype : object_item_scope_t ::singleton;
+                tmp_item.id = static_cast<std::string>(items[i]["id"]);
+                tmp_item._class = static_cast<std::string>(items[i]["class"]);
+                tmp_item.scope = static_cast<std::string>(items[i]["scope"]) == "prototype" ? object_item_scope_t ::prototype : object_item_scope_t ::singleton;
                 
                 auto properties = items[i]["property"];
                 auto keys = properties.keys();

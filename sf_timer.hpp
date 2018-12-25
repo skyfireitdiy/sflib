@@ -58,7 +58,8 @@ namespace skyfire
         new_thread.detach();
     }
 
-    inline bool sf_timer::is_active() {
+    inline bool sf_timer::is_active() const
+    {
         return running__;
     }
 

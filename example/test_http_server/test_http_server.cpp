@@ -82,7 +82,6 @@ int main() {
     sf_http_server_config config;
     config.host = "0.0.0.0";        // 监听ip
     config.port = 8080;             // 端口
-    config.thread_count = 16;        // 线程数量
     config.request_timeout = 30;    // http请求超时
     // 2. 根据配置生成一个http server
     auto server = sf_http_server::make_server(config);

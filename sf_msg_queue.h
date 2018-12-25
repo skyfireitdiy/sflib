@@ -18,19 +18,14 @@
 #pragma once
 
 #include "sf_single_instance.hpp"
-#include <functional>
-#include <list>
-#include <map>
-#include <mutex>
-#include <algorithm>
-#include <condition_variable>
+#include "sf_stdc++.h"
 
 namespace skyfire
 {
     /**
      *  @brief 消息队列
      */
-    class sf_msg_queue
+    class sf_msg_queue final
     {
     public:
         SF_SINGLE_TON(sf_msg_queue);
@@ -69,7 +64,7 @@ namespace skyfire
          * 判断是否队列为空
          * @return 是否为空
          */
-        bool empty();
+        bool empty() const;
 
         /**
          * 等待消息到来

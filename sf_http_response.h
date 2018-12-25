@@ -14,7 +14,6 @@
 #pragma once
 
 #include "sf_stdc++.h"
-#include "sf_type.hpp"
 #include "sf_http_utils.h"
 #include "sf_http_header.h"
 
@@ -26,7 +25,7 @@ namespace skyfire
     /**
      * @brief  HTTP响应
      */
-    class sf_http_response
+    class sf_http_response final
     {
     public:
         /**
@@ -42,7 +41,7 @@ namespace skyfire
         /**
          * @brief  响应文件信息（当响应类型为file或者响应类型为multipart，子类型为file时，使用改数据结构声明文件）
          */
-        struct response_file_info_t
+        struct response_file_info_t final
         {
             std::string filename;
             long long begin;
@@ -52,7 +51,7 @@ namespace skyfire
         /**
          * @brief  multipart类型信息
          */
-        struct multipart_info_t
+        struct multipart_info_t final
         {
             /**
              *  @brief multipart子类型
@@ -65,7 +64,7 @@ namespace skyfire
             /**
              *  @brief 表单信息，当type为multipart_info_type::form时有效
              */
-            struct form_info_t
+            struct form_info_t final
             {
                 sf_http_header_t header;        // 响应头
                 byte_array body;                // 响应体

@@ -19,18 +19,15 @@
 
 #include <string>
 
-#include "sf_msg_bus_utils.h"
-#include "sf_type.hpp"
 #include "sf_object.hpp"
-#include "sf_tcp_server.hpp"
-#include "sf_serialize_binary.hpp"
+#include "sf_tcp_server.h"
 
 namespace skyfire {
 
     /**
      *  @brief 消息总线服务端
      */
-    class sf_msg_bus_server : public sf_nocopy<sf_object> {
+    class sf_msg_bus_server final : public sf_nocopy<sf_object> {
         /**
          * @brief msg_come 消息到来信号
          */
@@ -59,7 +56,7 @@ namespace skyfire {
          * @param port 端口
          * @return 监听是否成功
          */
-        bool listen(const std::string &ip, unsigned short port);
+        bool listen(const std::string &ip, unsigned short port) const;
 
         /**
          * @brief close 关闭总线服务器
@@ -83,7 +80,7 @@ namespace skyfire {
          * @param addr 地址信息
          * @return 是否成功
          */
-        bool get_server_addr(sf_addr_info_t &addr);
+        bool get_server_addr(sf_addr_info_t &addr) const;
 
     private:
         std::shared_ptr<sf_tcp_server> p_server__ = sf_tcp_server::make_server();

@@ -13,7 +13,7 @@ public:
         cout<<"A()"<<endl;
     }
 
-    void print()
+    void print() const
     {
         cout<<"n is "<< num<<endl;
     }
@@ -25,7 +25,7 @@ public:
     {
         cout<<"B()"<<endl;
     }
-    void print()
+    void print() const
     {
         cout<<"B object"<<endl;
     }

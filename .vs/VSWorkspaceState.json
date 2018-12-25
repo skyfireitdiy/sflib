@@ -4,6 +4,6 @@
     "\\example",
     "\\example\\test_http_server"
   ],
-  "SelectedNode": "\\example\\test_http_server\\test_http_server.cpp",
+  "SelectedNode": "\\sf_tcp_server_interface.hpp",
   "PreviewInSolutionExplorer": false
 }

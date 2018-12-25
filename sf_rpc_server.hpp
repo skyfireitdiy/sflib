@@ -28,12 +28,12 @@ namespace skyfire {
         sf_rpc_res_context_t res;
         res.call_id = id_code;
         res.ret = sf_serialize_binary(data);
-        __tcp_server__->send(sock, RPC_RES_TYPE, sf_serialize_binary(res));
+        __tcp_server__->send(sock, rpc_res_type, sf_serialize_binary(res));
     }
 
-    
-    void sf_rpc_server::__on_data_coming(SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
-        if(header.type != RPC_REQ_TYPE)
+
+    inline void sf_rpc_server::__on_data_coming(SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
+        if(header.type != rpc_req_type)
         {
             return;
         }
@@ -100,13 +100,13 @@ namespace skyfire {
 
     }
 
-    
-    std::shared_ptr<sf_rpc_server> sf_rpc_server::make_server() {
+
+    inline std::shared_ptr<sf_rpc_server> sf_rpc_server::make_server() {
         return std::shared_ptr<sf_rpc_server>(new sf_rpc_server);
     }
 
-    
-    sf_rpc_server::sf_rpc_server() {
+
+    inline sf_rpc_server::sf_rpc_server() {
         sf_bind_signal(sf_rpc_server::__tcp_server__,
                        data_coming,
                        [=](SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
@@ -121,13 +121,15 @@ namespace skyfire {
         },true);
     }
 
-    
-    bool sf_rpc_server::listen(const std::string &ip, unsigned short port) {
+
+    inline bool sf_rpc_server::listen(const std::string &ip, unsigned short port) const
+    {
         return __tcp_server__->listen(ip, port);
     }
 
-    
-    void sf_rpc_server::close() {
+
+    inline void sf_rpc_server::close() const
+    {
         __tcp_server__->close();
     }
 }

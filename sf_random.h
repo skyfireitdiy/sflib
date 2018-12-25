@@ -16,13 +16,12 @@
 #include "sf_stdc++.h"
 
 #include "sf_nocopy.h"
-#include "sf_single_instance.hpp"
 
 namespace skyfire {
     /**
      *  @brief 随机数类
      */
-    class sf_random : public sf_nocopy<> {
+    class sf_random final : public sf_nocopy<> {
     public:
         SF_SINGLE_TON(sf_random)
 

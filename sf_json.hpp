@@ -2,9 +2,7 @@
 
 #include "sf_lex.hpp"
 #include "sf_yacc.hpp"
-#include "sf_http_utils.h"
 #include "sf_json.h"
-#include "sf_utils.hpp"
 #include "sf_define.h"
 #include "sf_meta.hpp"
 #include "sf_msvc_safe.h"
@@ -134,9 +132,11 @@ namespace skyfire
                                                        {
                                                            sf_json json;
                                                            json.convert_to_object();
-                                                           sf_json js1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json js2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           const auto js1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           const auto js2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           // ReSharper disable once CppExpressionWithoutSideEffects
                                                            json.join(js1);
+                                                           // ReSharper disable once CppExpressionWithoutSideEffects
                                                            json.join(js2);
                                                            return json;
                                                        }
@@ -152,7 +152,8 @@ namespace skyfire
                                                        {
                                                            sf_json json;
                                                            json.convert_to_object();
-                                                           auto json1 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           const auto json1 = std::any_cast<sf_json
+                                                           >(data[2]->user_data);
                                                            json[sf_json::json_string_to_string(
                                                                    data[0]->text)] = json1;
                                                            return json;
@@ -200,8 +201,9 @@ namespace skyfire
                                                        {
                                                            sf_json json;
                                                            json.convert_to_array();
-                                                           sf_json json1 = std::any_cast<sf_json>(data[0]->user_data);
-                                                           sf_json json2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           const auto json1 = std::any_cast<sf_json>(data[0]->user_data);
+                                                           const auto json2 = std::any_cast<sf_json>(data[2]->user_data);
+                                                           // ReSharper disable once CppExpressionWithoutSideEffects
                                                            json.join(json1);
                                                            json.append(json2);
                                                            return json;
@@ -220,7 +222,7 @@ namespace skyfire
         return std::any_cast<sf_json>(yacc_result[0]->user_data);
     }
 
-    std::unordered_set<std::string> sf_json::keys() const
+    inline std::unordered_set<std::string> sf_json::keys() const
     {
         std::unordered_set<std::string> ret;
         if(value__->type != sf_json_type::object)
@@ -269,7 +271,7 @@ namespace skyfire
         value__ = value;
     }
 
-    inline void sf_json::convert_to_object()
+    inline void sf_json::convert_to_object() const
     {
         if (value__->type == sf_json_type::object)
         {
@@ -279,7 +281,7 @@ namespace skyfire
         clear();
     }
 
-    inline void sf_json::convert_to_array()
+    inline void sf_json::convert_to_array() const
     {
         if (value__->type == sf_json_type::array)
         {
@@ -295,7 +297,7 @@ namespace skyfire
     }
 
 
-    inline const sf_json sf_json::at(const std::string &key) const
+    inline sf_json sf_json::at(const std::string &key) const
     {
         if (value__->type != sf_json_type::object)
         {
@@ -308,7 +310,7 @@ namespace skyfire
         return sf_json(value__->object_value[key]);
     }
 
-    inline sf_json sf_json::operator[](const std::string &key)
+    inline sf_json sf_json::operator[](const std::string &key) const
     {
         if (value__->type != sf_json_type::object)
         {
@@ -321,7 +323,7 @@ namespace skyfire
         return sf_json(value__->object_value[key]);
     }
 
-    inline const sf_json sf_json::at(int key) const
+    inline sf_json sf_json::at(int key) const
     {
         if (value__->type != sf_json_type::array)
         {
@@ -440,7 +442,7 @@ namespace skyfire
     }
 
 
-    inline void sf_json::append(const sf_json &value)
+    inline void sf_json::append(const sf_json &value) const
     {
         convert_to_array();
         value__->array_value.push_back(value.value__);
@@ -453,7 +455,7 @@ namespace skyfire
         return tmp_json;
     }
 
-    inline bool sf_json::join(const sf_json &other)
+    inline bool sf_json::join(const sf_json &other) const
     {
         if (value__->type == sf_json_type::array && other.value__->type == sf_json_type::array)
         {
@@ -471,7 +473,7 @@ namespace skyfire
         return false;
     }
 
-    inline void sf_json::clear()
+    inline void sf_json::clear() const
     {
         value__->number_value = 0;
         value__->string_value.clear();
@@ -479,13 +481,13 @@ namespace skyfire
         value__->object_value.clear();
     }
 
-    inline void sf_json::resize(int size)
+    inline void sf_json::resize(const int size) const
     {
         convert_to_array();
         value__->array_value.resize(size);
     }
 
-    inline void sf_json::remove(int pos)
+    inline void sf_json::remove(const int pos) const
     {
         if (value__->array_value.size() > pos)
         {
@@ -493,7 +495,7 @@ namespace skyfire
         }
     }
 
-    inline void sf_json::remove(int pos, int len)
+    inline void sf_json::remove(const int pos, int len) const
     {
         if (value__->array_value.size() > pos)
         {
@@ -505,7 +507,7 @@ namespace skyfire
         }
     }
 
-    inline void sf_json::remove(const std::string &key)
+    inline void sf_json::remove(const std::string &key) const
     {
         value__->object_value.erase(key);
     }
@@ -544,7 +546,7 @@ namespace skyfire
                 break;
             case sf_json_type::number:
             {
-                char buffer[SF_DEFAULT_BUFFER_SIZE];
+                char buffer[sf_default_buffer_size];
                 sf_safe_sprintf(buffer,sizeof(buffer),"%Lg",value__->number_value);
                 ret+=buffer;
                 break;
@@ -582,7 +584,7 @@ namespace skyfire
         dst->number_value = src->number_value;
         if(!src->array_value.empty())
         {
-            for (int i=0;i<src->array_value.size();++i)
+            for (auto i=0;i<src->array_value.size();++i)
             {
                 dst->array_value.push_back(std::make_shared<sf_json_value>());
                 value_copy__(src->array_value[i], dst->array_value[i]);
@@ -598,17 +600,17 @@ namespace skyfire
         }
     }
 
-    inline const sf_json sf_json::at(const char *c_str) const
+    inline sf_json sf_json::at(const char *c_key) const
     {
-        return at(std::string(c_str));
+        return at(std::string(c_key));
     }
 
-    inline sf_json sf_json::operator[](const char *c_str)
+    inline sf_json sf_json::operator[](const char *c_key) const
     {
-        return operator[](std::string(c_str));
+        return operator[](std::string(c_key));
     }
 
-    inline sf_json sf_json::operator[](int key)
+    inline sf_json sf_json::operator[](const int key) const
     {
         if (value__->type != sf_json_type::array)
         {
@@ -621,7 +623,7 @@ namespace skyfire
         return sf_json(value__->array_value[key]);
     }
 
-    sf_json &sf_json::operator=(bool value)
+    inline sf_json &sf_json::operator=(const bool value)
     {
         if (value__->type != sf_json_type::boolean)
         {
@@ -632,7 +634,7 @@ namespace skyfire
         return *this;
     }
 
-    inline bool sf_json::is_null()
+    inline bool sf_json::is_null() const
     {
         return value__->type == sf_json_type::null;
     }
@@ -643,7 +645,7 @@ namespace skyfire
         return operator=(std::string(value));
     }
 
-    inline void sf_json::convert_to_null()
+    inline void sf_json::convert_to_null() const
     {
         clear();
         value__->type = sf_json_type ::null;
@@ -654,12 +656,12 @@ namespace skyfire
         return value__->type == sf_json_type ::array?value__->array_value.size():0;
     }
 
-    inline bool sf_json::has(const std::string &key)
+    inline bool sf_json::has(const std::string &key) const
     {
         return value__->type == sf_json_type ::object?value__->object_value.count(key)!=0:false;
     }
 
-    inline bool sf_json::has(const char *c_key)
+    inline bool sf_json::has(const char *c_key) const
     {
         return has(std::string(c_key));
     }

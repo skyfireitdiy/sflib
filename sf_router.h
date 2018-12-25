@@ -21,7 +21,8 @@ namespace skyfire
     class sf_router
     {
         public:
-        /**
+	    virtual ~sf_router() = default;
+	    /**
          * 获取优先级
          * @return 优先级
          */

@@ -8,7 +8,8 @@ namespace skyfire
     /**
      * @brief 词法分析器
      */
-    class sf_lex{
+    class sf_lex final
+    {
     private:
         std::vector<sf_lex_rule_t> rules__;
 

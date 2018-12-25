@@ -20,21 +20,21 @@ namespace skyfire {
         e__ = std::make_shared<std::default_random_engine>(rd__());
     }
 
-    inline int sf_random::get_int(int min, int max)  const
+    inline int sf_random::get_int(const int min, const int max)  const
     {
-        std::uniform_int_distribution<int> ed(min, max);
+	    const std::uniform_int_distribution<int> ed(min, max);
         return ed(*e__.get());
     }
 
-    inline double sf_random::get_double(double min, double max) const
+    inline double sf_random::get_double(const double min, const double max) const
     {
-        std::uniform_real_distribution<double > ed(min, max);
+	    const std::uniform_real_distribution<double > ed(min, max);
         return ed(*e__.get());
     }
 
     inline std::string sf_random::get_uuid_str() const
     {
-        std::uniform_int_distribution<int> ed(INT_MIN, INT_MAX);
+	    const std::uniform_int_distribution<int> ed(INT_MIN, INT_MAX);
         int data[4] {ed(*e__.get()), ed(*e__.get()), ed(*e__.get()), ed(*e__.get())};
         char c_str[40];
 #ifdef _MSC_VER

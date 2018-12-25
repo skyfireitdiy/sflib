@@ -11,7 +11,7 @@ namespace skyfire
     }
 
     inline bool sf_yacc::parse(const std::vector<sf_lex_result_t> &lex_result,
-                               std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result)
+                               std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result) const
     {
         auto prepare_items = make_yacc_result_from_lex_result(lex_result);
         yacc_result.clear();

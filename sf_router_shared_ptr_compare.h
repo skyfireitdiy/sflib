@@ -13,11 +13,6 @@
 
 #pragma once
 
-#include <memory>
-
-#include "sf_http_router.hpp"
-#include "sf_websocket_router.hpp"
-
 
 namespace skyfire
 {
@@ -26,7 +21,7 @@ namespace skyfire
      * @tparam RouterType
      */
     template <typename RouterType>
-    struct sf_router_shared_ptr_compare__
+    struct sf_router_shared_ptr_compare__ final
     {
         /**
          * 路由比较

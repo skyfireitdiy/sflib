@@ -14,12 +14,11 @@
 #pragma once
 
 #include "sf_http_server.h"
-#include "sf_http_utils.hpp"
 
 namespace skyfire
 {
     inline void sf_http_server::default_request_callback__(const sf_http_request &req, sf_http_response &res) {
-        auto req_line = req.get_request_line();
+	    const auto req_line = req.get_request_line();
         for(auto &p:http_routers__)
         {
             if(p->run_route(req,res,req_line.url,req_line.method))
@@ -64,21 +63,25 @@ namespace skyfire
             default_websocket_open_callback__(sock,url);
         });
         set_websocket_close_callback([=](SOCKET sock,const std::string& url){
-            default_websocket_close_callback(sock,url);
+            default_websocket_close_callback__(sock,url);
         });
     }
 
-    inline void sf_http_server::default_websocket_close_callback(SOCKET sock, const std::string &url) {
+    // ReSharper disable once CppMemberFunctionMayBeStatic
+    inline void sf_http_server::default_websocket_close_callback__(SOCKET sock, const std::string &url) const
+    {
         // TODO websocket 关闭事件响应
     }
 
-    inline void sf_http_server::default_websocket_open_callback__(SOCKET sock, const std::string &url) {
+    // ReSharper disable once CppMemberFunctionMayBeStatic
+    inline void sf_http_server::default_websocket_open_callback__(SOCKET sock, const std::string &url) const
+    {
         // TODO websocket 打开事件响应
     }
 
     inline void
     sf_http_server::default_websocket_text_data_callback__(SOCKET sock, const std::string &url, const std::string &data) {
-        sf_websocket_param_t param;
+        sf_websocket_param_t param = {};
         sf_parse_url(url,param.url,param.param,param.frame);
         param.sock = sock;
         param.text_msg = data;
@@ -93,7 +96,7 @@ namespace skyfire
 
     inline void sf_http_server::default_websocket_binary_data_callback__(SOCKET sock, const std::string &url,
                                                                   const byte_array &data) {
-        sf_websocket_param_t param;
+        sf_websocket_param_t param = {};
         sf_parse_url(url,param.url,param.param,param.frame);
         param.sock = sock;
         param.binary_data = data;
@@ -106,7 +109,8 @@ namespace skyfire
         }
     }
 
-    inline void sf_http_server::default_websocket_request_callback__(const sf_http_request &req, sf_http_response &res) {
+    inline void sf_http_server::default_websocket_request_callback__(const sf_http_request &req, sf_http_response &res) const
+    {
         auto headers = req.get_header();
         auto header_key = headers.get_key_list();
         // 基于sha加密方式的握手协议
@@ -116,8 +120,8 @@ namespace skyfire
             if(sec_websocket_key.empty())
                 return;
             sec_websocket_key+=websocket_sha1_append_str;
-            auto sha1_encoded_key = sf_sha1_encode(to_byte_array(sec_websocket_key));
-            auto base64_encoded_key = sf_base64_encode(sha1_encoded_key);
+            const auto sha1_encoded_key = sf_sha1_encode(to_byte_array(sec_websocket_key));
+            const auto base64_encoded_key = sf_base64_encode(sha1_encoded_key);
             res.get_header().set_header("Upgrade","websocket");
             res.get_header().set_header("Connection","Upgrade");
             res.get_header().set_header("Sec-WebSocket-Accept",sf_string_trim(base64_encoded_key));

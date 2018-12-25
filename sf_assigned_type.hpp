@@ -56,7 +56,7 @@ namespace skyfire
         return &data__;
     }
 
-    inline sf_assigned_type<void>::sf_assigned_type(bool init) : init__(init)
+    inline sf_assigned_type<void>::sf_assigned_type(const bool init) : init__(init)
 	{}
 
 	inline sf_assigned_type<void>::operator bool() const {

@@ -38,7 +38,6 @@ namespace skyfire {
     typename std::enable_if<std::is_pod<_Pod_Type>::value, byte_array>::type
     sf_serialize_binary(const _Pod_Type &value) {
         byte_array ret(sizeof(_Pod_Type));
-        auto p = reinterpret_cast<const char *>(&value);
         memcpy(ret.data(), &value, sizeof(_Pod_Type));
         return ret;
     }

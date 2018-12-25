@@ -28,7 +28,7 @@ namespace skyfire
         std::string pattern = ".+";
         if (!path.empty())
         {
-            auto ch = path[path.length() - 1];
+	        const auto ch = path[path.length() - 1];
             if (ch == '\\' || ch == '/')
             {
                 path.pop_back();
@@ -42,7 +42,7 @@ namespace skyfire
                     std::unordered_map<std::string, std::string> param;
                     std::string frame;
                     sf_parse_url(raw_url, url, param, frame);
-                    auto abspath = path + url;
+                    auto abs_path = path + url;
 
                     sf_http_header header;
                     byte_array body_data;
@@ -71,12 +71,12 @@ namespace skyfire
                     };
 
 
-                    if (sf_is_dir(abspath))
+                    if (sf_is_dir(abs_path))
                     {
                         _404_res();
                     } else
                     {
-                        auto file_size = sf_get_file_size(abspath);
+                        auto file_size = sf_get_file_size(abs_path);
                         if (file_size == -1)
                         {
                             _404_res();
@@ -112,12 +112,12 @@ namespace skyfire
                                             if (sf_safe_scanf(range_str.c_str(), "%lld-%lld", &start, &end) < 1)
                                             {
                                                 error_flag = true;
-                                                _401_res();
+                                                _416_res();
                                                 break;
                                             }
                                             sf_http_response::multipart_info_t tmp_part;
                                             tmp_part.type = sf_http_response::multipart_info_t::multipart_info_type ::file;
-                                            tmp_part.file_info = sf_http_response::response_file_info_t{abspath,start,end};
+                                            tmp_part.file_info = sf_http_response::response_file_info_t{abs_path,start,end};
                                             multipart_info_vec.emplace_back(tmp_part);
                                         }
                                         if(!error_flag)
@@ -129,9 +129,9 @@ namespace skyfire
                                     } else
                                     {
 #ifdef _MSC_VER
-										long long start = LLONG_MAX;
+	                                    auto start = LLONG_MAX;
 #else
-										long long start = LONG_LONG_MAX;
+										auto start = LONG_LONG_MAX;
 #endif // _MSC_VER
                                     	long long end=-1;
                                         if (sf_safe_scanf(range_list[0].c_str(), "%lld-%lld", &start, &end) < 1)
@@ -140,16 +140,16 @@ namespace skyfire
                                         } else
                                         {
                                             res.set_header(header);
-                                            res.set_file(sf_http_response::response_file_info_t{abspath,start,end});
+                                            res.set_file(sf_http_response::response_file_info_t{abs_path,start,end});
                                             return;
                                         }
                                     }
                                 }
                             } else
                             {
-                                sf_debug("big file", abspath);
+                                sf_debug("big file", abs_path);
                                 res.set_header(header);
-                                res.set_file(sf_http_response::response_file_info_t{abspath,0,-1});
+                                res.set_file(sf_http_response::response_file_info_t{abs_path,0,-1});
                                 return;
                             }
                         }

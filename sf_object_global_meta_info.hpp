@@ -1,7 +1,5 @@
 #pragma once
 
-#include "sf_single_instance.hpp"
-#include "sf_meta_object_factory.hpp"
 #include "sf_object_global_meta_info.h"
 #include "sf_object.hpp"
 

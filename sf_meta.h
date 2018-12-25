@@ -23,30 +23,36 @@
 namespace skyfire {
 
     template<class T>
-    struct sf_check_param_reference {
+    struct sf_check_param_reference final
+    {
     };
 
     template<class T, class ... U>
-    struct sf_check_param_reference<std::function<T(U...)>> {
+    struct sf_check_param_reference<std::function<T(U...)>>final
+    {
         static constexpr bool value = (std::is_reference<U>::value || ... || false);
     };
 
     template<template<typename> class T, typename U, typename...V>
-    struct sf_check_param_reference<T<U(V...)>> {
+    struct sf_check_param_reference<T<U(V...)>>final
+    {
         static constexpr bool value = (std::is_reference<V>::value || ... || false);
     };
 
     template<class T>
-    struct sf_check_param_pointer {
+    struct sf_check_param_pointer final
+    {
     };
 
     template<class T, class ... U>
-    struct sf_check_param_pointer<std::function<T(U...)>> {
+    struct sf_check_param_pointer<std::function<T(U...)>>final
+    {
         static constexpr bool value = (std::is_pointer<U>::value || ... || false);
     };
 
     template<template<typename> class T, typename U, typename...V>
-    struct sf_check_param_pointer<T<U(V...)>> {
+    struct sf_check_param_pointer<T<U(V...)>>final
+    {
         static constexpr bool value = (std::is_pointer<V>::value || ... || false);
     };
 

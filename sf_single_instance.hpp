@@ -16,8 +16,7 @@
  */
 
 #pragma once
-#include <mutex>
-#include "sf_empty_class.hpp"
+#include "sf_stdc++.h"
 #include "sf_single_instance.h"
 
 namespace skyfire

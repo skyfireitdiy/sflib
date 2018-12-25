@@ -19,6 +19,7 @@
 
 
 #include "sf_msg_bus_client.h"
+#include "sf_msg_bus_utils.h"
 
 namespace skyfire
 {
@@ -44,35 +45,42 @@ namespace skyfire
         close();
     }
 
-    inline void sf_msg_bus_client::reg_msg_to_bus(const std::string &type) {
+    inline void sf_msg_bus_client::reg_msg_to_bus(const std::string &type) const
+    {
         p_client__->send(msg_bus_reg_type_single, sf_serialize_binary(type));
     }
 
-    inline void sf_msg_bus_client::reg_msg_to_bus(const std::vector<std::string> &types) {
+    inline void sf_msg_bus_client::reg_msg_to_bus(const std::vector<std::string> &types) const
+    {
         p_client__->send(msg_bus_reg_type_multi, sf_serialize_binary(types));
     }
 
-    inline void sf_msg_bus_client::unreg_msg_to_bus(const std::string &type) {
+    inline void sf_msg_bus_client::unreg_msg_to_bus(const std::string &type) const
+    {
         p_client__->send(msg_bus_unreg_single, sf_serialize_binary(type));
     }
 
-    inline void sf_msg_bus_client::unreg_msg_to_bus(const std::vector<std::string> &types) {
+    inline void sf_msg_bus_client::unreg_msg_to_bus(const std::vector<std::string> &types) const
+    {
         p_client__->send(msg_bus_unreg_multi, sf_serialize_binary(types));
     }
 
-    inline bool sf_msg_bus_client::connect_to_server(const std::string &ip, unsigned short port) {
+    inline bool sf_msg_bus_client::connect_to_server(const std::string &ip, unsigned short port) const
+    {
         return p_client__->connect_to_server(ip,port);
     }
 
-    inline void sf_msg_bus_client::send_msg(const std::string &type, const byte_array &data) {
+    inline void sf_msg_bus_client::send_msg(const std::string &type, const byte_array &data) const
+    {
         sf_msg_bus_t msg;
         msg.type = type;
         msg.data = data;
-        auto send_data = sf_serialize_binary(msg);
+        const auto send_data = sf_serialize_binary(msg);
         p_client__->send(msg_bus_new_msg, send_data);
     }
 
-    inline void sf_msg_bus_client::close() {
+    inline void sf_msg_bus_client::close() const
+    {
         p_client__->close();
     }
 
@@ -85,12 +93,12 @@ namespace skyfire
         }
     }
 
-    inline bool sf_msg_bus_client::get_local_addr(sf_addr_info_t &addr)
+    inline bool sf_msg_bus_client::get_local_addr(sf_addr_info_t &addr) const
     {
         return p_client__->get_local_addr(addr);
     }
 
-    bool sf_msg_bus_client::get_peer_addr(sf_addr_info_t &addr)
+    inline bool sf_msg_bus_client::get_peer_addr(sf_addr_info_t &addr) const
     {
         return p_client__->get_peer_addr(addr);
     }

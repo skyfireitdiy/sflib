@@ -15,9 +15,6 @@
 
 #include "sf_tcp_client_win.h"
 #include "sf_tcp_utils.hpp"
-#include "sf_object.hpp"
-#include "sf_nocopy.h"
-#include "sf_type.hpp"
 #include "sf_tcp_client_interface.hpp"
 
 namespace skyfire
@@ -29,6 +26,7 @@ namespace skyfire
     inline bool sf_tcp_client::bind(const std::string &ip, unsigned short port) {
         sockaddr_in address;
         address.sin_family = AF_INET;
+        // ReSharper disable once CppDeprecatedEntity
         address.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
         address.sin_port = htons(port);
         return SOCKET_ERROR != ::bind(sock__,reinterpret_cast<sockaddr*>(&address), sizeof(address));
@@ -78,7 +76,7 @@ namespace skyfire
         return std::make_shared<sf_tcp_client>(sock, raw);
     }
 
-    sf_tcp_client::~sf_tcp_client() {
+    inline sf_tcp_client::~sf_tcp_client() {
         close();
         WSACleanup();
     }
@@ -88,6 +86,7 @@ namespace skyfire
             return false;
         sockaddr_in address;
         address.sin_family = AF_INET;
+        // ReSharper disable once CppDeprecatedEntity
         address.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
         address.sin_port = htons(port);
         if (::connect(sock__, reinterpret_cast<const sockaddr *>(&address), sizeof(address)) != 0)
@@ -96,12 +95,12 @@ namespace skyfire
         }
         std::thread([=]
                     {
-                        byte_array recv_buffer(SF_DEFAULT_BUFFER_SIZE);
+                        byte_array recv_buffer(sf_default_buffer_size);
                         byte_array data;
                         sf_pkg_header_t header;
                         while (true)
                         {
-                            auto len = ::recv(sock__, recv_buffer.data(), SF_DEFAULT_BUFFER_SIZE, 0);
+	                        const auto len = ::recv(sock__, recv_buffer.data(), sf_default_buffer_size, 0);
                             if (len <= 0)
                             {
                                 closed();
@@ -156,7 +155,7 @@ namespace skyfire
         header.type = type;
         header.length = data.size();
         make_header_checksum(header);
-        auto ret = ::send(sock__, make_pkg(header).data(), sizeof(header), 0);
+        const auto ret = ::send(sock__, make_pkg(header).data(), sizeof(header), 0);
         if (ret != sizeof(header))
             return false;
         return ::send(sock__, data.data(), data.size(), 0) == data.size();

@@ -71,7 +71,7 @@ namespace skyfire
          * @return 是否分析完成
          */
         bool parse(const std::vector<sf_lex_result_t> &lex_result,
-                   std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result);
+                   std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result) const;
 
     };
 

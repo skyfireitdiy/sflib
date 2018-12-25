@@ -1,6 +1,5 @@
 #pragma once
 
-#include "sf_single_instance.h"
 #include "sf_nocopy.h"
 #include <string>
 #include <any>
@@ -10,7 +9,7 @@
 
 namespace skyfire
 {
-    class sf_object_factory : public sf_nocopy<>
+    class sf_object_factory final : public sf_nocopy<>
     {
 
     private:
@@ -33,6 +32,6 @@ namespace skyfire
 
         void set_before_create_callback(std::function<void(const std::string&)> before);
         void set_after_create_callback(std::function<void(const std::string&)> after);
-        bool has(const std::string &key);
+        bool has(const std::string &key) const;
     };
 }

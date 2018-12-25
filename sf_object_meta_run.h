@@ -4,9 +4,9 @@
 
 namespace skyfire
 {
-    class sf_object_meta_run
+    class sf_object_meta_run final
     {
     public:
-        sf_object_meta_run(std::function<void()> f);
+	    explicit sf_object_meta_run(std::function<void()> f);
     };
 }

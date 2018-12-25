@@ -12,7 +12,7 @@ namespace skyfire
         auto old_len = content.length();
         while(!content.empty())
         {
-            bool flag = false;
+	        auto flag = false;
             sf_lex_result_t tmp_result{};
             std::smatch result_sm;
             for(auto &p:rules__)

@@ -13,12 +13,7 @@
 
 #pragma once
 
-#include <string>
-#include <ctime>
-#include <map>
-#include <memory>
-#include <chrono>
-
+#include "sf_stdc++.h"
 #include "sf_tcp_utils.h"
 #include "sf_type.h"
 #include "sf_http_request_line.h"
@@ -35,12 +30,10 @@ namespace skyfire
      */
     using sf_http_header_t = std::unordered_map<std::string,std::string>;
 
-    namespace {
-        /**
-         * @brief  websocket追加的uuid
-         */
-        std::string websocket_sha1_append_str = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-    }
+    /**
+     * @brief  websocket追加的uuid
+     */
+    constexpr char websocket_sha1_append_str[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
     /**
      * @brief  请求上下文
@@ -57,7 +50,7 @@ namespace skyfire
     /**
      *  @brief websocket上下文
      */
-    struct sf_websocket_context_t
+    struct sf_websocket_context_t final
     {
         std::string url;            // url
         SOCKET sock;                // socket
@@ -70,7 +63,8 @@ namespace skyfire
     /**
      *  @brief 分块请求上下文
      */
-    struct sf_multipart_data_context_t{
+    struct sf_multipart_data_context_t final
+    {
         SOCKET sock;                                    // socket
         std::string boundary_str;                       // 分解字符串
         sf_http_header_t header;                        // 头
@@ -90,7 +84,8 @@ namespace skyfire
     /**
      *  @brief cookie
      */
-    struct sf_http_cookie_t{
+    struct sf_http_cookie_t final
+    {
         std::string key;                                                                            // 键
         std::string value;                                                                          // 值
         cookie_life_type life_type = cookie_life_type ::session;                                    // 生存期类型
@@ -143,7 +138,7 @@ namespace skyfire
      * @param frame 锚点信息
      */
     inline void sf_parse_url(const std::string &raw_url, std::string &url, std::unordered_map<std::string,std::string>& param,
-                             std::string frame);
+                             std::string &frame);
 
 
     /**

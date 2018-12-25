@@ -13,17 +13,15 @@
 
 #pragma once
 
-#include <map>
 #include <string>
 
 namespace skyfire
 {
-    namespace
-    {
+
         /**
          * @brief  HTTP状态码对应的描述信息
          */
-         std::unordered_map<int, std::string> sf_http_status = {
+         inline std::unordered_map<int, std::string> sf_http_status = {
                 {100, "Continue"},
                 {101, "Switching Protocols"},
                 {200, "OK"},
@@ -66,5 +64,4 @@ namespace skyfire
                 {504, "Gateway Time-out" },
                 {505, "HTTP Version not supported" },
         };
-    }
 }

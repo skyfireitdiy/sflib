@@ -30,7 +30,7 @@ namespace skyfire
     /**
      *   @brief  消息总线数据
      */
-    struct sf_msg_bus_t
+    struct sf_msg_bus_t final
     {
         std::string type;
         byte_array data;

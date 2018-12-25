@@ -99,6 +99,7 @@
 #if __cplusplus >= 201703L
 #include <charconv>
 #include <filesystem>
+#include <optional>
 #endif
 
 #else
@@ -199,5 +200,5 @@
 // C++17
 #include <charconv>
 #include <filesystem>
-
+#include <optional>
 #endif

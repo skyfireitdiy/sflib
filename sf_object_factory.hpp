@@ -2,7 +2,7 @@
 
 #include "sf_object_factory.h"
 #include <functional>
-
+#include <utility>
 
 
 namespace skyfire
@@ -10,7 +10,7 @@ namespace skyfire
     template <typename T,typename ... ARGS>
     void sf_object_factory::reg_object_type(const std::string &type) {
         factory__[type] = std::function<std::any(ARGS...)>([](ARGS&&...args) -> std::any{
-            return std::shared_ptr<T>(new T(std::forward<ARGS>(args)...));
+            return std::make_shared<T>(std::forward<ARGS>(args)...);
         });
     }
 
@@ -31,15 +31,16 @@ namespace skyfire
         return nullptr;
     }
 
-    void sf_object_factory::set_before_create_callback(std::function<void(const std::string &)> before) {
-        before_create_callback__ = before;
+    inline void sf_object_factory::set_before_create_callback( std::function<void(const std::string &)> before) {
+        before_create_callback__ = std::move(before);
     }
 
-    void sf_object_factory::set_after_create_callback(std::function<void(const std::string &)> after) {
-        after_create_callback__ = after;
+    inline void sf_object_factory::set_after_create_callback( std::function<void(const std::string &)> after) {
+        after_create_callback__ = std::move(after);
     }
 
-    bool sf_object_factory::has(const std::string &key) {
+    inline bool sf_object_factory::has(const std::string &key) const
+    {
         return factory__.count(key) != 0;
     }
 

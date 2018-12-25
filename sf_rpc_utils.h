@@ -15,14 +15,13 @@
 
 #include "sf_serialize_binary.hpp"
 #include "sf_type.h"
-#include "sf_stdc++.h"
 
 namespace skyfire
 {
     /**
      *  @brief rpc请求上下文
      */
-    struct sf_rpc_req_context_t
+    struct sf_rpc_req_context_t final
     {
         int call_id;                    // 调用id
         std::string func_id;            // 函数id
@@ -34,7 +33,7 @@ namespace skyfire
     /**
      *  @brief rpc响应上下文
      */
-    struct sf_rpc_res_context_t
+    struct sf_rpc_res_context_t final
     {
         int call_id;                    // 调用id
         byte_array ret;                 // 返回值

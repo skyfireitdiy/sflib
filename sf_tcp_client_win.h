@@ -14,15 +14,11 @@
 #pragma once
 
 #include <winsock2.h>
-#include <string>
-#include <functional>
-#include <memory>
-#include <thread>
 #include "sf_tcp_client_interface.h"
 
 namespace skyfire
 {
-    class sf_tcp_client : public sf_tcp_client_interface
+    class sf_tcp_client final : public sf_tcp_client_interface
     {
 
     private:
@@ -35,9 +31,9 @@ namespace skyfire
 
         bool bind(const std::string& ip, unsigned short port) override;
 
-        sf_tcp_client(bool raw = false);
+        explicit sf_tcp_client(bool raw = false);
 
-        sf_tcp_client(SOCKET sock, bool raw = false);
+        explicit sf_tcp_client(SOCKET sock, bool raw = false);
 
         static std::shared_ptr <sf_tcp_client> make_client(bool raw = false);
 
@@ -53,7 +49,7 @@ namespace skyfire
 
         bool send(const byte_array & data) override;
 
-        void close();
+        void close() override;
     };
 
 }

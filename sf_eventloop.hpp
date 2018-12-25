@@ -31,11 +31,13 @@ namespace skyfire
         wake();
     }
 
-    inline void sf_eventloop::wake() {
+    inline void sf_eventloop::wake() const
+    {
         __p_msg_queue__->add_empty_msg();
     }
 
-    inline void sf_eventloop::clear() {
+    inline void sf_eventloop::clear() const
+    {
         __p_msg_queue__->clear();
     }
 

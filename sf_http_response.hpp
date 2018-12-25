@@ -99,17 +99,17 @@ namespace skyfire
         return multipart_info_vec__;
     }
 
-    void sf_http_response::add_cookie(const sf_http_cookie_t &cookie_data)
+    inline void sf_http_response::add_cookie(const sf_http_cookie_t &cookie_data)
     {
         cookies__[cookie_data.key] = cookie_data;
     }
 
-    void sf_http_response::remove_cookie(const std::string &key)
+    inline void sf_http_response::remove_cookie(const std::string &key)
     {
         cookies__.erase(key);
     }
 
-    std::unordered_map<std::string, sf_http_cookie_t> sf_http_response::get_cookies() const
+    inline std::unordered_map<std::string, sf_http_cookie_t> sf_http_response::get_cookies() const
     {
         return cookies__;
     }

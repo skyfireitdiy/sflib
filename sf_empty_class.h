@@ -21,6 +21,7 @@ namespace skyfire
 	/**
 	 * @brief 空类型
 	 */
+	// ReSharper disable once CppClassCanBeFinal
 	class sf_empty_class
 	{};
 }

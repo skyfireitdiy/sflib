@@ -22,7 +22,7 @@
 
 namespace skyfire
 {
-    inline int sf_logger::add_level_func(SF_LOG_LEVEL level, std::function<void( const sf_logger_info_t__ &
+    inline int sf_logger::add_level_func(SF_LOG_LEVEL level, const std::function<void( const sf_logger_info_t__ &
 
     )> func)
 {
@@ -31,20 +31,20 @@ namespace skyfire
         {
             logger_func_set__[level] = std::unordered_map<int,std::function<void(const sf_logger_info_t__ &)>>();
         }
-        auto key = make_random_logger_id__();
+        const auto key = make_random_logger_id__();
         logger_func_set__[level][key] = func;
         return key;
     }
 
 inline
-int sf_logger::add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::string format_str)
+int sf_logger::add_level_stream(const SF_LOG_LEVEL level, std::ostream *os, std::string format_str)
 {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0)
         {
             logger_func_set__[level] = std::unordered_map<int,std::function<void(const sf_logger_info_t__ &)>>();
         }
-        auto key = make_random_logger_id__();
+        const auto key = make_random_logger_id__();
         logger_func_set__[level][key] = [=](const sf_logger_info_t__ &log_info)
         {
             *os<<format(format_str, log_info)<<std::flush;
@@ -53,9 +53,9 @@ int sf_logger::add_level_stream(SF_LOG_LEVEL level, std::ostream *os, std::strin
     }
 
 inline
-int sf_logger::add_level_file(SF_LOG_LEVEL level, const std::string &filename, std::string format_str)
+int sf_logger::add_level_file(const SF_LOG_LEVEL level, const std::string &filename, std::string format_str)
 {
-        std::shared_ptr<std::ofstream> ofs = std::make_shared<std::ofstream>(filename, std::ios::app);
+	const auto ofs = std::make_shared<std::ofstream>(filename, std::ios::app);
         if(*ofs)
         {
             std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
@@ -64,7 +64,7 @@ int sf_logger::add_level_file(SF_LOG_LEVEL level, const std::string &filename, s
                 logger_func_set__[level] = std::unordered_map<int,std::function<void(const sf_logger_info_t__ &)>>();
             }
 
-            auto key = make_random_logger_id__();
+            const auto key = make_random_logger_id__();
             logger_func_set__[level][key] = [=](const sf_logger_info_t__ &log_info){
                 *ofs<<format(format_str, log_info)<<std::flush;
             };
@@ -76,7 +76,7 @@ int sf_logger::add_level_file(SF_LOG_LEVEL level, const std::string &filename, s
     }
 
 inline
-void sf_logger::remove_filter(int key)
+void sf_logger::remove_filter(const int key)
 {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         for(auto &p:logger_func_set__){
@@ -85,7 +85,7 @@ void sf_logger::remove_filter(int key)
     }
 
 inline
-bool sf_logger::check_key_can_use__(int key)
+bool sf_logger::check_key_can_use__(const int key)
 {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         for(const auto &p: logger_func_set__){
@@ -100,11 +100,10 @@ bool sf_logger::check_key_can_use__(int key)
 inline
 int sf_logger::make_random_logger_id__()
 {
-
-        auto make_rand = []{
+	const auto make_rand = []{
             return sf_random::get_instance()->get_int(0, INT_MAX);
         };
-        int tmp_key = make_rand();
+	auto tmp_key = make_rand();
         while(!check_key_can_use__(tmp_key))
         {
             tmp_key = make_rand();
@@ -194,7 +193,7 @@ std::string sf_logger::make_time_str__()
 {
         auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         tm tm_d;
-        tm *ptm = &tm_d;
+        const auto ptm = &tm_d;
 #ifdef _MSC_VER
         localtime_s(ptm, &tt);
 #else
@@ -207,7 +206,7 @@ std::string sf_logger::make_time_str__()
 
 
     template<typename... T>
-    inline void sf_logger::logout(SF_LOG_LEVEL level, const std::string &file, int line, const std::string &func,
+    inline void sf_logger::logout(const SF_LOG_LEVEL level, const std::string &file, const int line, const std::string &func,
                                   const T &... dt) {
         sf_logger_info_t__ log_info;
         log_info.level = level;
@@ -228,9 +227,9 @@ void sf_logger::stop_logger()
     }
 
 
-    namespace {
-        auto g_logger = sf_logger::get_instance();
-    }
+    
+    inline auto g_logger = sf_logger::get_instance();
+    
 
 #ifdef QT_CORE_LIB
 inline
@@ -257,7 +256,7 @@ void sf_logger::logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, 
 
 inline std::string sf_logger::format(std::string format_str, const sf_logger_info_t__ &log_info)
     {
-        auto replace = [](std::string& str,const std::string &from, const std::string &to)
+	    const auto replace = [](std::string& str,const std::string &from, const std::string &to)
         {
             size_t start_pos = 0;
             while((start_pos = str.find(from, start_pos)) != std::string::npos) {
@@ -265,7 +264,7 @@ inline std::string sf_logger::format(std::string format_str, const sf_logger_inf
                 start_pos += to.length();
             }
         };
-        auto thread_to_str=[](std::thread::id id){
+	    const auto thread_to_str=[](std::thread::id id){
             std::ostringstream oss;
             oss<<id;
             return oss.str();

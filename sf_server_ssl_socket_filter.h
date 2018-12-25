@@ -7,7 +7,9 @@
 
 namespace skyfire
 {
-    class sf_ssl_server_socket_filter : public sf_server_socket_filter
+	struct sf_pkg_header_t;
+
+	class sf_ssl_server_socket_filter final : public sf_server_socket_filter
     {
     private:
         bool check_ok__ { false };
