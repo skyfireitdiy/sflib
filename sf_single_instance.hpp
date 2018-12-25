@@ -43,11 +43,6 @@ namespace skyfire
 		if (instance != nullptr)
 			delete instance;
 	}
-
-	template<typename ThisClass, typename BaseClass>
-	ThisClass* sf_single_instance<ThisClass, BaseClass>::instance = nullptr;
-	template<typename ThisClass, typename BaseClass>
-	std::mutex sf_single_instance<ThisClass, BaseClass>::mu;
 }
 
 

@@ -94,11 +94,13 @@ namespace skyfire
         sf_debug("Socket", sock, "Data size", data.size());
 
         {
-            std::unique_lock<std::mutex> lck(mu_sock_lock_map__);
-            if(sock_lock_map__.count(sock) == 0)
-            {
-                sock_lock_map__[sock] = std::make_shared<std::mutex>();
-            }
+			if (sock_lock_map__.count(sock) == 0) {
+				std::unique_lock<std::mutex> lck(mu_sock_lock_map__);
+				if (sock_lock_map__.count(sock) == 0)
+				{
+					sock_lock_map__[sock] = std::make_shared<std::mutex>();
+				}
+			}
         }
 
         std::unique_lock<std::mutex> lck_solve(*sock_lock_map__[sock]);
@@ -247,7 +249,7 @@ namespace skyfire
 
     inline void sf_http_base_server::close_request__(SOCKET sock)
     {
-        server__->close(sock);
+		sock_lock_map__.erase(sock);
         {
             std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
             request_context__.erase(sock);
@@ -258,7 +260,7 @@ namespace skyfire
         }
     }
 
-    inline void sf_http_base_server::normal_response__(SOCKET sock, sf_http_response &res)
+    inline void sf_http_base_server::normal_response__(SOCKET sock, sf_http_response &res) const
     {
         res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
         server__->send(sock, res.to_package());
@@ -445,10 +447,10 @@ namespace skyfire
     }
 
     inline void sf_http_base_server::send_response_file_part__(SOCKET sock, const sf_http_response::response_file_info_t &file,
-                                                        std::ifstream &fi)
+                                                        std::ifstream &fi) const
     {
         fi.seekg(file.begin, std::ios_base::beg);
-        auto buffer_size = 4096;
+        const auto buffer_size = 4096;
         byte_array buffer(static_cast<unsigned long>(buffer_size));
         auto curr_read_pos = file.begin;
         while (curr_read_pos < file.end - buffer_size)
@@ -627,6 +629,7 @@ namespace skyfire
 
     inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
     {
+		sock_lock_map__.erase(sock);
         if (request_context__.count(sock) != 0)
             request_context__.erase(sock);
         {

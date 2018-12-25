@@ -43,8 +43,8 @@ namespace skyfire
 	private:
 		sf_single_instance() = default;
 
-		static ThisClass *instance;
-		static std::mutex mu;
+		inline static ThisClass *instance {nullptr};
+		inline static std::mutex mu;
 		friend ThisClass;
 	};
 

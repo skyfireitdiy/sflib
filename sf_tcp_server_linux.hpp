@@ -20,7 +20,7 @@
 #include "sf_tcp_server_interface.hpp"
 
 namespace skyfire {
-    inline sf_tcp_server::sf_tcp_server(bool raw) {
+    inline sf_tcp_server::sf_tcp_server(const bool raw) {
         raw__ = raw;
     }
 

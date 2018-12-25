@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\example",
+    "\\example\\test_http_server"
   ],
-  "SelectedNode": "\\CMakeLists.txt",
+  "SelectedNode": "\\example\\test_http_server\\test_http_server.cpp",
   "PreviewInSolutionExplorer": false
 }

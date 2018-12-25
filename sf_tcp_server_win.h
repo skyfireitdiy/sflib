@@ -30,18 +30,19 @@ namespace skyfire {
         byte_array buffer;
         DWORD data_trans_count{};
         bool is_send{};
-		int req_id{};
     };
 
     struct sf_per_handle_data_t {
         SOCKET socket;
 		byte_array sock_data_buffer;
-		std::shared_ptr<std::mutex> mu_sending = std::make_shared<std::mutex>();
-		bool sending;
-		std::shared_ptr<std::mutex> mu_out_buffer = std::make_shared<std::mutex>();
-		std::deque<byte_array> data_buffer_out;
-		std::shared_ptr<std::mutex> read_lock = std::make_shared<std::mutex>();
     };
+
+	struct sf_iocp_thread_countext_t
+	{
+		std::shared_ptr<std::shared_mutex> mu_socks = std::make_shared<std::shared_mutex>();
+		std::unordered_set<SOCKET> socks;
+		HANDLE iocp_port{};
+	};
 
 
     class sf_tcp_server : public sf_tcp_server_interface {
@@ -51,26 +52,34 @@ namespace skyfire {
         bool raw__ = false;
 
         SOCKET listen_sock__ = INVALID_SOCKET;
-        HANDLE completion_port__ = INVALID_HANDLE_VALUE;
+
         int thread_count__ = 4;
 
 		std::vector<std::thread> thread_vec__;
 
-		std::atomic<long long> req_num__{ 0 };
+		std::vector<std::unordered_set<SOCKET>> sock_thread__;
 
-		std::unordered_map<SOCKET, sf_per_handle_data_t> handle_data__;
+        static sf_per_io_operation_data_t* make_req__();
 
-		std::unordered_map<long long,sf_per_io_operation_data_t> io_data__;
+		std::vector<sf_iocp_thread_countext_t> iocp_context__;
 
-		sf_per_io_operation_data_t* make_req__();
+		void server_work_thread__(int index);
+        bool add_sock__(SOCKET accept_socket);
 
-		void server_work_thread__(const LPVOID completion_port_id);
+        void accept_thread__();
+
+        void handle_sock_error__(sf_per_handle_data_t* p_handle_data, sf_per_io_operation_data_t* p_io_data,int index);
+        void write_handle__(DWORD bytes_transferred, sf_per_handle_data_t* p_handle_data,
+                          sf_per_io_operation_data_t* p_io_data, int index);
+        void receive_handle__(DWORD bytes_transferred, sf_per_handle_data_t* p_handle_data,
+                            sf_per_io_operation_data_t* p_io_data, int index);
+
 
     public:
 
         SOCKET get_raw_socket() override;
 
-        sf_tcp_server(bool raw = false);
+        explicit sf_tcp_server(bool raw = false);
 
 		~sf_tcp_server() override;
 
