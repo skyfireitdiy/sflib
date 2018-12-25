@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_stdc++.h"
@@ -221,3 +223,4 @@ namespace skyfire
         }
     }
 }
+#pragma clang diagnostic pop

@@ -15,6 +15,8 @@
  * sf_event_waiter 事件等待
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_event_waiter.h"
@@ -54,3 +56,5 @@ namespace skyfire {
         return std::make_shared<sf_event_waiter<ARGS...>>();
     }
 }
+
+#pragma clang diagnostic pop

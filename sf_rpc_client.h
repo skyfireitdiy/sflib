@@ -15,6 +15,8 @@
  * sf_rpc_client rpc客户端
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_tcp_client.h"
@@ -77,7 +79,7 @@ namespace skyfire {
          * @param port 端口
          * @return 是否连接成功
          */
-        bool connect_to_server(const std::string ip, unsigned short port) const;
+        bool connect_to_server(std::string ip, unsigned short port) const;
 
         /**
          * @brief close 关闭RPC客户端
@@ -130,3 +132,5 @@ namespace skyfire {
         friend std::shared_ptr<sf_tcp_client>;
     };
 }
+
+#pragma clang diagnostic pop

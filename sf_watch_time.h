@@ -15,6 +15,9 @@
  * sf_watch_time 时间监测类型
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "OCUnusedStructInspection"
 #pragma once
 #include "sf_stdc++.h"
 
@@ -61,3 +64,5 @@ namespace skyfire
 }
 
 
+
+#pragma clang diagnostic pop

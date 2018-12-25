@@ -30,6 +30,8 @@ namespace skyfire
         return ret;
     }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     template<typename T>
     typename std::enable_if<std::is_pod<T>::value, T>::type take_pkg(const byte_array &data) {
         assert(data.size() == sizeof(T));
@@ -41,6 +43,7 @@ namespace skyfire
 #endif
         return ret;
     }
+#pragma clang diagnostic pop
 
     inline void make_header_checksum(sf_pkg_header_t &header) {
         header.checksum = 0;

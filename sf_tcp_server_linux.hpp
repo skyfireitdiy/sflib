@@ -292,7 +292,7 @@ namespace skyfire {
                     break;
                 } else {
                     disconnect_sock_filter__(ev.data.fd);
-                    closed(static_cast<SOCKET>(ev.data.fd));
+                    closed(ev.data.fd);
                     close(ev.data.fd);
                     {
                         epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, ev.data.fd,
@@ -307,9 +307,9 @@ namespace skyfire {
             recv_buf.resize(static_cast<unsigned long>(count_read));
             if (raw__) {
                 sf_debug("raw data", recv_buf.size());
-                after_raw_recv_filter__(static_cast<SOCKET>(ev.data.fd), recv_buf);
-                raw_data_coming(static_cast<SOCKET>(ev.data.fd), recv_buf);
-                sf_debug("after reslove");
+                after_raw_recv_filter__(ev.data.fd, recv_buf);
+                raw_data_coming(ev.data.fd, recv_buf);
+                sf_debug("after resolve");
             } else {
                 sock_context__[ev.data.fd].data_buffer_in.insert(
                         sock_context__[ev.data.fd].data_buffer_in.end(),
@@ -324,7 +324,7 @@ namespace skyfire {
                     if (!check_header_checksum(header)) {
                         disconnect_sock_filter__(ev.data.fd);
                         close(ev.data.fd);
-                        closed(static_cast<SOCKET>(ev.data.fd));
+                        closed(ev.data.fd);
                         break;
                     }
                     if (sock_context__[ev.data.fd].data_buffer_in.size() - read_pos -
@@ -339,10 +339,10 @@ namespace skyfire {
                                 sizeof(header) + header.length)};
                         read_pos += sizeof(header) + header.length;
 
-                        after_recv_filter__(static_cast<SOCKET>(ev.data.fd), header, data);
+                        after_recv_filter__(ev.data.fd, header, data);
 
                         data_coming(
-                                static_cast<SOCKET>(ev.data.fd), header,
+                                ev.data.fd, header,
                                 data
                         );
 

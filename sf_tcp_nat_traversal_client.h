@@ -59,7 +59,10 @@ namespace skyfire {
 
         void on_client_data_coming__(const sf_pkg_header_t &header, const byte_array &data);
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
         void on_client_close__();
+#pragma clang diagnostic pop
 
         sf_tcp_nat_traversal_client();
     public:

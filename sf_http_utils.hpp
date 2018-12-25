@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_http_utils.h"
@@ -35,7 +37,7 @@ namespace skyfire
 
     inline std::string sf_url_encode(const std::string &str)
     {
-        std::string strTemp = "";
+        std::string strTemp {};
         size_t length = str.length();
         for (size_t i = 0; i < length; i++)
         {
@@ -51,7 +53,7 @@ namespace skyfire
             {
                 strTemp += '%';
                 strTemp += sf_to_hex((unsigned char)str[i] >> 4);
-                strTemp += sf_to_hex((unsigned char)str[i] % 16);
+                strTemp += sf_to_hex(static_cast<const unsigned char>((unsigned char)str[i] % 16));
             }
         }
         return strTemp;
@@ -59,7 +61,7 @@ namespace skyfire
 
     inline std::string sf_url_decode(const std::string &str)
     {
-        std::string strTemp = "";
+        std::string strTemp {};
         const auto length = str.length();
         for (size_t i = 0; i < length; i++)
         {
@@ -177,3 +179,4 @@ namespace skyfire
     }
 
 }
+#pragma clang diagnostic pop

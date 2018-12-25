@@ -11,6 +11,9 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
 #pragma once
 
 #ifdef __GNUC__
@@ -178,3 +181,5 @@ namespace skyfire {
 
 
 
+
+#pragma clang diagnostic pop

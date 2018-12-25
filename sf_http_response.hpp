@@ -11,10 +11,13 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_http_response.h"
 #include "sf_http_status.h"
+#include "sf_http_header.hpp"
 
 namespace skyfire
 {
@@ -114,3 +117,4 @@ namespace skyfire
         return cookies__;
     }
 }
+#pragma clang diagnostic pop

@@ -21,8 +21,6 @@
 
 namespace skyfire
 {
-	template<typename T>
-	sf_assigned_type<T>::sf_assigned_type() {}
 
 	template<typename T>
 	template<typename... Args>

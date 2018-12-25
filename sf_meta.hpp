@@ -15,6 +15,8 @@
  * sf_meta 元编程辅助函数
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_meta.h"
@@ -25,7 +27,7 @@ namespace skyfire {
     template<int N>
     auto make_placeholders() {
         return
-	        decltype(__sf_placeholders_type(std::placeholders::_1))::type<N>{};
+	        typename decltype(__sf_placeholders_type(std::placeholders::_1))::template type<N>{};
     }
 
     template<typename _Type, typename Tuple>
@@ -59,3 +61,5 @@ namespace skyfire {
 
 
 }
+
+#pragma clang diagnostic pop

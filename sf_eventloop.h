@@ -36,7 +36,7 @@ namespace skyfire
         /**
          * @brief sf_eventloop 构造一个事件循环对象
          */
-        sf_eventloop();
+        sf_eventloop() = default;
 
         /**
          * @brief exec 执行事件循环

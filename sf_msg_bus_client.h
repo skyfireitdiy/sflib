@@ -15,6 +15,8 @@
  * sf_msg_bus_client 消息总线客户端
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_object.hpp"
@@ -48,7 +50,7 @@ namespace skyfire
         /**
          * 析构函数
          */
-        ~sf_msg_bus_client();
+        ~sf_msg_bus_client() override;
 
         /**
          * @brief reg_msg_to_bus 向消息总线注册消息
@@ -116,3 +118,5 @@ namespace skyfire
 
 }
 
+
+#pragma clang diagnostic pop

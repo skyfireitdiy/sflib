@@ -30,7 +30,7 @@ namespace skyfire
         /**
          * @brief sf_assigned_type 创建tri类型
          */
-		sf_assigned_type();
+		sf_assigned_type() = default;
 
         /**
          * @brief sf_assigned_type 构造函数
@@ -61,7 +61,7 @@ namespace skyfire
         /**
          * @brief operator bool 判断是否赋值
          */
-		operator bool() const;
+		explicit operator bool() const;
 	private:
 		T data__;
 		bool init__{ false };
@@ -72,8 +72,9 @@ namespace skyfire
 	class sf_assigned_type<void>
 	{
 	public:
-		sf_assigned_type(bool init = false);
-		operator bool() const;
+		explicit sf_assigned_type(bool init = false);
+
+		explicit operator bool() const;
 
 	private:
 		bool init__{false};

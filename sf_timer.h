@@ -15,6 +15,8 @@
  * sf_timer 定时器
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_nocopy.h"
@@ -59,3 +61,5 @@ namespace skyfire
     };
 
 }
+
+#pragma clang diagnostic pop

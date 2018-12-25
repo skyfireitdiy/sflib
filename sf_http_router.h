@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 #include "sf_stdc++.h"
 #include "sf_router.hpp"
@@ -26,7 +28,7 @@ namespace skyfire
     {
     private:
         std::function<bool(const sf_http_request &,sf_http_response&,const std::string &)> route_callback__;
-        const int priority__{} {};
+        const int priority__ {};
         const std::vector<std::string> methods__;
         std::recursive_mutex methods_mu__;
 
@@ -120,3 +122,4 @@ namespace skyfire
 
 
 }
+#pragma clang diagnostic pop

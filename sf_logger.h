@@ -1,3 +1,7 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "cert-err58-cpp"
 
 /**
 * @version 1.0.0
@@ -170,3 +174,5 @@ namespace skyfire
 
 
 }
+
+#pragma clang diagnostic pop

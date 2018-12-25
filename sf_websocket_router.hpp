@@ -1,3 +1,5 @@
+#include <memory>
+
 
 /**
 * @version 1.0.0
@@ -13,6 +15,8 @@
 
 #include "sf_stdc++.h"
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_websocket_router.h"
@@ -24,13 +28,13 @@ namespace skyfire {
                                                                               const sf_websocket_param_t &)> callback,
                                                                       int priority)
     {
-        return std::shared_ptr < sf_websocket_router > (new sf_websocket_router(url, std::move(callback), priority));
+        return std::make_shared< sf_websocket_router > (url, std::move(callback), priority);
     }
 
     inline std::shared_ptr<sf_websocket_router>
     make_websocket_router(const std::string &url, void(*callback)(const sf_websocket_param_t &), int priority)
     {
-        return std::shared_ptr < sf_websocket_router > (new sf_websocket_router(url, callback, priority));
+        return std::make_shared< sf_websocket_router > (url, callback, priority);
     }
 
     inline sf_websocket_router::sf_websocket_router(const std::string &url,
@@ -67,3 +71,4 @@ namespace skyfire {
     }
 
 }
+#pragma clang diagnostic pop

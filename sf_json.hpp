@@ -1,3 +1,7 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cppcoreguidelines-c-copy-assignment-signature"
+#pragma ide diagnostic ignored "cert-err34-c"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_lex.hpp"
@@ -6,7 +10,7 @@
 #include "sf_define.h"
 #include "sf_meta.hpp"
 #include "sf_msvc_safe.h"
-
+#include "sf_utils.hpp"
 
 namespace skyfire
 {
@@ -484,7 +488,7 @@ namespace skyfire
     inline void sf_json::resize(const int size) const
     {
         convert_to_array();
-        value__->array_value.resize(size);
+        value__->array_value.resize((unsigned long) size);
     }
 
     inline void sf_json::remove(const int pos) const
@@ -870,3 +874,5 @@ namespace skyfire
 }
 
 
+
+#pragma clang diagnostic pop

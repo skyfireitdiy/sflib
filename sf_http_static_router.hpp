@@ -1,3 +1,6 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err34-c"
+#pragma ide diagnostic ignored "bugprone-lambda-function-name"
 
 /**
 * @version 1.0.0
@@ -174,3 +177,5 @@ namespace skyfire
         return std::make_shared<sf_http_router>(pattern, callback, methods, priority);
     }
 }
+
+#pragma clang diagnostic pop

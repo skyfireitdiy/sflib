@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 #pragma once
 
 #include "sf_tcp_nat_traversal_client.h"
@@ -18,6 +20,8 @@
 
 namespace skyfire {
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-lambda-function-name"
     inline void sf_tcp_nat_traversal_client::on_new_connect_required__(sf_tcp_nat_traversal_context_t__ &context) {
         // 创建连接上下文
         connect_context_map__[context.connect_id] = sf_p2p_connect_context_t__{};
@@ -110,7 +114,7 @@ namespace skyfire {
                                                            new_connection,
                                                            *tmp_bind_id
                                           );
-                                          sf_debug("unbind id", *tmp_bind_id);
+                                          sf_debug("unbind id", *tmp_bind_id); // NOLINT(bugprone-lambda-function-name)
                                           connect_context_map__.erase(context.connect_id);
                                       },
                                       true
@@ -142,6 +146,7 @@ namespace skyfire {
 
 
     }
+#pragma clang diagnostic pop
 
     inline void sf_tcp_nat_traversal_client::close() const
     {
@@ -287,3 +292,4 @@ namespace skyfire {
         }
     }
 }
+#pragma clang diagnostic pop

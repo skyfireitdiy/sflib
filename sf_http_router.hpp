@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-lambda-function-name"
 
 /**
 * @version 1.0.0
@@ -11,6 +13,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_http_router.h"
@@ -37,7 +41,7 @@ namespace skyfire
     template <typename ... StringType>
     sf_http_router::sf_http_router(const std::string& pattern,
 	    std::function<void(const sf_http_request&, sf_http_response&, StringType...)> callback,
-	    const std::vector<std::string>& methods, int priority):priority__(priority), methods__(std::move(methods))
+	    const std::vector<std::string>& methods, int priority):priority__(priority), methods__(methods)
     {
 		route_callback__ = [=](const sf_http_request &req, sf_http_response& res, const std::string &url)
 		{
@@ -106,3 +110,5 @@ namespace skyfire
         return std::make_shared<sf_http_router>(pattern, callback, methods, priority);
     }
 }
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop

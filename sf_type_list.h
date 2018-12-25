@@ -15,6 +15,8 @@
  * sf_type_list
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedStructInspection"
 #pragma once
 
 #include "sf_stdc++.h"
@@ -523,3 +525,5 @@ namespace skyfire
     };
 
 }
+
+#pragma clang diagnostic pop

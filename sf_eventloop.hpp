@@ -21,11 +21,6 @@
 
 namespace skyfire
 {
-
-    inline sf_eventloop::sf_eventloop() {
-
-    }
-
     inline void sf_eventloop::quit() {
         running__ = false;
         wake();

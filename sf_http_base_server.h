@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 #include <functional>
 #include <vector>
@@ -164,3 +166,4 @@ namespace skyfire {
         void close_websocket(SOCKET sock);
     };
 }
+#pragma clang diagnostic pop

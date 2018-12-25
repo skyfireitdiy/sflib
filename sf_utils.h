@@ -63,12 +63,15 @@ namespace skyfire
      */
     inline std::string sf_base64_encode(const byte_array &data);
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     /**
      * base64解码
      * @param data base64数据
      * @return 解码后的数据
      */
     inline byte_array sf_base64_decode(const std::string& data);
+#pragma clang diagnostic pop
 
     /**
      * sha1编码
@@ -99,6 +102,8 @@ namespace skyfire
      */
     inline bool sf_is_dir(const std::string& path);
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     /**
      * 目录拼接
      * @tparam Str 字符串类型
@@ -108,6 +113,7 @@ namespace skyfire
      */
     template <typename ... Str>
     std::string sf_path_join(std::string str1, Str... str2);
+#pragma clang diagnostic pop
 
     /**
      * 目录拼接
@@ -115,7 +121,7 @@ namespace skyfire
      * @param path2 后续目录
      * @return 拼接后的目录
      */
-    inline std::string sf_path_join(std::string path1, const std::string path2);
+    inline std::string sf_path_join(std::string path1, std::string path2);
 
     /**
      * 获取文件大小
@@ -124,6 +130,8 @@ namespace skyfire
      */
     long long sf_get_file_size(const std::string& filename);
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     /**
      * 写文件
      * @param file_name 文件名称
@@ -132,7 +140,10 @@ namespace skyfire
      * @return 是否写入成功
      */
     bool sf_write_file(const std::string& file_name, const byte_array& data, bool append);
+#pragma clang diagnostic pop
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     /**
      * 读文件
      * @param file_name 文件名称
@@ -140,6 +151,7 @@ namespace skyfire
      * @return 是否读取成功
      */
     bool sf_read_file(const std::string& file_name, byte_array& data);
+#pragma clang diagnostic pop
 
     /**
      * 字符串替换

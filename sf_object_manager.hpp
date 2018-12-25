@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "readability-static-accessed-through-instance"
 #pragma once
 
 #include "sf_object_manager.h"
@@ -225,6 +227,8 @@ namespace skyfire
                     sf_object_global_meta_info::get_instance()->set_associated_container_pointer_pointer(obj, p.first, data);
                 }
                     break;
+                case sf_object::__mem_value_type_t__::none:
+                    break;
                 default:
                     break;
             }
@@ -245,3 +249,4 @@ namespace skyfire
 
 
 }
+#pragma clang diagnostic pop

@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 
 /**
 * @version 1.0.0
@@ -65,3 +67,4 @@ namespace skyfire
                 {505, "HTTP Version not supported" },
         };
 }
+#pragma clang diagnostic pop

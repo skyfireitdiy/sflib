@@ -1,3 +1,7 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedStructInspection"
+#pragma ide diagnostic ignored "google-explicit-constructor"
+#pragma ide diagnostic ignored "readability-redundant-declaration"
 
 /**
 * @version 1.0.0
@@ -15,6 +19,8 @@
  * sf_meta 元编程辅助函数
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include <functional>
@@ -163,3 +169,6 @@ namespace skyfire {
     class sf_is_shared_ptr<std::shared_ptr<T>> : public std::true_type{};
 
 }
+
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop

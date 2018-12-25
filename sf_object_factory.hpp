@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_object_factory.h"
@@ -53,3 +55,4 @@ namespace skyfire
         return std::any_cast<std::shared_ptr<T>>(get_object__(type,std::forward<ARGS>(args)...));
     }
 }
+#pragma clang diagnostic pop

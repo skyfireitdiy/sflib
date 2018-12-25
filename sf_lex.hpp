@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 
@@ -73,3 +75,4 @@ namespace skyfire
         return ret;
     }
 }
+#pragma clang diagnostic pop

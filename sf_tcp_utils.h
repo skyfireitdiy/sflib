@@ -58,6 +58,8 @@ namespace skyfire
     template<typename T>
     typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(const T &data);
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     /**
      * 解析数据包
      * @tparam T 数据类型
@@ -66,6 +68,7 @@ namespace skyfire
      */
     template<typename T>
     typename std::enable_if<std::is_pod<T>::value, T>::type take_pkg(const byte_array &data);
+#pragma clang diagnostic pop
 
     /**
      * 计算header的校验和

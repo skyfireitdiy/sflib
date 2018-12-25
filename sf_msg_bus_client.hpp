@@ -15,6 +15,8 @@
  * sf_msg_bus_client 消息总线客户端
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 
@@ -104,3 +106,5 @@ namespace skyfire
     }
 }
 
+
+#pragma clang diagnostic pop

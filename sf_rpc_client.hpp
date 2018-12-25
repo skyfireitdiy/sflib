@@ -15,10 +15,14 @@
  * sf_rpc_client rpc客户端
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "OCSimplifyInspection"
 #pragma once
 
 #include "sf_rpc_client.h"
 #include "sf_rpc_utils.h"
+#include "sf_assigned_type.hpp"
 
 namespace skyfire {
 	inline int sf_rpc_client::__make_call_id() {
@@ -51,11 +55,11 @@ namespace skyfire {
         req.func_id = func_id;
         req.params = sf_serialize_binary(param);
         __tcp_client__->send(rpc_req_type, sf_serialize_binary(req));
-        auto ptimer = std::make_shared<sf_timer>();
-        sf_bind_signal(ptimer, timeout, [=]() {
+        auto p_timer = std::make_shared<sf_timer>();
+        sf_bind_signal(p_timer, timeout, [=]() {
             __rpc_data__.erase(call_id);
         }, true);
-        ptimer->start(rpc_timeout__, true);
+        p_timer->start(rpc_timeout__, true);
     }
 
     template<typename... __SF_RPC_ARGS__>
@@ -75,11 +79,11 @@ namespace skyfire {
         req.func_id = func_id;
         req.params =sf_serialize_binary(param);
         __tcp_client__->send(rpc_req_type, sf_serialize_binary(req));
-        auto ptimer = std::make_shared<sf_timer>();
-        sf_bind_signal(ptimer, timeout, [=]() {
+        auto p_timer = std::make_shared<sf_timer>();
+        sf_bind_signal(p_timer, timeout, [=]() {
             __rpc_data__.erase(call_id);
         }, true);
-        ptimer->start(rpc_timeout__, true);
+        p_timer->start(rpc_timeout__, true);
     }
 
     template<typename T>
@@ -138,7 +142,7 @@ namespace skyfire {
             return sf_assigned_type<void>(true);
         } else {
             sf_assigned_type<__Ret> ret;
-            __Ret tmp_ret;
+            __Ret tmp_ret{};
             sf_rpc_res_context_t res;
             sf_deserialize_binary(__rpc_data__[call_id]->data, res, 0);
             sf_deserialize_binary(res.ret, tmp_ret, 0);
@@ -214,3 +218,5 @@ namespace skyfire {
         }
     }
 }
+
+#pragma clang diagnostic pop

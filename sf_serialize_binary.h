@@ -85,9 +85,12 @@ namespace skyfire
     typename std::enable_if<N == std::tuple_size<_Tuple_Type>::value, size_t>::type
     sf_deserialize_binary_tuple(size_t pos, const byte_array &data, _Tuple_Type &obj, _Types... arg);
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     template<int N, typename _Tuple_Type, typename... _Types>
     typename std::enable_if<N != std::tuple_size<_Tuple_Type>::value, size_t>::type
     sf_deserialize_binary_tuple(size_t pos, const byte_array &data, _Tuple_Type &obj, _Types... arg);
+#pragma clang diagnostic pop
 
     template<typename _Tuple_Type>
     size_t sf_deserialize_binary_tuple(size_t pos, const byte_array &data, _Tuple_Type &obj);

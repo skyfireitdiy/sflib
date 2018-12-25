@@ -28,14 +28,14 @@ namespace skyfire {
             type = WEBSOCKET_OP_BINARY_PKG;
         }
         if(data.size() < 126){
-            sf_websocket_server_data_1_header_t header;
+            sf_websocket_server_data_1_header_t header{};
             memset(&header, 0, sizeof(header));
             header.fin_rsv_oc = 0b10000000;
             header.fin_rsv_oc |= type;
-            header.mask_len = static_cast<char>(data.size());
+            header.mask_len = static_cast<unsigned char>(static_cast<char>(data.size()));
             ret += to_byte_array(header);
         }else if(data.size()>=126 && data.size() <= 0xffffffffffffffffUL){
-            sf_websocket_server_data_2_header_t header;
+            sf_websocket_server_data_2_header_t header{};
             memset(&header,0,sizeof(header));
             header.mask_len = 126;
             header.fin_rsv_oc = 0b10000000;
@@ -43,12 +43,12 @@ namespace skyfire {
             *reinterpret_cast<unsigned short*>(header.extend_len) = htons(static_cast<unsigned short>(data.size()));
             ret += to_byte_array(header);
         }else{
-            sf_websocket_server_data_2_header_t header;
+            sf_websocket_server_data_2_header_t header{};
             memset(&header,0,sizeof(header));
             header.mask_len = 127;
             header.fin_rsv_oc = 0b10000000;
             header.fin_rsv_oc |= type;
-            *reinterpret_cast<unsigned short*>(header.extend_len) = sf_hton64(static_cast<unsigned short>(data.size()));
+            *reinterpret_cast<unsigned short*>(header.extend_len) = static_cast<unsigned short>(sf_hton64(static_cast<unsigned short>(data.size())));
             ret += to_byte_array(header);
         }
         if constexpr (std::is_same_v<T,std::string>) {

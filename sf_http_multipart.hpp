@@ -10,6 +10,8 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 #include "sf_http_multipart.h"
 
@@ -128,3 +130,4 @@ namespace skyfire
         }
     }
 }
+#pragma clang diagnostic pop

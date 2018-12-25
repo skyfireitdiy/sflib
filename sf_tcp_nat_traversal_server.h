@@ -33,13 +33,13 @@ namespace skyfire {
         // 当前已运行
         bool running__ = false;
 
-        static void on_new_connnection__(SOCKET sock);
+        static void on_new_connection__(SOCKET sock);
 
         void on_disconnect__(SOCKET sock);
 
         void on_client_reg__(SOCKET sock);
 
-        void on_update_client_list__(SOCKET sock = static_cast<SOCKET>(-1));
+        void on_update_client_list__(SOCKET sock = -1);
 
         void on_nat_traversal_b_reply_addr(sf_tcp_nat_traversal_context_t__ &context, SOCKET sock) const;
 

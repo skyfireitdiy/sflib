@@ -50,6 +50,8 @@ namespace skyfire
         return ret;
     }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     inline bool dump_byte_array(const byte_array &data, const std::string &filename, bool app) {
         std::ofstream fo(filename, app?(std::ios::app|std::ios::binary):(std::ios::trunc|std::ios::out));
         if(!fo)
@@ -57,5 +59,6 @@ namespace skyfire
         fo.write(data.data(), data.size());
         return true;
     }
+#pragma clang diagnostic pop
 
 }

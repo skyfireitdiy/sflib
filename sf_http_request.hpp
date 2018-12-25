@@ -12,6 +12,8 @@
 */
 
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_http_request.h"
@@ -206,3 +208,4 @@ namespace skyfire
         return cookies__;
     }
 }
+#pragma clang diagnostic pop

@@ -1,5 +1,5 @@
 #include "sf_object.hpp"
-
+#include "sf_object_manager.hpp"
 #include <vector>
 
 using namespace std;

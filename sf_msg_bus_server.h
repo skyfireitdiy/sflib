@@ -15,6 +15,8 @@
  * sf_msg_bus_server 消息总线服务器
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include <string>
@@ -48,7 +50,7 @@ namespace skyfire {
         /**
          * 析构函数
          */
-        ~sf_msg_bus_server();
+        ~sf_msg_bus_server() override;
 
         /**
          * @brief listen 监听消息总线
@@ -97,3 +99,5 @@ namespace skyfire {
 
     };
 }
+
+#pragma clang diagnostic pop

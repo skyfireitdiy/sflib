@@ -1,3 +1,7 @@
+#include <utility>
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_meta_object_factory.h"
@@ -28,11 +32,11 @@ namespace skyfire
     }
 
     inline void sf_meta_object_factory::set_before_create_callback(std::function<void(const std::string &)> before) {
-        before_create_callback__ = before;
+        before_create_callback__ = std::move(before);
     }
 
     inline void sf_meta_object_factory::set_after_create_callback(std::function<void(const std::string &)> after) {
-        after_create_callback__ = after;
+        after_create_callback__ = std::move(after);
     }
 
     inline bool sf_meta_object_factory::has(const std::string &key) const
@@ -40,3 +44,4 @@ namespace skyfire
         return factory__.count(key) != 0;
     }
 }
+#pragma clang diagnostic pop

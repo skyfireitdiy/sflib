@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_stdc++.h"
@@ -164,3 +166,4 @@ namespace skyfire
     inline byte_array read_file(const std::string& filename, size_t max_size = 4096);
 
 }
+#pragma clang diagnostic pop

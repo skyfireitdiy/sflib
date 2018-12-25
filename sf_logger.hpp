@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 
 /**
 * @version 1.0.0
@@ -15,6 +17,8 @@
  * sf_logger日志打印
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_logger.h"
@@ -76,7 +80,8 @@ int sf_logger::add_level_file(const SF_LOG_LEVEL level, const std::string &filen
     }
 
 inline
-void sf_logger::remove_filter(const int key)
+void
+    sf_logger::remove_filter(const int key)
 {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         for(auto &p:logger_func_set__){
@@ -188,12 +193,14 @@ sf_logger::sf_logger()
         cond__.notify_one();
     }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedValue"
 inline
 std::string sf_logger::make_time_str__()
 {
         auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         tm tm_d;
-        const auto ptm = &tm_d;
+        auto ptm = &tm_d;
 #ifdef _MSC_VER
         localtime_s(ptm, &tt);
 #else
@@ -203,6 +210,7 @@ std::string sf_logger::make_time_str__()
         os << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
         return os.str();
     }
+#pragma clang diagnostic pop
 
 
     template<typename... T>
@@ -280,3 +288,6 @@ inline std::string sf_logger::format(std::string format_str, const sf_logger_inf
     }
 
 }
+
+#pragma clang diagnostic pop
+#pragma clang diagnostic pop

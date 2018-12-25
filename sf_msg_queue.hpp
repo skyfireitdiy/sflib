@@ -22,7 +22,6 @@
 namespace skyfire
 {
 
-    inline sf_msg_queue::sf_msg_queue() {}
 
     inline void sf_msg_queue::add_msg(void *id, std::function<void()> func) {
         std::lock_guard<std::mutex> lck(mu_func_data_op__);

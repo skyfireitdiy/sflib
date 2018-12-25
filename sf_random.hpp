@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_random.h"
@@ -22,19 +24,19 @@ namespace skyfire {
 
     inline int sf_random::get_int(const int min, const int max)  const
     {
-	    const std::uniform_int_distribution<int> ed(min, max);
+        std::uniform_int_distribution<int> ed(min, max);
         return ed(*e__.get());
     }
 
     inline double sf_random::get_double(const double min, const double max) const
     {
-	    const std::uniform_real_distribution<double > ed(min, max);
+        std::uniform_real_distribution<double > ed(min, max);
         return ed(*e__.get());
     }
 
     inline std::string sf_random::get_uuid_str() const
     {
-	    const std::uniform_int_distribution<int> ed(INT_MIN, INT_MAX);
+        std::uniform_int_distribution<int> ed(INT_MIN, INT_MAX);
         int data[4] {ed(*e__.get()), ed(*e__.get()), ed(*e__.get()), ed(*e__.get())};
         char c_str[40];
 #ifdef _MSC_VER
@@ -50,3 +52,4 @@ namespace skyfire {
         return ret;
     }
 }
+#pragma clang diagnostic pop

@@ -51,7 +51,7 @@ namespace skyfire
     }
 
     inline bool sf_tcp_client::bind(const std::string &ip, unsigned short port) {
-        sockaddr_in address;
+        sockaddr_in address{};
         address.sin_family = AF_INET;
         address.sin_addr.s_addr = inet_addr(ip.c_str());
         address.sin_port = htons(port);
@@ -73,7 +73,7 @@ namespace skyfire
     inline bool sf_tcp_client::connect_to_server(const std::string &ip, unsigned short port) {
         if (!inited__)
             return false;
-        sockaddr_in address;
+        sockaddr_in address{};
         address.sin_family = AF_INET;
         address.sin_addr.s_addr = inet_addr(ip.c_str());
         address.sin_port = htons(port);
@@ -85,7 +85,7 @@ namespace skyfire
                     {
                         byte_array recv_buffer(sf_default_buffer_size);
                         byte_array data;
-                        sf_pkg_header_t header;
+                        sf_pkg_header_t header{};
                         while (true)
                         {
                             auto len = read(sock__, recv_buffer.data(), sf_default_buffer_size);
@@ -139,7 +139,7 @@ namespace skyfire
     inline bool sf_tcp_client::send(int type, const byte_array &data) {
         if (!inited__)
             return false;
-        sf_pkg_header_t header;
+        sf_pkg_header_t header{};
         header.type = type;
         header.length = data.size();
         make_header_checksum(header);

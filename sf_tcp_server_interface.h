@@ -73,7 +73,10 @@ namespace skyfire
 
     public:
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
         void add_server_socket_filter(std::shared_ptr<sf_server_socket_filter>&& filter);
+#pragma clang diagnostic pop
 
         /**
          * 获取原始socket
@@ -121,10 +124,13 @@ namespace skyfire
          * @return 获取结果
          */
         bool get_server_addr(sf_addr_info_t &addr);
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 		/**
 		 * 设置是否管理客户端连接
 		 * @param flag 是否管理
 		 */
 		void set_manage_clients(bool flag);
+#pragma clang diagnostic pop
     };
 }

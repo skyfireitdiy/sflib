@@ -14,6 +14,6 @@ namespace skyfire
         virtual void new_connection_filter(SOCKET sock) = 0;
         virtual void listen_sock_filter(SOCKET sock) = 0;
         virtual void disconnect_sock_filter(SOCKET sock) = 0;
-        virtual ~sf_server_socket_filter(){}
+        virtual ~sf_server_socket_filter() = default;
     };
 }

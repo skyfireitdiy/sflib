@@ -15,6 +15,8 @@
  * sf_event_waiter 事件等待
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_nocopy.h"
@@ -82,3 +84,5 @@ namespace skyfire {
     sf_make_waiter(const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>> &);
 
 }
+
+#pragma clang diagnostic pop

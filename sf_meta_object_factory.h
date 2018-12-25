@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_object.h"
@@ -28,3 +30,4 @@ namespace skyfire {
 
 
 }
+#pragma clang diagnostic pop

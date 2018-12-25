@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_http_base_server.h"
@@ -478,6 +480,8 @@ namespace skyfire
         return true;
     }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCSimplifyInspection"
     inline void sf_http_base_server::websocket_data_coming__(const SOCKET sock, const byte_array &data)
     {
         std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
@@ -577,6 +581,7 @@ namespace skyfire
         websocket_context__[sock].buffer.erase(websocket_context__[sock].buffer.begin(),
                                                websocket_context__[sock].buffer.begin() + resolve_pos);
     }
+#pragma clang diagnostic pop
 
     inline void sf_http_base_server::build_new_request__(SOCKET sock)
     {
@@ -748,8 +753,7 @@ namespace skyfire
         {
             if (multipart_data.multipart.empty() || multipart_data.multipart.back().is_finished())
             {
-                multipart_data.multipart.push_back(
-                        sf_http_multipart(multipart_data.boundary_str, config__.tmp_file_path));
+                multipart_data.multipart.emplace_back(multipart_data.boundary_str, config__.tmp_file_path);
             }
             const auto ret = multipart_data.multipart.back().append_data(tmp_data, tmp_data);
             if (!ret)
@@ -765,3 +769,4 @@ namespace skyfire
     }
 
 }
+#pragma clang diagnostic pop

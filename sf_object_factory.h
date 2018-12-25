@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_nocopy.h"
@@ -35,3 +37,4 @@ namespace skyfire
         bool has(const std::string &key) const;
     };
 }
+#pragma clang diagnostic pop

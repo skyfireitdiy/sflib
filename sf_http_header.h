@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_http_utils.h"
@@ -88,3 +90,4 @@ namespace skyfire
         friend sf_http_base_server;
     };
 }
+#pragma clang diagnostic pop

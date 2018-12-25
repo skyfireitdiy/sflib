@@ -1,3 +1,5 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 
 /**
 * @version 1.0.0
@@ -364,3 +366,4 @@ namespace skyfire
                 {"xap",     "application/x-silverlight-app"}
         };
 }
+#pragma clang diagnostic pop

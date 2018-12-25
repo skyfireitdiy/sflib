@@ -12,6 +12,8 @@
 */
 
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_type.h"
@@ -128,3 +130,4 @@ namespace skyfire{
         static void parse_cookies(const sf_http_header &header_data, std::unordered_map<std::string,std::string>& cookies);
     };
 }
+#pragma clang diagnostic pop

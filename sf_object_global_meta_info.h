@@ -4,8 +4,7 @@
 #include "sf_single_instance.h"
 #include "sf_meta_object_factory.h"
 #include "sf_object.hpp"
-#include <memory>
-#include <string>
+#include "sf_stdc++.h"
 
 
 namespace skyfire
@@ -28,7 +27,7 @@ namespace skyfire
 
 #define _SET_VALUE_FUNC(func_name, container_name) \
         template<typename T>\
-        static inline bool func_name(std::shared_ptr<sf_object> object, const std::string &key, T value) {\
+        static inline bool func_name(std::shared_ptr<sf_object>& object, const std::string &key, const T& value) {\
             if(object->container_name.count(key) == 0)\
             {\
                 return false;\

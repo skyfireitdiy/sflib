@@ -11,6 +11,8 @@
 * 发布日期：2018-10-22
 */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 #pragma once
 
 #include "sf_tcp_nat_traversal_server.h"
@@ -18,7 +20,7 @@
 namespace skyfire {
 
 
-    inline void sf_tcp_nat_traversal_server::on_new_connnection__(SOCKET sock)
+    inline void sf_tcp_nat_traversal_server::on_new_connection__(SOCKET sock)
     {
         // TODO 做一些处理
         sf_debug("new connection", sock);
@@ -38,7 +40,7 @@ namespace skyfire {
 
     inline sf_tcp_nat_traversal_server::sf_tcp_nat_traversal_server() {
         sf_bind_signal(server__, new_connection, [=](SOCKET sock) {
-            on_new_connnection__(sock);
+            on_new_connection__(sock);
         }, true);
         sf_bind_signal(server__, closed, [=](SOCKET sock) {
             on_disconnect__(sock);
@@ -59,26 +61,26 @@ namespace skyfire {
         // 第1步：server获取发起端信息，提交至接受端，context有效字段：connect_id、dest_id、src_id、src_addr
         context.step = 1;
         // 判断来源是否存在
-        if (clients__.count(context.src_id) == 0) {
+        if (clients__.count(static_cast<const int &>(context.src_id)) == 0) {
             return;
         }
         // 判断目的是否存在，如果不存在，通知来源
-        if (clients__.count(context.dest_id) == 0) {
+        if (clients__.count(static_cast<const int &>(context.dest_id)) == 0) {
             context.error_code = sf_err_not_exist;
-            server__->send(context.src_id, type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
             return;
         }
         // 获取来源的外网IP和端口，填充到连接上下文
-        if (!get_peer_addr(context.src_id, context.src_addr)) {
+        if (!get_peer_addr(static_cast<int>(context.src_id), context.src_addr)) {
             context.error_code = sf_err_disconnect;
-            server__->send(context.src_id, type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
             return;
         }
         sf_debug("notify target addr");
         // 将来源的外网ip端口通知给目的
-        if (!server__->send(context.dest_id, type_nat_traversal_new_connect_required, sf_serialize_binary(context))) {
+        if (!server__->send(static_cast<int>(context.dest_id), type_nat_traversal_new_connect_required, sf_serialize_binary(context))) {
             context.error_code = sf_err_remote_err;
-            server__->send(context.src_id, type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
             return;
         }
     }
@@ -117,27 +119,27 @@ namespace skyfire {
         // 第4步，服务器将目的的监听地址信息发送至来源，context有效字段：connect_id、dest_id、src_id、src_addr、dest_addr
         context.step = 4;
         // 判断目的是否存在，不存在，通知来源
-        if (clients__.count(context.dest_id) == 0) {
+        if (clients__.count(static_cast<const int &>(context.dest_id)) == 0) {
             context.error_code = sf_err_not_exist;
-            server__->send(context.src_id, type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
             return;
         }
         // 判断来源是否存在，如果不存在，通知回复者
-        if (clients__.count(context.src_id) == 0) {
+        if (clients__.count(static_cast<const int &>(context.src_id)) == 0) {
             context.error_code = sf_err_not_exist;
-            server__->send(context.dest_id, type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, sf_serialize_binary(context));
             return;
         }
 
         if (!get_peer_addr(sock, context.dest_addr)) {
             context.error_code = sf_err_disconnect;
-            server__->send(context.dest_id, type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, sf_serialize_binary(context));
             return;
         }
         sf_debug("reply addr of B to A");
-        if (!server__->send(context.src_id, type_nat_traversal_server_reply_b_addr, sf_serialize_binary(context))) {
+        if (!server__->send(static_cast<int>(context.src_id), type_nat_traversal_server_reply_b_addr, sf_serialize_binary(context))) {
             context.error_code = sf_err_remote_err;
-            server__->send(context.dest_id, type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, sf_serialize_binary(context));
             return;
         }
     }
@@ -156,7 +158,7 @@ namespace skyfire {
 
     inline void sf_tcp_nat_traversal_server::on_client_reg__(SOCKET sock) {
         clients__.insert(sock);
-        const unsigned long long id = sock;
+        const auto id = static_cast<const unsigned long long int>(sock);
         server__->send(sock, type_nat_traversal_set_id, sf_serialize_binary(id));
         on_update_client_list__();
     }
@@ -166,3 +168,4 @@ namespace skyfire {
         on_update_client_list__();
     }
 }
+#pragma clang diagnostic pop

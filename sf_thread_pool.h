@@ -15,6 +15,8 @@
  * sf_thread_pool 线程池
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 #include <functional>
 #include <atomic>
@@ -119,3 +121,5 @@ namespace skyfire
 	};
 
 }
+
+#pragma clang diagnostic pop

@@ -36,9 +36,9 @@ namespace skyfire
         bool raw__ = false;
         int sock__ = -1;
     public:
-        sf_tcp_client(bool raw = false);
+        sf_tcp_client(bool raw = false); // NOLINT(google-explicit-constructor)
 
-        sf_tcp_client(SOCKET sock, bool raw = false);
+        sf_tcp_client(SOCKET sock, bool raw = false); // NOLINT(google-explicit-constructor)
 
         SOCKET get_raw_socket() override;
 
@@ -49,7 +49,7 @@ namespace skyfire
         static std::shared_ptr<sf_tcp_client> make_client(SOCKET sock, bool raw = false);
 
 
-        ~sf_tcp_client();
+        ~sf_tcp_client(); // NOLINT(modernize-use-override)
 
         bool connect_to_server(const std::string &ip, unsigned short port) override;
 

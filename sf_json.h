@@ -1,3 +1,6 @@
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic ignored "google-explicit-constructor"
 #pragma once
 
 #include "sf_json_utils.h"
@@ -430,3 +433,5 @@ inline void from_json(const skyfire::sf_json &js, ClassName &obj){\
     skyfire::sf_from_json_helper__(js,SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));\
 }\
 
+
+#pragma clang diagnostic pop

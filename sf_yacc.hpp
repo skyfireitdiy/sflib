@@ -277,7 +277,7 @@ namespace skyfire
         if (result.empty())
             return false;
         auto left = result.back();
-        auto right = r_node;
+        const auto &right = r_node;
         auto conv = std::make_pair(left->id, right->id);
         auto iter = std::find_if(dfa.begin(), dfa.end(), [&](auto &item)
         {

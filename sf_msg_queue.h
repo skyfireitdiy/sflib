@@ -30,7 +30,7 @@ namespace skyfire
     public:
         SF_SINGLE_TON(sf_msg_queue);
     private:
-        sf_msg_queue();
+        sf_msg_queue() = default;
         std::list<std::pair<void*,std::function<void()>>> func_data__;
         std::mutex mu_func_data_op__;
 

@@ -16,6 +16,8 @@
  * 提供了信号---槽的通信机制、AOP编程
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedMacroInspection"
 #pragma once
 
 #include "sf_stdc++.h"
@@ -772,3 +774,5 @@ namespace skyfire {
     };
 
 }
+
+#pragma clang diagnostic pop

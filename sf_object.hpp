@@ -21,7 +21,9 @@
 #include "sf_object.h"
 #include "sf_json.hpp"
 #include "sf_object_meta_run.hpp"
-
+#include "sf_eventloop.hpp"
+#include "sf_object_global_meta_info.hpp"
+#include "sf_random.hpp"
 
 namespace skyfire
 {
@@ -29,12 +31,12 @@ namespace skyfire
     template<typename _VectorType, typename _FuncType>
     int sf_object::__sf_bind_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func, bool mul_thread) {
         std::lock_guard<std::recursive_mutex> lck(mu);
-        int bind_id = rand();
+        int bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         while(std::find_if(vec.begin(),vec.end(),[=](auto p){
             return std::get<2>(p) == bind_id;
         }) != vec.end())
         {
-            bind_id = rand();
+            bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         }
         vec.push_back(std::make_tuple(func, mul_thread, bind_id));
         return bind_id;
@@ -55,12 +57,12 @@ namespace skyfire
     template<typename _VectorType, typename _FuncType>
     int sf_object::__sf_aop_after_add_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func) {
         std::lock_guard<std::recursive_mutex> lck(mu);
-        int bind_id = rand();
+        int bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         while(std::find_if(vec.begin(),vec.end(),[=](auto p){
             return std::get<1>(p) == bind_id;
         }) != vec.end())
         {
-            bind_id = rand();
+            bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         }
         vec.push_back(std::make_tuple(func, bind_id));
         return bind_id;
@@ -69,12 +71,12 @@ namespace skyfire
     template<typename _VectorType, typename _FuncType>
     int sf_object::__sf_aop_before_add_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func) {
         std::lock_guard<std::recursive_mutex> lck(mu);
-        int bind_id = rand();
+        int bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         while(std::find_if(vec.begin(),vec.end(),[=](auto p){
             return std::get<1>(p) == bind_id;
         }) != vec.end())
         {
-            bind_id = rand();
+            bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         }
         vec.insert(vec.begin() ,std::make_tuple(func, bind_id));
         return bind_id;
@@ -99,7 +101,7 @@ namespace skyfire
         js.convert_to_object();
         for(auto &p:to_json_callback__)
         {
-            [[maybe_unused]] auto t = js.join(p.second());
+            js.join(p.second());
         }
         return js;
     }

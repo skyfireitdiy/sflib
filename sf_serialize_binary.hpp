@@ -15,6 +15,8 @@
  * 提供序列化支持（二进制）
  */
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_serialize_binary.h"
@@ -22,9 +24,14 @@
 namespace skyfire {
 
 
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
     inline sf_serialize_binary_size_mismatch_exception::
     sf_serialize_binary_size_mismatch_exception(const std::string &exception_message) : _message(exception_message) {
     }
+#pragma clang diagnostic pop
+
 
     inline const char *sf_serialize_binary_size_mismatch_exception::what() const noexcept {
         return _message.c_str();
@@ -197,3 +204,5 @@ namespace skyfire {
 }
 
 
+
+#pragma clang diagnostic pop

@@ -2,6 +2,7 @@
 
 #include "sf_object_global_meta_info.h"
 #include "sf_object.hpp"
+#include "sf_meta_object_factory.hpp"
 
 namespace skyfire
 {

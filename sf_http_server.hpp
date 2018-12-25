@@ -1,3 +1,6 @@
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma ide diagnostic ignored "bugprone-lambda-function-name"
 
 /**
 * @version 1.0.0
@@ -137,3 +140,4 @@ namespace skyfire
         }
     }
 }
+#pragma clang diagnostic pop
