@@ -701,7 +701,7 @@ int main()
     // 3. 添加事件到来相应
     sf_bind_signal(client, msg_come, [](std::string, byte_array data){
         std::string str;
-        sf_deserialize_binary(data, str, 0);
+        from_json(sf_json::from_string(to_string(data)),str);
         std::cout<<"msg_come:"<<str<<std::endl;
         }, true);
     std::string type;

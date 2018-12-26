@@ -12,6 +12,7 @@
 #include "sf_meta.hpp"
 #include "sf_msvc_safe.h"
 #include "sf_utils.hpp"
+#include "sf_logger.hpp"
 
 namespace skyfire
 {
@@ -658,6 +659,7 @@ namespace skyfire
 
     inline size_t sf_json::size() const
     {
+        sf_debug("is array", value__->type == sf_json_type ::array);
         return value__->type == sf_json_type ::array?value__->array_value.size():0;
     }
 
@@ -708,7 +710,7 @@ namespace skyfire
     }
 
     template <typename T, typename>
-    sf_json::sf_json(T number)
+    sf_json::sf_json(T number):sf_json()
     {
         value__->type = sf_json_type::number;
         value__->number_value = number;

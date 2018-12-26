@@ -340,7 +340,6 @@ namespace skyfire {
                         read_pos += sizeof(header) + header.length;
 
                         after_recv_filter__(ev.data.fd, header, data);
-
                         data_coming(
                                 ev.data.fd, header,
                                 data

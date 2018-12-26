@@ -27,8 +27,8 @@ namespace skyfire {
     void sf_rpc_server::__send_back(SOCKET sock, int id_code, _Type data) {
         sf_rpc_res_context_t res;
         res.call_id = id_code;
-        res.ret = to_byte_array(skyfire::to_json(data));
-        __tcp_server__->send(sock, rpc_res_type, to_byte_array(skyfire::to_json(res)));
+        res.ret = skyfire::to_json(data);
+        __tcp_server__->send(sock, rpc_res_type, to_byte_array(skyfire::to_json(res).to_string()));
     }
 
 

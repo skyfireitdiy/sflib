@@ -9,12 +9,12 @@ namespace skyfire
      */
     enum class sf_json_type
     {
-        null,
-        boolean,
-        number,
-        string,
-        array,
-        object,
+        null = 0,
+        boolean = 1,
+        number = 2,
+        string = 3,
+        array = 4,
+        object = 5,
     };
 
 

@@ -49,22 +49,22 @@ namespace skyfire
 
     inline void sf_msg_bus_client::reg_msg_to_bus(const std::string &type) const
     {
-        p_client__->send(msg_bus_reg_type_single, to_byte_array(skyfire::to_json(type)));
+        p_client__->send(msg_bus_reg_type_single, to_byte_array(skyfire::to_json(type).to_string()));
     }
 
     inline void sf_msg_bus_client::reg_msg_to_bus(const std::vector<std::string> &types) const
     {
-        p_client__->send(msg_bus_reg_type_multi, to_byte_array(skyfire::to_json(types)));
+        p_client__->send(msg_bus_reg_type_multi, to_byte_array(skyfire::to_json(types).to_string()));
     }
 
     inline void sf_msg_bus_client::unreg_msg_to_bus(const std::string &type) const
     {
-        p_client__->send(msg_bus_unreg_single, to_byte_array(skyfire::to_json(type)));
+        p_client__->send(msg_bus_unreg_single, to_byte_array(skyfire::to_json(type).to_string()));
     }
 
     inline void sf_msg_bus_client::unreg_msg_to_bus(const std::vector<std::string> &types) const
     {
-        p_client__->send(msg_bus_unreg_multi, to_byte_array(skyfire::to_json(types)));
+        p_client__->send(msg_bus_unreg_multi, to_byte_array(skyfire::to_json(types).to_string()));
     }
 
     inline bool sf_msg_bus_client::connect_to_server(const std::string &ip, unsigned short port) const
@@ -77,7 +77,7 @@ namespace skyfire
         sf_msg_bus_t msg;
         msg.type = type;
         msg.data = data;
-        const auto send_data = to_byte_array(skyfire::to_json(msg));
+        const auto send_data = to_byte_array(skyfire::to_json(msg).to_string());
         p_client__->send(msg_bus_new_msg, send_data);
     }
 

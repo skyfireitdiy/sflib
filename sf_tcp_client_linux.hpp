@@ -19,6 +19,7 @@
 #include "sf_nocopy.h"
 #include "sf_type.hpp"
 #include "sf_tcp_client_interface.hpp"
+#include "sf_logger.hpp"
 
 namespace skyfire
 {
@@ -113,12 +114,11 @@ namespace skyfire
                                     }
                                     if (data.size() - read_pos - sizeof(header) >= header.length)
                                     {
+                                        byte_array recv_data = {data.begin() + static_cast<long>(read_pos) + sizeof(header),
+                                                data.begin() + static_cast<long>(read_pos) + sizeof(header)
+                                                + static_cast<long>(header.length)};
                                         data_coming(
-                                                header,
-                                                byte_array(
-                                                        data.begin() + static_cast<long>(read_pos) + sizeof(header),
-                                                        data.begin() + static_cast<long>(read_pos) + sizeof(header)
-                                                        + static_cast<long>(header.length)));
+                                                header,recv_data);
                                         read_pos += sizeof(header) + header.length;
                                     }
                                     else

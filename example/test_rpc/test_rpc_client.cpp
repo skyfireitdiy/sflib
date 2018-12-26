@@ -11,6 +11,7 @@
 * 发布日期：2018-10-22
 */
 
+#define SF_DEBUG
 #include <iostream>
 #include "sf_rpc_client.hpp"
 

@@ -36,7 +36,7 @@ namespace skyfire
     struct sf_rpc_res_context_t final
     {
         int call_id;                    // 调用id
-        byte_array ret;                 // 返回值
+        sf_json ret;                 // 返回值
     };
 
     SF_JSONIFY(sf_rpc_res_context_t, call_id, ret)

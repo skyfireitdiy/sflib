@@ -56,7 +56,7 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
     std::cout<<"msg:"<<std::flush;
     std::string msg;
     getline(std::cin,msg);
-    conn->send(tcp_pkg_type_user + 1,to_json(msg));
+    conn->send(tcp_pkg_type_user + 1, to_byte_array(skyfire:: to_json(msg).to_string()));
 }
 
 
@@ -73,7 +73,7 @@ int main() {
         conn = conn_t;
         sf_bind_signal(conn, data_coming, [](const sf_pkg_header_t &header, const byte_array &data){
             std::string msg;
-            sf_deserialize_binary(data,msg,0);
+            from_json(sf_json::from_string(to_string(data)),msg);
             std::cout<<"Recv:"<<msg<<std::endl;
         }, true);
     },true);

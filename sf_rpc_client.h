@@ -47,7 +47,8 @@ namespace skyfire {
     class sf_rpc_client : public sf_nocopy<sf_object> {
     private:
         std::shared_ptr<sf_tcp_client> __tcp_client__ = sf_tcp_client::make_client();
-        std::unordered_map<int, std::shared_ptr<sf_rpc_context_t>> __rpc_data__;
+        // TODO 此处使用unordered_map会崩溃，在计算hash的时候会发生除0错误，why？
+        std::map<int, std::shared_ptr<sf_rpc_context_t>> __rpc_data__;
 
         int current_call_id__ = 0;
         unsigned int rpc_timeout__ = 30000;

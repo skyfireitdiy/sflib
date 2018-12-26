@@ -42,23 +42,29 @@ namespace skyfire {
         using __Ret = typename std::decay<_Ret>::type;
         std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
         const auto call_id = __make_call_id();
+        sf_debug("async call 1", call_id);
         __rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
         __rpc_data__[call_id]->is_async = true;
         __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
             __Ret ret;
             sf_rpc_res_context_t res;
 			from_json(sf_json::from_string(to_string(data)), res);
-			from_json(sf_json::from_string(to_string(res.ret)), ret);
+			from_json(res.ret, ret);
             rpc_callback(ret);
         };
         sf_rpc_req_context_t req;
         req.call_id = call_id;
         req.func_id = func_id;
         req.params = skyfire::to_json(param);
-        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req)));
+        sf_debug("call param", skyfire::to_json(param).to_string());
+        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
         auto p_timer = std::make_shared<sf_timer>();
         sf_bind_signal(p_timer, timeout, [=]() {
-            __rpc_data__.erase(call_id);
+            if(__rpc_data__.count(call_id)!=0)
+            {
+                __rpc_data__[call_id]->back_cond.notify_one();
+                __rpc_data__.erase(call_id);
+            }
         }, true);
         p_timer->start(rpc_timeout__, true);
     }
@@ -70,6 +76,7 @@ namespace skyfire {
         static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
         std::tuple<typename std::decay<__SF_RPC_ARGS__>::type ...> param{args...};
         const auto call_id = __make_call_id();
+        sf_debug("async call 2", call_id);
         __rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
         __rpc_data__[call_id]->is_async = true;
         __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
@@ -79,10 +86,14 @@ namespace skyfire {
         req.call_id = call_id;
         req.func_id = func_id;
         req.params =to_json(param);
-        __tcp_client__->send(rpc_req_type, to_json(req));
+        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
         auto p_timer = std::make_shared<sf_timer>();
         sf_bind_signal(p_timer, timeout, [=]() {
-            __rpc_data__.erase(call_id);
+            if(__rpc_data__.count(call_id)!=0)
+            {
+                __rpc_data__[call_id]->back_cond.notify_one();
+                __rpc_data__.erase(call_id);
+            }
         }, true);
         p_timer->start(rpc_timeout__, true);
     }
@@ -90,6 +101,7 @@ namespace skyfire {
     template<typename T>
     void sf_rpc_client::async_call(const std::string &func_id, std::function<void()> rpc_callback) {
 	    const auto call_id = __make_call_id();
+        sf_debug("async call 3", call_id);
         __rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
         __rpc_data__[call_id]->is_async = true;
         __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
@@ -98,8 +110,17 @@ namespace skyfire {
         sf_rpc_req_context_t req;
         req.call_id = call_id;
         req.func_id = func_id;
-        req.params =to_json(byte_array());
-        __tcp_client__->send(rpc_req_type, to_json(req));
+        req.params = skyfire::to_json(byte_array());
+        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
+        auto p_timer = std::make_shared<sf_timer>();
+        sf_bind_signal(p_timer, timeout, [=]() {
+            if(__rpc_data__.count(call_id)!=0)
+            {
+                __rpc_data__[call_id]->back_cond.notify_one();
+                __rpc_data__.erase(call_id);
+            }
+        }, true);
+        p_timer->start(rpc_timeout__, true);
     }
 
     template<typename _Ret, typename... __SF_RPC_ARGS__>
@@ -120,7 +141,8 @@ namespace skyfire {
         req.call_id = call_id;
         req.func_id = func_id;
         req.params = skyfire::to_json(param);
-        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req)));
+        sf_debug("call", skyfire::to_json(req), skyfire::to_json(req).to_string());
+        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
         std::cout<<"1"<<std::endl;
         if (!__rpc_data__[call_id]->back_finished) {
             std::unique_lock<std::mutex> lck(__rpc_data__[call_id]->back_mu);
@@ -145,8 +167,11 @@ namespace skyfire {
             sf_assigned_type<__Ret> ret;
             __Ret tmp_ret{};
             sf_rpc_res_context_t res;
+            sf_debug("rpc return",to_string(__rpc_data__[call_id]->data));
 			from_json(sf_json::from_string(to_string(__rpc_data__[call_id]->data)), res);
-			from_json(sf_json::from_string(to_string(res.ret)), tmp_ret);
+            sf_debug("rpc return", res.ret.to_string());
+			from_json(res.ret, tmp_ret);
+            sf_debug("rpc return", tmp_ret.size());
             ret = tmp_ret;
             __rpc_data__.erase(call_id);
             return ret;
@@ -199,6 +224,10 @@ namespace skyfire {
         sf_rpc_res_context_t res;
 		from_json(sf_json::from_string(to_string(data_t)),res);
         const auto call_id = res.call_id;
+        if(__rpc_data__.count(call_id) == 0)
+        {
+            return;
+        }
         if (__rpc_data__[call_id]->is_async) {
             __rpc_data__[call_id]->async_callback(data_t);
             __rpc_data__.erase(call_id);

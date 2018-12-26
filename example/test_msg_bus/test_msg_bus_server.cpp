@@ -33,7 +33,7 @@ int main()
             break;
         std::cout<<"data:"<<std::flush;
         std::cin>>data;
-        server->send_msg(type, to_json(data));
+        server->send_msg(type, to_byte_array(skyfire::to_json(data).to_string()));
     }
     // 4.关闭总线
     server->close();
