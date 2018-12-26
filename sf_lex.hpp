@@ -1,7 +1,7 @@
+
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
-
 
 #include "sf_lex.h"
 #include "sf_stdc++.h"

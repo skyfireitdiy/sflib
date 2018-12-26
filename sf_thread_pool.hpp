@@ -14,10 +14,10 @@
 /*
  * sf_thread_pool 线程池
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_thread_pool.h"
 

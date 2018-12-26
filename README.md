@@ -428,7 +428,7 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
     std::cout<<"msg:"<<std::flush;
     std::string msg;
     getline(std::cin,msg);
-    conn->send(TCP_PKG_TYPE_USER + 1,sf_serialize_binary(msg));
+    conn->send(TCP_PKG_TYPE_USER + 1,to_json(msg));
 }
 
 
@@ -667,7 +667,7 @@ int main()
             break;
         std::cout<<"data:"<<std::flush;
         std::cin>>data;
-        server->send_msg(type, sf_serialize_binary(data));
+        server->send_msg(type, to_json(data));
     }
     // 4.关闭总线
     server->close();
@@ -1352,7 +1352,7 @@ int main()
 
 #### 更多
 
-在例子中，用到了一些其他组件，如二进制序列化`sf_serialize_binary`、随机数`sf_random`以及单例对象`sf_singel_instance`等。
+在例子中，用到了一些其他组件，如二进制序列化`to_json`、随机数`sf_random`以及单例对象`sf_singel_instance`等。
 
 此快速入门仅作为介绍作用，详细使用方法见API文档。（下文会给出API文档生成方法）
 

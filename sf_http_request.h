@@ -11,10 +11,10 @@
 * 发布日期：2018-10-22
 */
 
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_type.h"
 #include "sf_http_request_line.h"

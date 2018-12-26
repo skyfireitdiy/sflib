@@ -1,6 +1,4 @@
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma ide diagnostic ignored "bugprone-lambda-function-name"
+
 
 /**
 * @version 1.0.0
@@ -14,7 +12,11 @@
 * 发布日期：2018-10-22
 */
 
+
 #pragma once
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma ide diagnostic ignored "bugprone-lambda-function-name"
 
 #include "sf_http_server.h"
 

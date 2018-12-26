@@ -11,10 +11,11 @@
 * 发布日期：2018-10-22
 */
 
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
-#pragma once
+
 
 #ifdef __GNUC__
 #if __GNUC__ < 7
@@ -57,8 +58,8 @@
 #define SF_EXPAND_OBJ_MEM(...) SF_INVOKE_VAR_MACRO(SF_EXPAND_ARGS_, __VA_ARGS__)
 
 
-#define SF_EXPAND_ARGS_WITH_NAME_2(prefix, _1), std::string(#_1), prefix._1
-#define SF_EXPAND_ARGS_WITH_NAME_3(prefix, _1, _2) , std::string(#_1), prefix._1, std::string(#_2), prefix._2
+#define SF_EXPAND_ARGS_WITH_NAME_2(prefix, _1) std::string(#_1), prefix._1
+#define SF_EXPAND_ARGS_WITH_NAME_3(prefix, _1, _2)  std::string(#_1), prefix._1, std::string(#_2), prefix._2
 #define SF_EXPAND_ARGS_WITH_NAME_4(prefix, _1, _2, _3) std::string(#_1), prefix._1, std::string(#_2), prefix._2, std::string(#_3), prefix._3
 #define SF_EXPAND_ARGS_WITH_NAME_5(prefix, _1, _2, _3, _4) std::string(#_1), prefix._1,std::string(#_2), prefix._2, std::string(#_3), prefix._3, std::string(#_4), prefix._4
 #define SF_EXPAND_ARGS_WITH_NAME_6(prefix, _1, _2, _3, _4, _5) std::string(#_1), prefix._1,std::string(#_2), prefix._2, std::string(#_3), prefix._3, std::string(#_4), prefix._4, std::string(#_5), prefix._5

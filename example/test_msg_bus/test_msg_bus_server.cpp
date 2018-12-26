@@ -33,7 +33,7 @@ int main()
             break;
         std::cout<<"data:"<<std::flush;
         std::cin>>data;
-        server->send_msg(type, sf_serialize_binary(data));
+        server->send_msg(type, to_json(data));
     }
     // 4.关闭总线
     server->close();

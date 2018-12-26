@@ -1,11 +1,9 @@
+
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
-
 #include "sf_object_factory.h"
-#include <functional>
-#include <utility>
-
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

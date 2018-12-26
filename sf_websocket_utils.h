@@ -20,7 +20,7 @@
 
 #include "sf_type.hpp"
 #include "sf_tcp_utils.hpp"
-#include "sf_serialize_binary.hpp"
+#include "sf_json.hpp"
 
 #ifdef _WIN32
 #include <winsock2.h>

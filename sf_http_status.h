@@ -1,5 +1,4 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
+
 
 /**
 * @version 1.0.0
@@ -14,7 +13,8 @@
 */
 
 #pragma once
-
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err58-cpp"
 #include <string>
 
 namespace skyfire

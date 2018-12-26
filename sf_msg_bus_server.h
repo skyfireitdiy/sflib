@@ -14,10 +14,10 @@
 /*
  * sf_msg_bus_server 消息总线服务器
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include <string>
 

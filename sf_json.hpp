@@ -1,8 +1,9 @@
+
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cppcoreguidelines-c-copy-assignment-signature"
 #pragma ide diagnostic ignored "cert-err34-c"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
 
 #include "sf_lex.hpp"
 #include "sf_yacc.hpp"
@@ -782,7 +783,7 @@ namespace skyfire
     sf_json to_json_tuple_helper__(const ARGS &... value) {
         sf_json js;
         js.convert_to_array();
-        (js.append(sf_json(value)),...);
+        (js.append(to_json(value)),...);
         return js;
     }
 
@@ -818,8 +819,9 @@ namespace skyfire
     {\
         std::vector<T> data;\
         int sz = js.size();\
+		data.resize(sz);\
         for(int i=0;i<sz;++i){\
-            data.push_back(from_json<T>(js.at(i)));\
+            from_json<T>(js.at(i), data[i]);\
         }\
         value = container<T> {data.begin(),data.end()};\
     }\

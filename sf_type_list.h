@@ -14,10 +14,10 @@
 /*
  * sf_type_list
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedStructInspection"
-#pragma once
+
 
 #include "sf_stdc++.h"
 

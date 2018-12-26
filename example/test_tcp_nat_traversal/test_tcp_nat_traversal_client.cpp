@@ -50,13 +50,13 @@ void nat_conn(std::shared_ptr<sf_tcp_nat_traversal_client> client){
 
 void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
     if(!conn){
-        std::cout<<"连接未建立"<<std::endl;
+        std::cout<<"connect error"<<std::endl;
         return;
     }
     std::cout<<"msg:"<<std::flush;
     std::string msg;
     getline(std::cin,msg);
-    conn->send(tcp_pkg_type_user + 1,sf_serialize_binary(msg));
+    conn->send(tcp_pkg_type_user + 1,to_json(msg));
 }
 
 

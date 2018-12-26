@@ -14,18 +14,11 @@
 /*
  * sf_thread_pool 线程池
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
-#include <functional>
-#include <atomic>
-#include <deque>
-#include <mutex>
-#include <vector>
-#include <memory>
-#include <thread>
-#include <condition_variable>
+
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

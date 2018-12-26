@@ -237,7 +237,7 @@ int main()
         {
             for (auto &p:yacc_result)
             {
-                std::cout << "(" << p->id << ")【" << p->text << "】" << std::flush;
+                std::cout << "(" << p->id << ")[" << p->text << "]" << std::flush;
             }
         }
     }

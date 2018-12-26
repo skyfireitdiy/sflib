@@ -74,7 +74,7 @@ namespace skyfire
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-    inline void sf_tcp_server_interface::add_server_socket_filter(shared_ptr<sf_server_socket_filter>&& filter) {  // NOLINT(performance-unnecessary-value-param)
+    inline void sf_tcp_server_interface::add_server_socket_filter(std::shared_ptr<sf_server_socket_filter>&& filter) {  // NOLINT(performance-unnecessary-value-param)
         filters__.emplace_back(std::move(filter));
     }
 

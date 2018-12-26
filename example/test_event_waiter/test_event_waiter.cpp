@@ -26,9 +26,9 @@ sf_timer timer;
 
 int main()
 {
-    std::cout<<"开始"<<std::endl;
+    std::cout<<"Start"<<std::endl;
     timer.start(5000, true);
     // 1. 等待超时
     SF_WAIT(&timer, timeout);
-    std::cout<<"结束"<<std::endl;
+    std::cout<<"End"<<std::endl;
 }

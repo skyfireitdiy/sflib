@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "sf_serialize_binary.hpp"
+#include "sf_json.h"
 #include "sf_type.h"
 
 namespace skyfire
@@ -25,10 +25,10 @@ namespace skyfire
     {
         int call_id;                    // 调用id
         std::string func_id;            // 函数id
-        byte_array params;              // 参数
+        sf_json params;              // 参数
     };
 
-    SF_MAKE_SERIALIZABLE_BINARY(sf_rpc_req_context_t, call_id, func_id, params)
+    SF_JSONIFY(sf_rpc_req_context_t, call_id, func_id, params)
 
     /**
      *  @brief rpc响应上下文
@@ -39,5 +39,5 @@ namespace skyfire
         byte_array ret;                 // 返回值
     };
 
-    SF_MAKE_SERIALIZABLE_BINARY(sf_rpc_res_context_t, call_id, ret)
+    SF_JSONIFY(sf_rpc_res_context_t, call_id, ret)
 }

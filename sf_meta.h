@@ -1,7 +1,4 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedStructInspection"
-#pragma ide diagnostic ignored "google-explicit-constructor"
-#pragma ide diagnostic ignored "readability-redundant-declaration"
+
 
 /**
 * @version 1.0.0
@@ -18,95 +15,104 @@
 /*
  * sf_meta 元编程辅助函数
  */
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCUnusedStructInspection"
+#pragma ide diagnostic ignored "google-explicit-constructor"
+#pragma ide diagnostic ignored "readability-redundant-declaration"
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include <functional>
-#include <tuple>
+
+#include "sf_stdc++.h"
 
 namespace skyfire {
 
     template<class T>
-    struct sf_check_param_reference final
-    {
-    };
+	struct sf_check_param_reference;
 
     template<class T, class ... U>
     struct sf_check_param_reference<std::function<T(U...)>>final
     {
-        static constexpr bool value = (std::is_reference<U>::value || ... || false);
+		static constexpr bool value = std::disjunction<std::is_reference<U>...>::value;
+        //static constexpr bool value = (std::is_reference<U>::value || ... || false);
     };
 
-    template<template<typename> class T, typename U, typename...V>
-    struct sf_check_param_reference<T<U(V...)>>final
+    template<typename T>
+    struct sf_check_param_reference final
     {
-        static constexpr bool value = (std::is_reference<V>::value || ... || false);
+		static constexpr bool value = sf_check_param_reference<decltype(std::function(std::declval<T>()))>::value;
+        // static constexpr bool value = (std::is_reference<V>::value || ... || false);
     };
 
     template<class T>
-    struct sf_check_param_pointer final
-    {
-    };
+	struct sf_check_param_pointer;
 
     template<class T, class ... U>
     struct sf_check_param_pointer<std::function<T(U...)>>final
     {
-        static constexpr bool value = (std::is_pointer<U>::value || ... || false);
+		static constexpr bool value = std::disjunction<std::is_pointer<U>...>::value;
+        // static constexpr bool value = (std::is_pointer<U>::value || ... || false);
     };
 
-    template<template<typename> class T, typename U, typename...V>
-    struct sf_check_param_pointer<T<U(V...)>>final
+    template<typename T>
+    struct sf_check_param_pointer final
     {
-        static constexpr bool value = (std::is_pointer<V>::value || ... || false);
+		static constexpr bool value = sf_check_param_pointer<decltype(std::function(std::declval<T>()))>::value;
+        // static constexpr bool value = (std::is_pointer<V>::value || ... || false);
     };
 
 
     template<class T>
-    struct sf_check_return_reference {
+    struct sf_check_return_reference final
+    {
     };
 
     template<class T, class ... U>
-    struct sf_check_return_reference<std::function<T(U...)>> {
+    struct sf_check_return_reference<std::function<T(U...)>>final
+    {
         static constexpr bool value = std::is_reference<T>::value;
     };
 
     template<template<typename> class T, typename U, typename...V>
-    struct sf_check_return_reference<T<U(V...)>> {
+    struct sf_check_return_reference<T<U(V...)>>final
+    {
         static constexpr bool value = std::is_reference<U>::value;
     };
 
     template<class T>
-    struct sf_check_return_pointer {
+    struct sf_check_return_pointer final
+    {
     };
 
     template<class T, class ... U>
-    struct sf_check_return_pointer<std::function<T(U...)>> {
+    struct sf_check_return_pointer<std::function<T(U...)>>final
+    {
         static constexpr bool value = std::is_pointer<T>::value;
     };
 
     template<template<typename> class T, typename U, typename...V>
-    struct sf_check_return_pointer<T<U(V...)>> {
+    struct sf_check_return_pointer<T<U(V...)>>final
+    {
         static constexpr bool value = std::is_pointer<U>::value;
     };
 
 
-    template<class T>
-    struct sf_function_type_helper {
-    };
+	template<typename T>
+	struct sf_function_type_helper ;
 
     template<class T, class ... U>
-    struct sf_function_type_helper<std::function<T(U...)>> {
-        using return_type=T;
-        using param_type= std::tuple<U...>;
+    struct sf_function_type_helper<std::function<T(U...)>>final
+    {
+        using return_type=typename std::decay<T>::type;
+        using param_type= std::tuple<typename std::decay<U>::type...>;
     };
 
 
-    template<template<typename> class T, typename U, typename...V>
-    struct sf_function_type_helper<T<U(V...)>> {
-        using return_type = U;
-        using param_type = std::tuple<V...>;
+    template<typename T>
+    struct sf_function_type_helper final
+    {
+        using return_type = typename sf_function_type_helper<decltype(std::function(std::declval<T>()))>::return_type;
+        using param_type = typename sf_function_type_helper<decltype(std::function(std::declval<T>()))>::param_type;
     };
 
     template<typename Function, typename Tuple, std::size_t... Index>
@@ -170,5 +176,4 @@ namespace skyfire {
 
 }
 
-#pragma clang diagnostic pop
 #pragma clang diagnostic pop

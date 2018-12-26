@@ -10,16 +10,16 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_stdc++.h"
 #include "sf_tcp_client.h"
 #include "sf_tcp_server.h"
 #include "sf_type.hpp"
-#include "sf_serialize_binary.hpp"
+#include "sf_json.hpp"
 #include "sf_object.hpp"
 #include "sf_nocopy.h"
 
@@ -40,7 +40,7 @@ namespace skyfire {
         bool raw{};
     };
 
-    SF_MAKE_SERIALIZABLE_BINARY(sf_tcp_nat_traversal_context_t__, connect_id, src_id, src_addr, dest_id, dest_addr, error_code,
+    SF_JSONIFY(sf_tcp_nat_traversal_context_t__, connect_id, src_id, src_addr, dest_id, dest_addr, error_code,
                          step, raw)
 
     /**

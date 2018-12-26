@@ -14,10 +14,10 @@
 /*
  * sf_timer 定时器
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_timer.h"
 

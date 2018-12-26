@@ -14,10 +14,10 @@
 /*
  * sf_event_waiter 事件等待
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_event_waiter.h"
 

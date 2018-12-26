@@ -1,7 +1,6 @@
 #include "sf_object_factory.hpp"
 #include <iostream>
 
-using namespace std;
 using namespace skyfire;
 
 class A{
@@ -10,12 +9,12 @@ private:
 public:
     A(int n) : num(n)
     {
-        cout<<"A()"<<endl;
+	    std::cout<<"A()"<< std::endl;
     }
 
     void print() const
     {
-        cout<<"n is "<< num<<endl;
+	    std::cout<<"n is "<< num<< std::endl;
     }
 };
 
@@ -23,11 +22,11 @@ class B{
 public:
     B()
     {
-        cout<<"B()"<<endl;
+	    std::cout<<"B()"<< std::endl;
     }
     void print() const
     {
-        cout<<"B object"<<endl;
+	    std::cout<<"B object"<< std::endl;
     }
 };
 
@@ -40,12 +39,12 @@ int main()
 
     // 2. 设置创建前回调
     factory.set_before_create_callback([](const std::string& type){
-        cout<<"before " + type + " create"<<endl;
+	    std::cout<<"before " + type + " create"<< std::endl;
     });
 
     // 3. 设置创建后回调
     factory.set_after_create_callback([](const std::string& type){
-        cout<<"after " + type + " create"<<endl;
+	    std::cout<<"after " + type + " create"<< std::endl;
     });
 
     // 4. 创建对象

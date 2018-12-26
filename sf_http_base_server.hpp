@@ -10,10 +10,10 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_http_base_server.h"
 #include "sf_http_server_config.h"
@@ -480,8 +480,7 @@ namespace skyfire
         return true;
     }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCSimplifyInspection"
+
     inline void sf_http_base_server::websocket_data_coming__(const SOCKET sock, const byte_array &data)
     {
         std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
@@ -581,7 +580,7 @@ namespace skyfire
         websocket_context__[sock].buffer.erase(websocket_context__[sock].buffer.begin(),
                                                websocket_context__[sock].buffer.begin() + resolve_pos);
     }
-#pragma clang diagnostic pop
+
 
     inline void sf_http_base_server::build_new_request__(SOCKET sock)
     {

@@ -10,10 +10,10 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
-#pragma once
+
 
 #include "sf_tcp_nat_traversal_client.h"
 
@@ -38,7 +38,7 @@ namespace skyfire {
         if (!get_local_addr(client__->get_raw_socket(), server_addr)) {
             context.error_code = sf_err_disconnect;
             client__->send(type_nat_traversal_error,
-                           sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                           to_json(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
             return;
         }
 
@@ -51,7 +51,7 @@ namespace skyfire {
         if (!connect_context_map__[context.connect_id].point_b_client_1->bind(server_addr.ip, auto_port)) {
             context.error_code = sf_err_bind_err;
             client__->send(type_nat_traversal_error,
-                           sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                           to_json(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
             return;
         }
 
@@ -80,7 +80,7 @@ namespace skyfire {
         )) {
             context.error_code = sf_err_bind_err;
             client__->send(type_nat_traversal_error,
-                           sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                           to_json(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
             return;
         }
 
@@ -89,7 +89,7 @@ namespace skyfire {
         if (!connect_context_map__[context.connect_id].point_b_server->listen(server_addr.ip, auto_port)) {
             context.error_code = sf_err_disconnect;
             client__->send(type_nat_traversal_error,
-                           sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                           to_json(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
             return;
         }
 
@@ -127,7 +127,7 @@ namespace skyfire {
                                                                                  server_addr__.port)) {
             context.error_code = sf_err_disconnect;
             client__->send(type_nat_traversal_error,
-                           sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                           to_json(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
             return;
         }
 
@@ -135,12 +135,12 @@ namespace skyfire {
         sf_debug("reply server");
         if (!connect_context_map__[context.connect_id].point_b_client_2->send(
                 type_nat_traversal_b_reply_addr,
-                sf_serialize_binary(
+                to_json(
                         connect_context_map__[context.connect_id].tcp_nat_traversal_context))
                 ) {
             context.error_code = sf_err_disconnect;
             client__->send(type_nat_traversal_error,
-                           sf_serialize_binary(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
+                           to_json(connect_context_map__[context.connect_id].tcp_nat_traversal_context));
             return;
         }
 
@@ -189,7 +189,7 @@ namespace skyfire {
             sf_debug("start connect");
             // 发起连接请求
             if (tmp_p2p_conn_context.point_a_client_1->send(type_nat_traversal_require_connect_peer,
-                                                            sf_serialize_binary(
+                                                            to_json(
                                                                     tmp_p2p_conn_context.tcp_nat_traversal_context))) {
                 // 保存连接上下文
                 connect_context_map__[tmp_p2p_conn_context.tcp_nat_traversal_context.connect_id] = tmp_p2p_conn_context;
@@ -267,7 +267,7 @@ namespace skyfire {
         context.step = 5;
         if (connect_context_map__.count(context.connect_id) == 0) {
             context.error_code = sf_err_not_exist;
-            client__->send(type_nat_traversal_error, sf_serialize_binary(context));
+            client__->send(type_nat_traversal_error, to_json(context));
             return;
         }
         connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
@@ -287,7 +287,7 @@ namespace skyfire {
             connect_context_map__.erase(context.connect_id);
         } else {
             context.error_code = sf_err_disconnect;
-            client__->send(type_nat_traversal_error, sf_serialize_binary(context));
+            client__->send(type_nat_traversal_error, to_json(context));
             return;
         }
     }

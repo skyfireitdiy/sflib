@@ -14,10 +14,10 @@
 /*
  * sf_meta 元编程辅助函数
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_meta.h"
 

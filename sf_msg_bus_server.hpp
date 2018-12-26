@@ -14,10 +14,10 @@
 /*
  * sf_msg_bus_server 消息总线服务器
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_msg_bus_server.h"
 #include "sf_tcp_server.h"
@@ -99,7 +99,7 @@ namespace skyfire {
         sf_msg_bus_t msg;
         msg.type = type;
         msg.data = data;
-        const auto send_data = sf_serialize_binary(msg);
+        const auto send_data = to_json(msg);
         if (msg_map__.count(type) != 0) {
             for (auto &sock : msg_map__[type]) {
                 p_server__->send(sock, msg_bus_new_msg, send_data);

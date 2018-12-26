@@ -15,10 +15,10 @@
  * sf_object 基础对象
  * 提供了信号---槽的通信机制、AOP编程
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
-#pragma once
+
 
 #include "sf_stdc++.h"
 #include "sf_msg_queue.hpp"

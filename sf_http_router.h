@@ -10,10 +10,10 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 #include "sf_stdc++.h"
 #include "sf_router.hpp"
 #include "sf_http_response.hpp"
@@ -37,7 +37,7 @@ namespace skyfire
         callback_call_helper__(const sf_http_request &req,sf_http_response& res,FuncType func,const std::smatch &sm, Args ... args);
 
         template <typename  FuncType, int N, typename ... Args>
-        typename std::enable_if<sizeof...(Args) != N, void>::type
+		static typename std::enable_if<sizeof...(Args) != N, void>::type
         callback_call_helper__(const sf_http_request &req,sf_http_response& res,FuncType func,const std::smatch &sm, Args ... args);;
 
     public:

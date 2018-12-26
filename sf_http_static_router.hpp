@@ -1,6 +1,4 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err34-c"
-#pragma ide diagnostic ignored "bugprone-lambda-function-name"
+
 
 /**
 * @version 1.0.0
@@ -15,6 +13,10 @@
 */
 
 #pragma once
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "cert-err34-c"
+#pragma ide diagnostic ignored "bugprone-lambda-function-name"
 
 #include "sf_http_static_router.h"
 #include "sf_stdc++.h"

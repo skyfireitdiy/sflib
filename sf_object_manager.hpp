@@ -1,14 +1,12 @@
+
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "readability-static-accessed-through-instance"
-#pragma once
-
 #include "sf_object_manager.h"
 #include "sf_object_global_meta_info.hpp"
 #include "sf_json.hpp"
 #include "sf_stdc++.h"
 
-
-using namespace std;
 
 namespace skyfire
 {

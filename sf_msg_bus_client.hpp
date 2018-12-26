@@ -14,10 +14,10 @@
 /*
  * sf_msg_bus_client 消息总线客户端
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 
 #include "sf_msg_bus_client.h"
@@ -49,22 +49,22 @@ namespace skyfire
 
     inline void sf_msg_bus_client::reg_msg_to_bus(const std::string &type) const
     {
-        p_client__->send(msg_bus_reg_type_single, sf_serialize_binary(type));
+        p_client__->send(msg_bus_reg_type_single, to_byte_array(skyfire::to_json(type)));
     }
 
     inline void sf_msg_bus_client::reg_msg_to_bus(const std::vector<std::string> &types) const
     {
-        p_client__->send(msg_bus_reg_type_multi, sf_serialize_binary(types));
+        p_client__->send(msg_bus_reg_type_multi, to_byte_array(skyfire::to_json(types)));
     }
 
     inline void sf_msg_bus_client::unreg_msg_to_bus(const std::string &type) const
     {
-        p_client__->send(msg_bus_unreg_single, sf_serialize_binary(type));
+        p_client__->send(msg_bus_unreg_single, to_byte_array(skyfire::to_json(type)));
     }
 
     inline void sf_msg_bus_client::unreg_msg_to_bus(const std::vector<std::string> &types) const
     {
-        p_client__->send(msg_bus_unreg_multi, sf_serialize_binary(types));
+        p_client__->send(msg_bus_unreg_multi, to_byte_array(skyfire::to_json(types)));
     }
 
     inline bool sf_msg_bus_client::connect_to_server(const std::string &ip, unsigned short port) const
@@ -77,7 +77,7 @@ namespace skyfire
         sf_msg_bus_t msg;
         msg.type = type;
         msg.data = data;
-        const auto send_data = sf_serialize_binary(msg);
+        const auto send_data = to_byte_array(skyfire::to_json(msg));
         p_client__->send(msg_bus_new_msg, send_data);
     }
 
@@ -90,7 +90,7 @@ namespace skyfire
         if(header.type == msg_bus_new_msg)
         {
             sf_msg_bus_t msg_data;
-            sf_deserialize_binary(data, msg_data, 0);
+			from_json(sf_json::from_string(to_string(data)), msg_data);
             msg_come(msg_data.type, msg_data.data);
         }
     }

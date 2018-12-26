@@ -1,7 +1,8 @@
+
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "google-explicit-constructor"
-#pragma once
 
 #include "sf_json_utils.h"
 #include "sf_stdc++.h"

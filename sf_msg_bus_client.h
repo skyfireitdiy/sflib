@@ -14,10 +14,10 @@
 /*
  * sf_msg_bus_client 消息总线客户端
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_object.hpp"
 #include "sf_tcp_client.h"

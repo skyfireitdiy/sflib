@@ -15,9 +15,9 @@
  * sf_empty_class 空类
  */
 
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedStructInspection"
-#pragma once
 namespace skyfire
 {
 	/**

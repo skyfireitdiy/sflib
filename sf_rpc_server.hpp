@@ -27,8 +27,8 @@ namespace skyfire {
     void sf_rpc_server::__send_back(SOCKET sock, int id_code, _Type data) {
         sf_rpc_res_context_t res;
         res.call_id = id_code;
-        res.ret = sf_serialize_binary(data);
-        __tcp_server__->send(sock, rpc_res_type, sf_serialize_binary(res));
+        res.ret = to_byte_array(skyfire::to_json(data));
+        __tcp_server__->send(sock, rpc_res_type, to_byte_array(skyfire::to_json(res)));
     }
 
 
@@ -40,7 +40,7 @@ namespace skyfire {
         std::string id;
         byte_array param;
         sf_rpc_req_context_t req;
-        sf_deserialize_binary(data, req, 0);
+		from_json(sf_json::from_string(to_string(data)), req);
         for (auto &p : __func__vec__) {
             p(sock, req);
         }
@@ -48,57 +48,36 @@ namespace skyfire {
 
     
     template<typename _Func>
-    void sf_rpc_server::reg_rpc_func(const std::string &id, _Func func) {
-        if constexpr (std::is_bind_expression<_Func>::value) {
-            static_assert(!sf_check_param_reference<_Func>::value, "Param can't be reference");
-            static_assert(!sf_check_param_pointer<_Func>::value, "Param can't be pointer");
-            static_assert(!sf_check_return_reference<_Func>::value, "Return can't be reference");
-            static_assert(!sf_check_return_pointer<_Func>::value, "Return can't be pointer");
+	void sf_rpc_server::reg_rpc_func(const std::string &id, _Func func) {
+
+		static_assert(!sf_check_param_reference<decltype(std::function(func))>::value,
+			"Param can't be reference");
+		static_assert(!sf_check_param_pointer<decltype(std::function(func))>::value, "Param can't be pointer");
+		static_assert(!sf_check_return_reference<decltype(std::function(func))>::value,
+			"Return can't be reference");
+		static_assert(!sf_check_return_pointer<decltype(std::function(func))>::value,
+			"Return can't be pointer");
 
 
-            using _Ret = typename sf_function_type_helper<_Func>::return_type;
-            using _Param = typename sf_function_type_helper<_Func>::param_type;
-
-            auto f = [=](SOCKET s, const sf_rpc_req_context_t& req) {
-                if (req.func_id == id) {
-                    _Param param;
-                    sf_deserialize_binary(req.params, param, 0);
-                    _Ret ret = sf_invoke(func, param);
-                    __send_back(s, req.call_id, ret);
-                }
-            };
-            __func__vec__.push_back(f);
-
-        } else {
-            static_assert(!sf_check_param_reference<decltype(std::function(func))>::value,
-                          "Param can't be reference");
-            static_assert(!sf_check_param_pointer<decltype(std::function(func))>::value, "Param can't be pointer");
-            static_assert(!sf_check_return_reference<decltype(std::function(func))>::value,
-                          "Return can't be reference");
-            static_assert(!sf_check_return_pointer<decltype(std::function(func))>::value,
-                          "Return can't be pointer");
-
-
-            using _Ret = typename sf_function_type_helper<decltype(std::function(func))>::return_type;
-            using _Param = typename sf_function_type_helper<decltype(std::function(func))>::param_type;
-
-            auto f = [=](SOCKET s, const sf_rpc_req_context_t& req ) {
-                if (req.func_id == id) {
-                    _Param param;
-                    sf_deserialize_binary(req.params, param, 0);
-                    if constexpr (std::is_same<_Ret, void>::value) {
-                        sf_invoke(func, param);
-                        __send_back(s, req.call_id, '\0');
-                    } else {
-                        _Ret ret = sf_invoke(func, param);
-                        __send_back(s, req.call_id, ret);
-                    }
-                }
-            };
-            __func__vec__.push_back(f);
-        }
-
-    }
+		using _Ret = typename sf_function_type_helper<decltype(func)>::return_type;
+		using _Param = typename sf_function_type_helper<decltype(func)>::param_type;
+		// auto 让 constexpr-if 生效
+		auto f = [=](SOCKET s, const auto& req) {
+			if (req.func_id == id) {
+				_Param param;
+				from_json(req.params, param);
+				if constexpr (std::is_same<_Ret, void>::value) {
+					sf_invoke(func, param);
+					__send_back(s, req.call_id, '\0');
+				}
+				else {
+					_Ret ret = sf_invoke(func, param);
+					__send_back(s, req.call_id, ret);
+				}
+			}
+		};
+		__func__vec__.push_back(f);
+	}
 
 
     inline std::shared_ptr<sf_rpc_server> sf_rpc_server::make_server() {

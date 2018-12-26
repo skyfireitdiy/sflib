@@ -10,10 +10,10 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
-#pragma once
+
 
 #include "sf_tcp_nat_traversal_server.h"
 
@@ -67,20 +67,20 @@ namespace skyfire {
         // 判断目的是否存在，如果不存在，通知来源
         if (clients__.count(static_cast<const int &>(context.dest_id)) == 0) {
             context.error_code = sf_err_not_exist;
-            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, to_byte_array(skyfire:: to_json(context)));
             return;
         }
         // 获取来源的外网IP和端口，填充到连接上下文
         if (!get_peer_addr(static_cast<int>(context.src_id), context.src_addr)) {
             context.error_code = sf_err_disconnect;
-            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, to_byte_array(skyfire::to_json(context)));
             return;
         }
         sf_debug("notify target addr");
         // 将来源的外网ip端口通知给目的
-        if (!server__->send(static_cast<int>(context.dest_id), type_nat_traversal_new_connect_required, sf_serialize_binary(context))) {
+        if (!server__->send(static_cast<int>(context.dest_id), type_nat_traversal_new_connect_required, to_byte_array(skyfire::to_json(context)))) {
             context.error_code = sf_err_remote_err;
-            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, to_byte_array(skyfire::to_json(context)));
             return;
         }
     }
@@ -97,14 +97,14 @@ namespace skyfire {
             case type_nat_traversal_require_connect_peer: {
                 sf_debug("recv connection request");
                 sf_tcp_nat_traversal_context_t__ context;
-                sf_deserialize_binary(data, context, 0);
+				from_json(sf_json::from_string(to_string(data)), context);
                 on_client_require_connect_to_peer_client__(context);
             }
                 break;
             case type_nat_traversal_b_reply_addr: {
                 sf_debug("recv reply from B");
                 sf_tcp_nat_traversal_context_t__ context;
-                sf_deserialize_binary(data, context, 0);
+				from_json(sf_json::from_string(to_string(data)), context);
                 on_nat_traversal_b_reply_addr(context, sock);
             }
                 break;
@@ -121,32 +121,32 @@ namespace skyfire {
         // 判断目的是否存在，不存在，通知来源
         if (clients__.count(static_cast<const int &>(context.dest_id)) == 0) {
             context.error_code = sf_err_not_exist;
-            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, to_byte_array(skyfire:: to_json(context)));
             return;
         }
         // 判断来源是否存在，如果不存在，通知回复者
         if (clients__.count(static_cast<const int &>(context.src_id)) == 0) {
             context.error_code = sf_err_not_exist;
-            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, to_byte_array(skyfire::to_json(context)));
             return;
         }
 
         if (!get_peer_addr(sock, context.dest_addr)) {
             context.error_code = sf_err_disconnect;
-            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, to_byte_array(skyfire::to_json(context)));
             return;
         }
         sf_debug("reply addr of B to A");
-        if (!server__->send(static_cast<int>(context.src_id), type_nat_traversal_server_reply_b_addr, sf_serialize_binary(context))) {
+        if (!server__->send(static_cast<int>(context.src_id), type_nat_traversal_server_reply_b_addr, to_byte_array(skyfire::to_json(context)))) {
             context.error_code = sf_err_remote_err;
-            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, sf_serialize_binary(context));
+            server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, to_byte_array(skyfire::to_json(context)));
             return;
         }
     }
 
     inline void sf_tcp_nat_traversal_server::on_update_client_list__(SOCKET sock) {
 	    const std::unordered_set<unsigned long long> tmp_data{clients__.begin(), clients__.end()};
-	    const auto data = sf_serialize_binary(tmp_data);
+	    const auto data = to_byte_array(skyfire::to_json(tmp_data));
         if (sock == -1) {
             for (auto &p:clients__) {
                 server__->send(p, type_nat_traversal_list, data);
@@ -159,7 +159,7 @@ namespace skyfire {
     inline void sf_tcp_nat_traversal_server::on_client_reg__(SOCKET sock) {
         clients__.insert(sock);
         const auto id = static_cast<const unsigned long long int>(sock);
-        server__->send(sock, type_nat_traversal_set_id, sf_serialize_binary(id));
+        server__->send(sock, type_nat_traversal_set_id, to_byte_array(skyfire::to_json(id)));
         on_update_client_list__();
     }
 

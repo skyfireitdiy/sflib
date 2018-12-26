@@ -14,15 +14,16 @@
 /*
  * sf_rpc_client rpc客户端
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "OCSimplifyInspection"
-#pragma once
+
 
 #include "sf_rpc_client.h"
 #include "sf_rpc_utils.h"
 #include "sf_assigned_type.hpp"
+#include "sf_json.hpp"
 
 namespace skyfire {
 	inline int sf_rpc_client::__make_call_id() {
@@ -46,15 +47,15 @@ namespace skyfire {
         __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
             __Ret ret;
             sf_rpc_res_context_t res;
-            sf_deserialize_binary(data, res, 0);
-            sf_deserialize_binary(res.ret, ret, 0);
+			from_json(sf_json::from_string(to_string(data)), res);
+			from_json(sf_json::from_string(to_string(res.ret)), ret);
             rpc_callback(ret);
         };
         sf_rpc_req_context_t req;
         req.call_id = call_id;
         req.func_id = func_id;
-        req.params = sf_serialize_binary(param);
-        __tcp_client__->send(rpc_req_type, sf_serialize_binary(req));
+        req.params = skyfire::to_json(param);
+        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req)));
         auto p_timer = std::make_shared<sf_timer>();
         sf_bind_signal(p_timer, timeout, [=]() {
             __rpc_data__.erase(call_id);
@@ -77,8 +78,8 @@ namespace skyfire {
         sf_rpc_req_context_t req;
         req.call_id = call_id;
         req.func_id = func_id;
-        req.params =sf_serialize_binary(param);
-        __tcp_client__->send(rpc_req_type, sf_serialize_binary(req));
+        req.params =to_json(param);
+        __tcp_client__->send(rpc_req_type, to_json(req));
         auto p_timer = std::make_shared<sf_timer>();
         sf_bind_signal(p_timer, timeout, [=]() {
             __rpc_data__.erase(call_id);
@@ -97,8 +98,8 @@ namespace skyfire {
         sf_rpc_req_context_t req;
         req.call_id = call_id;
         req.func_id = func_id;
-        req.params =sf_serialize_binary(byte_array());
-        __tcp_client__->send(rpc_req_type, sf_serialize_binary(req));
+        req.params =to_json(byte_array());
+        __tcp_client__->send(rpc_req_type, to_json(req));
     }
 
     template<typename _Ret, typename... __SF_RPC_ARGS__>
@@ -118,8 +119,8 @@ namespace skyfire {
         sf_rpc_req_context_t req;
         req.call_id = call_id;
         req.func_id = func_id;
-        req.params =sf_serialize_binary(param);
-        __tcp_client__->send(rpc_req_type, sf_serialize_binary(req));
+        req.params = skyfire::to_json(param);
+        __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req)));
         std::cout<<"1"<<std::endl;
         if (!__rpc_data__[call_id]->back_finished) {
             std::unique_lock<std::mutex> lck(__rpc_data__[call_id]->back_mu);
@@ -144,8 +145,8 @@ namespace skyfire {
             sf_assigned_type<__Ret> ret;
             __Ret tmp_ret{};
             sf_rpc_res_context_t res;
-            sf_deserialize_binary(__rpc_data__[call_id]->data, res, 0);
-            sf_deserialize_binary(res.ret, tmp_ret, 0);
+			from_json(sf_json::from_string(to_string(__rpc_data__[call_id]->data)), res);
+			from_json(sf_json::from_string(to_string(res.ret)), tmp_ret);
             ret = tmp_ret;
             __rpc_data__.erase(call_id);
             return ret;
@@ -196,7 +197,7 @@ namespace skyfire {
             return;
         }
         sf_rpc_res_context_t res;
-        sf_deserialize_binary(data_t, res, 0);
+		from_json(sf_json::from_string(to_string(data_t)),res);
         const auto call_id = res.call_id;
         if (__rpc_data__[call_id]->is_async) {
             __rpc_data__[call_id]->async_callback(data_t);

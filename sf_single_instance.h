@@ -14,10 +14,10 @@
 /*
  * sf_single_instance单例支持
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedStructInspection"
-#pragma once
+
 #include "sf_stdc++.h"
 #include "sf_empty_class.h"
 

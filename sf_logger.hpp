@@ -1,5 +1,3 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
 
 /**
 * @version 1.0.0
@@ -16,10 +14,11 @@
 /*
  * sf_logger日志打印
  */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+#pragma ide diagnostic ignored "cert-err58-cpp"
+
 
 #include "sf_logger.h"
 #include "sf_thread_pool.hpp"
@@ -289,5 +288,4 @@ inline std::string sf_logger::format(std::string format_str, const sf_logger_inf
 
 }
 
-#pragma clang diagnostic pop
 #pragma clang diagnostic pop

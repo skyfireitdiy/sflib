@@ -10,16 +10,16 @@
 * 版本号1.0.0
 * 发布日期：2018-10-22
 */
-
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
+
 
 #include "sf_stdc++.h"
 #include "sf_tcp_utils.h"
 #include "sf_type.h"
 #include "sf_http_request_line.h"
-#include "sf_serialize_binary.hpp"
+#include "sf_json.hpp"
 
 
 
@@ -46,7 +46,7 @@ namespace skyfire
         byte_array buffer;       // buffer
     };
 
-    SF_MAKE_SERIALIZABLE_BINARY(sf_request_context_t,new_req,buffer)
+    SF_JSONIFY(sf_request_context_t,new_req,buffer)
 
 
     /**
@@ -60,7 +60,7 @@ namespace skyfire
         byte_array data_buffer;     // 解析出来的buffer
     };
 
-    SF_MAKE_SERIALIZABLE_BINARY(sf_websocket_context_t, url, sock, buffer, data_buffer)
+    SF_JSONIFY(sf_websocket_context_t, url, sock, buffer, data_buffer)
 
     /**
      *  @brief 分块请求上下文

@@ -1,13 +1,9 @@
+
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
-
 #include "sf_nocopy.h"
-#include <string>
-#include <any>
-#include <memory>
-#include <unordered_map>
-#include <functional>
+#include "sf_stdc++.h"
 
 namespace skyfire
 {

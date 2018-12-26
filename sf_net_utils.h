@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "sf_serialize_binary.hpp"
+#include "sf_json.hpp"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -31,7 +31,7 @@ namespace skyfire
         std::string ip;             // ip
         unsigned short port;      // 端口
     };
-    SF_MAKE_SERIALIZABLE_BINARY(sf_addr_info_t,ip,port)
+    SF_JSONIFY(sf_addr_info_t,ip,port)
 
     /**
      * 获取远端地址

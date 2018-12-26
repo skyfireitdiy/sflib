@@ -11,9 +11,9 @@
 * 发布日期：2018-10-22
 */
 
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma once
 
 #include "sf_stdc++.h"
 #include "sf_single_instance.h"

@@ -16,7 +16,7 @@
 #include <string>
 
 #include "sf_type.hpp"
-#include "sf_serialize_binary.hpp"
+#include "sf_json.hpp"
 
 namespace skyfire
 {
@@ -36,6 +36,6 @@ namespace skyfire
         byte_array data;
     };
 
-    SF_MAKE_SERIALIZABLE_BINARY(sf_msg_bus_t, type, data)
+    SF_JSONIFY(sf_msg_bus_t, type, data)
 
 }
