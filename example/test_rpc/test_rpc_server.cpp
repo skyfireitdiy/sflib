@@ -35,6 +35,11 @@ void output(const char *str)
     std::cout<<str<<std::endl;
 }
 
+void print_str(byte_array data)
+{
+	std::cout << skyfire::to_string(data) << std::endl;
+}
+
 int main()
 {
     // 1.创建server对象
@@ -42,6 +47,7 @@ int main()
     // 2.注册rpc函数
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);
+	server->reg_rpc_func("print_str", print_str);
     // 3.监听
     std::cout<<server->listen("127.0.0.1",10001)<<std::endl;
     sf_eventloop event_loop;

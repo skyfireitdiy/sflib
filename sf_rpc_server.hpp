@@ -21,18 +21,17 @@
 #include "sf_rpc_utils.h"
 
 namespace skyfire {
-
-    
     template<typename _Type>
-    void sf_rpc_server::__send_back(SOCKET sock, int id_code, _Type data) {
+    void sf_rpc_server::__send_back(const SOCKET sock, const int id_code, _Type data) {
         sf_rpc_res_context_t res;
         res.call_id = id_code;
         res.ret = skyfire::to_json(data);
+		sf_debug("call ret", skyfire::to_json(res));
         __tcp_server__->send(sock, rpc_res_type, to_byte_array(skyfire::to_json(res).to_string()));
     }
 
 
-    inline void sf_rpc_server::__on_data_coming(SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
+    inline void sf_rpc_server::__on_data_coming(const SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
         if(header.type != rpc_req_type)
         {
             return;
@@ -40,6 +39,7 @@ namespace skyfire {
         std::string id;
         byte_array param;
         sf_rpc_req_context_t req;
+		sf_debug("call req", to_string(data));
 		from_json(sf_json::from_string(to_string(data)), req);
         for (auto &p : __func__vec__) {
             p(sock, req);

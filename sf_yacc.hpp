@@ -108,21 +108,27 @@ namespace skyfire
                 {
                     std::set<sf_yacc_state_node_t> new_state;
                     auto conv = std::pair<sf_yacc_state_node_t, std::string>(q, p);
-                    auto old_iter = old_machine.begin() - 1;
-                    while ((old_iter = std::find_if(old_iter + 1, old_machine.end(), [&](auto item)
+                    const auto conv_find = [&](auto item)
+					{
+						return item.first == conv;
+					};
+					auto old_iter = old_machine.end();
+					if ((old_iter = std::find_if(old_machine.begin(), old_machine.end(), conv_find)) != old_machine.end())
+					{
+						new_state.insert(old_iter->second);
+						while ((old_iter = std::find_if(old_iter + 1, old_machine.end(), conv_find)) != old_machine.end())
+						{
+							new_state.insert(old_iter->second);
+						}
+					}
+                    if (!new_state.empty())
                     {
-                        return item.first == conv;
-                    })) != old_machine.end())
-                    {
-                        new_state.insert(old_iter->second);
+	                    if (std::find(state.begin(), state.end(), new_state) == state.end())
+	                    {
+		                    state.push_back(new_state);
+	                    }
+	                    new_machine.push_back({{state[i], p}, new_state});
                     }
-                    if (new_state.empty())
-                        continue;
-                    if (std::find(state.begin(), state.end(), new_state) == state.end())
-                    {
-                        state.push_back(new_state);
-                    }
-                    new_machine.push_back({{state[i], p}, new_state});
                 }
             }
         }

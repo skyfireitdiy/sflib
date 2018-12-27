@@ -659,7 +659,6 @@ namespace skyfire
 
     inline size_t sf_json::size() const
     {
-        sf_debug("is array", value__->type == sf_json_type ::array);
         return value__->type == sf_json_type ::array?value__->array_value.size():0;
     }
 

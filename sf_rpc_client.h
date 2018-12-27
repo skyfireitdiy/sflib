@@ -101,10 +101,10 @@ namespace skyfire {
           * @param func_id 函数id
           * @param rpc_callback 返回后的回调函数
           */
-        template<typename T>
-        void async_call(const std::string &func_id,
-                        std::function<void()> rpc_callback
-        );
+        //template<typename T>
+        //void async_call(const std::string &func_id,
+        //                std::function<void()> rpc_callback
+        //);
 
         /**
           * @brief async_call 异步调用（无返回）

@@ -39,6 +39,7 @@ int main()
     }
     // 3.同步调用，无返回值
     client->call<>("print"s);
+	client->call<>("print_str", to_byte_array("hello world"s));
     std::cout<<"call finished"<<std::endl;
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
