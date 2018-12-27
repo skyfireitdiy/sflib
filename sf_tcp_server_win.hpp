@@ -78,19 +78,18 @@ namespace skyfire {
 			// 接收
 			p_io_data->data_trans_count = bytes_transferred;
 			p_io_data->buffer.resize(bytes_transferred);
-
+			auto tmp_data = p_io_data->buffer;
+			after_raw_recv_filter__(p_handle_data->socket, tmp_data);
 			if (raw__) {
 				sf_debug("recv raw", p_io_data->buffer.size());
-				auto tmp_data = p_io_data->buffer;
-				after_raw_recv_filter__(p_handle_data->socket, tmp_data);
 				raw_data_coming(p_handle_data->socket, tmp_data);
 			}
 			else {
 				sf_pkg_header_t header{};
 				p_handle_data->sock_data_buffer.insert(
 					p_handle_data->sock_data_buffer.end(),
-					p_io_data->buffer.begin(),
-					p_io_data->buffer.end());
+					tmp_data.begin(),
+					tmp_data.end());
 				size_t read_pos = 0;
 				// 循环解析
 				while (p_handle_data->sock_data_buffer.size() - read_pos >= sizeof(sf_pkg_header_t)) {
@@ -425,8 +424,8 @@ namespace skyfire {
         make_header_checksum(header);
         auto tmp_data = data;
         before_send_filter__(sock,header,tmp_data);
-        const auto send_data = make_pkg(header) + tmp_data;
-
+        auto send_data = make_pkg(header) + tmp_data;
+		before_raw_send_filter__(sock, send_data);
 		auto p_io_data = make_req__();
 		ZeroMemory(&(p_io_data->overlapped), sizeof(p_io_data->overlapped));
 		p_io_data->buffer = send_data;

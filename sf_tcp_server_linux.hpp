@@ -68,6 +68,8 @@ namespace skyfire {
         before_send_filter__(sock, header, tmp_data);
         auto send_data = make_pkg(header) + tmp_data;
 
+		before_raw_send_filter__(sock, send_data);
+
         std::lock_guard<std::mutex> lck(*sock_context__[sock].mu_out_buffer);
         sock_context__[sock].data_buffer_out.push_back(send_data);
         sf_debug("index", index, "sock", sock, "push data");
@@ -303,11 +305,11 @@ namespace skyfire {
                     break;
                 }
             }
-
             recv_buf.resize(static_cast<unsigned long>(count_read));
+			after_raw_recv_filter__(ev.data.fd, recv_buf);
             if (raw__) {
                 sf_debug("raw data", recv_buf.size());
-                after_raw_recv_filter__(ev.data.fd, recv_buf);
+                
                 raw_data_coming(ev.data.fd, recv_buf);
                 sf_debug("after resolve");
             } else {
