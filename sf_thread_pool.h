@@ -42,14 +42,9 @@ namespace skyfire
          * @param func 函数
          * @param args 参数
          */
-        template <typename Func,typename ... T>
-		void add_task(Func func, T&&...args);
+		template<typename Func, typename... Args>
+		auto add_task(Func func, Args&&...args);
 
-        /**
-         * @brief add_task 添加任务
-         * @param func 函数
-         */
-        void add_task(std::function<void()> func);
 
         /**
          * @brief pause 暂停

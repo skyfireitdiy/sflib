@@ -24,7 +24,7 @@
 namespace skyfire
 {
 
-    inline sf_thread_pool::sf_thread_pool(size_t thread_count) {
+    inline sf_thread_pool::sf_thread_pool(const size_t thread_count) {
         add_thread__(thread_count);
     }
 
@@ -108,7 +108,7 @@ namespace skyfire
         return thread_count__;
     }
 
-    inline void sf_thread_pool::add_thread(size_t thread_num) {
+    inline void sf_thread_pool::add_thread(const size_t thread_num) {
         add_thread__(thread_num);
     }
 
@@ -117,22 +117,26 @@ namespace skyfire
         thread_cv__.notify_all();
     }
 
-    template<typename Func, typename... T>
-    void sf_thread_pool::add_task(Func func, T &&... args) {
-        std::lock_guard<std::mutex> lck(mu_task_deque__);
-        task_deque__.push_back(std::bind(func, std::forward<T>(args)...));
-        thread_cv__.notify_all();
+    template<typename Func, typename... Args>
+    auto sf_thread_pool::add_task(Func func, Args &&... args) {
+		using _Ret = std::invoke_result_t<Func,Args...>;
+		auto task = std::make_shared<std::packaged_task<_Ret()>>(std::bind(func,std::forward<Args>(args)...));
+		auto fu = task->get_future();
+		{
+			std::lock_guard<std::mutex> lck(mu_task_deque__);
+			task_deque__.push_back([=]()
+			{
+				(*task)();
+			});
+		}
+		thread_cv__.notify_all();
+		return fu;
     }
 
     inline sf_thread_pool::~sf_thread_pool() {
         clear_thread();
     }
 
-    inline void sf_thread_pool::add_task(std::function<void()> func) {
-        std::lock_guard<std::mutex> lck(mu_task_deque__);
-        task_deque__.push_back(func);
-        thread_cv__.notify_all();
-    }
 
     inline void sf_thread_pool::pause() {
         is_pause__ = true;
