@@ -34,7 +34,7 @@
  */
 #define SF_WAIT(obj, name)                                                        \
 {                                                                                \
-    auto p_waiter = sf_make_waiter((obj)->__##name##_signal_func_vec__);         \
+    auto p_waiter = skyfire::sf_make_waiter((obj)->__##name##_signal_func_vec__);\
     auto bind_id = sf_bind_signal(obj,name,p_waiter->__make_quit_func(), true);  \
     p_waiter->wait();                                                            \
     sf_unbind_signal(obj,name,bind_id);                                          \
