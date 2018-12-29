@@ -35,7 +35,7 @@ namespace skyfire {
 
     inline sf_tcp_nat_traversal_connection::sf_tcp_nat_traversal_connection(std::shared_ptr <sf_tcp_client> client,
                                                                      std::shared_ptr <sf_tcp_server> server, int sock,
-                                                                     int connect_id,
+                                                                     std::string connect_id,
                                                                      sf_tcp_nat_traversal_connection_type type) :
             client__(std::move(client)),
             server__(std::move(server)),

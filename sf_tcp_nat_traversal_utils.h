@@ -30,7 +30,7 @@ namespace skyfire {
      */
     struct sf_tcp_nat_traversal_context_t__ final
     {
-        int connect_id{};
+		std::string connect_id{};
         unsigned long long src_id{};
         sf_addr_info_t src_addr;
         unsigned long long dest_id{};
@@ -77,14 +77,14 @@ namespace skyfire {
         std::shared_ptr<sf_tcp_client> client__;
         std::shared_ptr<sf_tcp_server> server__;
         SOCKET sock__;
-        int connect_id__;
+        std::string connect_id__;
         sf_tcp_nat_traversal_connection_type type__;
 
 
         sf_tcp_nat_traversal_connection(std::shared_ptr<sf_tcp_client> client,
                                         std::shared_ptr<sf_tcp_server> server,
                                         int sock,
-                                        int connect_id,
+                                        std::string connect_id,
                                         sf_tcp_nat_traversal_connection_type type);
 
     public:

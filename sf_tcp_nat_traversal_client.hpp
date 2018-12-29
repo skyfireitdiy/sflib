@@ -133,10 +133,11 @@ namespace skyfire {
 
         // 向server发送信息，server获取ip端口（此时已在路由器留下记录）
         sf_debug("reply server");
+		sf_debug("send", "type_nat_traversal_b_reply_addr");
         if (!connect_context_map__[context.connect_id].point_b_client_2->send(
                 type_nat_traversal_b_reply_addr,
                 to_byte_array(skyfire::to_json(
-                        connect_context_map__[context.connect_id].tcp_nat_traversal_context))
+                        connect_context_map__[context.connect_id].tcp_nat_traversal_context).to_string())
                 )) {
             context.error_code = sf_err_disconnect;
             client__->send(type_nat_traversal_error,
@@ -153,13 +154,13 @@ namespace skyfire {
         client__->close();
     }
 
-    inline int sf_tcp_nat_traversal_client::connect_to_peer(unsigned long long peer_id, bool raw) {
+    inline std::string sf_tcp_nat_traversal_client::connect_to_peer(unsigned long long peer_id, bool raw) {
         // 生成一个连接上下文
         sf_p2p_connect_context_t__ tmp_p2p_conn_context;
         // 第0步：发起端主动连接server，context有效字段：connect_id、dest_id、src_id
         tmp_p2p_conn_context.tcp_nat_traversal_context.step = 0;
         // 生成随机连接id
-        tmp_p2p_conn_context.tcp_nat_traversal_context.connect_id = sf_random::get_instance()->get_int(0, INT_MAX);
+		tmp_p2p_conn_context.tcp_nat_traversal_context.connect_id = sf_random::get_instance()->get_uuid_str();
         // 指定对方id
         tmp_p2p_conn_context.tcp_nat_traversal_context.dest_id = peer_id;
         // 指定自身id
@@ -175,28 +176,29 @@ namespace skyfire {
             // 获取到本机要连接外网的ip端口，保存至连接上下文
             if (!get_local_addr(tmp_p2p_conn_context.point_a_client_1->get_raw_socket(), addr)) {
                 sf_error("get local ip port error");
-                return -1;
+                return "";
             }
 
             tmp_p2p_conn_context.point_a_server = sf_tcp_server::make_server();
             // 复用刚才断开的连接1端口号
             if (!tmp_p2p_conn_context.point_a_server->listen(addr.ip, addr.port)) {
                 sf_error("listen local ip port error", addr.ip, addr.port);
-                return -1;
+                return "";
             }
 
 
             sf_debug("start connect");
             // 发起连接请求
+			sf_debug("send", "type_nat_traversal_require_connect_peer");
             if (tmp_p2p_conn_context.point_a_client_1->send(type_nat_traversal_require_connect_peer,
                                                             to_byte_array(skyfire::to_json(
-                                                                    tmp_p2p_conn_context.tcp_nat_traversal_context)))) {
+                                                                    tmp_p2p_conn_context.tcp_nat_traversal_context).to_string()))) {
                 // 保存连接上下文
                 connect_context_map__[tmp_p2p_conn_context.tcp_nat_traversal_context.connect_id] = tmp_p2p_conn_context;
                 return tmp_p2p_conn_context.tcp_nat_traversal_context.connect_id;
             }
         }
-        return -1;
+        return "";
     }
 
     inline std::unordered_set<unsigned long long int> sf_tcp_nat_traversal_client::get_clients() const
@@ -208,6 +210,7 @@ namespace skyfire {
         server_addr__.ip = ip;
         server_addr__.port = port;
         if (client__->connect_to_server(ip, port)) {
+			sf_debug("send", "type_nat_traversal_reg");
             client__->send(type_nat_traversal_reg, byte_array());
             return true;
         }
@@ -234,20 +237,22 @@ namespace skyfire {
         sf_debug(header.type);
         switch (header.type) {
             case type_nat_traversal_list:
+				sf_debug("recv", "type_nat_traversal_list", to_string(data));
                 from_json(sf_json::from_string(to_string(data)),client_list__);
                 break;
             case type_nat_traversal_set_id:
+				sf_debug("recv", "type_nat_traversal_set_id", to_string(data));
                 from_json(sf_json::from_string(to_string(data)),self_id__);
                 break;
             case type_nat_traversal_new_connect_required: {
-                sf_debug("recv connect request");
+				sf_debug("recv", "type_nat_traversal_new_connect_required", to_string(data));
                 sf_tcp_nat_traversal_context_t__ context;
                 from_json(sf_json::from_string(to_string(data)),context);
                 on_new_connect_required__(context);
             }
                 break;
             case type_nat_traversal_server_reply_b_addr: {
-                sf_debug("recv addr of B");
+				sf_debug("recv", "type_nat_traversal_server_reply_b_addr", to_string(data));
                 sf_tcp_nat_traversal_context_t__ context;
                 from_json(sf_json::from_string(to_string(data)),context);
                 on_server_reply_b_addr(context);
@@ -267,6 +272,7 @@ namespace skyfire {
         context.step = 5;
         if (connect_context_map__.count(context.connect_id) == 0) {
             context.error_code = sf_err_not_exist;
+			sf_debug("send", "type_nat_traversal_error", skyfire::to_json(context).to_string());
             client__->send(type_nat_traversal_error, to_byte_array(skyfire::to_json(context).to_string()));
             return;
         }
@@ -287,6 +293,7 @@ namespace skyfire {
             connect_context_map__.erase(context.connect_id);
         } else {
             context.error_code = sf_err_disconnect;
+			sf_debug("send", "type_nat_traversal_error", skyfire::to_json(context).to_string());
             client__->send(type_nat_traversal_error, to_byte_array(skyfire::to_json(context).to_string()));
             return;
         }

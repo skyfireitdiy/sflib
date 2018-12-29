@@ -43,13 +43,13 @@ namespace skyfire {
     class sf_tcp_nat_traversal_client : public sf_nocopy<sf_object> {
 
         // 新连接，返回建立连接成功的tcpserver和已经连接上的socket，可通过这两个与被连接方通信
-    SF_REG_SIGNAL(new_nat_connection, std::shared_ptr<sf_tcp_nat_traversal_connection>, int)
+    SF_REG_SIGNAL(new_nat_connection, std::shared_ptr<sf_tcp_nat_traversal_connection>, std::string)
 
     private:
         std::shared_ptr<sf_tcp_client> client__{sf_tcp_client::make_client()};
         std::unordered_set<unsigned long long> client_list__;
         unsigned long long self_id__;
-        std::unordered_map<int, sf_p2p_connect_context_t__> connect_context_map__;
+        std::unordered_map<std::string, sf_p2p_connect_context_t__> connect_context_map__;
         sf_addr_info_t server_addr__;
 
         void on_new_connect_required__(sf_tcp_nat_traversal_context_t__ &context);
@@ -97,9 +97,9 @@ namespace skyfire {
          * 来源，连接远程peer端
          * @param peer_id 远端id
          * @param raw 是否为原始数据格式
-         * @return -1表示失败，其他表示此次连接的id
+         * @return 空表示失败，其他表示此次连接的id
          */
-        int connect_to_peer(unsigned long long peer_id, bool raw);
+        std::string connect_to_peer(unsigned long long peer_id, bool raw);
 
         /**
          * 关闭
