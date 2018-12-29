@@ -11,7 +11,6 @@
 * 发布日期：2018-10-22
 */
 
-#include <iostream>
 #include "sf_msg_bus_client.hpp"
 
 using namespace skyfire;

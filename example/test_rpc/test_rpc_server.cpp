@@ -12,7 +12,6 @@
 */
 #define SF_DEBUG
 #include "sf_rpc_server.hpp"
-#include <iostream>
 
 using namespace skyfire;
 

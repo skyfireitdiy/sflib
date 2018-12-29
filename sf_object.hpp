@@ -19,10 +19,7 @@
 #pragma once
 
 #include "sf_object.h"
-#include "sf_json.hpp"
-#include "sf_object_meta_run.hpp"
 #include "sf_eventloop.hpp"
-#include "sf_object_global_meta_info.hpp"
 #include "sf_random.hpp"
 
 namespace skyfire
@@ -90,19 +87,4 @@ namespace skyfire
         }), vec.end());
     }
 
-    inline sf_object::__mem_value_type_t__ sf_object::__get_mem_value_type(const std::string &key){
-        if(mem_value_type__.count(key))
-            return mem_value_type__[key];
-        return sf_object::__mem_value_type_t__ ::none;
-    }
-
-    inline sf_json sf_object::to_json() const {
-        sf_json js;
-        js.convert_to_object();
-        for(auto &p:to_json_callback__)
-        {
-            js.join(p.second());
-        }
-        return js;
-    }
 }

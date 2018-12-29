@@ -12,7 +12,6 @@
 */
 
 #define SF_DEBUG
-#include "sf_http_static_router.hpp"
 #include "sf_http_server.hpp"
 
 using namespace std::literals;

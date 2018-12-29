@@ -11,7 +11,6 @@
 * 发布日期：2018-10-22
 */
 
-#include <iostream>
 // 1.SF_LOGGER_STANDALONE宏表示单独使用sf_logger，不必依赖其他sflib库
 #define SF_LOGGER_STANDALONE
 // 2.SF_DEBUG表示启用sf_debug宏

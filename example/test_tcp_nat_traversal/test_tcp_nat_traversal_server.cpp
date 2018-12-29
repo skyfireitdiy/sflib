@@ -15,8 +15,6 @@
 
 #include "sf_tcp_nat_traversal_server.hpp"
 
-#include <iostream>
-
 using namespace skyfire;
 
 int main(){

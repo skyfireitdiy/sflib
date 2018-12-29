@@ -16,6 +16,7 @@
 #include "sf_http_base_server.hpp"
 #include "sf_http_router.hpp"
 #include "sf_websocket_router.hpp"
+#include "sf_http_static_router.hpp"
 #include "sf_router_shared_ptr_compare.hpp"
 #include "sf_stdc++.h"
 

@@ -1,5 +1,4 @@
 #include "sf_json.hpp"
-#include <sf_stdc++.h>
 
 using namespace skyfire;
 

@@ -13,8 +13,6 @@
 
 #define SF_DEBUG
 #include "sf_tcp_nat_traversal_client.hpp"
-#include <iostream>
-#include <sf_timer.hpp>
 
 using namespace skyfire;
 

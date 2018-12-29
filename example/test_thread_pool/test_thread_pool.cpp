@@ -12,8 +12,6 @@
 */
 
 #include "sf_thread_pool.hpp"
-#include <iostream>
-
 using namespace skyfire;
 
 

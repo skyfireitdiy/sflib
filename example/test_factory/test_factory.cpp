@@ -1,6 +1,5 @@
 #include "sf_object_factory.hpp"
-#include <iostream>
-
+#include "sf_stdc++.h"
 using namespace skyfire;
 
 class A{

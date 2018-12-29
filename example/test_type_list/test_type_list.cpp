@@ -12,10 +12,6 @@
 */
 
 #include "sf_type_list.h"
-#include <iostream>
-#include <typeinfo>
-#include <string>
-
 using namespace skyfire;
 
 template <typename  T>

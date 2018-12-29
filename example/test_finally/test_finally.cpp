@@ -12,7 +12,6 @@
 */
 
 #include "sf_finally.hpp"
-#include <iostream>
 
 using namespace skyfire;
 

@@ -12,7 +12,6 @@
 */
 
 #include "sf_object.hpp"
-#include <iostream>
 
 using namespace skyfire;
 
