@@ -124,7 +124,7 @@ int sf_logger::make_random_logger_id__()
         log_info.file = file;
         log_info.line = line;
         log_info.thread_id = std::this_thread::get_id();
-        log_info.time = make_time_str__();
+        log_info.time = make_time_str();
         log_info.func = func;
         std::ostringstream oss;
         logout__(oss, log_info, dt);
@@ -192,25 +192,6 @@ sf_logger::sf_logger()
         cond__.notify_one();
     }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnusedValue"
-inline
-std::string sf_logger::make_time_str__()
-{
-        auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        tm tm_d;
-        auto ptm = &tm_d;
-#ifdef _MSC_VER
-        localtime_s(ptm, &tt);
-#else
-        ptm = localtime(&tt);
-#endif
-        std::ostringstream os;
-        os << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
-        return os.str();
-    }
-#pragma clang diagnostic pop
-
 
     template<typename... T>
     inline void sf_logger::logout(const SF_LOG_LEVEL level, const std::string &file, const int line, const std::string &func,
@@ -220,7 +201,7 @@ std::string sf_logger::make_time_str__()
         log_info.file = file;
         log_info.line = line;
         log_info.thread_id = std::this_thread::get_id();
-        log_info.time = make_time_str__();
+        log_info.time = make_time_str();
         log_info.func = func;
         std::ostringstream oss;
         logout__(oss, log_info, dt...);

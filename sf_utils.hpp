@@ -222,5 +222,26 @@ namespace skyfire
             start_pos += to.length();
         }
     }
+
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnusedValue"
+	inline
+		std::string make_time_str()
+	{
+		auto tt = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		tm tm_d;
+		auto ptm = &tm_d;
+#ifdef _MSC_VER
+		localtime_s(ptm, &tt);
+#else
+		ptm = localtime(&tt);
+#endif
+		std::ostringstream os;
+		os << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
+		return os.str();
+	}
+#pragma clang diagnostic pop
+
 }
 #pragma clang diagnostic pop

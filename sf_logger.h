@@ -29,6 +29,7 @@
 
 #include "sf_random.hpp"
 #include "sf_single_instance.hpp"
+#include "sf_utils.hpp"
 
 namespace skyfire
 {
@@ -156,8 +157,6 @@ namespace skyfire
 #endif
         template<typename T>
         void logout__(std::ostringstream &oss, sf_logger_info_t__ &log_info, const T &tmp);
-
-        static std::string make_time_str__();
     };
 
 

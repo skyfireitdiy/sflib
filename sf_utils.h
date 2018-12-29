@@ -160,4 +160,10 @@ namespace skyfire
      * @param to 替换后的新字符串
      */
     void sf_string_replace(std::string& str,const std::string &from, const std::string &to);
+
+	/**
+	 * 生成时间字符串
+	 */
+	std::string make_time_str();
+
 }
