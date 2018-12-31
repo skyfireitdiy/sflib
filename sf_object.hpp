@@ -35,7 +35,7 @@ namespace skyfire
         {
             bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         }
-        vec.push_back(std::make_tuple(func, mul_thread, bind_id));
+        vec.push_back(std::make_tuple(std::function(func), mul_thread, bind_id));
         return bind_id;
     }
 

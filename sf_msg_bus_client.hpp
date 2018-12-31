@@ -33,12 +33,12 @@ namespace skyfire
         sf_bind_signal(
                 p_client__,
                 data_coming,
-                std::bind(
+                std::function<void(const sf_pkg_header_t&,const byte_array&)>(std::bind(
                         &sf_msg_bus_client::on_reg_data__,
                         this,
                         std::placeholders::_1,
                         std::placeholders::_2
-                ),
+                )),
                 true
         );
     }

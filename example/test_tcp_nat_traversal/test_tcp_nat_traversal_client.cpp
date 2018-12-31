@@ -59,14 +59,12 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
 
 
 int main() {
-
-    g_logger->add_level_stream(SF_DEBUG_LEVEL,&std::cout);
     // 1.创建nat穿透客户端
     auto pclient = sf_tcp_nat_traversal_client::make_client();
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 
     // 2.设新连接到来响应
-    sf_bind_signal(pclient, new_nat_connection, [&](std::shared_ptr<sf_tcp_nat_traversal_connection> conn_t, int){
+    sf_bind_signal(pclient, new_nat_connection, std::function<void(std::shared_ptr<sf_tcp_nat_traversal_connection>, std::string)>([&](std::shared_ptr<sf_tcp_nat_traversal_connection> conn_t, std::string){
         std::cout<<"new connection!"<<std::endl;
         conn = conn_t;
         sf_bind_signal(conn, data_coming, [](const sf_pkg_header_t &header, const byte_array &data){
@@ -74,7 +72,7 @@ int main() {
             from_json(sf_json::from_string(to_string(data)),msg);
             std::cout<<"Recv:"<<msg<<std::endl;
         }, true);
-    },true);
+    }),true);
 
     while(true){
         std::string cmd;
