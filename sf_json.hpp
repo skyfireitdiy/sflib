@@ -552,8 +552,12 @@ namespace skyfire
                 break;
             case sf_json_type::number:
             {
-                char buffer[sf_default_buffer_size];
-                sf_safe_sprintf(buffer,sizeof(buffer),"%Lg",value__->number_value);
+				auto buffer = std::to_string(value__->number_value);
+				assert(buffer.size() > 7);
+				if(std::string(buffer.end() - 7 ,buffer.end()) == ".000000")
+				{
+					buffer = { buffer.begin(), buffer.end() - 7 };
+				}
                 ret+=buffer;
                 break;
             }
