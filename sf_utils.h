@@ -163,7 +163,16 @@ namespace skyfire
 
 	/**
 	 * 生成时间字符串
+	 * @return 时间字符串
 	 */
 	std::string make_time_str();
+
+	/**
+	 * long double 转为字符串
+	 * @param num 数字
+	 * @return 字符串
+	 */
+	std::string sf_long_double_to_string(const long double& num);
+
 
 }

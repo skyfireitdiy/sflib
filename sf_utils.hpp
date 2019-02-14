@@ -27,6 +27,7 @@
 
 #include "sf_type.hpp"
 #include "sf_utils.h"
+#include "sf_msvc_safe.h"
 
 
 namespace skyfire
@@ -206,6 +207,7 @@ namespace skyfire
         fi.seekg(0,std::ios::end);
         auto size = fi.tellg();
         data.resize(static_cast<unsigned long>(size));
+		fi.seekg(0, std::ios::beg);
         fi.read(data.data(),size);
         fi.close();
         return true;
@@ -222,6 +224,26 @@ namespace skyfire
             start_pos += to.length();
         }
     }
+
+	std::string sf_long_double_to_string(const long double& num)
+	{
+		auto buffer = std::to_string(num);
+		if (buffer.length() > 7)
+		{
+			if (std::string(buffer.end() - 7, buffer.end()) == ".000000")
+			{
+				buffer = { buffer.begin(), buffer.end() - 7 };
+			}
+		}
+		return buffer;
+	}
+
+	long double sf_string_to_long_double(const std::string &str)
+	{
+		long double tmp_num;
+		sf_safe_scanf(str.c_str(), "%Lf", &tmp_num);
+		return tmp_num;
+	}
 
 
 #pragma clang diagnostic push

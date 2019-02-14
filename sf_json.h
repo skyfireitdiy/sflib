@@ -320,6 +320,16 @@ namespace skyfire
     template <typename T>
     sf_json to_json(const T& t);
 
+	/**
+	 * 转为json
+	 * @tparam T 类型
+	 * @param pt 对象
+	 * @return json对象
+	 */
+	template <typename T>
+	sf_json to_json(std::shared_ptr<T> pt);
+
+
     /**
      * 从json加载对象
      * @tparam T 对象类型
@@ -329,6 +339,15 @@ namespace skyfire
 
     template <typename T>
     void from_json(const sf_json& js, T& value);
+
+	/**
+	 * 从json加载对象
+	 * @tparam T 对象类型
+	 * @param js json对象
+	 * @param value 对象
+	 */
+	template<typename T>
+	void from_json(const sf_json& js, std::shared_ptr<T> &value);
 
     /**
      * 转换pair为json

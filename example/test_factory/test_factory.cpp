@@ -1,58 +1,47 @@
+#define SF_DEBUG
 #include "sf_object_factory.hpp"
 #include "sf_stdc++.h"
 using namespace skyfire;
 
-class A{
-private:
-    int num;
-public:
-    A(int n) : num(n)
-    {
-	    std::cout<<"A()"<< std::endl;
-    }
-
-    void print() const
-    {
-	    std::cout<<"n is "<< num<< std::endl;
-    }
+struct Student
+{
+	std::string name;
+	int age;
+	bool male;
 };
 
-class B{
-public:
-    B()
-    {
-	    std::cout<<"B()"<< std::endl;
-    }
-    void print() const
-    {
-	    std::cout<<"B object"<< std::endl;
-    }
+struct StudentExt : public Student
+{
+	std::string address;
 };
 
+SF_JSONIFY(Student, name, age, male);
+SF_JSONIFY(StudentExt, name, age, male, address);
+
+void print_student(Student st)
+{
+	std::cout << "name:" << st.name << std::endl;
+	std::cout << "age:" << st.age << std::endl;
+	std::cout << "male:" << st.male << std::endl;
+}
+
+void print_student_ext(StudentExt st)
+{
+	print_student(st);
+	std::cout << "address:" << st.address << std::endl;
+}
 
 
 int main()
 {
-    // 1. 获取工厂对象
-    sf_object_factory factory;
+	sf_object_factory factory;
+	factory.load_config_file(R"(C:\code\sflib\example\test_factory\config.json)");
+	auto student1 = factory.get_object<Student>("student1");
+	auto student2 = factory.get_object<StudentExt>("student2");
+	auto student3 = factory.get_object<StudentExt>("student3");
+	print_student(*student1);
+	print_student_ext(*student2);
+	print_student_ext(*student3);
 
-    // 2. 设置创建前回调
-    factory.set_before_create_callback([](const std::string& type){
-	    std::cout<<"before " + type + " create"<< std::endl;
-    });
-
-    // 3. 设置创建后回调
-    factory.set_after_create_callback([](const std::string& type){
-	    std::cout<<"after " + type + " create"<< std::endl;
-    });
-
-    // 4. 创建对象
-
-    auto a_obj = factory.get_object<A>("A", 20);
-    auto b_obj = factory.get_object<B>("B");
-
-    // 5. 调用函数
-    a_obj->print();
-    b_obj->print();
-
+	getchar();
 }

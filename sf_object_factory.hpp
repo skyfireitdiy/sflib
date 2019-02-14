@@ -4,53 +4,102 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_object_factory.h"
 #include "sf_stdc++.h"
+#include "sf_utils.hpp"
+#include "sf_json.hpp"
+
+#include "sf_logger.hpp"
 
 namespace skyfire
 {
-    template <typename T,typename ... ARGS>
-    void sf_object_factory::reg_object_type(const std::string &type) {
-        factory__[type] = std::function<std::any(ARGS...)>([](ARGS&&...args) -> std::any{
-            return std::make_shared<T>(std::forward<ARGS>(args)...);
-        });
-    }
+	bool sf_object_factory::load_config(const std::string &config_str)
+	{
+		auto config_obj = sf_json::from_string(config_str);
+		if (config_obj.is_null())
+		{
+			return false;
+		}
+		return load_data__(config_obj);
+	}
 
-    template <typename ... ARGS>
-    std::any sf_object_factory::get_object__(const std::string &type, ARGS &&... args) {
-        if(factory__.count(type) != 0)
-        {
-            if(before_create_callback__) {
-                before_create_callback__(type);
-            }
-            auto ret = std::any_cast<std::function<std::any(ARGS...)>>(factory__[type])(std::forward<ARGS>(args)...);
-            if(after_create_callback__)
-            {
-                after_create_callback__(type);
-            }
-            return ret;
-        }
-        return nullptr;
-    }
+	bool sf_object_factory::load_config_file(const std::string &config_file)
+	{
+		byte_array data;
+		if (sf_read_file(config_file, data) == false)
+		{
+			return false;
+		}
+		return load_config(skyfire::to_string(data));
+	}
 
-    inline void sf_object_factory::set_before_create_callback( std::function<void(const std::string &)> before) {
-        before_create_callback__ = std::move(before);
-    }
+	bool sf_object_factory::set_config(const sf_json &config_obj)
+	{
+		return load_data__(config_obj);
+	}
 
-    inline void sf_object_factory::set_after_create_callback( std::function<void(const std::string &)> after) {
-        after_create_callback__ = std::move(after);
-    }
+	bool sf_object_factory::load_data__(const sf_json& config_obj)
+	{
+		object_data__.clear();
+		auto size = config_obj.size();
+		for (int i = 0; i < size; ++i)
+		{
+			sf_object_factory_config_item_t item;
+			auto tmp_obj = config_obj.at(i);
+			item.id = static_cast<std::string>(tmp_obj["id"]);
+			item.data = tmp_obj["data"];
+			item.singleton = tmp_obj["singleton"];
+			if (item.id.empty())
+			{
+				object_data__.clear();
+				return false;
+			}
+			object_data__[item.id] = item;
+		}
+	}
 
-    inline bool sf_object_factory::has(const std::string &key) const
-    {
-        return factory__.count(key) != 0;
-    }
+	sf_json sf_object_factory::get_object_data(const std::string& obj_name)
+	{
+		if (object_data__.count(obj_name) == 0)
+		{
+			return sf_json();
+		}
+		auto obj = object_data__[obj_name].data.clone();
+		if (obj.has("__base__"))
+		{
+			auto base_obj = get_object_data(static_cast<std::string>(obj["__base__"]));
+			obj.remove("__base__");
+			base_obj.join(obj);
+			return base_obj;
+		}
+		else 
+		{
+			return obj;
+		}
+	}
 
-    template<typename T, typename... ARGS>
-    std::shared_ptr<T> sf_object_factory::get_object(const std::string &type, ARGS &&... args) {
-        if(factory__.count(type) == 0)
-        {
-            reg_object_type<T,ARGS...>(type);
-        }
-        return std::any_cast<std::shared_ptr<T>>(get_object__(type,std::forward<ARGS>(args)...));
-    }
+	template<typename T, typename ... ARGS>
+	std::shared_ptr<T> sf_object_factory::get_object(const std::string& obj_id, ARGS&&... args)
+	{
+		if (object_data__.count(obj_id) == 0)
+		{
+			return nullptr;
+		}
+		auto &tmp_config = object_data__[obj_id];
+
+		if (tmp_config.singleton)
+		{
+			if (tmp_config.object.has_value())
+			{
+				return std::any_cast<std::shared_ptr<T>>(tmp_config.object);
+			}
+		}
+		std::shared_ptr<T> obj;
+		obj = std::make_shared<T>(std::forward<ARGS>(args)...);
+
+		auto obj_data = get_object_data(obj_id);
+
+		from_json(obj_data, *obj);
+		tmp_config.object = obj;
+		return obj;
+	}
 }
 #pragma clang diagnostic pop

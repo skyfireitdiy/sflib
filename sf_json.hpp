@@ -73,9 +73,7 @@ namespace skyfire
                                                        {"number"},
                                                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &data) -> std::any
                                                        {
-                                                           long double tmp_num;
-                                                           sf_safe_scanf(data[0]->text.c_str(), "%Lf", &tmp_num);
-                                                           return sf_json(tmp_num);
+                                                           return sf_json(sf_string_to_long_double(data[0]->text));
                                                        }
                                                },
                                                {
@@ -250,7 +248,7 @@ namespace skyfire
     inline sf_json::sf_json(const std::string &str) : sf_json()
     {
         value__->type = sf_json_type::string;
-        value__->string_value = str;
+        value__->value = str;
     }
 
     inline sf_json::sf_json(const char* c_str) : sf_json(std::string(c_str))
@@ -268,7 +266,7 @@ namespace skyfire
     inline sf_json::sf_json(bool boolean_value) : sf_json()
     {
         value__->type = sf_json_type::boolean;
-        value__->number_value = boolean_value;
+		value__->value = boolean_value ? "true" : "false";
     }
 
 
@@ -351,17 +349,9 @@ namespace skyfire
             case sf_json_type::null:
                 return "";
             case sf_json_type::boolean:
-                if (value__->number_value != 0)
-                {
-                    return "true";
-                } else
-                {
-                    return "false";
-                }
             case sf_json_type::number:
-                return std::to_string(value__->number_value);
             case sf_json_type::string:
-                return value__->string_value;
+                return value__->value;
             default:
                 return "";
         }
@@ -413,10 +403,11 @@ namespace skyfire
             case sf_json_type::null:
                 return false;
             case sf_json_type::boolean:
+				return value__->value == "true";
             case sf_json_type::number:
-                return value__->number_value != 0;
+				return sf_string_to_long_double(value__->value) != 0;
             case sf_json_type::string:
-                return !value__->string_value.empty();
+                return !value__->value.empty();
             default:
                 return false;
         }
@@ -430,7 +421,7 @@ namespace skyfire
             value__->type = sf_json_type::number;
             clear();
         }
-        value__->number_value = value;
+        value__->value = value;
         return *this;
     }
 
@@ -443,7 +434,7 @@ namespace skyfire
             value__->type = sf_json_type::string;
             clear();
         }
-        value__->string_value = value;
+        value__->value = value;
         return *this;
     }
 
@@ -472,8 +463,10 @@ namespace skyfire
             return true;
         } else if (value__->type == sf_json_type::object && other.value__->type == sf_json_type::object)
         {
-            value__->object_value.insert(other.value__->object_value.begin(),
-                                         other.value__->object_value.end());
+			for (auto &p : other.value__->object_value)
+			{
+				value__->object_value[p.first] = p.second;
+			}
             return true;
         }
         return false;
@@ -481,8 +474,7 @@ namespace skyfire
 
     inline void sf_json::clear() const
     {
-        value__->number_value = 0;
-        value__->string_value.clear();
+        value__->value.clear();
         value__->array_value.clear();
         value__->object_value.clear();
     }
@@ -548,21 +540,15 @@ namespace skyfire
             }
                 break;
             case sf_json_type::string:
-                ret += string_to_json_string(value__->string_value);
+                ret += string_to_json_string(value__->value);
                 break;
             case sf_json_type::number:
             {
-				auto buffer = std::to_string(value__->number_value);
-				assert(buffer.size() > 7);
-				if(std::string(buffer.end() - 7 ,buffer.end()) == ".000000")
-				{
-					buffer = { buffer.begin(), buffer.end() - 7 };
-				}
-                ret+=buffer;
+				ret += value__->value;
                 break;
             }
             case sf_json_type::boolean:
-                ret += value__->number_value != 0 ? "true" : "false";
+				ret += value__->value.empty() ? "false" : value__->value;
                 break;
             case sf_json_type::null:
                 ret += "null";
@@ -581,8 +567,7 @@ namespace skyfire
             value__->object_value = value.value__->object_value;
             value__->array_value = value.value__->array_value;
             value__->type = value.value__->type;
-            value__->number_value = value.value__->number_value;
-            value__->string_value = value.value__->string_value;
+            value__->value = value.value__->value;
         }
         return *this;
     }
@@ -590,8 +575,7 @@ namespace skyfire
     inline void sf_json::value_copy__(const std::shared_ptr<sf_json_value>& src, std::shared_ptr<sf_json_value>& dst) const
     {
         dst->type = src->type;
-        dst->string_value = src->string_value;
-        dst->number_value = src->number_value;
+        dst->value = src->value;
         if(!src->array_value.empty())
         {
             for (auto i=0;i<src->array_value.size();++i)
@@ -640,7 +624,7 @@ namespace skyfire
             value__->type = sf_json_type::boolean;
             clear();
         }
-        value__->number_value = value;
+        value__->value = value?"true":"false";
         return *this;
     }
 
@@ -693,6 +677,11 @@ namespace skyfire
     }
 
 
+	template<typename T>
+	sf_json to_json(std::shared_ptr<T> pt) {
+		return sf_json(*pt);
+	}
+
     template <typename T, typename>
     sf_json::operator T() const
     {
@@ -704,9 +693,9 @@ namespace skyfire
             case sf_json_type::string:
                 return 0;
             case sf_json_type::boolean:
-                return value__->number_value != 0;
+				return value__->value == "true";
             case sf_json_type::number:
-                return static_cast<T>(value__->number_value);
+                return static_cast<T>(sf_string_to_long_double(value__->value));
             default:
                 return 0;
         }
@@ -716,7 +705,7 @@ namespace skyfire
     sf_json::sf_json(T number):sf_json()
     {
         value__->type = sf_json_type::number;
-        value__->number_value = number;
+		value__->value = sf_long_double_to_string(number);
     }
 
 
@@ -758,6 +747,12 @@ namespace skyfire
     void from_json(const sf_json &js, T& value) {
         value = static_cast<T>(js);
     }
+
+	template<typename T>
+	void from_json(const sf_json& js, std::shared_ptr<T> &value)
+	{
+		value = std::make_shared<T>(static_cast<T>(js));
+	}
 
     template<typename K, typename V>
     sf_json to_json(const std::pair<K, V> &value) {

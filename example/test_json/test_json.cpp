@@ -77,5 +77,7 @@ int main()
     People p2;
     from_json(js, p2);
     std::cout<<to_json(p2)<<std::endl;
+
+	getchar();
 }
 
