@@ -294,13 +294,13 @@ namespace skyfire {
                     break;
                 } else {
                     disconnect_sock_filter__(ev.data.fd);
-                    closed(ev.data.fd);
-                    close(ev.data.fd);
                     {
                         epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, ev.data.fd,
                                   &sock_context__[ev.data.fd].ev);
                         sock_context__.erase(ev.data.fd);
                     }
+					closed(ev.data.fd);
+					close(ev.data.fd);
                     sf_debug("read error / connection closed");
                     break;
                 }
@@ -392,9 +392,9 @@ namespace skyfire {
             if (error_flag) {
                 sf_debug("write error");
                 disconnect_sock_filter__(fd);
-                close(fd);
-                closed(fd);
                 epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, fd, &sock_context__[fd].ev);
+				close(fd);
+				closed(fd);
                 sock_context__.erase(fd);
                 break;
             } else {
