@@ -303,9 +303,7 @@ namespace skyfire {
             return;
         }
 
-        SYSTEM_INFO sys_info{};
-        GetSystemInfo(&sys_info);
-        thread_count__ = static_cast<int>(sys_info.dwNumberOfProcessors * 2 + 2);
+		thread_count__ = std::thread::hardware_concurrency();
 		iocp_context__.resize(thread_count__);
         inited__ = true;
         raw__ = raw;
