@@ -814,6 +814,11 @@ namespace skyfire
         }\
         return js;\
     }\
+    template <>\
+    sf_json to_json(const container<char> &value)\
+    {\
+        return sf_json(sf_char_container_to_hex_string(value));\
+    }\
     template<typename T>\
     void from_json(const sf_json& js, container<T>& value)\
     {\
@@ -824,6 +829,13 @@ namespace skyfire
             from_json<T>(js.at(i), data[i]);\
         }\
         value = container<T> {data.begin(),data.end()};\
+    }\
+	template<>\
+    void from_json(const sf_json& js, container<char>& value)\
+    {\
+        std::string tmp;\
+		from_json(js, tmp);\
+		sf_hex_string_to_char_container(tmp, value);\
     }\
 
 
@@ -856,7 +868,6 @@ namespace skyfire
     SF_CONTAINER_JSON_IMPL(std::vector)
     SF_CONTAINER_JSON_IMPL(std::list)
     SF_CONTAINER_JSON_IMPL(std::deque)
-    SF_CONTAINER_JSON_IMPL(std::queue)
     SF_CONTAINER_JSON_IMPL(std::set)
     SF_CONTAINER_JSON_IMPL(std::multiset)
     SF_CONTAINER_JSON_IMPL(std::unordered_set)

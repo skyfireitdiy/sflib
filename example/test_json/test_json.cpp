@@ -54,6 +54,7 @@ int main()
     std::cout<<json3<<std::endl;
     std::cout<<"---------"<<std::endl;
 
+	// 6.json序列化
     std::tuple<int, std::string,double> t{5,"hello"s, 5.2};
     auto t_js = to_json(t);
     std::cout<<t_js<<std::endl;
@@ -77,6 +78,19 @@ int main()
     People p2;
     from_json(js, p2);
     std::cout<<to_json(p2)<<std::endl;
+
+	// 7.对字节容器的序列化有优化
+	byte_array bin_data{ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 };
+	auto bin_data_json = to_json(bin_data);
+	std::cout << bin_data_json << std::endl;
+
+	byte_array bin_data2;
+	from_json(bin_data_json, bin_data2);
+	for (auto &p : bin_data2)
+	{
+		std::cout << int(p) << std::ends;
+	}
+	std::cout<<std::endl;
 
 	getchar();
 }

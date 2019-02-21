@@ -16,6 +16,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_random.h"
+#include "sf_msvc_safe.h"
 
 namespace skyfire {
     inline sf_random::sf_random() {
@@ -39,11 +40,7 @@ namespace skyfire {
         std::uniform_int_distribution<int> ed(INT_MIN, INT_MAX);
         int data[4] {ed(*e__.get()), ed(*e__.get()), ed(*e__.get()), ed(*e__.get())};
         char c_str[40];
-#ifdef _MSC_VER
-		sprintf_s(c_str, "%0X%0X%0X%0X", data[0], data[1], data[2], data[3]);
-#else
-		sprintf(c_str, "%0X%0X%0X%0X", data[0], data[1], data[2], data[3]);
-#endif // _MSC_VER
+		sf_safe_sprintf(c_str, "%0X%0X%0X%0X", data[0], data[1], data[2], data[3]);
         std::string ret = c_str;
         ret.insert(ret.begin()+20,'-');
         ret.insert(ret.begin()+16,'-');

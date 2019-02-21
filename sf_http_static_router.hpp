@@ -114,7 +114,11 @@ namespace skyfire
 											long long start = LONG_LONG_MAX;
 #endif // _MSC_VER
                                             long long end = -1;
-                                            if (sf_safe_scanf(range_str.c_str(), "%lld-%lld", &start, &end) < 1)
+#ifdef _MSC_VER
+                                            if (scanf_s(range_str.c_str(), "%lld-%lld", &start, &end) < 1)
+#else
+											if (sscanf(range_str.c_str(), "%lld-%lld", &start, &end) < 1)
+#endif
                                             {
                                                 error_flag = true;
                                                 _416_res();
@@ -139,7 +143,11 @@ namespace skyfire
 										auto start = LONG_LONG_MAX;
 #endif // _MSC_VER
                                     	long long end=-1;
-                                        if (sf_safe_scanf(range_list[0].c_str(), "%lld-%lld", &start, &end) < 1)
+#ifdef _MSC_VER
+										if (sscanf_s(range_list[0].c_str(), "%lld-%lld", &start, &end) < 1)
+#else
+										if (sscanf(range_list[0].c_str(), "%lld-%lld", &start, &end) < 1)
+#endif // _MSC_VER
                                         {
                                             _401_res();
                                         } else

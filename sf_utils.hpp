@@ -241,7 +241,11 @@ namespace skyfire
 	long double sf_string_to_long_double(const std::string &str)
 	{
 		long double tmp_num;
-		sf_safe_scanf(str.c_str(), "%Lf", &tmp_num);
+#ifdef MSC_VER
+		sscanf_s(str.c_str(), "%Lf", &tmp_num);
+#else
+		sscanf(str.c_str(), "%Lf", &tmp_num);
+#endif // MSC_VER
 		return tmp_num;
 	}
 
@@ -264,6 +268,43 @@ namespace skyfire
 		return os.str();
 	}
 #pragma clang diagnostic pop
+
+
+	template<typename T>
+	std::string sf_char_container_to_hex_string(const T& data)
+	{
+		std::string str;
+		str.reserve(data.size() * 2 + 1);
+		char tmp[4];
+		for (auto &p : data)
+		{
+			sf_safe_sprintf(tmp, 4, "%02x", p);
+			str += tmp;
+		}
+		return str;
+	}
+
+	template<typename T>
+	void sf_hex_string_to_char_container(const std::string& str, T& data)
+	{
+		data.clear();
+		if (str.size() % 2 != 0)
+		{
+			return;
+		}
+		std::vector<char> tmp_ret_data(str.size() / 2);
+		for (auto i = 0; i < str.length() / 2; ++i)
+		{
+			int tmp;
+#ifdef _MSC_VER
+			sscanf_s(str.data() + i * 2, "%02x", &tmp);
+#else
+			sscanf(str.data() + i * 2, "%02x", &tmp);
+#endif // _MSC_VER
+			tmp_ret_data[i] = tmp;
+		}
+		data = T(tmp_ret_data.begin(), tmp_ret_data.end());
+	}
 
 }
 #pragma clang diagnostic pop

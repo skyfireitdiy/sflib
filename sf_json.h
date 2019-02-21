@@ -401,6 +401,10 @@ namespace skyfire
     sf_json to_json(const container<T> &value);\
     template <typename T>\
     void from_json(const sf_json& js, container<T>& value);\
+	template <>\
+	sf_json to_json(const container<char> &value);\
+	template <>\
+    void from_json(const sf_json& js, container<char>& value);\
 
 
 #define SF_ASSOCIATED_CONTAINER_JSON_EXTERN(container) \
@@ -413,7 +417,6 @@ namespace skyfire
     SF_CONTAINER_JSON_EXTERN(std::vector)
     SF_CONTAINER_JSON_EXTERN(std::list)
     SF_CONTAINER_JSON_EXTERN(std::deque)
-    SF_CONTAINER_JSON_EXTERN(std::queue)
     SF_CONTAINER_JSON_EXTERN(std::set)
     SF_CONTAINER_JSON_EXTERN(std::multiset)
     SF_CONTAINER_JSON_EXTERN(std::unordered_set)

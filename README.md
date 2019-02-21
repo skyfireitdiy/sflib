@@ -52,7 +52,6 @@
 
     `提供工厂模式的简单实现。`
 
-* 控制反转实现
     
 ### 特点
 
@@ -66,14 +65,13 @@
 
 ```cpp
 #include "sf_object.hpp"
-#include <iostream>
 
 using namespace skyfire;
 
 // 1. 类继承自sf_object
 class A: public sf_object
 {
-    // 2. 注册一个信号，信号名称为s1，参数列表为int
+    // 2.注册一个信号，信号名称为s1，参数列表为int
     SF_REG_SIGNAL(s1, int)
 };
 
@@ -116,8 +114,7 @@ int main()
 #### 面向切面编程（AOP）使用
 
 ```cpp
-#include "sf_object.hpp"
-#include <iostream>
+#include <sf_object.hpp>
 using namespace skyfire;
 
 // 1.对象继承自sf_object
@@ -126,7 +123,7 @@ class A : public sf_object
 public:
     // 2. 注册aop成员函数，会生成aop_xxx函数
     SF_REG_AOP(func, int , int)
-    int func(int a, int b)
+    int func(int a, int b) const
     {
         std::cout<<a+b<<std::endl;
         return a+b;
@@ -199,9 +196,9 @@ int main()
 #### 事件等待和timer使用
 
 ```cpp
+#include "sf_object.hpp"
 #include "sf_event_waiter.hpp"
 #include "sf_timer.hpp"
-#include <iostream>
 
 using namespace skyfire;
 
@@ -210,11 +207,11 @@ sf_timer timer;
 
 int main()
 {
-    std::cout<<"开始"<<std::endl;
+    std::cout<<"Start"<<std::endl;
     timer.start(5000, true);
     // 1. 等待超时
-    sf_wait(&timer, timeout);
-    std::cout<<"结束"<<std::endl;
+    SF_WAIT(&timer, timeout);
+    std::cout<<"End"<<std::endl;
 }
 ```
 
@@ -228,10 +225,8 @@ int main()
 
 ```cpp
 #include "sf_finally.hpp"
-#include <iostream>
 
 using namespace skyfire;
-using namespace std;
 
 int main()
 {
@@ -239,14 +234,14 @@ int main()
     // 1. 注册一个删除函数，在作用域结束的时候执行（后执行）
     sf_finally del_p([&](){
         delete p;
-        cout<<"Delete p"<<endl;
+        std::cout<<"Delete p"<< std::endl;
     });
     {
         int *q = new int;
         // 2. 注册一个删除函数，在作用域结束的时候执行（先执行）
         sf_finally del_q([&](){
             delete q;
-            cout<<"Delete q"<<endl;
+            std::cout<<"Delete q"<< std::endl;
         });
     }
 }
@@ -260,8 +255,6 @@ int main()
 
 ```cpp
 #include "sf_thread_pool.hpp"
-#include <iostream>
-
 using namespace skyfire;
 
 
@@ -320,6 +313,8 @@ int main()
 
 using namespace skyfire;
 
+
+
 int main()
 {
     // 1.创建服务器
@@ -327,12 +322,12 @@ int main()
     // 2.监听
     if(!server->listen("0.0.0.0",9988))
     {
-        std::cout<<"listen on 9988 error"<<std::endl;
+        std::cout << "listen on 9988 error" << std::endl;
         return -1;
     }
     // 3.设置数据到来事件响应
     sf_bind_signal(server,raw_data_coming,[=](SOCKET sock, const byte_array& data){
-        std::cout<<"recv:"<<to_string(data)<<std::endl;
+        std::cout << "recv:" << to_string(data) << std::endl;
     },true);
     // 4. 启动消息循环
     sf_eventloop loop;
@@ -356,8 +351,6 @@ int main()
 
 ```cpp
 #include "sf_tcp_nat_traversal_server.hpp"
-
-#include <iostream>
 
 using namespace skyfire;
 
@@ -385,8 +378,6 @@ int main(){
 客户端
 ```cpp
 #include "sf_tcp_nat_traversal_client.hpp"
-#include <iostream>
-#include <sf_timer.hpp>
 
 using namespace skyfire;
 
@@ -422,33 +413,31 @@ void nat_conn(std::shared_ptr<sf_tcp_nat_traversal_client> client){
 
 void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
     if(!conn){
-        std::cout<<"连接未建立"<<std::endl;
+        std::cout<<"connect error"<<std::endl;
         return;
     }
     std::cout<<"msg:"<<std::flush;
     std::string msg;
     getline(std::cin,msg);
-    conn->send(TCP_PKG_TYPE_USER + 1,to_json(msg));
+    conn->send(tcp_pkg_type_user + 1, to_byte_array(skyfire:: to_json(msg).to_string()));
 }
 
 
 int main() {
-
-    g_logger->add_level_stream(SF_DEBUG_LEVEL,&std::cout);
     // 1.创建nat穿透客户端
     auto pclient = sf_tcp_nat_traversal_client::make_client();
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 
     // 2.设新连接到来响应
-    sf_bind_signal(pclient, new_nat_connection, [&](std::shared_ptr<sf_tcp_nat_traversal_connection> conn_t, int){
+    sf_bind_signal(pclient, new_nat_connection, std::function<void(std::shared_ptr<sf_tcp_nat_traversal_connection>, std::string)>([&](std::shared_ptr<sf_tcp_nat_traversal_connection> conn_t, std::string){
         std::cout<<"new connection!"<<std::endl;
         conn = conn_t;
         sf_bind_signal(conn, data_coming, [](const sf_pkg_header_t &header, const byte_array &data){
             std::string msg;
-            sf_deserialize_binary(data,msg,0);
+            from_json(sf_json::from_string(to_string(data)),msg);
             std::cout<<"Recv:"<<msg<<std::endl;
         }, true);
-    },true);
+    }),true);
 
     while(true){
         std::string cmd;
@@ -490,10 +479,7 @@ int main() {
 #### 日志工具的使用
 
 ```cpp
-#include <iostream>
-// 1.SF_LOGGER_STANDALONE宏表示单独使用sf_logger，不必依赖其他sflib库
-#define SF_LOGGER_STANDALONE
-// 2.SF_DEBUG表示启用sf_debug宏
+// 1.SF_DEBUG表示启用sf_debug宏
 #define SF_DEBUG
 #include "sf_logger.hpp"
 
@@ -502,13 +488,13 @@ using namespace skyfire;
 
 int main()
 {
-    // 3.获取单例对象
+    // 2.获取单例对象
     auto logger = sf_logger::get_instance();
-    // 4.添加日志文件，SF_WARN_LEVEL以上的日志级别将会打印到此文件中
+    // 3.添加日志文件，SF_WARN_LEVEL以上的日志级别将会打印到此文件中
     logger->add_level_file(SF_WARN_LEVEL, "runlog.log");
-    // 5.SF_INFO_LEVEL以上的日志级别将会打印到标准输出流
+    // 4.SF_INFO_LEVEL以上的日志级别将会打印到标准输出流
     logger->add_level_stream(SF_INFO_LEVEL, &std::cout);
-    // 6.日志打印
+    // 5.日志打印
     sf_error("hello", "world");
     sf_warn("this is warn");
     sf_error("hello", "world");
@@ -521,17 +507,15 @@ int main()
 
 使用步骤：
 
-1. 在包含`sf_logger.hpp`之前，可以定义`SF_LOGGER_STANDALONE`宏，此宏定义后，表示`sf_logger`将不再依赖`sflib`中的其他库，比如`sf_singel_instance`和`sf_random`等。（一般不建议定义，除非确认不使用其他库文件）
+1. 在包含`sf_logger.hpp`之前，可以定义`SF_DEBUG`宏，这个宏的定义使`SF_DEBUG_LEVEL`日志等级生效，否则默认不生效。（建议在调试的时候打开，并使用`sf_debug`输出调试级别日志）。
 
-2. 在包含`sf_logger.hpp`之前，可以定义`SF_DEBUG`宏，这个宏的定义使`SF_DEBUG_LEVEL`日志等级生效，否则默认不生效。（建议在调试的时候打开，并使用`sf_debug`输出调试级别日志）。
+2. 获取全局单例日志对象。
 
-3. 获取全局单例日志对象。
+3. 使用`add_level_file`添加指定等级的日志文件。
 
-4. 使用`add_level_file`添加指定等级的日志文件。
+4. 使用`add_level_stream`添加指定等级的输出流。
 
-5. 使用`add_level_stream`添加指定等级的输出流。
-
-6. 使用`sf_debug,sf_info,sf_warn,sf_error,sf_fatal`打印日志。（更多内容见API文档）
+5. 使用`sf_debug,sf_info,sf_warn,sf_error,sf_fatal`打印日志。（更多内容见API文档）
 
 #### 远程过程调用（RPC）框架使用
 
@@ -539,7 +523,6 @@ int main()
 服务器端
 ```cpp
 #include "sf_rpc_server.hpp"
-#include <iostream>
 
 using namespace skyfire;
 
@@ -562,6 +545,11 @@ void output(const char *str)
     std::cout<<str<<std::endl;
 }
 
+void print_str(byte_array data)
+{
+	std::cout << skyfire::to_string(data) << std::endl;
+}
+
 int main()
 {
     // 1.创建server对象
@@ -569,6 +557,7 @@ int main()
     // 2.注册rpc函数
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);
+	server->reg_rpc_func("print_str", print_str);
     // 3.监听
     std::cout<<server->listen("127.0.0.1",10001)<<std::endl;
     sf_eventloop event_loop;
@@ -589,9 +578,7 @@ int main()
 
 客户端
 ```cpp
-#include <iostream>
 #include "sf_rpc_client.hpp"
-
 using namespace skyfire;
 using namespace std::literals;
 
@@ -616,6 +603,7 @@ int main()
     }
     // 3.同步调用，无返回值
     client->call<>("print"s);
+	client->call<>("print_str", to_byte_array("hello world"s));
     std::cout<<"call finished"<<std::endl;
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
@@ -627,6 +615,7 @@ int main()
     client->async_call<std::vector<int>>("add_one"s, disp_vec, data);
     getchar();
 }
+
 ```
 
 使用步骤：
@@ -645,7 +634,6 @@ int main()
 
 服务器端
 ```cpp
-#include <iostream>
 #include "sf_msg_bus_server.hpp"
 
 using namespace skyfire;
@@ -667,7 +655,7 @@ int main()
             break;
         std::cout<<"data:"<<std::flush;
         std::cin>>data;
-        server->send_msg(type, to_json(data));
+        server->send_msg(type, to_byte_array(skyfire::to_json(data).to_string()));
     }
     // 4.关闭总线
     server->close();
@@ -687,7 +675,6 @@ int main()
 
 客户端
 ```cpp
-#include <iostream>
 #include "sf_msg_bus_client.hpp"
 
 using namespace skyfire;
@@ -701,7 +688,7 @@ int main()
     // 3. 添加事件到来相应
     sf_bind_signal(client, msg_come, [](std::string, byte_array data){
         std::string str;
-        from_json(sf_json::from_string(to_string(data)),str);
+		from_json(sf_json::from_string(to_string(data)), str);
         std::cout<<"msg_come:"<<str<<std::endl;
         }, true);
     std::string type;
@@ -729,7 +716,6 @@ int main()
 #### http服务器框架使用
 
 ```cpp
-#include "sf_http_static_router.hpp"
 #include "sf_http_server.hpp"
 
 using namespace std::literals;
@@ -786,6 +772,7 @@ void websocket_route(const sf_websocket_param_t& param)
 {
     // 如果类型为文本，返回hello:原内容
     if(param.type == websocket_data_type::TextData){
+        std::cout<<"received:"<<param.text_msg<<std::endl;
         param.p_server->send_websocket_data(param.sock,"hello:" + param.text_msg);
     } else{
         std::cout<<"binary data"<<std::endl;
@@ -798,7 +785,6 @@ int main() {
     sf_http_server_config config;
     config.host = "0.0.0.0";        // 监听ip
     config.port = 8080;             // 端口
-    config.thread_count = 8;        // 线程数量
     config.request_timeout = 30;    // http请求超时
     // 2. 根据配置生成一个http server
     auto server = sf_http_server::make_server(config);
@@ -818,16 +804,16 @@ int main() {
                 res.set_body(to_byte_array(user+"'s name is skyfire"s));
             }),
             std::vector<std::string>{{"GET"s}}
-            ));
+    ));
 
     // 5. 添加一个websocket路由，地址为/ws，回调函数为websocket_route
     server->add_router(make_websocket_router("/ws", websocket_route));
 
-    // 6. 设置一个静态资源路由，位置为"../test/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
-    server->add_router(make_static_router(R"(../test/test_http_server/testWebsite)", {{"*"s}}, "utf-8", true));
+    // 6. 设置一个静态资源路由，位置为"../example/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
+    server->add_router(make_static_router(R"(C:\code\sflib\example\test_http_server\testWebsite)",  {{"*"s}}, "utf-8", true));
 
     // 7. 启动服务
-    server->start();
+    server->start(); 
 }
 ```
 
@@ -854,7 +840,6 @@ int main() {
 
 ```cpp
 
-#include <iostream>
 #include "sf_lex.hpp"
 #include "sf_yacc.hpp"
 
@@ -951,19 +936,19 @@ int main()
 
     // 2. 创建一个词法分析器，并添加词法规则
     sf_lex lex;
-    lex.add_rules({
+    lex.set_rules({
                           {"string", R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
-                          {"left_square_bracket", R"(\[)"},
-                          {"right_square_bracket", R"(\])"},
-                          {"left_curly_bracket", R"(\{)"},
-                          {"right_curly_bracket", R"(\})"},
-                          {"comma", R"(,)"},
-                          {"colon", R"(:)"},
-                          {"ws", R"([\r\n\t ]+)"},
+                          {"[",      R"(\[)"},
+                          {"]",      R"(\])"},
+                          {"{",      R"(\{)"},
+                          {"}",      R"(\})"},
+                          {",",      R"(,)"},
+                          {":",      R"(:)"},
+                          {"ws",     R"([\r\n\t ]+)"},
                           {"number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
-                          {"true", R"(true)"},
-                          {"false", R"(false)"},
-                          {"null", R"(null)"}
+                          {"true",   R"(true)"},
+                          {"false",  R"(false)"},
+                          {"null",   R"(null)"}
                   });
 
     // 3.词法分析
@@ -984,7 +969,7 @@ int main()
 
         // 5. 生成语法分析器，添加语法规则
         sf_yacc yacc;
-        yacc.add_rules({
+        yacc.set_rules({
                                {
                                        "value",
                                        {
@@ -1019,17 +1004,17 @@ int main()
                                        }
                                },
                                {
-                                   // 6. 表示 文法 object 可由 "left_curly_bracket",  "right_curly_bracket" （即{}）或者
-                                   // "left_curly_bracket",  "members",  "right_curly_bracket"（即{"hello":"world"}）推导出来
+                                   // 6. 表示 文法 object 可由 "{",  "}" （即{}）或者
+                                   // "{",  "members",  "}"（即{"hello":"world"}）推导出来
                                    // 用通俗一点的话说，一个json对象，可以是空对象，或者一个或多个键值对构成
                                        "object",
                                        {
                                                {
-                                                       {"left_curly_bracket",  "right_curly_bracket"},
+                                                       {"{",  "}"},
                                                        nullptr
                                                },
                                                {
-                                                       {"left_curly_bracket",  "members",  "right_curly_bracket"},
+                                                       {"{",  "members",  "}"},
                                                        nullptr
                                                }
                                        }
@@ -1042,11 +1027,7 @@ int main()
                                                        nullptr
                                                },
                                                {
-                                                       {"members",             "comma",    "member"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"members",             "comma",    "members"},
+                                                       {"members",             ",",    "member"},
                                                        nullptr
                                                }
                                        }
@@ -1055,45 +1036,20 @@ int main()
                                        "member",
                                        {
                                                {
-                                                       {"string",              "colon", "array"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string",              "colon",    "object"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string",   "colon", "string"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "number"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "true"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "false"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string", "colon", "null"},
+                                                       {"string",              ":", "value"},
                                                        nullptr
                                                }
-
                                        }
                                },
                                {
                                        "array",
                                        {
                                                {
-                                                       {"left_square_bracket", "right_square_bracket"},
+                                                       {"[", "]"},
                                                        nullptr
                                                },
                                                {
-                                                       {"left_square_bracket", "values", "right_square_bracket"},
+                                                       {"[", "values", "]"},
                                                        nullptr
                                                }
                                        }
@@ -1106,35 +1062,7 @@ int main()
                                                        nullptr
                                                },
                                                {
-                                                       {"values",            "comma",    "string"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "number"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "object"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "array"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "true"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "false"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            "comma",    "null"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values","comma","values"},
+                                                       {"values",            ",",    "value"},
                                                        nullptr
                                                }
                                        }
@@ -1142,14 +1070,14 @@ int main()
                        });
 
         // 7. 添加终结符号，即json最终解析出来的结果应该是value 或者 array 或者 object
-        yacc.add_termanate_ids({"value", "array", "object"});
+        yacc.add_terminate_ids({"array", "object"});
         // 8. 语法分析，使用词法分析的结果作为输入
         std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
         yacc.parse(lex_result, yacc_result);
         {
             for (auto &p:yacc_result)
             {
-                std::cout << "(" << p->id << ")【" << p->text << "】" << std::flush;
+                std::cout << "(" << p->id << ")[" << p->text << "]" << std::flush;
             }
         }
     }
@@ -1189,44 +1117,103 @@ int main()
 使用例子：
 
 ```cpp
-#include <sf_json.h>
 #include "sf_json.hpp"
-#include <iostream>
 
 using namespace skyfire;
-using namespace std;
+
+
+struct Time
+{
+    int h;
+    int m;
+    int s;
+};
+
+SF_JSONIFY(Time,h,m,s)
+
+struct People
+{
+    int age;
+    std::string name;
+    std::string address;
+    Time t;
+};
+
+SF_JSONIFY(People, age, name ,address, t)
 
 int main()
 {
+	using namespace std::literals;
     // 1. 使用字面值操作符解析json
     auto json1 = R"({"name": "wmb","data": [1,2,3,"666"]})"_json;
     auto json2 = R"({"age":25, "address":"西安"})"_json;
     auto json3 = R"({"company":"saming"})"_json;
     // 2. 输出json
-    cout<<json1<<endl;
-    cout<<json2<<endl;
-    cout<<json3<<endl;
-    cout<<"---------"<<endl;
+    std::cout<<json1<<std::endl;
+    std::cout<<json2<<std::endl;
+    std::cout<<json3<<std::endl;
+    std::cout<<"---------"<<std::endl;
     // 3. 合并json
     json1.join(json2);
     json1.join(json3.clone());
-    cout<<json1<<endl;
-    cout<<json2<<endl;
-    cout<<json3<<endl;
-    cout<<"---------"<<endl;
+    std::cout<<json1<<std::endl;
+    std::cout<<json2<<std::endl;
+    std::cout<<json3<<std::endl;
+    std::cout<<"---------"<<std::endl;
     // 4. sf_json底层使用指针，数据属于浅拷贝，所以改变json2的值同样会影响json1的值
     json2["address"] = "北京";
-    cout<<json1<<endl;
-    cout<<json2<<endl;
-    cout<<json3<<endl;
-    cout<<"---------"<<endl;
+    std::cout<<json1<<std::endl;
+    std::cout<<json2<<std::endl;
+    std::cout<<json3<<std::endl;
+    std::cout<<"---------"<<std::endl;
     // 5. json3与json1进行合并时，使用clone()创建了副本（深拷贝）,操作json3不会影响json1
     json3["company"]="lenovo";
-    cout<<json1<<endl;
-    cout<<json2<<endl;
-    cout<<json3<<endl;
-    cout<<"---------"<<endl;
+    std::cout<<json1<<std::endl;
+    std::cout<<json2<<std::endl;
+    std::cout<<json3<<std::endl;
+    std::cout<<"---------"<<std::endl;
+
+	// 6.json序列化
+    std::tuple<int, std::string,double> t{5,"hello"s, 5.2};
+    auto t_js = to_json(t);
+    std::cout<<t_js<<std::endl;
+
+    std::tuple<int, std::string,double> t2;
+    from_json(t_js, t2);
+    std::cout<< std::get<0>(t2)<<std::endl;
+    std::cout<< std::get<1>(t2)<<std::endl;
+    std::cout<< std::get<2>(t2)<<std::endl;
+
+    People p;
+    p.name = "skyfire";
+    p.age = 100;
+    p.address = "China";
+    p.t.h = 24;
+    p.t.m = 60;
+    p.t.s = 25;
+    auto js = to_json(p);
+    std::cout<<js<<std::endl;
+
+    People p2;
+    from_json(js, p2);
+    std::cout<<to_json(p2)<<std::endl;
+
+	// 7.对字节容器的序列化有优化
+	byte_array bin_data{ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26 };
+	auto bin_data_json = to_json(bin_data);
+	std::cout << bin_data_json << std::endl;
+
+	byte_array bin_data2;
+	from_json(bin_data_json, bin_data2);
+	for (auto &p : bin_data2)
+	{
+		std::cout << int(p) << std::ends;
+	}
+	std::cout<<std::endl;
+
+	getchar();
 }
+
 ```
 
 
@@ -1242,113 +1229,9 @@ int main()
 
 对`json`的更多操作请参阅API文档。
 
+6. `json`序列化
 
-#### 控制反转,依赖注入
-
-使用例子
-
-```cpp
-#include "sf_object.hpp"
-
-using namespace skyfire;
-using namespace std;
-
-class work : public sf_object
-{
-private:
-    m_base(string,name);
-    m_base(int,time);
-};
-sf_class(work)
-
-class student : public sf_object
-{
-private:
-    m_base(string, name)
-    m_base(int, age)
-    m_value(work,works)
-    m_pointer(work,works2)
-};
-sf_class(student)
-
-
-int main()
-{
-    // 1.创建一个manager
-    sf_object_manager manager;
-    // 2.加载配置文件
-    auto ret = manager.load_config("/home/skyfire/CLionProjects/sflib/example/test_object_manager/config.json");
-
-    if(!ret){
-        cout<<"加载配置文件失败";
-        return 0;
-    }
-
-    // 3. 获取my_work对象，类型是work
-    auto wk = manager.get_object<work>("my_work");
-
-    // 4.将my_work序列化为json
-    cout<<wk->to_json()<<endl;
-
-    // 5. 修改my_work的属性
-    wk->set_name("skyfire");
-
-
-    cout<<wk->to_json()<<endl;
-
-    // 6. 再次获取my_work对象，此时获取到的与上一次一致
-    wk = manager.get_object<work>("my_work");
-    cout<<wk->to_json()<<endl;
-
-    // 7. 获取student对象，此时student中的works属性与上面的my_work一致
-    auto st = manager.get_object<student>("my_student");
-    cout<<st->to_json()<<endl;
-
-}
-```
-
-要支持依赖注入，必须从`sf_object`派生，并且使用`m_base`,`m_value`,`m_pointer`定义成员函数，其中`m_base`为基础类型（数字、字符串、布尔），`m_value`表示其他`sf_object`类型，`m_pointer`会创建一个`sf_object`的智能指针`shared_ptr`，暂不支持容器，后期考虑支持。
-
-程序加载一个`json`格式的配置文件，配置文件负责依赖注入，配置文件如下：
-
-```json
-{
-  "objects": [
-    {
-      "id": "my_student",
-      "scope": "singleton",
-      "class": "student",
-      "property": {
-        "name":  "skyfire",
-        "age": 25,
-        "works": "my_work",
-        "works2" : "my_work2"
-      }
-    },
-    {
-      "id": "my_work",
-      "scope": "singleton",
-      "class": "work",
-      "property": {
-        "name":"拧螺丝",
-        "time": 20
-      }
-    },
-    {
-      "id": "my_work2",
-      "scope": "prototype",
-      "class": "work",
-      "property": {
-        "name":"开车",
-        "time": 60
-      }
-    }
-  ]
-}
-```
-
-配置文件中定义了三个对象，`id`表示一个唯一的对象，`scope`可以制定是否为单例，如果值为`singleton`，则为单例，只在第一次获取对象的时候创建一次，否则每次获取都会创建。然后指定一些属性，需要与源文件中`sf_meta_xxx`配合，当源文件字段为`m_base`时，此处就是值，否则为其他对象的`id`。
-
+7. 对字节容器的序列化有优化
 
 #### 更多
 

@@ -174,5 +174,21 @@ namespace skyfire
 	 */
 	std::string sf_long_double_to_string(const long double& num);
 
+	/**
+	 * char容器转换为十六进制字符串
+	 * @tparam T 容器
+	 * @param data 数据
+	 * @return 十六进制字符串
+	 */
+	template<typename T>
+	std::string sf_char_container_to_hex_string(const T& data);
 
+	/**
+	 * 16进制字符串转为char容器
+	 * @tparam T 容器
+	 * @param str 字符串
+	 * @param data 用于返回的数据
+	 */
+	template<typename T>
+	void sf_hex_string_to_char_container(const std::string& str, T& data);
 }
