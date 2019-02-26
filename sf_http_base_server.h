@@ -87,7 +87,7 @@ namespace skyfire {
 
         void send_response_file_part__(SOCKET sock, const sf_http_response::response_file_info_t &file, std::ifstream &fi) const;
 
-    protected:
+    public:
         /**
          * 构造函数
          * @param config http配置
