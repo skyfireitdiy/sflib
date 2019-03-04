@@ -64,6 +64,7 @@ namespace skyfire {
 		std::vector<sf_iocp_thread_countext_t> iocp_context__;
 
 		void server_work_thread__(int index);
+
         bool add_sock__(SOCKET accept_socket);
 
         void accept_thread__();

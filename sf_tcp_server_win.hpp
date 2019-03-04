@@ -168,6 +168,7 @@ namespace skyfire {
 					if (p_handle_data != nullptr) {
 						invalid = true;
 					}
+					sf_debug("exit flag is true");
 					return;
 				}
 
@@ -176,25 +177,29 @@ namespace skyfire {
 					if (p_handle_data != nullptr) {
 						invalid = true;
 					}
+					sf_debug("result == 0");
 					break;
 				}
 
 				// 出错
 				if (p_handle_data == nullptr || p_io_data == nullptr) {
 					invalid = true;
+					sf_debug("p_handle_data == nullptr || p_io_data == nullptr");
 					break;
 				}
 				// 关闭
 				if (bytes_transferred == 0) {
 					invalid = true;
+					sf_debug("bytes_transferred == 0");
 					break;
 				}
 			} while (false);
 
 			if(invalid)
 			{
+				sf_debug("invalid");
 				handle_sock_error__(p_handle_data, p_io_data,index);
-				return;
+				continue;
 			}
 			// 发送
             if (p_io_data->is_send) {
@@ -239,7 +244,8 @@ namespace skyfire {
 
 		if (CreateIoCompletionPort(reinterpret_cast<HANDLE>(accept_socket), iocp_context__[index].iocp_port,
 			reinterpret_cast<ULONG_PTR>(p_handle_data), 0) == nullptr) {
-			return true;
+			sf_debug("CreateIoCompletionPort error");
+			return false;
 		}
 
 
@@ -259,6 +265,7 @@ namespace skyfire {
 		DWORD flags = 0;
 
 		// 投递一个接收请求
+		sf_debug("post a read request");
 		if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags, &(p_io_data->overlapped),
 			nullptr) ==
 			SOCKET_ERROR) {
@@ -266,7 +273,7 @@ namespace skyfire {
 				handle_sock_error__(p_handle_data, p_io_data, index);
 			}
 		}
-		return false;
+		return true;
 
 	}
 
@@ -274,10 +281,9 @@ namespace skyfire {
     {
 		while (true) {
 			SOCKET accept_socket;
-			sockaddr_in addr;
-			int addr_len = sizeof(addr);
 			accept_socket = WSAAccept(listen_sock__, nullptr, nullptr, nullptr, 0);
 			if (accept_socket == INVALID_SOCKET) {
+				sf_debug("accept_socket == INVALID_SOCKET");
 				break;
 			}
 
@@ -287,9 +293,9 @@ namespace skyfire {
 
 			if (manage_clients__) {
 
-				if (add_sock__(accept_socket))
+				if (!add_sock__(accept_socket))
 				{
-					break;
+					sf_debug("add sock error");
 				}
 			}
 		}
@@ -356,6 +362,7 @@ namespace skyfire {
 
 		// 启动工作线程
 		for (auto i = 0; i < thread_count__; ++i) {
+			sf_debug("start work thread");
 			thread_vec__.emplace_back(std::thread(&sf_tcp_server::server_work_thread__, this, i));
 		}
 

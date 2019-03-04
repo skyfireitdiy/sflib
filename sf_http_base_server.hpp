@@ -584,6 +584,8 @@ namespace skyfire
 
     inline void sf_http_base_server::build_new_request__(SOCKET sock)
     {
+		// TODO 此处需要优化
+		/*
         std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
         std::thread([=]()
                     {
@@ -607,31 +609,33 @@ namespace skyfire
                             }
                         }
                     }).detach();
+		*/
     }
 
-    inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
-    {
-        if (request_context__.count(sock) != 0)
-            request_context__.erase(sock);
-        {
-            std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
-            if (websocket_context__.count(sock) != 0)
-            {
-                if (websocket_close_callback__)
-                {
-                    websocket_close_callback__(sock, websocket_context__[sock].url);
-                }
-                websocket_context__.erase(sock);
-            }
-        }
-        {
-            std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
-            if (multipart_data_context__.count(sock) != 0)
-            {
-                multipart_data_context__.erase(sock);
-            }
-        }
-    }
+	inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
+	{
+		if (request_context__.count(sock) != 0)
+		{
+			std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+			request_context__.erase(sock);
+		}
+
+		if (websocket_context__.count(sock) != 0)
+		{
+			std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+			if (websocket_close_callback__)
+			{
+				websocket_close_callback__(sock, websocket_context__[sock].url);
+			}
+			websocket_context__.erase(sock);
+		}
+
+		if (multipart_data_context__.count(sock) != 0)
+		{
+			std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
+			multipart_data_context__.erase(sock);
+		}
+	}
 
     inline sf_http_base_server::sf_http_base_server(sf_http_server_config config) :
             config__(std::move(config))

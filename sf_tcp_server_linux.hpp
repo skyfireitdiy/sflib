@@ -179,19 +179,25 @@ namespace skyfire {
 
             sf_debug("new epoll event", wait_fds, index);
 
+            auto listen_err = false;
+
             for (auto i = 0; i < wait_fds; ++i) {
                 if (evs[i].data.fd == listen_fd__ && (evs[i].events & EPOLLIN)) {
-                    if (handle_accept(index)) {
-                        continue;
-                    } else {
-                        break;
-                    }
+					if(!handle_accept(index))
+					{
+						listen_err = true;
+					}
                 } else if (evs[i].events & EPOLLIN) {
                     handle_read(index, evs[i]);
                 } else if (evs[i].events & EPOLLOUT) {
                     handle_write(index, evs[i]);
                 }
             }
+			if(listen_err)
+			{
+				sf_debug("listen error");
+				break;
+			}
         }
     }
 
