@@ -53,7 +53,7 @@ namespace skyfire {
 
         SOCKET listen_sock__ = INVALID_SOCKET;
 
-        int thread_count__ = 4;
+        int thread_count__ = std::thread::hardware_concurrency() * 2 + 2;
 
 		std::vector<std::thread> thread_vec__;
 

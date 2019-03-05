@@ -54,7 +54,7 @@ namespace skyfire
     private:
         int listen_fd__ = -1;
         bool raw__ = false;
-		int thread_count__ = std::thread::hardware_concurrency();
+		int thread_count__ = std::thread::hardware_concurrency() * 2 + 2;
 
         std::vector<epoll_context_t> epoll_data__;
 

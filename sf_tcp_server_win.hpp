@@ -309,7 +309,6 @@ namespace skyfire {
             return;
         }
 
-		thread_count__ = std::thread::hardware_concurrency();
 		iocp_context__.resize(thread_count__);
         inited__ = true;
         raw__ = raw;

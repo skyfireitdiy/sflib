@@ -71,7 +71,7 @@ ELSE()
     target_link_libraries(test_tcpserver pthread)
     target_link_libraries(test_sf_logger pthread)
     target_link_libraries(test_event_waiter pthread)
-    target_link_libraries(test_httpserver pthread ssl crypto z)
+    target_link_libraries(test_httpserver pthread ssl crypto z stdc++fs)
     target_link_libraries(test_aop pthread)
     target_link_libraries(test_json pthread)
 
