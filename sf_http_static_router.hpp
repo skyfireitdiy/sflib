@@ -75,8 +75,11 @@ namespace skyfire
                         header.set_header("Content-Type", "text/html; charset=" + charset);
                     };
 
+					static std::unordered_map<std::string, bool> is_dir_cache;
 
-                    if (sf_is_dir(abs_path))
+                    auto is_dir = sf_is_dir(abs_path);
+
+                    if (is_dir)
                     {
                         _404_res();
                     } else

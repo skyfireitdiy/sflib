@@ -151,25 +151,12 @@ namespace skyfire
 
 
     inline bool sf_is_dir(const std::string& path) {
-        struct stat buf = {0};
-        stat(path.c_str(), &buf);
-        return static_cast<bool>(buf.st_mode & S_IFDIR);
+		return fs::is_directory(path);
     }
 
-    // TODO 后续使用filesystem
     inline std::string sf_path_join(std::string path1, const std::string path2)
     {
-        if(path1.empty())
-            return path2;
-        if(path1.back()=='\\' || path1.back() == '/')
-        {
-            path1.pop_back();
-        }
-#ifdef _WIN32
-        return path1 + "\\" + path2;
-#else
-        return path1 + "/" + path2;
-#endif
+		return (fs::path(path1) / path2).string();
     }
 
     template<typename ... Str>
@@ -180,13 +167,7 @@ namespace skyfire
 
     inline long long sf_get_file_size(const std::string & filename)
     {
-        std::ifstream in(filename);
-        if(!in)
-            return -1;
-        in.seekg(0, std::ios::end);
-        auto ps = in.tellg();
-        in.close();
-        return ps;
+		return fs::file_size(filename);
     }
 
     inline bool sf_write_file(const std::string &file_name, const byte_array &data, bool append )

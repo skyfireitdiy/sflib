@@ -94,3 +94,6 @@
 #include <filesystem>
 #include <optional>
 #include <any>
+
+
+namespace fs = std::filesystem;

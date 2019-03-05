@@ -280,7 +280,10 @@ namespace skyfire
                 {
                     tmp_str += "Content-Type: application/octet-stream\r\n";
                 }
-                auto file_size = sf_get_file_size(p.file_info.filename);
+
+				static std::unordered_map<std::string, long long> file_size_cache;
+
+				long long file_size = sf_get_file_size(p.file_info.filename);
                 tmp_str += "Content-Range: bytes " + std::to_string(p.file_info.begin) + "-" +
                         std::to_string(p.file_info.end) + "/" + std::to_string(file_size) + "\r\n\r\n";
                 header_vec.push_back(tmp_str);
