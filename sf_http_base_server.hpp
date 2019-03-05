@@ -587,32 +587,7 @@ namespace skyfire
 
     inline void sf_http_base_server::build_new_request__(SOCKET sock)
     {
-		// TODO 此处需要优化
-		/*
-        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
-        std::thread([=]()
-                    {
-                        while (true)
-                        {
-                            std::this_thread::sleep_for(std::chrono::seconds(config__.request_timeout));
-                            std::unique_lock<std::recursive_mutex> lck2(mu_request_context__);
-                            if (request_context__.count(sock) != 0)
-                            {
-                                if (!request_context__[sock].new_req)
-                                {
-                                    server__->close(sock);
-                                    request_context__.erase(sock);
-                                } else
-                                {
-                                    request_context__[sock].new_req = true;
-                                }
-                            } else
-                            {
-                                break;
-                            }
-                        }
-                    }).detach();
-		*/
+		sf_debug("new connection");
     }
 
 	inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
