@@ -74,6 +74,7 @@ ELSE()
     target_link_libraries(test_httpserver pthread ssl crypto z stdc++fs)
     target_link_libraries(test_aop pthread)
     target_link_libraries(test_json pthread)
+    target_link_libraries(test_factory pthread)
 
 ENDIF ()
 

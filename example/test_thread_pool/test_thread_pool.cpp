@@ -12,44 +12,39 @@
 */
 
 #include "sf_thread_pool.hpp"
+#include <iostream>
+
 using namespace skyfire;
 
 
-void func()
+long long sum(long long from, long long n)
 {
-    for(int i=0;i<10;++i)
+    std::cout<<"add from "<<from<<std::endl;
+    long long ret;
+    for(long long i =0;i<n;++i)
     {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        std::cout<<std::this_thread::get_id()<<" "<<i<<std::endl;
+        ret += from + i;
     }
-}
-
-void func2(int a)
-{
-    for(int i=0;i<a;++i)
-    {
-        std::cout<<i<<std::endl;
-    }
+    return ret;
 }
 
 
 int main()
 {
-    // 1. 创建线程池
+    // 1. 创建线程池对象
     sf_thread_pool pool4(4);
-    // 2.添加任务
-    pool4.add_task(std::bind(func2, 10));
-    // 3.等待所有任务完成
-    pool4.wait_all_task_finished();
-    pool4.add_task(func2, 7);
-    pool4.add_task(func);
-    pool4.wait_all_task_finished();
-    pool4.add_task([](int a)
-                   {
-                       for (auto i = 0; i < 5; ++i)
-                       {
-                           std::cout << "hello world" << std::endl;
-                       }
-                   }, 5);
-    pool4.wait_all_task_finished();
+    // 2. 用于存储线程的返回值
+    std::vector<std::future<long long>> item;
+    // 3. 增加任务
+    for(long long i=0;i<10;++i)
+    {
+        item.emplace_back(pool4.add_task(sum, 10000*i, 10000));
+    }
+    long long ret = 0;
+    // 4. 合并（使用返回值）
+    for(auto &p:item)
+    {
+        ret += p.get();
+    }
+    std::cout<<ret<<std::endl;
 }
