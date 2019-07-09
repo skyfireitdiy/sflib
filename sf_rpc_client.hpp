@@ -58,13 +58,13 @@ namespace skyfire {
 		sf_debug("async call", skyfire::to_json(req));
         __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
         auto p_timer = std::make_shared<sf_timer>();
-        sf_bind_signal(p_timer, timeout, [=]() {
+        sf_bind_signal(p_timer, timeout, ([=, this]() {
             if(__rpc_data__.count(call_id)!=0)
             {
                 __rpc_data__[call_id]->back_cond.notify_one();
                 __rpc_data__.erase(call_id);
             }
-        }, true);
+        }), true);
         p_timer->start(rpc_timeout__, true);
     }
 
@@ -87,13 +87,13 @@ namespace skyfire {
 		sf_debug("async call", skyfire::to_json(req));
         __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
         auto p_timer = std::make_shared<sf_timer>();
-        sf_bind_signal(p_timer, timeout, [=]() {
+        sf_bind_signal(p_timer, timeout, ([=, this]() {
             if(__rpc_data__.count(call_id)!=0)
             {
                 __rpc_data__[call_id]->back_cond.notify_one();
                 __rpc_data__.erase(call_id);
             }
-        }, true);
+        }), true);
         p_timer->start(rpc_timeout__, true);
     }
 
@@ -190,7 +190,7 @@ namespace skyfire {
 	inline sf_rpc_client::sf_rpc_client() {
         sf_bind_signal(__tcp_client__,
                        data_coming,
-                       [=](const sf_pkg_header_t &header_t, const byte_array &data_t) {
+                       [this](const sf_pkg_header_t &header_t, const byte_array &data_t) {
                            __back_callback(header_t, data_t);
                        },
                        true);
@@ -198,7 +198,7 @@ namespace skyfire {
 
         sf_bind_signal(__tcp_client__,
                        closed,
-                       [=]() {
+                       [this]() {
                            close();
                        },
                        true);

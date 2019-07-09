@@ -97,7 +97,7 @@ namespace skyfire {
         std::shared_ptr<int> tmp_bind_id = std::make_shared<int>();
         *tmp_bind_id = sf_bind_signal(connect_context_map__[context.connect_id].point_b_server,
                                       new_connection,
-                                      [=](SOCKET sock) {
+                                      ([=,this](SOCKET sock) {
                                           sf_debug("B new connection,NAT conection built");
                                           std::shared_ptr<sf_tcp_nat_traversal_connection> connection(
                                                   new sf_tcp_nat_traversal_connection(
@@ -116,7 +116,7 @@ namespace skyfire {
                                           );
                                           sf_debug("unbind id", *tmp_bind_id); // NOLINT(bugprone-lambda-function-name)
                                           connect_context_map__.erase(context.connect_id);
-                                      },
+                                      }),
                                       true
         );
 
@@ -218,10 +218,10 @@ namespace skyfire {
     }
 
     inline sf_tcp_nat_traversal_client::sf_tcp_nat_traversal_client() {
-        sf_bind_signal(client__, data_coming, [=](const sf_pkg_header_t &header, const byte_array &data) {
+        sf_bind_signal(client__, data_coming, [this](const sf_pkg_header_t &header, const byte_array &data) {
             on_client_data_coming__(header, data);
         }, true);
-        sf_bind_signal(client__, closed, [=] { close(); }, true);
+        sf_bind_signal(client__, closed, [this] { close(); }, true);
     }
 
     inline unsigned long long int sf_tcp_nat_traversal_client::get_id() const

@@ -62,7 +62,7 @@ namespace skyfire {
 		using _Ret = typename sf_function_type_helper<decltype(func)>::return_type;
 		using _Param = typename sf_function_type_helper<decltype(func)>::param_type;
 		// auto 让 constexpr-if 生效
-		auto f = [=](SOCKET s, const auto& req) {
+		auto f = [=, this](SOCKET s, const auto& req) {
 			if (req.func_id == id) {
 				_Param param;
 				from_json(req.params, param);
@@ -88,14 +88,14 @@ namespace skyfire {
     inline sf_rpc_server::sf_rpc_server() {
         sf_bind_signal(sf_rpc_server::__tcp_server__,
                        data_coming,
-                       [=](SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
+                       [this](SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
                            __on_data_coming(sock, header, data);
                        },
                        true);
-        sf_bind_signal(sf_rpc_server::__tcp_server__,new_connection,[=](SOCKET sock){
+        sf_bind_signal(sf_rpc_server::__tcp_server__,new_connection,[this](SOCKET sock){
             client_connected(sock);
         },true);
-        sf_bind_signal(sf_rpc_server::__tcp_server__,closed,[=](SOCKET sock){
+        sf_bind_signal(sf_rpc_server::__tcp_server__,closed,[this](SOCKET sock){
             client_disconnected(sock);
         },true);
     }

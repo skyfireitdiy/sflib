@@ -82,7 +82,7 @@ namespace skyfire
         {
             return false;
         }
-        std::thread([=]
+        std::thread([=, this]
                     {
                         byte_array recv_buffer(sf_default_buffer_size);
                         byte_array data;

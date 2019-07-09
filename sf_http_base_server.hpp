@@ -624,15 +624,15 @@ inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
 
 inline sf_http_base_server::sf_http_base_server(sf_http_server_config config) : config__(std::move(config))
 {
-    sf_bind_signal(server__, raw_data_coming, [=](SOCKET sock, const byte_array &data) {
+    sf_bind_signal(server__, raw_data_coming, [this](SOCKET sock, const byte_array &data) {
         raw_data_coming__(sock, data);
     },
                    true);
-    sf_bind_signal(server__, new_connection, [=](SOCKET sock) {
+    sf_bind_signal(server__, new_connection, [this](SOCKET sock) {
         build_new_request__(sock);
     },
                    true);
-    sf_bind_signal(server__, closed, [=](SOCKET sock) {
+    sf_bind_signal(server__, closed, [this](SOCKET sock) {
         on_socket_closed__(sock);
     },
                    true);
@@ -687,7 +687,7 @@ inline bool sf_http_base_server::start()
         return false;
     }
     sf_debug("listen succeed!", config__.port);
-    std::thread([=] {
+    std::thread([=, this] {
         event_loop__.exec();
     })
         .join();

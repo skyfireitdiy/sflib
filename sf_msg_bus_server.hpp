@@ -129,7 +129,7 @@ namespace skyfire {
         sf_bind_signal(
                 p_server__,
                 data_coming,
-                [=](SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
+                [this](SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
                     on_reg_data__(sock, header, data);
                 },
                 true
@@ -137,7 +137,7 @@ namespace skyfire {
         sf_bind_signal(
                 p_server__,
                 closed,
-                [=](SOCKET sock) {
+                [this](SOCKET sock) {
                     on_disconnect__(sock);
                 },
                 true

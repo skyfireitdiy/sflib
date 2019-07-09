@@ -42,11 +42,11 @@ namespace skyfire {
         sf_bind_signal(server__, new_connection, [=](SOCKET sock) {
             on_new_connection__(sock);
         }, true);
-        sf_bind_signal(server__, closed, [=](SOCKET sock) {
+        sf_bind_signal(server__, closed, [this](SOCKET sock) {
             on_disconnect__(sock);
         }, true);
 
-        sf_bind_signal(server__, data_coming, [=](SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
+        sf_bind_signal(server__, data_coming, [this](SOCKET sock, const sf_pkg_header_t &header, const byte_array &data) {
             on_msg_coming__(sock, header, data);
         }, true);
     }

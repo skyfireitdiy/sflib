@@ -45,34 +45,34 @@ namespace skyfire {
         if (type__ == sf_tcp_nat_traversal_connection_type::type_client_valid) {
             sf_bind_signal(client__,
                            data_coming,
-                           [=](const sf_pkg_header_t &header, const byte_array &data) {
+                           [this](const sf_pkg_header_t &header, const byte_array &data) {
                                data_coming(header, data);
                            }, true);
             sf_bind_signal(client__,
                            raw_data_coming,
-                           [=](const byte_array &data) {
+                           [this](const byte_array &data) {
                                raw_data_coming(data);
                            }, true);
             sf_bind_signal(client__,
                            closed,
-                           [=]() {
+                           [this]() {
                                closed();
                            },
                            true);
         } else {
             sf_bind_signal(server__,
                            data_coming,
-                           [=](SOCKET, const sf_pkg_header_t &header, const byte_array &data) {
+                           [this](SOCKET, const sf_pkg_header_t &header, const byte_array &data) {
                                data_coming(header, data);
                            }, true);
             sf_bind_signal(server__,
                            raw_data_coming,
-                           [=](SOCKET, const byte_array &data) {
+                           [this](SOCKET, const byte_array &data) {
                                raw_data_coming(data);
                            }, true);
             sf_bind_signal(server__,
                            closed,
-                           [=](SOCKET) {
+                           [this](SOCKET) {
                                closed();
                            },
                            true);

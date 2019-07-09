@@ -1,0 +1,24 @@
+[
+  {
+    "id": "student1",
+    "data": {
+      "name": "zhangsan",
+      "age": 26,
+      "male": true
+    }
+  },
+  {
+    "id": "student2",
+    "data": {
+      "__base__": "student1",
+      "address": "xi'an"
+    }
+  },
+  {
+    "id": "student3",
+    "data": {
+      "__base__": "student1",
+      "address": "shandong"
+    }
+  }
+]

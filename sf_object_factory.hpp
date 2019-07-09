@@ -54,6 +54,7 @@ namespace skyfire
 			}
 			object_data__[item.id] = item;
 		}
+        return true;
 	}
 
 	sf_json sf_object_factory::get_object_data(const std::string& obj_name)

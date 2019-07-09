@@ -31,7 +31,7 @@ namespace skyfire
         }
         running__ = true;
 
-        std::thread new_thread = std::thread ([=](bool is_once)
+        std::thread new_thread = std::thread ([=, this](bool is_once)
                                               {
                                                   while (true)
                                                   {
