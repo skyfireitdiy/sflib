@@ -46,6 +46,8 @@ add_executable(test_finally example/test_finally/test_finally.cpp ${headers})
 add_executable(test_grammer example/test_grammer/test_grammer.cpp ${headers})
 add_executable(test_json example/test_json/test_json.cpp ${headers})
 add_executable(test_factory example/test_factory/test_factory.cpp ${headers})
+add_executable(test_argv example/test_argv/test_argv.cpp ${headers})
+
 
 
 
@@ -75,6 +77,7 @@ ELSE()
     target_link_libraries(test_aop pthread)
     target_link_libraries(test_json pthread)
     target_link_libraries(test_factory pthread)
+    target_link_libraries(test_argv pthread)
 
 ENDIF ()
 

@@ -421,7 +421,7 @@ namespace skyfire
             value__->type = sf_json_type::number;
             clear();
         }
-        value__->value = value;
+        value__->value = std::to_string(value);
         return *this;
     }
 
