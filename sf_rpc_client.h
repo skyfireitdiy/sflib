@@ -14,9 +14,11 @@
 /*
  * sf_rpc_client rpc客户端
  */
-#pragma once
+#pragma once返回sf_assigned_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
+
 
 
 #include "sf_tcp_client.h"
@@ -24,6 +26,7 @@
 #include "sf_timer.hpp"
 #include "sf_stdc++.h"
 #include "sf_assigned_type.h"
+#include "sf_json.h"
 
 
 namespace skyfire {
@@ -40,6 +43,38 @@ namespace skyfire {
         bool is_async;
         std::function<void(const byte_array &)> async_callback;
     };
+
+    class sf_rpc_ret_t{
+        bool valid__;
+        sf_json data__;
+    public:
+
+        sf_rpc_ret_t(bool valid, const sf_json &data): valid__(valid), data__(data)
+        {}
+
+        bool valid()const{
+            return valid__;
+        }
+
+        template <typename T>
+        T get() const{
+            sf_debug("***********");
+            sf_debug(data__);
+            sf_debug("***********");
+            T ret;
+            from_json(data__["ret"], ret);
+            return ret;
+        }
+
+        template <typename T>
+        operator T() const{
+            return get<T>();
+        }
+
+    };
+
+
+
 
     /**
      *  @brief rpc客户端类
@@ -93,8 +128,8 @@ namespace skyfire {
           * @param args 参数列表
           * @return 返回值
           */
-        template<typename _Ret=void, typename ... __SF_RPC_ARGS__>
-        sf_assigned_type<_Ret> call(const std::string &func_id, __SF_RPC_ARGS__ ... args);
+        template<typename ... __SF_RPC_ARGS__>
+        sf_rpc_ret_t call(const std::string &func_id, __SF_RPC_ARGS__ ... args);
 
         /**
           * @brief async_call 异步调用

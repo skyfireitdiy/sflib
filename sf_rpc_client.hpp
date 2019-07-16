@@ -122,14 +122,11 @@ namespace skyfire {
     //    p_timer->start(rpc_timeout__, true);
     //}
 
-    template<typename _Ret, typename... __SF_RPC_ARGS__>
-    sf_assigned_type<_Ret> sf_rpc_client::call(const std::string &func_id, __SF_RPC_ARGS__... args) {
-        static_assert(!std::is_reference<_Ret>::value, "Param can't be reference");
-        static_assert(!std::is_pointer<_Ret>::value, "Param can't be pointer");
+    template<typename... __SF_RPC_ARGS__>
+    sf_rpc_ret_t sf_rpc_client::call(const std::string &func_id, __SF_RPC_ARGS__... args) {
         static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
         static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
 
-        using __Ret = typename std::decay<_Ret>::type;
 
         std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param{args...};
         const auto call_id = __make_call_id();
@@ -150,37 +147,18 @@ namespace skyfire {
 				wait_ret = __rpc_data__[call_id]->back_cond.wait_for(lck, std::chrono::milliseconds(rpc_timeout__), [&] ()->bool { return __rpc_data__[call_id]->back_finished; });
 			}
 			if (!wait_ret) {
-				std::cout << "4" << std::endl;
 				__rpc_data__.erase(call_id);
-				std::cout << "5" << std::endl;
-				return sf_assigned_type<__Ret>();
+				sf_json ret;
+				return {false, sf_json()};
 			}
 		}
         std::cout<<"6"<<std::endl;
         
         // 连接断开
         if (!__rpc_data__[call_id]->back_finished) {
-            return sf_assigned_type<__Ret>();
+            return {false, sf_json()};
         }
-        if constexpr (std::is_same<_Ret, void>::value) {
-            std::cout<<"ok"<<std::endl;
-            __rpc_data__.erase(call_id);
-            return sf_assigned_type<void>(true);
-        } 
-		else
-		{
-            sf_assigned_type<__Ret> ret;
-            __Ret tmp_ret{};
-            sf_rpc_res_context_t res;
-            sf_debug("rpc return",to_string(__rpc_data__[call_id]->data));
-			from_json(sf_json::from_string(to_string(__rpc_data__[call_id]->data)), res);
-            sf_debug("rpc return", res.ret.to_string());
-			from_json(res.ret, tmp_ret);
-            sf_debug("rpc return", tmp_ret.size());
-            ret = tmp_ret;
-            __rpc_data__.erase(call_id);
-            return ret;
-        }
+        return {true,sf_json::from_string(to_string(__rpc_data__[call_id]->data))};
     }
 
 	inline void sf_rpc_client::set_rpc_timeout(unsigned int ms) {

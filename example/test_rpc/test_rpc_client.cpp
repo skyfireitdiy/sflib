@@ -36,16 +36,16 @@ int main()
         return -1;
     }
     // 3.同步调用，无返回值
-    client->call<>("print"s);
-	client->call<>("print_str", to_byte_array("hello world"s));
+    client->call("print"s);
+	client->call("print_str", to_byte_array("hello world"s));
     std::cout<<"call finished"<<std::endl;
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
-    // 4.同步调用，返回sf_assigned_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
-    data = *client->call<std::vector<int>>("add_one"s, data);
+    // 4.同步调用
+    data = decltype(data)(client->call("add_one"s, data));
     disp_vec(data);
     std::cout<<"---------"<<std::endl;
     // 5.异步调用，第二个参数为参数为rpc函数返回类型的回调函数（需要显式指明返回值类型）
-    client->async_call<std::vector<int>>("add_one"s, disp_vec, data);
+    client->async_call("add_one"s, std::function(disp_vec), data);
     getchar();
 }
