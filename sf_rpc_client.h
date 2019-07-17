@@ -14,7 +14,7 @@
 /*
  * sf_rpc_client rpc客户端
  */
-#pragma once返回sf_assigned_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
@@ -94,9 +94,10 @@ namespace skyfire {
 
         void __on_closed();
 
+    public:
+
         sf_rpc_client();
 
-    public:
         /**
          * @brief make_client 创建RPC客户端
          * @return 客户端对象
@@ -148,7 +149,7 @@ namespace skyfire {
           * @param args 参数
           */
         template<typename ... __SF_RPC_ARGS__>
-        void async_call(const std::string &func_id,
+        void call(const std::string &func_id,
                         std::function<void()> rpc_callback,
                         __SF_RPC_ARGS__ ...args
         );
@@ -160,13 +161,33 @@ namespace skyfire {
           * @param args 参数
           */
         template<typename _Ret, typename ... __SF_RPC_ARGS__>
-        void async_call(const std::string &func_id,
+        void call(const std::string &func_id,
                         std::function<void(_Ret)> rpc_callback,
                         __SF_RPC_ARGS__ ...args
         );
 
         friend std::shared_ptr<sf_tcp_client>;
     };
+
+
+#define RPC_OBJECT(name) struct name:public skyfire::sf_rpc_client
+
+#define RPC_INTERFACE(name) \
+template<typename ... __SF_RPC_ARGS__>  \
+    skyfire::sf_rpc_ret_t name(__SF_RPC_ARGS__&& ... args){   \
+        return call(#name, std::forward<__SF_RPC_ARGS__>(args)...);\
+    }\
+    template<typename _Ret, typename ... __SF_RPC_ARGS__>\
+    void name(std::function<void(_Ret)> rpc_callback,\
+                     __SF_RPC_ARGS__ && ...args) {\
+        call(#name, rpc_callback, std::forward<__SF_RPC_ARGS__>(args)...);\
+    }\
+    template<typename ... __SF_RPC_ARGS__>\
+    void name(std::function<void()> rpc_callback,\
+                     __SF_RPC_ARGS__ && ...args) {\
+        call(#name, rpc_callback, std::forward<__SF_RPC_ARGS__>(args)...);\
+    }\
+
 }
 
 #pragma clang diagnostic pop

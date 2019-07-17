@@ -573,6 +573,7 @@ int main()
 
 客户端
 ```cpp
+#define SF_DEBUG
 #include "sf_rpc_client.hpp"
 using namespace skyfire;
 using namespace std::literals;
@@ -586,44 +587,50 @@ void disp_vec(std::vector<int> data)
     std::cout<<std::endl;
 }
 
+// 1. 声明接口
+RPC_OBJECT(Object) {
+    RPC_INTERFACE(print)
+    RPC_INTERFACE(print_str)
+    RPC_INTERFACE(add_one)
+};
+
 int main()
 {
-    // 1.创建rpc客户端
-    auto client = sf_rpc_client::make_client();
-    // 2.连接rpc服务器
-    if (!client->connect_to_server("127.0.0.1", 10001))
+    // 2.创建rpc客户端
+    Object client;
+    // 3.连接rpc服务器
+    if (!client.connect_to_server("127.0.0.1", 10001))
     {
         std::cout << "connect error" << std::endl;
         return -1;
     }
     // 3.同步调用，无返回值
-    client->call<>("print"s);
-	client->call<>("print_str", to_byte_array("hello world"s));
+    client.print();
+	client.print_str("hello world"s);
     std::cout<<"call finished"<<std::endl;
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
-    // 4.同步调用，返回sf_assigned_type<vector<int>>，使用*解引用（需要显式指明返回值类型）
-    data = *client->call<std::vector<int>>("add_one"s, data);
+    // 4.同步调用
+    data = decltype(data)(client.add_one(data));
     disp_vec(data);
     std::cout<<"---------"<<std::endl;
-    // 5.异步调用，第二个参数为参数为rpc函数返回类型的回调函数（需要显式指明返回值类型）
-    client->async_call<std::vector<int>>("add_one"s, disp_vec, data);
+    // 5.异步调用，第1个参数为参数为rpc函数返回类型的回调函数
+    client.add_one(std::function(disp_vec), data);
     getchar();
 }
-
 ```
 
 使用步骤：
 
-1. 创建RPC客户端
+1. 声明接口
 
-2. 连接RPC服务器
+2. 创建rpc客户端
 
-3. 使用`call<>`进行同步调用无返回值函数，参数为过程`id`和参数列表。
+3. 连接rpc服务器
 
-4. 使用`call<Type>`同步调用返回值类型为`Type`的函数，实际返回的类型为`sf_assigned_type<Type>`包装后类型，使用`bool()`可以判断值的合法性，使用`*`解引用获取原始值。
+4.同步调用
 
-5. 使用`async_call<Type>`进行异步调用，调用方式为`async_call<Type>(过程id,异步回调函数,参数列表...)`。回调函数会在RPC调用返回时被调用，参数类型为`Type`
+5. 异步调用，第1个参数为参数为rpc函数返回类型的回调函数（需要显式指明返回值类型）
 
 #### 消息总线框架使用
 

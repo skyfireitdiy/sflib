@@ -32,7 +32,7 @@ namespace skyfire {
     }
 
     template<typename _Ret, typename... __SF_RPC_ARGS__>
-    void sf_rpc_client::async_call(const std::string &func_id, std::function<void(_Ret)> rpc_callback,
+    void sf_rpc_client::call(const std::string &func_id, std::function<void(_Ret)> rpc_callback,
                                               __SF_RPC_ARGS__... args) {
         static_assert(!std::is_reference<_Ret>::value, "Param can't be reference");
         static_assert(!std::is_pointer<_Ret>::value, "Param can't be pointer");
@@ -69,7 +69,7 @@ namespace skyfire {
     }
 
     template<typename... __SF_RPC_ARGS__>
-    void sf_rpc_client::async_call(const std::string &func_id, std::function<void()> rpc_callback,
+    void sf_rpc_client::call(const std::string &func_id, std::function<void()> rpc_callback,
                                               __SF_RPC_ARGS__... args) {
         static_assert(!std::disjunction<std::is_reference<__SF_RPC_ARGS__>...>::value, "Param can't be reference");
         static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value, "Param can't be pointer");
