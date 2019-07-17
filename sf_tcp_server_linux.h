@@ -46,6 +46,7 @@ namespace skyfire
 
     struct epoll_context_t{
         int epoll_fd;
+        std::shared_ptr<std::shared_mutex> mu_sock_context__;
         std::unordered_map<SOCKET, sock_data_context_t> sock_context__;
     };
 
@@ -91,6 +92,8 @@ namespace skyfire
         bool send(SOCKET sock, int type, const byte_array &data) override;
 
         bool send(SOCKET sock, const byte_array &data) override;
+
+        bool detach(SOCKET sock) override ;
 
     };
 

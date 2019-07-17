@@ -35,6 +35,9 @@ namespace skyfire
         bool inited__ = false;
         bool raw__ = false;
         int sock__ = -1;
+
+        void recv_thread__();
+
     public:
         sf_tcp_client(bool raw = false); // NOLINT(google-explicit-constructor)
 

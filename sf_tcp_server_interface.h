@@ -124,6 +124,10 @@ namespace skyfire
          * @return 获取结果
          */
         bool get_server_addr(sf_addr_info_t &addr);
+
+
+        virtual bool detach(SOCKET socket) = 0;
+
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 		/**

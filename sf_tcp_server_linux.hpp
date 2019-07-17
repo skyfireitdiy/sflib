@@ -35,7 +35,10 @@ namespace skyfire {
             return false;
         }
 
+
+        std::shared_lock<std::shared_mutex> lck1(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
+        lck1.unlock();
 
         sf_debug("find index", index);
 
@@ -47,7 +50,11 @@ namespace skyfire {
         sock_context__[sock].data_buffer_out.push_back(send_data);
 
         sock_context__[sock].ev.events |= EPOLLOUT;
+
+        std::shared_lock<std::shared_mutex> lck2(*epoll_data__[index].mu_sock_context__);
         return epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
+
+
     }
 
     inline bool sf_tcp_server::send(int sock, int type, const byte_array &data) {
@@ -56,7 +63,10 @@ namespace skyfire {
             sf_debug("not found fd", sock);
             return false;
         }
+
+        std::shared_lock<std::shared_mutex> lck1(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
+        lck1.unlock();
 
         sf_debug("find index", index);
 
@@ -74,6 +84,8 @@ namespace skyfire {
         sock_context__[sock].data_buffer_out.push_back(send_data);
         sf_debug("index", index, "sock", sock, "push data");
         sock_context__[sock].ev.events |= EPOLLOUT;
+
+        std::shared_lock<std::shared_mutex> lck2(*epoll_data__[index].mu_sock_context__);
         return epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
 
     }
@@ -87,6 +99,7 @@ namespace skyfire {
         shutdown(listen_fd__, SHUT_RDWR);
         ::close(listen_fd__);
         listen_fd__ = -1;
+
         for (auto &t:epoll_data__) {
             for (auto &p:t.sock_context__) {
                 epoll_ctl(t.epoll_fd, EPOLL_CTL_DEL, p.first,
@@ -419,5 +432,26 @@ namespace skyfire {
                 }
             }
         }
+    }
+
+    inline bool sf_tcp_server::detach(SOCKET sock) {
+        auto index = find_fd_epoll_index(sock);
+        if(index == -1){
+            return false;
+        }
+
+        if (epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, sock,
+                  &epoll_data__[index].sock_context__[sock].ev) != -1)
+        {
+            return false;
+        }
+        epoll_data__[index].sock_context__.erase(sock);
+
+        if (fcntl(sock, F_SETFL, fcntl(sock, F_GETFD, 0) & ~O_NONBLOCK) == -1) {
+            sf_debug("detach error");
+            return false;
+        }
+
+        return true;
     }
 }
