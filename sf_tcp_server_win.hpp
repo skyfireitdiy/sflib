@@ -420,6 +420,12 @@ namespace skyfire {
 		}
     }
 
+
+	inline bool sf_tcp_server::detach(SOCKET sock)
+	{
+		return false;
+	}
+
     inline bool sf_tcp_server::send(SOCKET sock, int type, const byte_array &data) {
         DWORD send_bytes;
 		sf_pkg_header_t header{};

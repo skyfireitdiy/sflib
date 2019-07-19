@@ -58,9 +58,6 @@ namespace skyfire {
 
         template <typename T>
         T get() const{
-            sf_debug("***********");
-            sf_debug(data__);
-            sf_debug("***********");
             T ret;
             from_json(data__["ret"], ret);
             return ret;

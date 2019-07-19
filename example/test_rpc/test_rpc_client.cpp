@@ -49,8 +49,8 @@ int main()
     std::vector<int> data = {9,5,6,7,41,23,4,5,7};
     disp_vec(data);
     // 4.同步调用
-    data = decltype(data)(client.add_one(data));
-    disp_vec(data);
+    std::vector<int> data1 = (client.add_one(data));
+    disp_vec(data1);
     std::cout<<"---------"<<std::endl;
     // 5.异步调用，第1个参数为参数为rpc函数返回类型的回调函数（需要显式指明返回值类型）
     client.add_one(std::function(disp_vec), data);

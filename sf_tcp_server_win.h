@@ -97,6 +97,8 @@ namespace skyfire {
 
         bool send(SOCKET sock, const byte_array &data) override;
 
+		bool detach(SOCKET sock) override;
+
     };
 
 }

@@ -58,7 +58,7 @@ namespace skyfire {
 		sf_debug("async call", skyfire::to_json(req));
         __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
         auto p_timer = std::make_shared<sf_timer>();
-        sf_bind_signal(p_timer, timeout, ([=, this]() {
+        sf_bind_signal(p_timer, timeout, ([=]() {
             if(__rpc_data__.count(call_id)!=0)
             {
                 __rpc_data__[call_id]->back_cond.notify_one();
@@ -87,7 +87,7 @@ namespace skyfire {
 		sf_debug("async call", skyfire::to_json(req));
         __tcp_client__->send(rpc_req_type, to_byte_array(skyfire::to_json(req).to_string()));
         auto p_timer = std::make_shared<sf_timer>();
-        sf_bind_signal(p_timer, timeout, ([=, this]() {
+        sf_bind_signal(p_timer, timeout, ([=]() {
             if(__rpc_data__.count(call_id)!=0)
             {
                 __rpc_data__[call_id]->back_cond.notify_one();

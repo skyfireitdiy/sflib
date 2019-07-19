@@ -46,7 +46,7 @@ namespace skyfire
     inline sf_http_server::sf_http_server(const sf_http_server_config &config) :sf_http_base_server(config)
     {
         // NOTE 普通http回调函数
-        set_request_callback([=, this](const sf_http_request& req,sf_http_response& res){
+        set_request_callback([=](const sf_http_request& req,sf_http_response& res){
             sf_debug("http callback");
             default_request_callback__(req, res);
         });
@@ -54,20 +54,20 @@ namespace skyfire
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // NOTE websocket 回调函数
-        set_websocket_request_callback([=, this](const sf_http_request& req,sf_http_response& res){
+        set_websocket_request_callback([=](const sf_http_request& req,sf_http_response& res){
             default_websocket_request_callback__(req,res);
         });
-        set_websocket_binary_data_callback([=, this](SOCKET sock, const std::string& url,const byte_array& data){
+        set_websocket_binary_data_callback([=](SOCKET sock, const std::string& url,const byte_array& data){
             default_websocket_binary_data_callback__(sock, url, data);
         });
-        set_websocket_text_data_callback([=,this](SOCKET sock, const std::string& url,const std::string& data){
+        set_websocket_text_data_callback([=](SOCKET sock, const std::string& url,const std::string& data){
             sf_debug("recv",data);
             default_websocket_text_data_callback__(sock, url, data);
         });
-        set_websocket_open_callback([=, this](SOCKET sock,const std::string& url){
+        set_websocket_open_callback([=](SOCKET sock,const std::string& url){
             default_websocket_open_callback__(sock,url);
         });
-        set_websocket_close_callback([=, this](SOCKET sock,const std::string& url){
+        set_websocket_close_callback([=](SOCKET sock,const std::string& url){
             default_websocket_close_callback__(sock,url);
         });
     }

@@ -97,7 +97,7 @@ namespace skyfire {
         std::shared_ptr<int> tmp_bind_id = std::make_shared<int>();
         *tmp_bind_id = sf_bind_signal(connect_context_map__[context.connect_id].point_b_server,
                                       new_connection,
-                                      ([=,this](SOCKET sock) {
+                                      ([this, context, tmp_bind_id](SOCKET sock) {
                                           sf_debug("B new connection,NAT conection built");
                                           std::shared_ptr<sf_tcp_nat_traversal_connection> connection(
                                                   new sf_tcp_nat_traversal_connection(

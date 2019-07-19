@@ -25,6 +25,9 @@ namespace skyfire
         bool raw__ = false;
         bool inited__ = false;
         SOCKET sock__ = INVALID_SOCKET;
+
+		void recv_thread__();
+
     public:
 
         SOCKET get_raw_socket() override;

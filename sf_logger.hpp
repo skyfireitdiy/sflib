@@ -134,7 +134,7 @@ inline
 sf_logger::sf_logger()
 {
         add_level_stream(SF_DEBUG_LEVEL, &std::cout);
-        std::thread([=, this]()
+        std::thread([=]()
                     {
                         while (true)
                         {

@@ -37,6 +37,7 @@ namespace skyfire
         sock__ = sock;
         inited__ = true;
         raw__ = raw;
+		std::thread(&sf_tcp_client::recv_thread__, this).detach();
     }
 
     inline sf_tcp_client::sf_tcp_client(bool raw) {
@@ -93,60 +94,62 @@ namespace skyfire
         {
             return false;
         }
-        std::thread([=]
-                    {
-                        byte_array recv_buffer(sf_default_buffer_size);
-                        byte_array data;
-                        sf_pkg_header_t header;
-                        while (true)
-                        {
-	                        const auto len = ::recv(sock__, recv_buffer.data(), sf_default_buffer_size, 0);
-                            if (len <= 0)
-                            {
-                                closed();
-                                break;
-                            }
-                            if(raw__)
-                            {
-                                raw_data_coming(byte_array(recv_buffer.begin(),recv_buffer.begin()+len));
-                            }
-                            else
-                            {
-                                data.insert(data.end(), recv_buffer.begin(), recv_buffer.begin() + len);
-                                size_t read_pos = 0;
-                                while (data.size() - read_pos >= sizeof(sf_pkg_header_t))
-                                {
-                                    memmove_s(&header, sizeof(header), data.data() + read_pos, sizeof(header));
-                                    if(!check_header_checksum(header))
-                                    {
-                                        close();
-                                        return;
-                                    }
-                                    if (data.size() - read_pos - sizeof(header) >= header.length)
-                                    {
-
-                                        data_coming(
-                                                header,
-                                                byte_array(
-                                                        data.begin() + read_pos + sizeof(header),
-                                                        data.begin() + read_pos + sizeof(header)
-                                                        + header.length));
-                                        read_pos += sizeof(header) + header.length;
-                                    }
-                                    else
-                                    {
-                                        break;
-                                    }
-                                }
-                                if (read_pos != 0)
-                                {
-                                    data.erase(data.begin(), data.begin() + read_pos);
-                                }
-                            }
-                        }
-                    }).detach();
+        std::thread(&sf_tcp_client::recv_thread__, this).detach();
         return true;
     }
+
+	void sf_tcp_client::recv_thread__()
+	{
+		byte_array recv_buffer(sf_default_buffer_size);
+		byte_array data;
+		sf_pkg_header_t header;
+		while (true)
+		{
+			const auto len = ::recv(sock__, recv_buffer.data(), sf_default_buffer_size, 0);
+			if (len <= 0)
+			{
+				closed();
+				break;
+			}
+			if (raw__)
+			{
+				raw_data_coming(byte_array(recv_buffer.begin(), recv_buffer.begin() + len));
+			}
+			else
+			{
+				data.insert(data.end(), recv_buffer.begin(), recv_buffer.begin() + len);
+				size_t read_pos = 0;
+				while (data.size() - read_pos >= sizeof(sf_pkg_header_t))
+				{
+					memmove_s(&header, sizeof(header), data.data() + read_pos, sizeof(header));
+					if (!check_header_checksum(header))
+					{
+						close();
+						return;
+					}
+					if (data.size() - read_pos - sizeof(header) >= header.length)
+					{
+
+						data_coming(
+							header,
+							byte_array(
+								data.begin() + read_pos + sizeof(header),
+								data.begin() + read_pos + sizeof(header)
+								+ header.length));
+						read_pos += sizeof(header) + header.length;
+					}
+					else
+					{
+						break;
+					}
+				}
+				if (read_pos != 0)
+				{
+					data.erase(data.begin(), data.begin() + read_pos);
+				}
+			}
+		}
+	}
 
     inline bool sf_tcp_client::send(int type, const byte_array &data) {
         if (!inited__)

@@ -62,7 +62,7 @@ namespace skyfire {
 		using _Ret = typename sf_function_type_helper<decltype(func)>::return_type;
 		using _Param = typename sf_function_type_helper<decltype(func)>::param_type;
 		// auto 让 constexpr-if 生效
-		auto f = [=, this](SOCKET s, const auto& req) {
+		auto f = [=](SOCKET s, const auto& req) {
 			if (req.func_id == id) {
 				_Param param;
 				from_json(req.params, param);
