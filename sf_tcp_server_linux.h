@@ -48,7 +48,7 @@ namespace skyfire
 
     struct epoll_context_t{
         int epoll_fd;
-        std::shared_ptr<std::shared_mutex> mu_sock_context__;
+        // FIXME 此处应该加个锁，对sock_context__的访问在高并发环境下有冲突
         std::unordered_map<SOCKET, sock_data_context_t> sock_context__;
     };
 

@@ -157,6 +157,8 @@ namespace skyfire {
         return sf_path_join(str1, sf_path_join(str2...));
     }
 
+
+
     inline long long sf_get_file_size(const std::string &filename) {
         return fs::file_size(filename);
     }
@@ -265,6 +267,10 @@ namespace skyfire {
 
     inline bool sf_string_start_with(const std::string &str, const std::string &prefix) {
         return str.find(prefix) == 0;
+    }
+
+    inline bool sf_file_exists(const std::string &filename) {
+        return fs::exists(fs::path(filename));
     }
 
 

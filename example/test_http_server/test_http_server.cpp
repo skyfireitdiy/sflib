@@ -83,30 +83,36 @@ int main() {
     config.port = 8080;             // 端口
     // 2. 根据配置生成一个http server
     auto server = sf_http_server::make_instance(config);
+//
+//    // 3. 添加一个http路由，地址为/upload_file， 回调函数为upload_file_route，方法为所有
+//    server->add_router(make_http_router(
+//            "/upload_file"s,
+//            upload_file_route,
+//            std::vector<std::string>{{"*"s}}
+//    ));
+//
+//    // 4. 同样支持lambda
+//    server->add_router(make_http_router(
+//            "/user/(.*)/name"s,
+//            // 使用lambda时需要使用function包装一下，例子中第一个string参数会接收整个url，第二个会接收(.*?)匹配的url，规则与<regex>相同
+//            std::function([](const sf_http_request &req,sf_http_response& res, std::string, std::string user){
+//                res.set_body(to_byte_array(user+"'s name is skyfire"s));
+//            }),
+//            std::vector<std::string>{{"GET"s}}
+//    ));
+//
+//    // 5. 添加一个websocket路由，地址为/ws，回调函数为websocket_route
+//    server->add_router(make_websocket_router("/ws", websocket_route));
+//
+//    // 6. 设置一个静态资源路由，位置为"../example/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
+//    server->add_router(make_static_router(R"(C:\code\sflib\example\test_http_server\testWebsite)",  {{"*"s}}, "utf-8", true));
 
-    // 3. 添加一个http路由，地址为/upload_file， 回调函数为upload_file_route，方法为所有
-    server->add_router(make_http_router(
-            "/upload_file"s,
-            upload_file_route,
-            std::vector<std::string>{{"*"s}}
+    server->add_router(make_http_router("/", std::function(
+            [](const sf_http_request &req, sf_http_response &res, std::string, std::string user) {
+                res.set_body(to_byte_array("hello world"s));
+            }), {{"*"s}}
     ));
-
-    // 4. 同样支持lambda
-    server->add_router(make_http_router(
-            "/user/(.*)/name"s,
-            // 使用lambda时需要使用function包装一下，例子中第一个string参数会接收整个url，第二个会接收(.*?)匹配的url，规则与<regex>相同
-            std::function([](const sf_http_request &req,sf_http_response& res, std::string, std::string user){
-                res.set_body(to_byte_array(user+"'s name is skyfire"s));
-            }),
-            std::vector<std::string>{{"GET"s}}
-    ));
-
-    // 5. 添加一个websocket路由，地址为/ws，回调函数为websocket_route
-    server->add_router(make_websocket_router("/ws", websocket_route));
-
-    // 6. 设置一个静态资源路由，位置为"../example/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
-    server->add_router(make_static_router(R"(C:\code\sflib\example\test_http_server\testWebsite)",  {{"*"s}}, "utf-8", true));
 
     // 7. 启动服务
-    server->start(); 
+    server->start();
 }

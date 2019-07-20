@@ -42,7 +42,6 @@ inline void sf_http_base_server::http_handler__(const SOCKET sock, sf_http_reque
     {
         keep_alive = false;
     }
-
     auto cookies = res.get_cookies();
     for (auto &p : cookies)
     {
@@ -248,6 +247,7 @@ inline void sf_http_base_server::close_request__(SOCKET sock)
 inline void sf_http_base_server::normal_response__(SOCKET sock, sf_http_response &res) const
 {
     res.get_header().set_header("Content-Length", std::to_string(res.get_length()));
+    sf_debug(to_string(res.to_package()));
     server__->send(sock, res.to_package());
 }
 

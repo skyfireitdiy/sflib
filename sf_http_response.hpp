@@ -27,9 +27,11 @@ namespace skyfire
         if(sf_http_status.count(status)!=0)
         {
             set_status_desc(sf_http_status[status]);
+            // set_body(to_byte_array(sf_http_status[status]));
         }else
         {
             set_status_desc("Unknown");
+            // set_body(to_byte_array("Unknown"s));
         }
     }
 

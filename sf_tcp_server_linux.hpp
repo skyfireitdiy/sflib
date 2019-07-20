@@ -36,9 +36,7 @@ namespace skyfire {
         }
 
 
-        std::shared_lock<std::shared_mutex> lck1(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
-        lck1.unlock();
 
         sf_debug("find index", index);
 
@@ -51,7 +49,6 @@ namespace skyfire {
 
         sock_context__[sock].ev.events |= EPOLLOUT;
 
-        std::shared_lock<std::shared_mutex> lck2(*epoll_data__[index].mu_sock_context__);
         return epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
 
 
@@ -64,9 +61,7 @@ namespace skyfire {
             return false;
         }
 
-        std::shared_lock<std::shared_mutex> lck1(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
-        lck1.unlock();
 
         sf_debug("find index", index);
 
@@ -85,7 +80,6 @@ namespace skyfire {
         sf_debug("index", index, "sock", sock, "push data");
         sock_context__[sock].ev.events |= EPOLLOUT;
 
-        std::shared_lock<std::shared_mutex> lck2(*epoll_data__[index].mu_sock_context__);
         return epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
 
     }
@@ -158,6 +152,7 @@ namespace skyfire {
     inline void sf_tcp_server::work_thread(int index, bool listen_thread, SOCKET listen_fd) {
         sf_debug("start thread", index);
         epoll_data__[index].epoll_fd = epoll_create(max_tcp_connection);
+
         auto &sock_context__ = epoll_data__[index].sock_context__;
 
         if (listen_thread) {
@@ -178,7 +173,6 @@ namespace skyfire {
 
         while (true) {
             int wait_fds = 0;
-            sf_debug("wait epoll event", index, sock_context__.size());
             if ((wait_fds = epoll_wait(epoll_data__[index].epoll_fd, evs.data(), max_tcp_connection, -1)) == -1) {
                 if (errno == EINTR) {
                     continue;
@@ -300,12 +294,12 @@ namespace skyfire {
         auto &sock_context__ = epoll_data__[index].sock_context__;
         while (true) {
             sf_debug("start read");
-            auto count_read = static_cast<int>(read(ev.data.fd, recv_buf.data(),
-                                                    sf_default_buffer_size));
+            auto count_read = static_cast<int>(recv(ev.data.fd, recv_buf.data(),
+                                                    sf_default_buffer_size, 0));
             sf_debug("read", count_read);
-
             if (count_read <= 0) {
-                if ((errno == EAGAIN || errno == EINTR) && count_read < 0) {
+                // EWOULDBLOCK == EAGAIN
+                if ((errno == EAGAIN || errno == EINTR /* || errno == EWOULDBLOCK */) && count_read < 0) {
                     sf_debug("read finished", errno);
                     break;
                 } else {
@@ -329,6 +323,7 @@ namespace skyfire {
                 raw_data_coming(ev.data.fd, recv_buf);
                 sf_debug("after resolve");
             } else {
+
                 sock_context__[ev.data.fd].data_buffer_in.insert(
                         sock_context__[ev.data.fd].data_buffer_in.end(),
                         recv_buf.begin(),

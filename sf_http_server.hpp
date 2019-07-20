@@ -29,6 +29,7 @@ namespace skyfire
             if(p->run_route(req,res,req_line.url,req_line.method))
                 return;
         }
+        res.set_status(404);
     }
 
     inline void sf_http_server::add_router(const std::shared_ptr<sf_http_router> &router) {

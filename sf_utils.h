@@ -139,6 +139,8 @@ namespace skyfire {
      */
     long long sf_get_file_size(const std::string &filename);
 
+    bool sf_file_exists(const std::string &filename);
+
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
