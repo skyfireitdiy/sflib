@@ -32,7 +32,7 @@ namespace skyfire {
         connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 2;
 
         // 建立客户端1
-        connect_context_map__[context.connect_id].point_b_client_1 = sf_tcp_client::make_client();
+        connect_context_map__[context.connect_id].point_b_client_1 = sf_tcp_client::make_instance();
 
         sf_addr_info_t server_addr;
         if (!get_local_addr(client__->get_raw_socket(), server_addr)) {
@@ -72,7 +72,7 @@ namespace skyfire {
         // 第3步：接受端建立socket，发送信息，便于server获取到接受端地址信息，同时监听端口，context有效字段：connect_id、dest_id、src_id、src_addr
         connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 3;
 
-        connect_context_map__[context.connect_id].point_b_client_2 = sf_tcp_client::make_client();
+        connect_context_map__[context.connect_id].point_b_client_2 = sf_tcp_client::make_instance();
 
         // 将客户端2绑定至于客户端1相同的ip端口
         if (!connect_context_map__[context.connect_id].point_b_client_2->bind(
@@ -85,7 +85,7 @@ namespace skyfire {
         }
 
         // 监听端口，等待连接
-        connect_context_map__[context.connect_id].point_b_server = sf_tcp_server::make_server(context.raw);
+        connect_context_map__[context.connect_id].point_b_server = sf_tcp_server::make_instance(context.raw);
         if (!connect_context_map__[context.connect_id].point_b_server->listen(server_addr.ip, auto_port)) {
             context.error_code = sf_err_disconnect;
             client__->send(type_nat_traversal_error,
@@ -168,7 +168,7 @@ namespace skyfire {
         // 原始数据传输
         tmp_p2p_conn_context.tcp_nat_traversal_context.raw = raw;
         // 生成连接a客户端
-        tmp_p2p_conn_context.point_a_client_1 = sf_tcp_client::make_client();
+        tmp_p2p_conn_context.point_a_client_1 = sf_tcp_client::make_instance();
         // 尝试连接服务器
         if (tmp_p2p_conn_context.point_a_client_1->connect_to_server(server_addr__.ip, server_addr__.port)) {
 
@@ -179,7 +179,7 @@ namespace skyfire {
                 return "";
             }
 
-            tmp_p2p_conn_context.point_a_server = sf_tcp_server::make_server();
+            tmp_p2p_conn_context.point_a_server = sf_tcp_server::make_instance();
             // 复用刚才断开的连接1端口号
             if (!tmp_p2p_conn_context.point_a_server->listen(addr.ip, addr.port)) {
                 sf_error("listen local ip port error", addr.ip, addr.port);
@@ -229,9 +229,6 @@ namespace skyfire {
         return self_id__;
     }
 
-    inline std::shared_ptr <sf_tcp_nat_traversal_client> sf_tcp_nat_traversal_client::make_client() {
-        return std::shared_ptr<sf_tcp_nat_traversal_client>(new sf_tcp_nat_traversal_client);
-    }
 
     inline void sf_tcp_nat_traversal_client::on_client_data_coming__(const sf_pkg_header_t &header, const byte_array &data) {
         sf_debug(header.type);
@@ -277,7 +274,7 @@ namespace skyfire {
             return;
         }
         connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
-        connect_context_map__[context.connect_id].point_a_client_2 = sf_tcp_client::make_client(context.raw);
+        connect_context_map__[context.connect_id].point_a_client_2 = sf_tcp_client::make_instance(context.raw);
         sf_debug("connect to B");
         if (connect_context_map__[context.connect_id].point_a_client_2->connect_to_server(context.dest_addr.ip,
                                                                                 context.dest_addr.port)) {

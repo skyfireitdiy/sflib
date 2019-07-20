@@ -20,7 +20,7 @@ using namespace skyfire;
 int main(){
     g_logger->add_level_stream(SF_DEBUG_LEVEL,&std::cout);
     // 1. 创建nat穿透server
-    auto pserver = sf_tcp_nat_traversal_server::make_server();
+    auto pserver = sf_tcp_nat_traversal_server::make_instance();
     std::cout<<"port:"<<std::flush;
     unsigned short port;
     std::cin>>port;

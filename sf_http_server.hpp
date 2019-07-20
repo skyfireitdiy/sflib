@@ -39,11 +39,9 @@ namespace skyfire
         websocket_routers__.insert(router);
     }
 
-    inline std::shared_ptr<sf_http_server> sf_http_server::make_server(const sf_http_server_config &config) {
-        return std::shared_ptr<sf_http_server>(new sf_http_server(config));
-    }
-
-    inline sf_http_server::sf_http_server(const sf_http_server_config &config) :sf_http_base_server(config)
+    inline sf_http_server::sf_http_server(const sf_http_server_config &config) :
+    // TODO 有没有更优雅的写法？
+        sf_make_instance_t<sf_http_server, sf_http_base_server>(config)
     {
         // NOTE 普通http回调函数
         set_request_callback([this](const sf_http_request& req,sf_http_response& res){

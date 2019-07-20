@@ -26,10 +26,6 @@
 
 namespace skyfire {
 
-    inline std::shared_ptr<sf_msg_bus_server> sf_msg_bus_server::make_server() {
-        return std::make_shared<sf_msg_bus_server>();
-    }
-
     inline void sf_msg_bus_server::on_disconnect__(const SOCKET sock) {
         std::vector<std::string> remove_msg;
         for (auto &p : msg_map__) {

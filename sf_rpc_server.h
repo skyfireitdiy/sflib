@@ -30,7 +30,7 @@ namespace skyfire {
     /**
      *  @brief rpc server类
      */
-    class sf_rpc_server : public sf_nocopy<sf_object> {
+    class sf_rpc_server : public sf_make_instance_t<sf_rpc_server, sf_nocopy<sf_object>> {
         /**
          * 客户端连接信号
          */
@@ -42,7 +42,7 @@ namespace skyfire {
 
     private:
 
-        std::shared_ptr<sf_tcp_server> __tcp_server__ = sf_tcp_server::make_server();
+        std::shared_ptr<sf_tcp_server> __tcp_server__ = sf_tcp_server::make_instance();
 
         std::vector<std::function<void(SOCKET, const sf_rpc_req_context_t &)>> __func__vec__;
 
@@ -52,8 +52,9 @@ namespace skyfire {
 
         void __on_data_coming(SOCKET sock, const sf_pkg_header_t &header, const byte_array &data);
 
-        sf_rpc_server();
     public:
+        sf_rpc_server();
+
 
         /**
          * @brief reg_rpc_func 注册远程调用函数
@@ -62,14 +63,6 @@ namespace skyfire {
          */
         template<typename _Func>
         void reg_rpc_func(const std::string &id, _Func func);
-
-        /**
-         * @brief make_server 创建RPC服务器
-         * @return 服务器对象
-         */
-        static std::shared_ptr<sf_rpc_server> make_server();
-
-
 
         /**
          * @brief listen 监听

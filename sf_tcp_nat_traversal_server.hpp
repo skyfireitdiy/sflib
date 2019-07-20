@@ -51,9 +51,6 @@ namespace skyfire {
         }, true);
     }
 
-    inline std::shared_ptr <sf_tcp_nat_traversal_server> sf_tcp_nat_traversal_server::make_server() {
-        return std::make_shared<sf_tcp_nat_traversal_server>();
-    }
 
     inline void
     sf_tcp_nat_traversal_server::on_client_require_connect_to_peer_client__(sf_tcp_nat_traversal_context_t__ &context) const

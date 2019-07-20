@@ -82,7 +82,7 @@ int main() {
     config.host = "0.0.0.0";        // 监听ip
     config.port = 8080;             // 端口
     // 2. 根据配置生成一个http server
-    auto server = sf_http_server::make_server(config);
+    auto server = sf_http_server::make_instance(config);
 
     // 3. 添加一个http路由，地址为/upload_file， 回调函数为upload_file_route，方法为所有
     server->add_router(make_http_router(

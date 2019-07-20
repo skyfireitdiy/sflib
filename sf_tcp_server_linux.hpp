@@ -214,9 +214,6 @@ namespace skyfire {
         }
     }
 
-    inline std::shared_ptr<sf_tcp_server> sf_tcp_server::make_server(bool raw) {
-        return std::make_shared<sf_tcp_server>(raw);
-    }
 
     inline sf_tcp_server::~sf_tcp_server() {
         close();

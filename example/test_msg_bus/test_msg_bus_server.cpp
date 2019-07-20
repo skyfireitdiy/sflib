@@ -18,7 +18,7 @@ using namespace skyfire;
 int main()
 {
     // 1.创建一个消息总线服务器
-    auto server = sf_msg_bus_server::make_server();
+    auto server = sf_msg_bus_server::make_instance();
     // 2.监听
     server->listen("127.0.0.1", 5678);
     std::string type;

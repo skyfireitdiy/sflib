@@ -77,9 +77,9 @@ namespace skyfire {
     /**
      *  @brief rpc客户端类
      */
-    class sf_rpc_client : public sf_nocopy<sf_object> {
+    class sf_rpc_client : public sf_make_instance_t<sf_rpc_client, sf_nocopy<sf_object>> {
     private:
-        std::shared_ptr<sf_tcp_client> __tcp_client__ = sf_tcp_client::make_client();
+        std::shared_ptr<sf_tcp_client> __tcp_client__ = sf_tcp_client::make_instance();
         // TODO 此处使用unordered_map会崩溃，在计算hash的时候会发生除0错误，why？
         std::map<int, std::shared_ptr<sf_rpc_context_t>> __rpc_data__;
 
@@ -95,12 +95,6 @@ namespace skyfire {
     public:
 
         sf_rpc_client();
-
-        /**
-         * @brief make_client 创建RPC客户端
-         * @return 客户端对象
-         */
-        static std::shared_ptr<sf_rpc_client> make_client();
 
         /**
          * @brief set_rpc_timeout 设置RPC超时
@@ -168,7 +162,7 @@ namespace skyfire {
     };
 
 
-#define RPC_OBJECT(name) struct name:public skyfire::sf_rpc_client, public skyfire::make_instance_t<name>
+#define RPC_OBJECT(name) struct name:public skyfire::sf_make_instance_t<name, skyfire::sf_rpc_client>
 
 #define RPC_INTERFACE(name) \
 template<typename ... __SF_RPC_ARGS__>  \

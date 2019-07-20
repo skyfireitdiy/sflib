@@ -19,17 +19,18 @@
 #include "sf_tcp_server.h"
 #include "sf_stdc++.h"
 #include "sf_tcp_nat_traversal_utils.hpp"
+#include "sf_utils.h"
 
 namespace skyfire {
     /**
      * nat穿透服务器类
      */
-    class sf_tcp_nat_traversal_server final : public sf_nocopy<sf_object> {
+    class sf_tcp_nat_traversal_server final : public sf_make_instance_t<sf_tcp_nat_traversal_server, sf_nocopy<sf_object>> {
     private:
         // 保存客户端列表
         std::unordered_set<SOCKET> clients__;
         // Server
-        std::shared_ptr<sf_tcp_server> server__{sf_tcp_server::make_server()};
+        std::shared_ptr<sf_tcp_server> server__{sf_tcp_server::make_instance()};
         // 当前已运行
         bool running__ = false;
 
@@ -48,11 +49,6 @@ namespace skyfire {
         void on_client_require_connect_to_peer_client__(sf_tcp_nat_traversal_context_t__ &context) const;
 
     public:
-        /**
-         * 创建NAT穿透服务器
-         * @return 服务器smart指针
-         */
-        static std::shared_ptr<sf_tcp_nat_traversal_server> make_server();
 
         /**
          * 构造函数

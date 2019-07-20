@@ -80,11 +80,6 @@ namespace skyfire {
 	}
 
 
-    inline std::shared_ptr<sf_rpc_server> sf_rpc_server::make_server() {
-        return std::shared_ptr<sf_rpc_server>(new sf_rpc_server);
-    }
-
-
     inline sf_rpc_server::sf_rpc_server() {
         sf_bind_signal(sf_rpc_server::__tcp_server__,
                        data_coming,

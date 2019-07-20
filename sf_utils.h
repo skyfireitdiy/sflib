@@ -215,12 +215,20 @@ namespace skyfire {
     void sf_hex_string_to_char_container(const std::string &str, T &data);
 
 
-    template <typename T>
-    struct make_instance_t{
+    template <typename T, typename Base>
+    struct sf_make_instance_t: public Base{
+    private:
+        sf_make_instance_t()= default;
+
+    public:
         template <typename ... Args>
         static std::shared_ptr<T> make_instance(Args && ... args){
             return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
         }
+
+        using Base::Base;
+
+        friend T;
     };
 
 

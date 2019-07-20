@@ -313,7 +313,7 @@ using namespace skyfire;
 int main()
 {
     // 1.创建服务器
-    auto server = sf_tcp_server::make_server(true);
+    auto server = sf_tcp_server::make_instance(true);
     // 2.监听
     if(!server->listen("0.0.0.0",9988))
     {
@@ -352,7 +352,7 @@ using namespace skyfire;
 int main(){
     g_logger->add_level_stream(SF_DEBUG_LEVEL,&std::cout);
     // 1. 创建nat穿透server
-    auto pserver = sf_tcp_nat_traversal_server::make_server();
+    auto pserver = sf_tcp_nat_traversal_server::make_instance();
     std::cout<<"port:"<<std::flush;
     unsigned short port;
     std::cin>>port;
@@ -420,7 +420,7 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
 
 int main() {
     // 1.创建nat穿透客户端
-    auto pclient = sf_tcp_nat_traversal_client::make_client();
+    auto pclient = sf_tcp_nat_traversal_client::make_instance();
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 
     // 2.设新连接到来响应
@@ -548,7 +548,7 @@ void print_str(byte_array data)
 int main()
 {
     // 1.创建server对象
-    auto server = sf_rpc_server::make_server();
+    auto server = sf_rpc_server::make_instance();
     // 2.注册rpc函数
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);
@@ -643,7 +643,7 @@ using namespace skyfire;
 int main()
 {
     // 1.创建一个消息总线服务器
-    auto server = sf_msg_bus_server::make_server();
+    auto server = sf_msg_bus_server::make_instance();
     // 2.监听
     server->listen("127.0.0.1", 5678);
     std::string type;
@@ -684,7 +684,7 @@ using namespace skyfire;
 int main()
 {
     // 1. 生成客户端
-    auto client = sf_msg_bus_client::make_client();
+    auto client = sf_msg_bus_client::make_instance();
     // 2. 连接到消息总线服务器
     client->connect_to_server("127.0.0.1", 5678);
     // 3. 添加事件到来相应
@@ -789,7 +789,7 @@ int main() {
     config.port = 8080;             // 端口
     config.request_timeout = 30;    // http请求超时
     // 2. 根据配置生成一个http server
-    auto server = sf_http_server::make_server(config);
+    auto server = sf_http_server::make_instance(config);
 
     // 3. 添加一个http路由，地址为/upload_file， 回调函数为upload_file_route，方法为所有
     server->add_router(make_http_router(

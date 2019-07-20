@@ -60,7 +60,7 @@ void send(std::shared_ptr<sf_tcp_nat_traversal_connection> conn) {
 
 int main() {
     // 1.创建nat穿透客户端
-    auto pclient = sf_tcp_nat_traversal_client::make_client();
+    auto pclient = sf_tcp_nat_traversal_client::make_instance();
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 
     // 2.设新连接到来响应

@@ -23,7 +23,7 @@ using namespace skyfire;
 int main()
 {
     // 1.创建服务器
-    auto server = sf_tcp_server::make_server(true);
+    auto server = sf_tcp_server::make_instance(true);
     // 2.监听
     if(!server->listen("0.0.0.0",9988))
     {

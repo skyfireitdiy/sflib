@@ -42,7 +42,7 @@ void print_str(byte_array data)
 int main()
 {
     // 1.创建server对象
-    auto server = sf_rpc_server::make_server();
+    auto server = sf_rpc_server::make_instance();
     // 2.注册rpc函数
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);

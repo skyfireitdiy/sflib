@@ -33,6 +33,8 @@
 #include "sf_tcp_server_interface.h"
 #include <sys/sysinfo.h>
 
+#include "sf_utils.h"
+
 
 namespace skyfire
 {
@@ -50,7 +52,7 @@ namespace skyfire
         std::unordered_map<SOCKET, sock_data_context_t> sock_context__;
     };
 
-    class sf_tcp_server : public sf_tcp_server_interface
+    class sf_tcp_server : public sf_make_instance_t<sf_tcp_server ,sf_tcp_server_interface>
     {
     private:
         int listen_fd__ = -1;
@@ -79,9 +81,6 @@ namespace skyfire
         explicit sf_tcp_server(bool raw = false);
 
         ~sf_tcp_server() override;
-
-
-        static std::shared_ptr<sf_tcp_server> make_server(bool raw = false);
 
         bool listen(const std::string &ip, unsigned short port) override;
 

@@ -25,11 +25,12 @@
 #include "sf_stdc++.h"
 
 #include "sf_tcp_client_interface.h"
+#include "sf_utils.h"
 
 
 namespace skyfire
 {
-    class sf_tcp_client : public sf_tcp_client_interface
+    class sf_tcp_client : public sf_make_instance_t<sf_tcp_client, sf_tcp_client_interface>
     {
     private:
         bool inited__ = false;
@@ -46,11 +47,6 @@ namespace skyfire
         SOCKET get_raw_socket() override;
 
         bool bind(const std::string& ip, unsigned short port) override;
-
-        static std::shared_ptr<sf_tcp_client> make_client(bool raw = false);
-
-        static std::shared_ptr<sf_tcp_client> make_client(SOCKET sock, bool raw = false);
-
 
         ~sf_tcp_client(); // NOLINT(modernize-use-override)
 

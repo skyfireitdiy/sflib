@@ -23,25 +23,22 @@
 
 #include "sf_object.hpp"
 #include "sf_tcp_server.h"
+#include "sf_utils.h"
 
 namespace skyfire {
 
     /**
      *  @brief 消息总线服务端
      */
-    class sf_msg_bus_server final : public sf_nocopy<sf_object> {
+    class sf_msg_bus_server final : public sf_make_instance_t<sf_msg_bus_server ,sf_nocopy<sf_object>>
+            {
         /**
          * @brief msg_come 消息到来信号
          */
     SF_REG_SIGNAL(msg_come, SOCKET, std::string, byte_array);
 
     public:
-
-        /**
-         * @brief make_server 创建消息总线服务器
-         * @return 消息总线服务器对象
-         */
-        static std::shared_ptr<sf_msg_bus_server> make_server();
+                
 
         /**
          * @brief sf_msg_bus_server 构造函数
@@ -85,7 +82,7 @@ namespace skyfire {
         bool get_server_addr(sf_addr_info_t &addr) const;
 
     private:
-        std::shared_ptr<sf_tcp_server> p_server__ = sf_tcp_server::make_server();
+        std::shared_ptr<sf_tcp_server> p_server__ = sf_tcp_server::make_instance();
 
         std::unordered_map<std::string, std::list<SOCKET>> msg_map__;
 
@@ -96,6 +93,8 @@ namespace skyfire {
         void unreg_msg__(SOCKET sock, const std::string &msg);
 
         void on_disconnect__(SOCKET sock);
+        
+        
 
     };
 }

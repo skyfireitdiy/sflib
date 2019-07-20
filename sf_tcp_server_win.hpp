@@ -375,9 +375,6 @@ namespace skyfire {
 		return new sf_per_io_operation_data_t();
 	}
 
-    inline std::shared_ptr<sf_tcp_server> sf_tcp_server::make_server(bool raw) {
-        return std::make_shared<sf_tcp_server>(raw);
-    }
 
 	inline void sf_tcp_server::close() {
 		exit_flag__ = true;

@@ -19,6 +19,7 @@
 #include "sf_http_static_router.hpp"
 #include "sf_router_shared_ptr_compare.hpp"
 #include "sf_stdc++.h"
+#include "sf_utils.h"
 
 
 namespace skyfire
@@ -27,7 +28,8 @@ namespace skyfire
      * @brief  HTTP服务器框架，丰富基础框架的接口
      */
 
-    class sf_http_server final : public sf_http_base_server,  public std::enable_shared_from_this<sf_http_server>
+    class sf_http_server final : public sf_make_instance_t<sf_http_server, sf_http_base_server>,
+            public std::enable_shared_from_this<sf_http_server>
     {
     private:
         std::multiset<std::shared_ptr<sf_http_router>,sf_router_shared_ptr_compare__<sf_http_router>> http_routers__;
@@ -44,11 +46,10 @@ namespace skyfire
 
         void default_websocket_close_callback__(SOCKET sock,const std::string& url) const;
 
-    private:
-        // WARNING 这个函数不应该直接被调用，而是应该使用make_server函数
-        explicit sf_http_server(const sf_http_server_config& config = sf_http_server_config{});
 
     public:
+        explicit sf_http_server(const sf_http_server_config& config = sf_http_server_config{});
+
         /**
          * 添加http路由
          * @param router http路由
@@ -61,12 +62,6 @@ namespace skyfire
          */
         void add_router(const std::shared_ptr<sf_websocket_router>& router);
 
-        /**
-         * 创建http server
-         * @param config server配置
-         * @return http server对象
-         */
-        static std::shared_ptr<sf_http_server> make_server(const sf_http_server_config &config);
 
         friend sf_websocket_router;
     };

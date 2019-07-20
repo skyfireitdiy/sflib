@@ -194,10 +194,6 @@ namespace skyfire {
         return __tcp_client__->connect_to_server(ip, port);
     }
 
-	inline std::shared_ptr<sf_rpc_client> sf_rpc_client::make_client() {
-        return std::shared_ptr<sf_rpc_client>(new sf_rpc_client);
-    }
-
 
 	inline void sf_rpc_client::__back_callback(const sf_pkg_header_t &header_t, const byte_array &data_t) {
         if(header_t.type != rpc_res_type)

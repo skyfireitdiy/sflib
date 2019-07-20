@@ -25,10 +25,6 @@
 
 namespace skyfire
 {
-    inline std::shared_ptr<sf_msg_bus_client> sf_msg_bus_client::make_client() {
-        return std::make_shared<sf_msg_bus_client>();
-    }
-
     inline sf_msg_bus_client::sf_msg_bus_client() {
         sf_bind_signal(
                 p_client__,

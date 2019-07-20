@@ -15,10 +15,11 @@
 
 #include <winsock2.h>
 #include "sf_tcp_client_interface.h"
+#include "sf_utils.h"
 
 namespace skyfire
 {
-    class sf_tcp_client final : public sf_tcp_client_interface
+    class sf_tcp_client final : public sf_make_instance_t<sf_tcp_client, sf_tcp_client_interface>
     {
 
     private:
@@ -37,10 +38,6 @@ namespace skyfire
         explicit sf_tcp_client(bool raw = false);
 
         explicit sf_tcp_client(SOCKET sock, bool raw = false);
-
-        static std::shared_ptr <sf_tcp_client> make_client(bool raw = false);
-
-        static std::shared_ptr <sf_tcp_client> make_client(SOCKET sock, bool raw = false);
 
 
         ~sf_tcp_client();

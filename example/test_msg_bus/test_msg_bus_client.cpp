@@ -18,7 +18,7 @@ using namespace skyfire;
 int main()
 {
     // 1. 生成客户端
-    auto client = sf_msg_bus_client::make_client();
+    auto client = sf_msg_bus_client::make_instance();
     // 2. 连接到消息总线服务器
     client->connect_to_server("127.0.0.1", 5678);
     // 3. 添加事件到来相应

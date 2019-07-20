@@ -19,6 +19,7 @@
 #include "sf_tcp_server.h"
 #include "sf_tcp_nat_traversal_utils.hpp"
 #include "sf_stdc++.h"
+#include "sf_utils.h"
 #include <zconf.h>
 
 
@@ -40,13 +41,13 @@ namespace skyfire {
     /**
      *  @brief nat穿透客户端类
      */
-    class sf_tcp_nat_traversal_client : public sf_nocopy<sf_object> {
+    class sf_tcp_nat_traversal_client : public sf_make_instance_t<sf_tcp_nat_traversal_client, sf_nocopy<sf_object>>{
 
         // 新连接，返回建立连接成功的tcpserver和已经连接上的socket，可通过这两个与被连接方通信
     SF_REG_SIGNAL(new_nat_connection, std::shared_ptr<sf_tcp_nat_traversal_connection>, std::string)
 
     private:
-        std::shared_ptr<sf_tcp_client> client__{sf_tcp_client::make_client()};
+        std::shared_ptr<sf_tcp_client> client__{sf_tcp_client::make_instance()};
         std::unordered_set<unsigned long long> client_list__;
         unsigned long long self_id__;
         std::unordered_map<std::string, sf_p2p_connect_context_t__> connect_context_map__;
@@ -64,14 +65,9 @@ namespace skyfire {
         void on_client_close__();
 #pragma clang diagnostic pop
 
-        sf_tcp_nat_traversal_client();
     public:
+        sf_tcp_nat_traversal_client();
 
-        /**
-         * 生成客户端
-         * @return
-         */
-        static std::shared_ptr<sf_tcp_nat_traversal_client> make_client();
 
         /**
          * 获取id
