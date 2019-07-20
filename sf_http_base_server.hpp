@@ -687,7 +687,7 @@ inline bool sf_http_base_server::start()
         return false;
     }
     sf_debug("listen succeed!", config__.port);
-    std::thread([=] {
+    std::thread([this] {
         event_loop__.exec();
     })
         .join();

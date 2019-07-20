@@ -34,7 +34,7 @@ namespace skyfire {
     template<typename... ARGS>
     template<size_t... Index>
     auto sf_event_waiter<ARGS...>::__make_quit_func_helper(std::index_sequence<Index...>) {
-        return [=]() {
+        return [this]() {
             quit(make_placeholders<Index + 1>()...);
         };
     }
