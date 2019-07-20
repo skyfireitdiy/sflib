@@ -215,4 +215,13 @@ namespace skyfire {
     void sf_hex_string_to_char_container(const std::string &str, T &data);
 
 
+    template <typename T>
+    struct make_instance_t{
+        template <typename ... Args>
+        static std::shared_ptr<T> make_instance(Args && ... args){
+            return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+        }
+    };
+
+
 } // namespace skyfire

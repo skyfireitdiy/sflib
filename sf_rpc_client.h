@@ -27,6 +27,7 @@
 #include "sf_stdc++.h"
 #include "sf_assigned_type.h"
 #include "sf_json.h"
+#include "sf_utils.h"
 
 
 namespace skyfire {
@@ -167,7 +168,7 @@ namespace skyfire {
     };
 
 
-#define RPC_OBJECT(name) struct name:public skyfire::sf_rpc_client
+#define RPC_OBJECT(name) struct name:public skyfire::sf_rpc_client, public skyfire::make_instance_t<name>
 
 #define RPC_INTERFACE(name) \
 template<typename ... __SF_RPC_ARGS__>  \
