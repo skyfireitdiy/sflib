@@ -142,7 +142,7 @@ sf_logger::sf_logger()
                             {
                                 std::unique_lock<std::mutex> lck(deque_mu__);
                                 cond__.wait(lck, [&]
-                                { return !log_deque__.empty(); });
+                                { return !log_deque__.empty() || !run__; });
                                 tmp_info = std::move(log_deque__);
                                 log_deque__.clear();
                             }
