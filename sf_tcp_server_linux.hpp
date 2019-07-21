@@ -35,7 +35,7 @@ namespace skyfire {
             return false;
         }
 
-
+        std::lock_guard<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
 
         sf_debug("find index", index);
@@ -43,7 +43,6 @@ namespace skyfire {
         auto send_data = data;
         before_raw_send_filter__(sock, send_data);
 
-        std::lock_guard<std::mutex> lck(*sock_context__[sock].mu_out_buffer);
         sf_debug("index", index, "sock", sock, "push data");
         sock_context__[sock].data_buffer_out.push_back(send_data);
 
@@ -61,6 +60,8 @@ namespace skyfire {
             return false;
         }
 
+        std::lock_guard<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
+
         auto &sock_context__ = epoll_data__[index].sock_context__;
 
         sf_debug("find index", index);
@@ -75,7 +76,6 @@ namespace skyfire {
 
 		before_raw_send_filter__(sock, send_data);
 
-        std::lock_guard<std::mutex> lck(*sock_context__[sock].mu_out_buffer);
         sock_context__[sock].data_buffer_out.push_back(send_data);
         sf_debug("index", index, "sock", sock, "push data");
         sock_context__[sock].ev.events |= EPOLLOUT;
@@ -95,6 +95,7 @@ namespace skyfire {
         listen_fd__ = -1;
 
         for (auto &t:epoll_data__) {
+            std::lock_guard<std::recursive_mutex> lock_context(*t.mu_sock_context__);
             for (auto &p:t.sock_context__) {
                 epoll_ctl(t.epoll_fd, EPOLL_CTL_DEL, p.first,
                           &p.second.ev);
@@ -153,6 +154,7 @@ namespace skyfire {
         sf_debug("start thread", index);
         epoll_data__[index].epoll_fd = epoll_create(max_tcp_connection);
 
+        std::unique_lock<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
 
         if (listen_thread) {
@@ -168,6 +170,7 @@ namespace skyfire {
                 return;
             }
         }
+        lock_context.unlock();
 
         std::vector<epoll_event> evs(max_tcp_connection);
 
@@ -215,8 +218,11 @@ namespace skyfire {
 
     inline bool sf_tcp_server::in_dispatch(SOCKET fd) {
         int index = 0;
+        std::unique_lock<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
         auto min_fd_count = epoll_data__[0].sock_context__.size();
+        lock_context.unlock();
         for (int i = 0; i < epoll_data__.size(); ++i) {
+            std::lock_guard<std::recursive_mutex> lock_context2(*epoll_data__[i].mu_sock_context__);
             auto ct = epoll_data__[i].sock_context__.size();
             sf_debug("index", i, "count", ct);
             if (min_fd_count > ct) {
@@ -225,8 +231,10 @@ namespace skyfire {
             }
         }
 
+
         sf_debug("add new fd", fd, index);
 
+        std::lock_guard<std::recursive_mutex> lock_context3(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
         sock_context__[fd] = sock_data_context_t{};
         sock_context__[fd].ev.events = EPOLLIN | EPOLLET;
@@ -244,6 +252,7 @@ namespace skyfire {
 
     inline int sf_tcp_server::find_fd_epoll_index(SOCKET fd) {
         for (int i = 0; i < epoll_data__.size(); ++i) {
+            std::lock_guard<std::recursive_mutex> lck(*epoll_data__[i].mu_sock_context__);
             if (epoll_data__[i].sock_context__.count(fd) != 0) {
                 return i;
             }
@@ -279,6 +288,7 @@ namespace skyfire {
         } else {
             sf_debug("accept error");
             {
+                std::lock_guard<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
                 epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, listen_fd__,
                           &epoll_data__[index].sock_context__[listen_fd__].ev);
                 epoll_data__[index].sock_context__.erase(listen_fd__);
@@ -291,6 +301,7 @@ namespace skyfire {
 
         byte_array recv_buf(sf_default_buffer_size);
         sf_pkg_header_t header{};
+        std::lock_guard<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
         auto &sock_context__ = epoll_data__[index].sock_context__;
         while (true) {
             sf_debug("start read");
@@ -372,6 +383,7 @@ namespace skyfire {
     }
 
     inline void sf_tcp_server::handle_write(int index, const epoll_event &ev) {
+        std::lock_guard<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
         auto sock_context__ = epoll_data__[index].sock_context__;
         sf_debug("ready write");
         SOCKET fd = ev.data.fd;
@@ -379,7 +391,6 @@ namespace skyfire {
             sf_debug("index", index, "sock", fd, "empty");
             return;
         }
-        std::lock_guard<std::mutex> lck(*sock_context__[fd].mu_out_buffer);
         while (true) {
             if (sock_context__[fd].data_buffer_out.empty())
                 break;
@@ -431,7 +442,7 @@ namespace skyfire {
         if(index == -1){
             return false;
         }
-
+        std::lock_guard<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
         if (epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_DEL, sock,
                   &epoll_data__[index].sock_context__[sock].ev) != -1)
         {

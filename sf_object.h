@@ -114,8 +114,8 @@ public:                                                                         
 /*
  * sf_bind_signal 信号绑定
  */
-#define sf_bind_signal(objptr, name, func, mul_thread)                                                                     \
-(objptr)->__sf_bind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,func,mul_thread)      \
+#define sf_bind_signal(objptr, name, func, single_thread)                                                                     \
+(objptr)->__sf_bind_helper((objptr)->__mu_##name##_signal_,(objptr)->__##name##_signal_func_vec__,func, single_thread)      \
 
 
 /*
@@ -135,7 +135,7 @@ namespace skyfire {
     public:
 
         template<typename _VectorType, typename _FuncType>
-        int __sf_bind_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func, bool mul_thread);
+        int __sf_bind_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func, bool single_thread);
 
         template<typename _VectorType>
         void __sf_signal_unbind_helper(std::recursive_mutex &mu, _VectorType &vec, int bind_id);

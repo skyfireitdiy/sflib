@@ -26,7 +26,7 @@ namespace skyfire
 {
 
     template<typename _VectorType, typename _FuncType>
-    int sf_object::__sf_bind_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func, bool mul_thread) {
+    int sf_object::__sf_bind_helper(std::recursive_mutex &mu, _VectorType &vec, _FuncType func, bool single_thread) {
         std::lock_guard<std::recursive_mutex> lck(mu);
         int bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         while(std::find_if(vec.begin(),vec.end(),[=](auto p){
@@ -35,7 +35,7 @@ namespace skyfire
         {
             bind_id = sf_random::get_instance()->get_int(0, INT_MAX);
         }
-        vec.push_back(std::make_tuple(std::function(func), mul_thread, bind_id));
+        vec.push_back(std::make_tuple(std::function(func), single_thread, bind_id));
         return bind_id;
     }
 

@@ -14,7 +14,7 @@
 //
 // Created by skyfire on 2018/8/27 0027.
 //
-#define SF_DEBUG
+// #define SF_DEBUG
 #include "sf_tcp_server.h"
 
 using namespace skyfire;
@@ -34,6 +34,7 @@ int main()
     // 3.设置数据到来事件响应
     sf_bind_signal(server,raw_data_coming,[=](SOCKET sock, const byte_array& data){
         std::cout << "recv:" << to_string(data) << std::endl;
+        server->send(sock, data);
     },true);
     // 4. 启动消息循环
     sf_eventloop loop;
