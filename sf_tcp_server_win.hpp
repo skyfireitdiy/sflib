@@ -287,6 +287,8 @@ namespace skyfire {
 				break;
 			}
 
+			sf_debug("new connection");
+
 			// 成功等待到新连接
 			new_connection_filter__(accept_socket);
 			new_connection(accept_socket);

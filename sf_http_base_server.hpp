@@ -103,7 +103,7 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array
     }
     // 普通请求
     {
-        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+        std::lock_guard<std::recursive_mutex> lck(mu_request_context__);
         // sf_debug("Request",to_string(data));
         if (request_context__.count(sock) == 0)
         {
@@ -118,10 +118,10 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array
     }
     // multipart消息
     {
-        std::unique_lock<std::recursive_mutex> lck(mu_multipart_data_context__);
+        std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
         if (multipart_data_context__.count(sock) != 0)
         {
-            std::unique_lock<std::recursive_mutex> lck2(mu_request_context__);
+            std::lock_guard<std::recursive_mutex> lck2(mu_request_context__);
             sf_debug("boundary data append", request_context__[sock].buffer.size());
 
             request_context__[sock].buffer = append_multipart_data__(multipart_data_context__[sock],
@@ -144,6 +144,7 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array
     {
         request_context__[sock].new_req = true;
         request_context__[sock].buffer.clear();
+		lck.unlock();
 
         auto req_header = request.get_header();
 
@@ -180,6 +181,7 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array
     }
     else
     {
+		lck.lock();
         sf_debug("invalid request", to_string(request_context__[sock].buffer));
         server__->close(sock);
     }
@@ -188,7 +190,9 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array
 inline void sf_http_base_server::build_websocket_context_data__(SOCKET sock, const sf_http_request &request)
 {
     // NOTE 删除记录，防止超时检测线程关闭连接
+	std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
     request_context__.erase(sock);
+	lck.unlock();
     sf_websocket_context_t ws_data;
     ws_data.url = request.get_request_line().url;
 
@@ -216,9 +220,9 @@ inline void sf_http_base_server::build_boundary_context_data(SOCKET sock, const 
     sf_debug("is boundary data");
     // 初始化boundary数据
     auto multipart_data = request.get_multipart_data_context();
-
+	std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
     request_context__[sock].buffer = append_multipart_data__(multipart_data, request.get_body());
-
+	lck.unlock();
     if (!multipart_data.multipart.empty() && multipart_data.multipart.back().is_end())
     {
         sf_debug("boundary data success one time");
@@ -227,7 +231,7 @@ inline void sf_http_base_server::build_boundary_context_data(SOCKET sock, const 
     else
     {
         sf_debug("boundary data prepare");
-        std::unique_lock<std::recursive_mutex> lck(mu_multipart_data_context__);
+        std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
         multipart_data_context__[sock] = multipart_data;
     }
 }
@@ -235,11 +239,11 @@ inline void sf_http_base_server::build_boundary_context_data(SOCKET sock, const 
 inline void sf_http_base_server::close_request__(SOCKET sock)
 {
     {
-        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+        std::lock_guard<std::recursive_mutex> lck(mu_request_context__);
         request_context__.erase(sock);
     }
     {
-        std::unique_lock<std::recursive_mutex> lck(mu_multipart_data_context__);
+        std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
         multipart_data_context__.erase(sock);
     }
 }
@@ -599,11 +603,12 @@ inline void sf_http_base_server::build_new_request__(SOCKET sock)
 
 inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
 {
+	std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
     if (request_context__.count(sock) != 0)
     {
-        std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
         request_context__.erase(sock);
     }
+	lck.unlock();
 
     if (websocket_context__.count(sock) != 0)
     {
@@ -614,7 +619,7 @@ inline void sf_http_base_server::on_socket_closed__(SOCKET sock)
         }
         websocket_context__.erase(sock);
     }
-
+	std::lock_guard<std::recursive_mutex> lck2(mu_multipart_data_context__);
     if (multipart_data_context__.count(sock) != 0)
     {
         std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
