@@ -309,6 +309,7 @@ namespace skyfire {
                                                     sf_default_buffer_size, 0));
             sf_debug("read", count_read);
             if (count_read <= 0) {
+                sf_debug("errno", errno);
                 // EWOULDBLOCK == EAGAIN
                 if ((errno == EAGAIN || errno == EINTR /* || errno == EWOULDBLOCK */) && count_read < 0) {
                     sf_debug("read finished", errno);

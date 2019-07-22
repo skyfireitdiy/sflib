@@ -140,5 +140,40 @@ namespace skyfire
             res.set_http_version(req.get_request_line().http_version);
         }
     }
+
+    template<typename... StringType>
+    void sf_http_server::add_http_router(const std::string &pattern,
+                                         std::function<void(const sf_http_request &, sf_http_response &,
+                                                            StringType ... args)> callback,
+                                         const std::vector<std::string> &methods, int priority) {
+        add_router(make_http_router(pattern, callback, methods, priority));
+    }
+
+    template<typename... StringType>
+    void sf_http_server::add_http_router(const std::string &pattern,
+                                         void (*callback)(const sf_http_request &, sf_http_response &, StringType...),
+                                         const std::vector<std::string> &methods, int priority) {
+        add_router(make_http_router(pattern, callback, methods, priority));
+    }
+
+    inline void
+    sf_http_server::add_static_router(std::string path, const std::vector<std::string> &methods, std::string charset,
+                                      bool deflate, unsigned long long max_file_size, int priority) {
+        add_router(make_static_router(path, methods, charset, deflate, max_file_size, priority));
+    }
+
+    inline void sf_http_server::add_websocket_router(const std::string &url, std::function<void(
+            const sf_websocket_param_t &
+
+    )> callback, int priority) {
+        add_router(make_websocket_router(url, callback, priority));
+    }
+
+    inline void sf_http_server::add_websocket_router(const std::string &url, void (*callback)(const sf_websocket_param_t &),
+                                              int priority) {
+        add_router(make_websocket_router(url, callback, priority));
+    }
+
+
 }
 #pragma clang diagnostic pop

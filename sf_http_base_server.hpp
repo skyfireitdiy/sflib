@@ -485,7 +485,7 @@ bool sf_http_base_server::analysis_websocket_pkg__(SOCKET sock, const T *header,
     fin = sf_is_fin(*header);
     op_code = sf_get_op_code(*header);
     resolve_pos += sizeof(T) + static_cast<int>(len);
-    sf_debug("resolve_pos", resolve_pos);
+    sf_debug("resolve_pos", resolve_pos, "fin", fin, "op", op_code);
     return true;
 }
 
@@ -542,6 +542,7 @@ inline void sf_http_base_server::websocket_data_coming__(const SOCKET sock, cons
                 break;
             }
         }
+        sf_debug("op", op_code);
         websocket_context__[sock].data_buffer += body;
         if (WEBSOCKET_OP_DISCONNECT_PKG == op_code)
         {
