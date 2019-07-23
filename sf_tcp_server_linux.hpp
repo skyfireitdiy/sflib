@@ -44,7 +44,9 @@ namespace skyfire {
         before_raw_send_filter__(sock, send_data);
 
         sf_debug("index", index, "sock", sock, "push data");
+        sf_debug(sock, "before", sock_context__[sock].data_buffer_out.size());
         sock_context__[sock].data_buffer_out.push_back(send_data);
+        sf_debug(sock, "after", sock_context__[sock].data_buffer_out.size());
 
         sock_context__[sock].ev.events |= EPOLLOUT;
 
@@ -76,8 +78,10 @@ namespace skyfire {
 
 		before_raw_send_filter__(sock, send_data);
 
+        sf_debug(sock, "before", sock_context__[sock].data_buffer_out.size());
         sock_context__[sock].data_buffer_out.push_back(send_data);
-        sf_debug("index", index, "sock", sock, "push data");
+        sf_debug(sock, "after", sock_context__[sock].data_buffer_out.size());
+
         sock_context__[sock].ev.events |= EPOLLOUT;
 
         return epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, sock, &sock_context__[sock].ev) != -1;
@@ -331,7 +335,6 @@ namespace skyfire {
 			after_raw_recv_filter__(ev.data.fd, recv_buf);
             if (raw__) {
                 sf_debug("raw data", recv_buf.size());
-                
                 raw_data_coming(ev.data.fd, recv_buf);
                 sf_debug("after resolve");
             } else {
@@ -385,17 +388,24 @@ namespace skyfire {
 
     inline void sf_tcp_server::handle_write(int index, const epoll_event &ev) {
         std::lock_guard<std::recursive_mutex> lock_context(*epoll_data__[index].mu_sock_context__);
-        auto sock_context__ = epoll_data__[index].sock_context__;
-        sf_debug("ready write");
+        auto &sock_context__ = epoll_data__[index].sock_context__;
         SOCKET fd = ev.data.fd;
+        sf_debug(fd, "ready write", sock_context__[fd].data_buffer_out.size());
         if (sock_context__[fd].data_buffer_out.empty()) {
             sf_debug("index", index, "sock", fd, "empty");
             return;
         }
+        sf_debug("pendding pkg count:", sock_context__[fd].data_buffer_out.size());
         while (true) {
-            if (sock_context__[fd].data_buffer_out.empty())
+            if (sock_context__[fd].data_buffer_out.empty()) {
+                write_finished(fd);
+                sock_context__[fd].ev.events &= ~EPOLLOUT;
+                epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, fd, &sock_context__[fd].ev);
+                sf_debug(fd, "write_finished", sock_context__[fd].data_buffer_out.size());
                 break;
+            }
             auto p = sock_context__[fd].data_buffer_out.front();
+            sf_debug("pkg size:", p.size());
             auto data_size = p.size();
             auto n = data_size;
             decltype(n) tmp_write;
@@ -407,11 +417,13 @@ namespace skyfire {
                         write_error(fd);
                         error_flag = true;
                     }
+                    if(tmp_write > 0){
+                        n -= tmp_write;
+                    }
                     break;
                 }
                 n -= tmp_write;
             }
-            sf_debug("write finished");
             if (error_flag) {
                 sf_debug("write error");
                 disconnect_sock_filter__(fd);
@@ -422,16 +434,15 @@ namespace skyfire {
                 break;
             } else {
                 if (n == 0) {
+                    sf_debug("pop front");
+                    sf_debug(fd, "before", sock_context__[fd].data_buffer_out.size());
                     sock_context__[fd].data_buffer_out.pop_front();
-                    write_finished(fd);
-                    sock_context__[fd].ev.events &= ~EPOLLOUT;
-                    epoll_ctl(epoll_data__[index].epoll_fd, EPOLL_CTL_MOD, fd, &sock_context__[fd].ev);
-                    sf_debug("write_finished");
+                    sf_debug(fd, "after", sock_context__[fd].data_buffer_out.size());
                 } else {
-                    sf_debug("write pendding");
                     sock_context__[fd].data_buffer_out.front() = {
                             sock_context__[fd].data_buffer_out.front().begin() + n,
                             sock_context__[fd].data_buffer_out.front().end()};
+                    sf_debug(fd, "write pendding", sock_context__[fd].data_buffer_out.size());
                     break;
                 }
             }

@@ -160,7 +160,7 @@ namespace skyfire {
     /**
      *  @brief Websocket包类型
      */
-    enum websocket_pkg_type
+    enum websocket_pkg_type : uint8_t
     {
         WEBSOCKET_OP_MIDDLE_PKG = 0x0,
         WEBSOCKET_OP_TEXT_PKG = 0x1,

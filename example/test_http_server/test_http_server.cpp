@@ -11,7 +11,7 @@
 * 发布日期：2018-10-22
 */
 
-#define SF_DEBUG
+//#define SF_DEBUG
 #include "sf_http_server.hpp"
 
 using namespace std::literals;

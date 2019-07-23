@@ -485,7 +485,7 @@ bool sf_http_base_server::analysis_websocket_pkg__(SOCKET sock, const T *header,
     fin = sf_is_fin(*header);
     op_code = sf_get_op_code(*header);
     resolve_pos += sizeof(T) + static_cast<int>(len);
-    sf_debug("resolve_pos", resolve_pos, "fin", fin, "op", op_code);
+    sf_debug("resolve_pos", resolve_pos, "fin", fin, "op", op_code, "body", to_string(body));
     return true;
 }
 

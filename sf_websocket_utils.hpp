@@ -34,6 +34,12 @@ namespace skyfire {
             header.fin_rsv_oc |= type;
             header.mask_len = static_cast<unsigned char>(static_cast<char>(data.size()));
             ret += to_byte_array(header);
+
+            std::bitset<8> b1(header.fin_rsv_oc);
+            std::bitset<8> b2(header.mask_len);
+            sf_debug(b1.to_string(), b2.to_string());
+
+
         }else if(data.size()>=126 && data.size() <= 0xffffffffffffffffUL){
             sf_websocket_server_data_2_header_t header{};
             memset(&header,0,sizeof(header));
