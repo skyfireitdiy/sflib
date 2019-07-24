@@ -16,7 +16,7 @@ namespace skyfire
 
         auto extract_result = sf_extract__(content, sep);
         for (auto p = extract_result.rbegin(); p != extract_result.rend(); ++p) {
-            sf_template_parse__(p->data, js);
+            sf_template_make_tree__(p->data, js);
             // TODO replace text
         }
 
@@ -54,7 +54,7 @@ namespace skyfire
         return ret;
     }
 
-    inline std::string sf_template_parse__(std::string content, const sf_json& js) {
+    inline std::string sf_template_make_tree__(std::string content, const sf_json &js) {
         sf_lex lex;
         lex.set_rules({
                               {"if",       R"(if)"},
@@ -78,12 +78,22 @@ namespace skyfire
                               {";",        R"(;)"},
                               {",",        R"(,)"},
                               {".",        R"(\.)"},
+                              {"+",        R"(\+)"},
+                              {"-",        R"(\-)"},
+                              {"*",        R"(\*)"},
+                              {"/",        R"(/)"},
+                              {"%",        R"(%)"},
                               {"=",        R"(=)"},
                               {"!",        R"(\!)"},
                               {"!=",       R"(\!=)"},
                               {"==",       R"(==)"},
                               {"&&",       R"(\&\&)"},
                               {"||",       R"(\|\|)"},
+                              {"+=",       R"(\+=)"},
+                              {"-=",       R"(\-=)"},
+                              {"*=",       R"(\*=)"},
+                              {"/=",       R"(/=)"},
+                              {"%=",       R"(%=)"},
                               {"key_word", R"(\w+)"},
                       });
 
@@ -148,14 +158,38 @@ namespace skyfire
                                         {
                                                 {"value", ".", "key_word"},
                                                 nullptr
+                                        },
+                                        {
+                                                {"value", "+", "key_word"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"value", "-", "key_word"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"value", "*", "key_word"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"-", "value"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"*", "value"},
+                                                nullptr
                                         }
                                 }
                         },
                         {
-                                "for",
+                                "for_block",
                                 {
                                         {
                                                 {"for", "key_word", "in", "value", "block"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"for",      "value",     ";",     "value", ";", "value", "block"},
                                                 nullptr
                                         }
                                 }
@@ -168,7 +202,7 @@ namespace skyfire
                                                 nullptr
                                         },
                                         {
-                                                {"{", "sentences", "}"},
+                                                {"{",        "sentences", "}"},
                                                 nullptr
                                         }
                                 }
@@ -181,7 +215,11 @@ namespace skyfire
                                                 nullptr
                                         },
                                         {
-                                                {"for"},
+                                                {"for_block"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"if_block"},
                                                 nullptr
                                         },
                                         {
@@ -189,8 +227,34 @@ namespace skyfire
                                                 nullptr
                                         },
                                         {
-                                            { "sentence", "value" },
-                                            nullptr
+                                                {"sentence", "value"},
+                                                nullptr
+                                        }
+                                }
+                        },
+                        {
+                                "if_block",
+                                {
+                                        {
+                                                {"if",  "value",    "block"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"if",       "value",     "block", "else",  "block"},
+                                                nullptr
+                                        }
+                                }
+                        },
+                        {
+                                "language",
+                                {
+                                        {
+                                                {"sentence"},
+                                                nullptr
+                                        },
+                                        {
+                                                {"language", "sentence"},
+                                                nullptr
                                         }
                                 }
                         }
