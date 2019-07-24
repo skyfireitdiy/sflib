@@ -4,6 +4,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "google-explicit-constructor"
 
+#include "sf_define.h"
 #include "sf_json_utils.h"
 #include "sf_stdc++.h"
 
