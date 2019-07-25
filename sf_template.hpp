@@ -153,7 +153,7 @@ namespace skyfire {
         auto merge_sentence_callback = [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
             make_empty(d);
             auto tmp = std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data);
-            tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
+            tmp->param.insert(tmp->param.begin(),std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
             return tmp;
         };
 
@@ -450,7 +450,7 @@ namespace skyfire {
                                                     make_empty(d);
                                                     auto tmp = std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(
                                                             d[2]->user_data);
-                                                    tmp->param.push_back(
+                                                    tmp->param.insert(tmp->param.begin(),
                                                             std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(
                                                                     d[0]->user_data));
                                                     return tmp;
