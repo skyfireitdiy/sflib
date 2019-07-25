@@ -13,12 +13,29 @@ namespace skyfire
     inline bool sf_yacc::parse(const std::vector<sf_lex_result_t> &lex_result,
                                std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result) const
     {
+
+#if 1
+		for(auto &p:dfa__)
+		{
+			printf(R"("%s"->"%s"[label="%s"])" "\n", p.first.first.c_str(), p.second.id.c_str(), p.first.second.c_str());
+		}
+#endif
+
         auto prepare_items = make_yacc_result_from_lex_result(lex_result);
         yacc_result.clear();
 
         // NOTE 这里故意不+1
         for (auto i = 0; i < prepare_items.size();)
         {
+
+#if 1
+			for (auto &p : yacc_result)
+			{
+				printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
+			}
+			printf("\n");
+#endif
+
             if (reduce_new_node(yacc_result, prepare_items[i], dfa__, term_words__))
             {
                 ++i;
@@ -36,10 +53,20 @@ namespace skyfire
             return false;
         }
 
-        if (yacc_result.size() != 1)
-            return false;
+		while (yacc_result.size() != 1)
+		{
+			if (self_reduce_two(yacc_result, dfa__, term_words__))
+				continue;
+			if (self_reduce_one(yacc_result, dfa__))
+				continue;
+			return false;
+		}
+
         while (terminate_ids__.count(yacc_result[0]->id) == 0)
         {
+#if 1
+			std::cout << yacc_result[0]->id << std::endl;
+#endif
             if (!self_reduce_one(yacc_result, dfa__))
                 return false;
         }

@@ -8,13 +8,13 @@ int main()
     std::string content = R"(
 <html>
     {$
-        d = data["d"];
-        for k,v in d{
-            print(k, v);
-        }
+        if true {
+			print("hello world")
+		}
     $}
 </html>
 )";
     auto ret = skyfire::sf_render(content, skyfire::sf_json() ,{"{$", "$}"});
     std::cout<<ret<<std::endl;
+	getchar();
 }
