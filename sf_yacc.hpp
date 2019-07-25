@@ -14,7 +14,7 @@ namespace skyfire
                                std::vector<std::shared_ptr<sf_yacc_result_t>> &yacc_result) const
     {
 
-#if 1
+#if 0
 		for(auto &p:dfa__)
 		{
 			printf(R"("%s"->"%s"[label="%s"])" "\n", p.first.first.c_str(), p.second.id.c_str(), p.first.second.c_str());
@@ -28,7 +28,7 @@ namespace skyfire
         for (auto i = 0; i < prepare_items.size();)
         {
 
-#if 1
+#if 0
 			for (auto &p : yacc_result)
 			{
 				printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
@@ -61,7 +61,7 @@ namespace skyfire
             return false;
         }
 
-#if 1
+#if 0
         for (auto &p : yacc_result)
         {
             printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
@@ -71,7 +71,7 @@ namespace skyfire
 
 		while (yacc_result.size() != 1)
 		{
-#if 1
+#if 0
             for (auto &p : yacc_result)
             {
                 printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
@@ -87,7 +87,7 @@ namespace skyfire
 
         while (terminate_ids__.count(yacc_result[0]->id) == 0)
         {
-#if 1
+#if 0
             for (auto &p : yacc_result)
             {
                 printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
