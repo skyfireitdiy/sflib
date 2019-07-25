@@ -17,7 +17,7 @@ namespace skyfire
 
     struct sf_template_tree_node_t{
         std::string operation;
-        std::vector<std::shared_ptr<sf_template_tree_node_t>> param;
+        std::vector<std::any> param;   //std::vector<std::shared_ptr<sf_template_tree_node_t>>
         std::string data;
     };
 
@@ -28,6 +28,6 @@ namespace skyfire
                                                  const std::pair<std::string, std::string> &sep);
 
 
-    std::string sf_template_make_tree__(std::string content, const sf_json &js = sf_json());
+    std::shared_ptr<sf_template_tree_node_t> sf_template_make_tree__(std::string content, const sf_json &js = sf_json());
 
 }
