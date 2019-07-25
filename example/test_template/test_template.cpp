@@ -8,7 +8,8 @@ int main()
     std::string content = R"(
 <html>
     {$
-        print(5)
+		print(555)
+        range(1,10,2,5)
     $}
 </html>
 )";

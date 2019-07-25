@@ -102,21 +102,46 @@ namespace skyfire {
 
         sf_yacc yacc;
 
-        auto value_callback = [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+
+		auto make_empty = [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d)
+		{
+			for(auto &p: d)
+			{
+				try
+				{
+					std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(p->user_data);
+				}
+				catch(std::bad_cast e)
+				{
+					auto t = std::make_shared<sf_template_tree_node_t>();
+					t->operation = p->id;
+					t->data = p->text;
+					p->user_data = t;
+				}
+			}
+		};
+
+
+        auto value_callback = [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+			make_empty(d);
             auto tmp = std::make_shared<sf_template_tree_node_t>();
             tmp->operation = "value";
             tmp->data = d[0]->text;
             return tmp;
         };
 
-        auto two_op_callback = [](const std::string &op,
+        auto two_op_callback = [make_empty](const std::string &op,
                                   const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+			make_empty(d);
             auto tmp = std::make_shared<sf_template_tree_node_t>();
             tmp->operation = op;
             tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
             tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[2]->user_data));
             return tmp;
         };
+
+
+		
 
         yacc.set_rules(
                 {
@@ -141,7 +166,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"string"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "value";
                                                     tmp->data = sf_json::json_string_to_string(d[0]->text);
@@ -153,18 +179,9 @@ namespace skyfire {
                                                 value_callback
                                         },
                                         {
-                                                {"int"},
-                                                value_callback
-                                        },
-                                        {
-                                                {"(", "value", ")"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
-                                                    return d[1]->user_data;
-                                                }
-                                        },
-                                        {
                                                 {"value", "[", "string", "]"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "[]";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
@@ -174,7 +191,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"!", "value"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "!";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
@@ -183,56 +201,57 @@ namespace skyfire {
                                         },
                                         {
                                                 {"value", "!=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("!=", d);
                                                 }
                                         },
                                         {
                                                 {"value", "==", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("==", d);
                                                 }
                                         },
                                         {
                                                 {"value", ".", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("[]", d);
                                                 }
                                         },
                                         {
                                                 {"value", "+", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("+", d);
                                                 }
                                         },
                                         {
                                                 {"value", "-", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("-", d);
                                                 }
                                         },
                                         {
                                                 {"value", "*", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("*", d);
                                                 }
                                         },
                                         {
                                                 {"value", "/", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("/", d);
                                                 }
                                         },
                                         {
                                                 {"value", "%", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("%", d);
                                                 }
                                         },
                                         {
                                                 {"-", "value"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
-                                                    auto tmp = std::make_shared<sf_template_tree_node_t>();
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
+                                                	auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "-";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
                                                     return tmp;
@@ -240,61 +259,38 @@ namespace skyfire {
                                         },
                                         {
                                                 {"value", "&&", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("&&", d);
                                                 }
                                         },
                                         {
                                                 {"value", "||", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("||", d);
                                                 }
                                         },
                                         {
                                                 {"+", "value"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     return d[1]->user_data;
                                                 }
                                         },
                                         {
                                                 {"key_word", "(", "param", ")"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "func";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[2]->user_data));
-                                                    return tmp;
-                                                }
-                                        },
-                                        {
-                                                {"key_word", "(", "value", ")"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
-                                                    auto tmp = std::make_shared<sf_template_tree_node_t>();
-                                                    tmp->operation = "func";
-
-                                                    std::cout<<d.size()<<std::endl;
-                                                    std::cout<<d[0]->id<<std::endl;
-                                                    std::cout<<d[0]->text<<std::endl;
-                                                    std::cout<<d[1]->id<<std::endl;
-                                                    std::cout<<d[1]->text<<std::endl;
-                                                    std::cout<<d[2]->id<<std::endl;
-                                                    std::cout<<d[2]->text<<std::endl;
-                                                    std::cout<<d[3]->id<<std::endl;
-                                                    std::cout<<d[3]->text<<std::endl;
-
-
-                                                    tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
-                                                    tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[2]->user_data));
-
-//                                                    print_tree__(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data),0);
-//                                                    print_tree__(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[2]->user_data),0);
-                                                    print_tree__(tmp,0);
                                                     return tmp;
                                                 }
                                         },
                                         {
                                                 {"key_word", "(", ")"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "func";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
@@ -303,50 +299,50 @@ namespace skyfire {
                                         },
                                         {
                                                 {"value", "=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("=", d);
                                                 }
                                         },
 
                                         {
                                                 {"value", "+=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("+=", d);
                                                 }
                                         },
                                         {
                                                 {"value", "-=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("-=", d);
                                                 }
                                         },
                                         {
                                                 {"value", "*=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("*=", d);
                                                 }
                                         },
                                         {
                                                 {"value", "/=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("/=", d);
                                                 }
                                         },
                                         {
                                                 {"value", "%=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("%=", d);
                                                 }
                                         },
                                         {
                                                 {"value", "&&=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("&&=", d);
                                                 }
                                         },
                                         {
                                                 {"value", "||=", "value"},
-                                                [=](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [two_op_callback](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     return two_op_callback("||=", d);
                                                 }
                                         }
@@ -356,18 +352,19 @@ namespace skyfire {
                                 "param",
                                 {
                                         {
-                                                {"value", ",",        "value"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                {"value"},
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "param";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
-                                                    tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[2]->user_data));
                                                     return tmp;
                                                 }
                                         },
                                         {
                                                 {"param", ",",        "value"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(
                                                             d[0]->user_data);
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[2]->user_data));
@@ -382,7 +379,8 @@ namespace skyfire {
                                 {
                                         {
                                                 {"for",   "key_word", "in", "value", "block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "for_in";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
@@ -393,7 +391,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"for",   "key_word", ",",  "key_word", "in", "value", "block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "for_in";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
@@ -406,8 +405,9 @@ namespace skyfire {
 
                                         {
                                                 {"for", "value", ";", "value", ";", "value", "block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
-                                                    auto tmp = std::make_shared<sf_template_tree_node_t>();
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
+                                                	auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "for_loop";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[3]->user_data));
@@ -423,24 +423,17 @@ namespace skyfire {
                                 {
                                         {
                                                 {"{",     "}"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
-                                                    auto tmp = std::make_shared<sf_template_tree_node_t>();
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
+                                                	auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "block";
                                                     return tmp;
                                                 }
                                         },
                                         {
                                                 {"{",     "sentence", "}"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
-                                                    auto tmp = std::make_shared<sf_template_tree_node_t>();
-                                                    tmp->operation = "block";
-                                                    tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
-                                                    return tmp;
-                                                }
-                                        },
-                                        {
-                                                {"{",   "value", "}"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "block";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
@@ -454,7 +447,8 @@ namespace skyfire {
                                 {
                                         {
                                                 {"value"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "sentence";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
@@ -463,7 +457,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"for_block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "sentence";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
@@ -472,7 +467,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"if_block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "sentence";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
@@ -481,7 +477,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "sentence";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
@@ -490,7 +487,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"sentence", "sentence"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "sentence";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[0]->user_data));
@@ -505,7 +503,8 @@ namespace skyfire {
                                 {
                                         {
                                                 {"if",    "value",    "block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "if";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
@@ -515,7 +514,8 @@ namespace skyfire {
                                         },
                                         {
                                                 {"if",    "value",    "block", "else",     "block"},
-                                                [](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+                                                [make_empty](const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
+													make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "if";
                                                     tmp->param.push_back(std::any_cast<std::shared_ptr<sf_template_tree_node_t>>(d[1]->user_data));
@@ -530,7 +530,7 @@ namespace skyfire {
                 }
         );
 
-        yacc.add_terminate_ids({"sentence", "value", "for_block", "block", "if_block"});
+        yacc.add_terminate_ids({"sentence"});
 
         std::vector<sf_lex_result_t> lex_result;
         auto lex_res = lex.parse(content, lex_result);

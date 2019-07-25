@@ -39,15 +39,23 @@ namespace skyfire
             if (reduce_new_node(yacc_result, prepare_items[i], dfa__, term_words__))
             {
                 ++i;
+				// while (self_reduce_two(yacc_result, dfa__, term_words__));
                 continue;
             }
-            if (self_reduce_two(yacc_result, dfa__, term_words__))
-                continue;
-            if (self_reduce_one(yacc_result, dfa__))
-                continue;
+			if (self_reduce_two(yacc_result, dfa__, term_words__))
+			{
+				// while (self_reduce_two(yacc_result, dfa__, term_words__));
+				continue;
+			}
+			if (self_reduce_one(yacc_result, dfa__))
+			{
+				// while (self_reduce_two(yacc_result, dfa__, term_words__));
+				continue;
+			}
             if (add_new_node(yacc_result, prepare_items[i], dfa__))
             {
                 ++i;
+				// while (self_reduce_two(yacc_result, dfa__, term_words__));
                 continue;
             }
             return false;
