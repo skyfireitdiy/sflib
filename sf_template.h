@@ -17,10 +17,13 @@ namespace skyfire
 
     struct sf_template_tree_node_t{
         std::string operation;
-        std::vector<std::any> param;   //std::vector<std::shared_ptr<sf_template_tree_node_t>>
+        std::vector<std::shared_ptr<sf_template_tree_node_t>> param;
         std::string data;
     };
 
+    std::string sf_template_exec__(const std::shared_ptr<sf_template_tree_node_t>& root, sf_json &js);
+
+    void print_tree__(const std::shared_ptr<sf_template_tree_node_t>& root, int index);
 
     std::string sf_render(std::string content, const sf_json &js, const std::pair<std::string,std::string> &sep = {"{$", "$}"});
 

@@ -53,8 +53,23 @@ namespace skyfire
             return false;
         }
 
+#if 1
+        for (auto &p : yacc_result)
+        {
+            printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
+        }
+        printf("\n");
+#endif
+
 		while (yacc_result.size() != 1)
 		{
+#if 1
+            for (auto &p : yacc_result)
+            {
+                printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
+            }
+            printf("\n");
+#endif
 			if (self_reduce_two(yacc_result, dfa__, term_words__))
 				continue;
 			if (self_reduce_one(yacc_result, dfa__))
@@ -65,7 +80,11 @@ namespace skyfire
         while (terminate_ids__.count(yacc_result[0]->id) == 0)
         {
 #if 1
-			std::cout << yacc_result[0]->id << std::endl;
+            for (auto &p : yacc_result)
+            {
+                printf(R"(%s[%s])", p->id.c_str(), p->text.c_str());
+            }
+            printf("\n");
 #endif
             if (!self_reduce_one(yacc_result, dfa__))
                 return false;

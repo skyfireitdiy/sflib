@@ -8,9 +8,7 @@ int main()
     std::string content = R"(
 <html>
     {$
-        if true {
-			print("hello world")
-		}
+        print(5)
     $}
 </html>
 )";
