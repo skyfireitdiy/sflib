@@ -193,7 +193,7 @@ namespace skyfire {
                                                     make_empty(d);
                                                     auto tmp = std::make_shared<sf_template_tree_node_t>();
                                                     tmp->operation = "value";
-                                                    tmp->data = sf_json::json_string_to_string(d[0]->text);
+                                                    tmp->data = d[0]->text;
                                                     return tmp;
                                                 }
                                         },
@@ -202,7 +202,7 @@ namespace skyfire {
                                                 value_callback
                                         },
                                         {
-                                                {"value",     "[", "string", "]"},
+                                                {"value",     "[", "value", "]"},
                                                 [make_empty](
                                                         const std::vector<std::shared_ptr<sf_yacc_result_t>> &d) -> std::any {
                                                     make_empty(d);
