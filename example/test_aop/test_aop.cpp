@@ -11,7 +11,7 @@
 * 发布日期：2018-10-22
 */
 
-#include <sf_object.hpp>
+#include <core/sf_object.hpp>
 using namespace skyfire;
 
 // 1.对象继承自sf_object

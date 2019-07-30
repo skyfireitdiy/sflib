@@ -1,6 +1,6 @@
 
 #define SF_DEBUG
-#include "sf_argv.hpp"
+#include "tools/sf_argv.hpp"
 
 using namespace skyfire;
 using namespace std;

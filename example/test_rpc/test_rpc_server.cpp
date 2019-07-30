@@ -11,7 +11,7 @@
 * 发布日期：2018-10-22
 */
 #define SF_DEBUG
-#include "sf_rpc_server.hpp"
+#include "network/sf_rpc_server.hpp"
 
 using namespace skyfire;
 

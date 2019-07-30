@@ -13,7 +13,7 @@
 
 // 1.SF_DEBUG表示启用sf_debug宏
 #define SF_DEBUG
-#include "sf_logger.hpp"
+#include "tools/sf_logger.hpp"
 
 using namespace skyfire;
 

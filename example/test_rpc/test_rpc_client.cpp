@@ -12,7 +12,7 @@
 */
 
 #define SF_DEBUG
-#include "sf_rpc_client.hpp"
+#include "network/sf_rpc_client.hpp"
 using namespace skyfire;
 using namespace std::literals;
 

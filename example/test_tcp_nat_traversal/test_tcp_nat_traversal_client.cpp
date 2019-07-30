@@ -12,7 +12,7 @@
 */
 
 #define SF_DEBUG
-#include "sf_tcp_nat_traversal_client.hpp"
+#include "network/sf_tcp_nat_traversal_client.hpp"
 
 using namespace skyfire;
 

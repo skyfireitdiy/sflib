@@ -19,11 +19,15 @@ link_directories(
 
 
 file(GLOB headers
-        *.h
-        *.hpp
+        compiler/*.h
+        compiler/*.hpp
+        core/*.h
+        core/*.hpp
+        network/*.h
+        network/*.hpp
+        tools/*.h
+        tools/*.hpp
         )
-
-install(FILES ${headers} DESTINATION include)
 
 
 include_directories(example)

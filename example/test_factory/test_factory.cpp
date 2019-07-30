@@ -1,6 +1,6 @@
 #define SF_DEBUG
-#include "sf_object_factory.hpp"
-#include "sf_stdc++.h"
+#include "tools/sf_object_factory.hpp"
+#include "core/sf_stdc++.h"
 using namespace skyfire;
 
 struct Student

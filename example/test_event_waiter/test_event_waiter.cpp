@@ -15,9 +15,9 @@
 // Created by skyfire on 18-7-11.
 //
 
-#include "sf_object.hpp"
-#include "sf_event_waiter.hpp"
-#include "sf_timer.hpp"
+#include "core/sf_object.hpp"
+#include "core/sf_event_waiter.hpp"
+#include "core/sf_timer.hpp"
 
 using namespace skyfire;
 
