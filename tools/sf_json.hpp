@@ -804,7 +804,7 @@ namespace skyfire
 
 #define SF_CONTAINER_JSON_IMPL(container) \
     template <typename T>\
-    sf_json to_json(const container<T> &value)\
+    inline sf_json to_json(const container<T> &value)\
     {\
         sf_json js;\
         js.convert_to_array();\
@@ -815,12 +815,12 @@ namespace skyfire
         return js;\
     }\
     template <>\
-    sf_json to_json(const container<char> &value)\
+    inline sf_json to_json(const container<char> &value)\
     {\
         return sf_json(sf_char_container_to_hex_string(value));\
     }\
     template<typename T>\
-    void from_json(const sf_json& js, container<T>& value)\
+    inline void from_json(const sf_json& js, container<T>& value)\
     {\
         std::vector<T> data;\
         int sz = js.size();\
@@ -831,7 +831,7 @@ namespace skyfire
         value = container<T> {data.begin(),data.end()};\
     }\
 	template<>\
-    void from_json(const sf_json& js, container<char>& value)\
+    inline void from_json(const sf_json& js, container<char>& value)\
     {\
         std::string tmp;\
 		from_json(js, tmp);\

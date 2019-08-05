@@ -195,7 +195,7 @@ namespace skyfire {
         }
     }
 
-    std::string sf_long_double_to_string(const long double &num) {
+    inline std::string sf_long_double_to_string(const long double &num) {
         auto buffer = std::to_string(num);
         if (buffer.length() > 7) {
             if (std::string(buffer.end() - 7, buffer.end()) == ".000000") {
@@ -205,7 +205,7 @@ namespace skyfire {
         return buffer;
     }
 
-    long double sf_string_to_long_double(const std::string &str) {
+    inline long double sf_string_to_long_double(const std::string &str) {
         long double tmp_num;
 #ifdef MSC_VER
         sscanf_s(str.c_str(), "%Lf", &tmp_num);
