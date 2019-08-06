@@ -69,11 +69,6 @@ private:
 
     void flush_session__();
 
-    sf_json get_session__(const std::string& session_key)  ;
-
-    template <typename T>
-    void set_session__(const std::string& session_key, const std::string& key, const T& value);
-
     void raw_data_coming__(SOCKET sock, const byte_array &data);
 
     template <typename T>
@@ -107,6 +102,24 @@ private:
     void send_response_file_part__(SOCKET sock, const sf_http_response::response_file_info_t &file, std::ifstream &fi) const;
 
 public:
+
+    /**
+     * 获取session
+     * @param session_key session key
+     * @return session的json对象（注意是浅拷贝）
+     */
+    sf_json get_session(const std::string& session_key)  ;
+
+    /**
+     * 设置session
+     * @tparam T session类型
+     * @param session_key session key
+     * @param key 键
+     * @param value 值
+     */
+    template <typename T>
+    void set_session(const std::string& session_key, const std::string& key, const T& value);
+
     /**
          * 构造函数
          * @param config http配置

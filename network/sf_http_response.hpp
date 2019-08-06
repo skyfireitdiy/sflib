@@ -118,5 +118,10 @@ namespace skyfire
     {
         return cookies__;
     }
+
+    inline void sf_http_response::redirect(const std::string &new_location, int code) {
+        set_status(code);
+        get_header().set_header("Location", new_location);
+    }
 }
 #pragma clang diagnostic pop

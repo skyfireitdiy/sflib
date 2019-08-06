@@ -182,6 +182,13 @@ namespace skyfire
          */
         byte_array to_package() const;
 
+        /**
+         * 重定向
+         * @param new_location 新地址
+         * @param code 跳转码
+         */
+        void redirect(const std::string &new_location, int code = 302);
+
         friend sf_http_base_server;
     };
 }

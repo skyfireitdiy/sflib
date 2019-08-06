@@ -17,6 +17,8 @@
 #define SF_SSL
 #define SF_ZLIB
 #include "sf_http_base_server.h"
+
+#include <memory>
 #include "sf_http_server_config.h"
 #include "core/sf_eventloop.hpp"
 #include "sf_tcp_server.h"
@@ -662,7 +664,7 @@ namespace skyfire {
         });
     }
 
-    inline sf_json sf_http_base_server::get_session__(const std::string &session_key) {
+    inline sf_json sf_http_base_server::get_session(const std::string &session_key) {
         std::lock_guard<std::recursive_mutex> lck(mu_session__);
         if(session_data__.count(session_key) == 0)
         {
@@ -673,11 +675,11 @@ namespace skyfire {
     }
 
     template<typename T>
-    void sf_http_base_server::set_session__(const std::string &session_key, const std::string &key, const T &value) {
+    void sf_http_base_server::set_session(const std::string &session_key, const std::string &key, const T &value) {
         std::lock_guard<std::recursive_mutex> lck(mu_session__);
         if(session_data__.count(session_key) == 0)
         {
-            session_data__[session_key] = std::make_shared<session_data_t>(config__.session_timeout, sf_json());
+            session_data__[session_key] = std::make_shared<session_data_t>(session_data_t{config__.session_timeout, sf_json()});
         }
         session_data__[session_key]->data[key] = sf_json(value);
     }

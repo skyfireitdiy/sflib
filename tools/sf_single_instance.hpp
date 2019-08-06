@@ -22,26 +22,20 @@
 namespace skyfire
 {
 
-	template <typename ThisClass, typename BaseClass>
-	ThisClass* sf_single_instance<ThisClass, BaseClass>::get_instance()
-	{
-		if (instance == nullptr)
-		{
-			std::lock_guard<std::mutex> lck(mu);
-			if (instance == nullptr)
-			{
-				instance = new ThisClass();
-			}
-		}
-		return instance;
-	}
 
-	template <typename ThisClass, typename BaseClass>
-	sf_single_instance<ThisClass, BaseClass>::~sf_single_instance()
-	{
-		if (instance != nullptr)
-			delete instance;
-	}
+    template<typename ThisClass, typename BaseClass>
+    template<typename... Args>
+    std::shared_ptr<ThisClass> sf_single_instance<ThisClass, BaseClass>::get_instance(Args &&... args) {
+        if (instance == nullptr)
+        {
+            std::lock_guard<std::mutex> lck(mu);
+            if (instance == nullptr)
+            {
+                instance = std::shared_ptr<ThisClass>(new ThisClass(std::forward<Args>(args)...));
+            }
+        }
+        return instance;
+    }
 }
 
 

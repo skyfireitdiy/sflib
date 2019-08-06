@@ -28,7 +28,7 @@
 #include <cstring>
 #include <sys/stat.h>
 #include <sys/types.h>
-
+#include "core/sf_empty_class.h"
 #include "core/sf_type.hpp"
 
 namespace skyfire {
@@ -217,7 +217,7 @@ namespace skyfire {
     void sf_hex_string_to_char_container(const std::string &str, T &data);
 
 
-    template <typename T, typename Base>
+    template <typename T, typename Base=sf_empty_class>
     struct sf_make_instance_t: public Base{
     private:
         sf_make_instance_t()= default;

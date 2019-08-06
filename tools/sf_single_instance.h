@@ -34,21 +34,17 @@ namespace skyfire
 	{
 	public:
 
-		/**
-         * @brief get_instance 获取单例对象
-         * @return
-         */
-		static ThisClass *get_instance();
-
-		~sf_single_instance();
+         template <typename ... Args>
+		static std::shared_ptr<ThisClass> get_instance(Args &&... args);
 
 	private:
 		sf_single_instance() = default;
 
-		inline static ThisClass *instance {nullptr};
+		inline static std::shared_ptr<ThisClass> instance {nullptr};
 		inline static std::mutex mu;
 		friend ThisClass;
 	} ;
+
 
 }
 
