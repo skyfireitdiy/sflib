@@ -16,12 +16,14 @@
 #include <functional>
 #include <vector>
 #include "core/sf_eventloop.h"
+#include "core/sf_timer.h"
 #include "sf_tcp_server.h"
 #include "sf_http_request.h"
 #include "sf_http_response.h"
 #include "sf_http_utils.h"
 #include "sf_websocket_utils.h"
 #include "sf_http_server_config.h"
+#include "tools/sf_json.h"
 #include <utility>
 #include <mutex>
 
@@ -47,12 +49,30 @@ private:
     std::function<void(SOCKET, const std::string &url)> websocket_open_callback__;
     std::function<void(SOCKET, const std::string &url)> websocket_close_callback__;
 
+
     std::unordered_map<SOCKET, sf_request_context_t> request_context__;
     std::recursive_mutex mu_request_context__;
     std::unordered_map<SOCKET, sf_websocket_context_t> websocket_context__;
     std::recursive_mutex mu_websocket_context__;
     std::unordered_map<SOCKET, sf_multipart_data_context_t> multipart_data_context__;
     std::recursive_mutex mu_multipart_data_context__;
+
+
+    struct session_data_t {
+        int timeout;
+        sf_json data;
+    };
+
+    mutable std::recursive_mutex mu_session__;
+    std::unordered_map<std::string, std::shared_ptr<session_data_t>> session_data__;
+    sf_timer session_timer__;
+
+    void flush_session__();
+
+    sf_json get_session__(const std::string& session_key)  ;
+
+    template <typename T>
+    void set_session__(const std::string& session_key, const std::string& key, const T& value);
 
     void raw_data_coming__(SOCKET sock, const byte_array &data);
 
@@ -78,7 +98,7 @@ private:
 
     void close_request__(SOCKET sock);
 
-    void http_handler__(SOCKET sock, sf_http_request http_request);
+    void http_handler__(SOCKET sock, const sf_http_request& http_request);
 
     void build_boundary_context_data(SOCKET sock, const sf_http_request &request);
 

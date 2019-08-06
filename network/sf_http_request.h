@@ -97,6 +97,12 @@ namespace skyfire{
         std::unordered_map<std::string,std::string> get_cookies() const;
 
         /**
+         * 获取session id
+         * @return session id， 如果没有，就为空
+         */
+        std::string get_session_id() const;
+
+        /**
          * 分割请求
          * @param raw 原始数据
          * @param request_line 请求行原始数据

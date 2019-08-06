@@ -25,8 +25,9 @@ namespace skyfire {
         std::string host    = "0.0.0.0";               // 主机ip地址
         unsigned short port = 80;          // http端口
         std::string tmp_file_path = ".";      // 临时文件路径
+        int session_timeout = 30 * 60;
     };
 
-    SF_JSONIFY(sf_http_server_config, host, port, tmp_file_path)
+    SF_JSONIFY(sf_http_server_config, host, port, tmp_file_path, session_timeout)
 }
 

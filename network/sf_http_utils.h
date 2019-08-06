@@ -25,6 +25,9 @@
 
 namespace skyfire
 {
+    constexpr char sf_session_id_key[] = "_SESSION_ID";
+
+
     class sf_http_multipart;
 
     /**
@@ -93,7 +96,7 @@ namespace skyfire
         cookie_life_type life_type = cookie_life_type ::session;                                    // 生存期类型
         std::chrono::system_clock::time_point time_point = std::chrono::system_clock::now();        // 生存期
         std::string path = "/";                                                                     // 路径
-        bool secure = true;                                                                        // 安全性
+        bool secure = false;                                                                        // 安全性
         bool http_only = true;                                                                     // http only
     };
 

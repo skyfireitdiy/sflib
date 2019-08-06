@@ -22,6 +22,7 @@
 // ReSharper disable once CppUnusedIncludeDirective
 #include "sf_http_utils.hpp"
 #include "tools/sf_logger.hpp"
+#include "tools/sf_random.hpp"
 
 namespace skyfire
 {
@@ -183,30 +184,39 @@ namespace skyfire
     sf_http_request::parse_cookies(const sf_http_header &header_data, std::unordered_map<std::string, std::string> &cookies)
     {
         cookies.clear();
-        if(!header_data.has_key("Cookie"))
-        {
-            return;
-        }
-        const auto cookie_str = header_data.get_header_value("Cookie");
-        auto str_list = sf_split_string(cookie_str,";");
-        for(auto &p:str_list)
-        {
-            p = sf_string_trim(p);
-        }
-        for(auto &p:str_list)
-        {
-            auto tmp_list = sf_split_string(p,"=");
-            if(tmp_list.size()!=2)
-            {
-                continue;
+        if(header_data.has_key("Cookie")) {
+            const auto cookie_str = header_data.get_header_value("Cookie");
+            auto str_list = sf_split_string(cookie_str, ";");
+            for (auto &p:str_list) {
+                p = sf_string_trim(p);
             }
-            cookies[tmp_list[0]]=tmp_list[1];
+            for (auto &p:str_list) {
+                auto tmp_list = sf_split_string(p, "=");
+                if (tmp_list.size() != 2) {
+                    continue;
+                }
+                cookies[tmp_list[0]] = tmp_list[1];
+            }
+        }
+        if(cookies.count(sf_session_id_key) == 0 || cookies[sf_session_id_key].empty())
+        {
+            auto rd = sf_random::get_instance();
+            cookies[sf_session_id_key] = rd->get_uuid_str();
         }
     }
 
     inline std::unordered_map<std::string, std::string> sf_http_request::get_cookies() const
     {
         return cookies__;
+    }
+
+    inline std::string sf_http_request::get_session_id() const {
+        auto ck = get_cookies();
+        if(cookies__.count(sf_session_id_key) == 0)
+        {
+            return "";
+        }
+        return ck[sf_session_id_key];
     }
 }
 #pragma clang diagnostic pop
