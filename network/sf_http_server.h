@@ -20,6 +20,7 @@
 #include "sf_router_shared_ptr_compare.hpp"
 #include "core/sf_stdc++.h"
 #include "tools/sf_utils.h"
+#include "sf_http_part_router.h"
 
 
 namespace skyfire {
@@ -30,7 +31,8 @@ namespace skyfire {
     class sf_http_server final : public sf_make_instance_t<sf_http_server, sf_http_base_server>,
                                  public std::enable_shared_from_this<sf_http_server> {
     private:
-        std::multiset<std::shared_ptr<sf_http_router>, sf_router_shared_ptr_compare__<sf_http_router>> http_routers__;
+        std::multiset<std::shared_ptr<sf_router>, sf_router_shared_ptr_compare__<sf_router>> http_routers__;
+
         std::multiset<std::shared_ptr<sf_websocket_router>, sf_router_shared_ptr_compare__<sf_websocket_router>> websocket_routers__;
 
         void default_request_callback__(const sf_http_request &req, sf_http_response &res);
@@ -53,7 +55,7 @@ namespace skyfire {
          * 添加http路由
          * @param router http路由
          */
-        void add_router(const std::shared_ptr<sf_http_router> &router);
+        void add_router(const std::shared_ptr<sf_router> &router);
 
 
         /**

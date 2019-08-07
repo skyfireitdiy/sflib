@@ -29,6 +29,8 @@ namespace skyfire
          * @return 优先级
          */
         virtual int get_priority() const;
+
+        virtual bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method);
     };
 
 }

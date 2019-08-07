@@ -18,6 +18,7 @@
 #include "core/sf_stdc++.h"
 #include "sf_http_utils.h"
 #include "sf_http_header.h"
+#include "tools/sf_json.h"
 
 
 namespace skyfire
@@ -113,11 +114,25 @@ namespace skyfire
          * @param body 响应体
          */
         void set_body(const byte_array & body);
+
+        /**
+         * 设置json响应（会设置content-type）
+         * @param json json数据
+         */
+        void set_json(const sf_json& json);
+
         /**
          * 设置响应文件（会设置类型为file）
          * @param file_info 文件信息
          */
         void set_file(const response_file_info_t &file_info);
+
+        /**
+         * 设置响应文件（默认为整个文件）
+         * @param filename 文件名
+         */
+        void set_file(const std::string &filename);
+
         /**
          * 设置分块响应（会设置类型为multipart）
          * @param multipart_info_vec 分块信息

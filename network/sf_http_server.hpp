@@ -32,9 +32,6 @@ namespace skyfire
         res.set_status(404);
     }
 
-    inline void sf_http_server::add_router(const std::shared_ptr<sf_http_router> &router) {
-        http_routers__.insert(router);
-    }
 
     inline void sf_http_server::add_router(const std::shared_ptr<sf_websocket_router> &router) {
         websocket_routers__.insert(router);
@@ -52,7 +49,7 @@ namespace skyfire
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // NOTE websocket 回调函数
+
         set_websocket_request_callback([this](const sf_http_request& req,sf_http_response& res){
             default_websocket_request_callback__(req,res);
         });
@@ -69,6 +66,7 @@ namespace skyfire
         set_websocket_close_callback([this](SOCKET sock,const std::string& url){
             default_websocket_close_callback__(sock,url);
         });
+
     }
 
     // ReSharper disable once CppMemberFunctionMayBeStatic
@@ -146,7 +144,7 @@ namespace skyfire
                                          std::function<void(const sf_http_request &, sf_http_response &,
                                                             StringType ... args)> callback,
                                          const std::vector<std::string> &methods, int priority) {
-        add_router(make_http_router(pattern, callback, methods, priority));
+        add_router(sf_http_router::make_instance(pattern, callback, methods, priority));
     }
 
     template<typename... StringType>
@@ -172,6 +170,10 @@ namespace skyfire
     inline void sf_http_server::add_websocket_router(const std::string &url, void (*callback)(const sf_websocket_param_t &),
                                               int priority) {
         add_router(make_websocket_router(url, callback, priority));
+    }
+
+    inline void sf_http_server::add_router(const std::shared_ptr<sf_router> &router) {
+        http_routers__.insert(router);
     }
 
 

@@ -18,6 +18,7 @@
 #include "sf_http_response.h"
 #include "sf_http_status.h"
 #include "sf_http_header.hpp"
+#include "tools/sf_json.hpp"
 
 namespace skyfire
 {
@@ -52,11 +53,27 @@ namespace skyfire
         body__ = body;
     }
 
+    inline void sf_http_response::set_json(const sf_json &json) {
+        type__ = response_type ::normal;
+        body__ =  to_byte_array(json.to_string());
+        header__.set_header("Content-Type", "application/json");
+    }
+
 
     inline void sf_http_response::set_file(const sf_http_response::response_file_info_t &file_info)
     {
         type__ = response_type ::file;
         file_info__ = file_info;
+    }
+
+
+    inline void sf_http_response::set_file(const std::string &filename) {
+        type__ = response_type ::file;
+        file_info__ = response_file_info_t{
+            filename,
+            0,
+            -1
+        };
     }
 
     inline void sf_http_response::set_multipart(const std::vector<multipart_info_t> &multipart_info_vec)
@@ -123,5 +140,8 @@ namespace skyfire
         set_status(code);
         get_header().set_header("Location", new_location);
     }
+
+
+
 }
 #pragma clang diagnostic pop

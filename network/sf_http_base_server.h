@@ -43,6 +43,7 @@ private:
     sf_eventloop event_loop__;
 
     std::function<void(const sf_http_request &, sf_http_response &)> request_callback__;
+
     std::function<void(const sf_http_request &, sf_http_response &)> websocket_request_callback__;
     std::function<void(SOCKET, const std::string &url, const byte_array &data)> websocket_binary_data_callback__;
     std::function<void(SOCKET, const std::string &url, const std::string &data)> websocket_text_data_callback__;
@@ -131,6 +132,7 @@ public:
          * @param request_callback 请求回调函数，函数接收参数为const sf_http_request&类型参数req和sf_http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端
          */
     void set_request_callback(std::function<void(const sf_http_request &, sf_http_response &)> request_callback);
+
 
     /**
          * 设置websocket回调函数

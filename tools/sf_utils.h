@@ -185,6 +185,14 @@ namespace skyfire {
  */
     bool sf_string_start_with(const std::string &str, const std::string &prefix);
 
+    /**
+     * 判断字符串是否是由指定后缀结束
+     * @param str 字符串
+     * @param suffix 后缀
+     * @return 字符串是否是由指定后缀结束
+     */
+    bool sf_string_end_with(const std::string& str, const std::string &suffix);
+
 /**
 	 * 生成时间字符串
 	 * @return 时间字符串

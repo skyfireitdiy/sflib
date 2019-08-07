@@ -19,6 +19,7 @@
 #include "sf_http_base_server.h"
 
 #include <memory>
+#include <utility>
 #include "sf_http_server_config.h"
 #include "core/sf_eventloop.hpp"
 #include "sf_tcp_server.h"
@@ -47,6 +48,7 @@ namespace skyfire {
         res.add_cookie(session_cookie);
 
         request_callback__(http_request, res);
+
         if (sf_equal_nocase_string(http_request.get_header().get_header_value("Connection", "Close"), "Close")) {
             keep_alive = false;
         }
@@ -683,7 +685,6 @@ namespace skyfire {
         }
         session_data__[session_key]->data[key] = sf_json(value);
     }
-
 } // namespace skyfire
 #pragma clang diagnostic pop
 

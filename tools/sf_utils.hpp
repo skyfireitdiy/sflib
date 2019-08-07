@@ -273,6 +273,10 @@ namespace skyfire {
         return fs::exists(fs::path(filename));
     }
 
+    inline bool sf_string_end_with(const std::string &str, const std::string &suffix) {
+        return str.find_last_of(suffix) == str.length()-suffix.size();
+    }
+
 
 } // namespace skyfire
 #pragma clang diagnostic pop
