@@ -65,43 +65,6 @@ namespace skyfire {
         void add_router(const std::shared_ptr<sf_websocket_router> &router);
 
 
-        template<typename ... StringType>
-        void add_http_router(const std::string &pattern,
-                              std::function<void(const sf_http_request &, sf_http_response &,
-                                                 StringType...)> callback,
-                              const std::vector<std::string> &methods = {{"*"}},
-                              int priority = 0);
-
-        template<typename ...StringType>
-        void add_http_router(const std::string &pattern,
-                             void(*callback)(const sf_http_request &, sf_http_response &,
-                                             StringType...),
-                             const std::vector<std::string> &methods = {{"*"}},
-                             int priority = 0);
-
-        void
-        add_static_router(std::string path, const std::vector<std::string> &methods = { {"*"s} },
-                           std::string charset = "utf-8",
-                           bool deflate = true,
-                           unsigned long long max_file_size = default_http_max_file_size,
-                           int priority = default_http_static_priority
-        );
-
-
-        void add_websocket_router(const std::string &url,
-                                                                   std::function<void(
-                                                                           const sf_websocket_param_t &
-
-                                                                   )> callback,
-                                                                   int priority = 0
-        );
-
-        void add_websocket_router(const std::string &url, void(*callback)(const sf_websocket_param_t &),
-
-                              int priority = 0
-        );
-
-
         friend sf_websocket_router;
     };
 }

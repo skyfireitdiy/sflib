@@ -80,11 +80,11 @@ namespace skyfire
 		return priority__ < router.priority__;
 	}
 
-    inline void sf_http_part_router::add_part_router(std::shared_ptr<sf_http_part_router> router) {
+    inline void sf_http_part_router::add_router(std::shared_ptr<sf_http_part_router> router) {
         middle_router__.insert(router);
     }
 
-    inline void sf_http_part_router::add_http_router(std::shared_ptr<sf_http_router> router) {
+    inline void sf_http_part_router::add_router(std::shared_ptr<sf_router> router) {
         endpoint_router__.insert(router);
     }
 

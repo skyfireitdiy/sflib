@@ -19,28 +19,34 @@
 #include "core/sf_define.h"
 #include "sf_http_utils.hpp"
 #include "tools/sf_logger.hpp"
+#include "tools/sf_utils.h"
+
 
 
 namespace skyfire {
 	using namespace std::literals;
 
-	/**
-	 * 创建静态http路由
-	 * @param path 本地路径
-	 * @param methods 请求方式
-	 * @param charset 编码
-	 * @param deflate 是否启用压缩
-	 * @param max_file_size 最大文件大小
-	 * @param priority 优先级
-	 * @return 本地静态http路由
-	 */
-	inline std::shared_ptr<sf_http_router>
-		make_static_router(std::string path, const std::vector<std::string> &methods = { {"*"s} },
-			std::string charset = "utf-8",
-			bool deflate = true,
-			unsigned long long max_file_size = default_http_max_file_size,
-			int priority = default_http_static_priority
+
+	class sf_static_router: public sf_make_instance_t<sf_static_router, sf_router>
+    {
+    private:
+        int priority__ = default_http_static_priority;
+	    std::string static_path__ ;
+	    std::vector<std::string> methods__;
+        std::function<void(const sf_http_request &, sf_http_response &, const std::string &, const std::string &)> callback__;
+    public:
+        bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method) override ;
+
+        [[nodiscard]] int get_priority() const override ;
+
+        explicit sf_static_router(std::string path, std::vector<std::string> methods = { {"GET"s} },
+                         std::string charset = "utf-8",
+                         bool deflate = true,
+                         unsigned long long max_file_size = default_http_max_file_size,
+                         int priority = default_http_static_priority);
+
+    };
 
 
-		);
+
 }

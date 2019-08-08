@@ -53,7 +53,7 @@ namespace skyfire
          */
         template <typename ... StringType>
         sf_http_router(const std::string& pattern,void(*callback)(const sf_http_request &,sf_http_response&,StringType...),
-                       const std::vector<std::string> &methods = {{"*"}} ,int priority = 0);
+                       const std::vector<std::string> &methods = {{"*"}} ,int priority = default_http_endpoint_priority);
 
         /**
          * 构造函数
@@ -65,7 +65,7 @@ namespace skyfire
          */
         template <typename ... StringType>
         sf_http_router(const std::string& pattern,std::function<void(const sf_http_request &,sf_http_response&,StringType...)> callback,
-                       std::vector<std::string> methods = {{"*"}} ,int priority = 0);
+                       std::vector<std::string> methods = {{"*"}} ,int priority = default_http_endpoint_priority);
 
         /**
          * 运行路由（由框架调用）

@@ -24,31 +24,31 @@ namespace skyfire
         std::string prefix__;
         std::function<bool(const sf_http_request&, sf_http_response&)> callback__;
 
-        std::multiset<std::shared_ptr<sf_http_router>, sf_router_shared_ptr_compare__<sf_http_router>>  endpoint_router__;
-        std::multiset<std::shared_ptr<sf_http_part_router>, sf_router_shared_ptr_compare__<sf_http_part_router>>  middle_router__;
+        std::multiset<std::shared_ptr<sf_router>, sf_router_shared_ptr_compare__<sf_router>>  endpoint_router__;
+        std::multiset<std::shared_ptr<sf_router>, sf_router_shared_ptr_compare__<sf_router>>  middle_router__;
 
     public:
 
 
         template <typename ... StringType>
         sf_http_part_router(std::string  prefix, std::function<bool(const sf_http_request&, sf_http_response&)> callback,
-            std::vector<std::string> methods = {{"*"}} ,int priority = 0);
+            std::vector<std::string> methods = {{"*"}} ,int priority = default_http_part_priority);
 
 
         template <typename ... StringType>
         sf_http_part_router(const std::string& prefix, bool(*callback)(const sf_http_request&, sf_http_response&),
-                const std::vector<std::string>& methods = {{"*"}} ,int priority = 0);
+                const std::vector<std::string>& methods = {{"*"}} ,int priority = default_http_part_priority);
 
-        void add_http_router( std::shared_ptr<sf_http_router> router);
+        void add_router( std::shared_ptr<sf_router> router);
 
-        void add_part_router( std::shared_ptr<sf_http_part_router> router);
+        void add_router( std::shared_ptr<sf_http_part_router> router);
 
 
-        bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method);
+        bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method) override;
 
         bool operator<(const sf_http_part_router& router) const;
 
-        int get_priority() const override;
+        [[nodiscard]] int get_priority() const override;
     };
 }
 #pragma clang diagnostic pop
