@@ -49,7 +49,7 @@ namespace skyfire
     }
 
     inline sf_static_router::sf_static_router(std::string path, std::vector<std::string> methods, std::string charset,
-                                       bool deflate, unsigned long long max_file_size, int priority) :
+                                       bool deflate, int priority) :
                                        static_path__(std::move(path)) ,
                                        methods__(std::move(methods)),
                                        priority__(priority)
@@ -76,8 +76,7 @@ namespace skyfire
                         res.set_status(401);
                         header.set_header("Content-Type", "text/html; charset=" + charset);
                         body_data = to_byte_array(
-                                "<p>" + url + " bad request! (" + std::to_string(max_file_size) +
-                                ")</p>");
+                                "<p>" + url + " bad request!</p>");
                     };
                     auto _404_res = [&] {
                         res.set_status(404);

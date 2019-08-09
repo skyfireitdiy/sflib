@@ -70,7 +70,7 @@ namespace skyfire
             {
 	            const auto high = sf_from_hex(static_cast<unsigned char>(str[++i]));
 	            const auto low = sf_from_hex(static_cast<unsigned char>(str[++i]));
-                strTemp += std::to_string(high*16 + low);  // NOLINT(bugprone-string-integer-assignment)
+                strTemp += static_cast<char>(high*16 + low);  // NOLINT(bugprone-string-integer-assignment)
             }
             else strTemp += str[i];
         }

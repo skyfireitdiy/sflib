@@ -153,8 +153,13 @@ namespace skyfire {
     // http 终端路由优先级
     constexpr int default_http_endpoint_priority = 10;
 
-    // 默认http文件最大大小1M
-    constexpr unsigned long long default_http_max_file_size = 1024*1024;
+    // 最大缓存数量
+    constexpr int default_cache_max_count = 1024;
+
+    // 最大缓存数量
+    constexpr int default_cache_max_file_size = 1024 * 1024;
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 

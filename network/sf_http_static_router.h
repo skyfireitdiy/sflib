@@ -22,10 +22,8 @@
 #include "tools/sf_utils.h"
 
 
-
 namespace skyfire {
 	using namespace std::literals;
-
 
 	class sf_static_router: public sf_make_instance_t<sf_static_router, sf_router>
     {
@@ -42,9 +40,7 @@ namespace skyfire {
         explicit sf_static_router(std::string path, std::vector<std::string> methods = { {"GET"s} },
                          std::string charset = "utf-8",
                          bool deflate = true,
-                         unsigned long long max_file_size = default_http_max_file_size,
                          int priority = default_http_static_priority);
-
     };
 
 

@@ -62,10 +62,16 @@ namespace skyfire
                 }
             }
             if (!match) {
+                match = false;
                 for (auto &p:middle_router__) {
                     if (p->run_route(req, res, new_url, method)) {
+                        match = true;
                         break;
                     }
+                }
+                if (!match)
+                {
+                    res.set_status(404);
                 }
             }
         }

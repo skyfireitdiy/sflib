@@ -26,6 +26,7 @@
 #include "tools/sf_json.h"
 #include <utility>
 #include <mutex>
+#include <tools/sf_cache.h>
 
 namespace skyfire
 {
@@ -57,6 +58,8 @@ private:
     std::recursive_mutex mu_websocket_context__;
     std::unordered_map<SOCKET, sf_multipart_data_context_t> multipart_data_context__;
     std::recursive_mutex mu_multipart_data_context__;
+
+    std::shared_ptr<sf_cache> file_cache__;
 
 
     struct session_data_t {
@@ -125,7 +128,7 @@ public:
          * 构造函数
          * @param config http配置
          */
-    explicit sf_http_base_server(sf_http_server_config config);
+    explicit sf_http_base_server(const sf_http_server_config& config);
 
     /**
          * 设置请求回调函数

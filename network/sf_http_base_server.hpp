@@ -16,6 +16,7 @@
 
 #define SF_SSL
 #define SF_ZLIB
+
 #include "sf_http_base_server.h"
 
 #include <memory>
@@ -31,12 +32,13 @@
 #include "tools/sf_json.hpp"
 #include "core/sf_timer.hpp"
 #include "tools/sf_random.hpp"
+#include "tools/sf_cache.hpp"
 
 using namespace std::string_literals;
 
 namespace skyfire {
 
-    inline void sf_http_base_server::http_handler__(const SOCKET sock, const sf_http_request& http_request) {
+    inline void sf_http_base_server::http_handler__(const SOCKET sock, const sf_http_request &http_request) {
         bool keep_alive = true;
         sf_http_response res;
         res.set_status(200);
@@ -86,7 +88,12 @@ namespace skyfire {
         if (!keep_alive) {
             close_request__(sock);
         }
-        sf_debug("request finished");
+        sf_info(
+                res.status__,
+                http_request.get_request_line().method,
+                http_request.get_request_line().http_version,
+                http_request.get_request_line().url
+        );
     }
 
     inline void sf_http_base_server::raw_data_coming__(SOCKET sock, const byte_array &data) {
@@ -354,7 +361,6 @@ namespace skyfire {
             if (!fi) {
                 sf_debug("file not found");
                 res.set_status(404);
-                res.set_body(to_byte_array("Not Found"s));
                 normal_response__(sock, res);
                 return;
             }
@@ -373,18 +379,37 @@ namespace skyfire {
                 header.set_header("Content-Type", "application/octet-stream");
             }
 
-            std::ifstream fi(file.filename, std::ios_base::binary | std::ios_base::in);
-            if (!fi) {
-                sf_debug("file not found");
-                res.set_status(404);
-                res.set_body(to_byte_array("Not Found"s));
-                normal_response__(sock, res);
-                return;
-            }
+            if (file_size > config__.max_cache_file_size || config__.debug) {
+                std::ifstream fi(file.filename, std::ios_base::binary | std::ios_base::in);
+                if (!fi) {
+                    sf_debug("file not found");
+                    res.set_status(404);
+                    normal_response__(sock, res);
+                    return;
+                }
 
-            server__->send(sock, res.to_header_package());
-            send_response_file_part__(sock, file, fi);
-            fi.close();
+                server__->send(sock, res.to_header_package());
+                send_response_file_part__(sock, file, fi);
+                fi.close();
+            } else {
+                auto data = file_cache__->get_data<byte_array>(file.filename);
+                if(data)
+                {
+                    res.set_body(*data);
+                    normal_response__(sock, res);
+                } else{
+                    byte_array content;
+                    if(!sf_read_file(file.filename, content))
+                    {
+                        res.set_status(404);
+                        normal_response__(sock, res);
+                    } else{
+                        file_cache__->set_data(file.filename, content);
+                        res.set_body(content);
+                        normal_response__(sock, res);
+                    }
+                }
+            }
         }
     }
 
@@ -539,7 +564,12 @@ namespace skyfire {
         }
     }
 
-    inline sf_http_base_server::sf_http_base_server(sf_http_server_config config) : config__(std::move(config)) {
+    inline sf_http_base_server::sf_http_base_server(const sf_http_server_config& config) :
+            config__(config),
+            file_cache__(sf_cache::make_instance(config.max_cache_count)) {
+
+        sf_info("server config:", to_json(config));
+
         sf_bind_signal(server__, raw_data_coming, [this](SOCKET sock, const byte_array &data) {
             raw_data_coming__(sock, data);
         },
@@ -657,19 +687,17 @@ namespace skyfire {
 
     inline void sf_http_base_server::flush_session__() {
         std::lock_guard<std::recursive_mutex> lck(mu_session__);
-        for (auto &p: session_data__)
-        {
-            p.second->timeout-=1;
+        for (auto &p: session_data__) {
+            p.second->timeout -= 1;
         }
-        std::erase_if(session_data__, [](const auto& p){
-            return p.second->timeout<=0;
+        std::erase_if(session_data__, [](const auto &p) {
+            return p.second->timeout <= 0;
         });
     }
 
     inline sf_json sf_http_base_server::get_session(const std::string &session_key) {
         std::lock_guard<std::recursive_mutex> lck(mu_session__);
-        if(session_data__.count(session_key) == 0)
-        {
+        if (session_data__.count(session_key) == 0) {
             return sf_json();
         }
         session_data__[session_key]->timeout = config__.session_timeout;
@@ -679,9 +707,9 @@ namespace skyfire {
     template<typename T>
     void sf_http_base_server::set_session(const std::string &session_key, const std::string &key, const T &value) {
         std::lock_guard<std::recursive_mutex> lck(mu_session__);
-        if(session_data__.count(session_key) == 0)
-        {
-            session_data__[session_key] = std::make_shared<session_data_t>(session_data_t{config__.session_timeout, sf_json()});
+        if (session_data__.count(session_key) == 0) {
+            session_data__[session_key] = std::make_shared<session_data_t>(
+                    session_data_t{config__.session_timeout, sf_json()});
         }
         session_data__[session_key]->data[key] = sf_json(value);
     }
