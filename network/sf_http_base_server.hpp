@@ -43,7 +43,9 @@ inline void sf_http_base_server::http_handler__(
 
     sf_http_cookie_t session_cookie;
     session_cookie.key = sf_session_id_key;
-    session_cookie.value = http_request.get_session_id();
+    auto session_id = http_request.get_session_id();
+    session_cookie.value = session_id;
+    keep_session_alive(session_id);
     res.add_cookie(session_cookie);
 
     request_callback__(http_request, res);
@@ -76,8 +78,6 @@ inline void sf_http_base_server::http_handler__(
     res.get_header().set_header("Server", "SkyFire HTTP Server");
     res.get_header().set_header("Connection",
                                 keep_alive ? "Keep-Alive" : "Close");
-
-    auto session_id = http_request.get_session_id();
 
     if (res.get_type() == sf_http_response::response_type::file) {
         file_response__(sock, res);
@@ -705,9 +705,6 @@ inline void sf_http_base_server::close_websocket(SOCKET sock) {
     server__->close(sock);
     std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
     if (websocket_context__.count(sock) != 0) {
-        if (websocket_close_callback__) {
-            websocket_close_callback__(sock, websocket_context__[sock].url);
-        }
         websocket_context__.erase(sock);
     }
 }
@@ -752,14 +749,21 @@ inline sf_json sf_http_base_server::get_session(
     return session_data__[session_key]->data;
 }
 
-template <typename T>
-void sf_http_base_server::set_session(const std::string &session_key,
-                                      const std::string &key, const T &value) {
+inline void sf_http_base_server::keep_session_alive(
+    const std::string &session_key) {
     std::lock_guard<std::recursive_mutex> lck(mu_session__);
     if (session_data__.count(session_key) == 0) {
         session_data__[session_key] = std::make_shared<session_data_t>(
             session_data_t{config__.session_timeout, sf_json()});
     }
+    session_data__[session_key]->timeout = config__.session_timeout;
+}
+
+template <typename T>
+void sf_http_base_server::set_session(const std::string &session_key,
+                                      const std::string &key, const T &value) {
+    std::lock_guard<std::recursive_mutex> lck(mu_session__);
+    keep_session_alive(session_key);
     session_data__[session_key]->data[key] = sf_json(value);
 }
 }    // namespace skyfire
