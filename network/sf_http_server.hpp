@@ -23,8 +23,12 @@ namespace skyfire {
 inline void sf_http_server::default_request_callback__(
     const sf_http_request &req, sf_http_response &res) {
     const auto req_line = req.get_request_line();
+    std::string url;
+    sf_http_header_t param;
+    std::string frame;
+    sf_parse_url(req_line.url, url, param, frame);
     for (auto &p : http_routers__) {
-        if (p->run_route(req, res, req_line.url, req_line.method)) return;
+        if (p->run_route(req, res, url, req_line.method)) return;
     }
     res.set_status(404);
 }
