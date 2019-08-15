@@ -14,19 +14,9 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "core/sf_stdc++.h"
-#ifdef SF_SSL
-#include <openssl/bio.h>
-#include <openssl/buffer.h>
-#include <openssl/evp.h>
-#include <openssl/sha.h>
-#endif
-#ifdef SF_ZLIB
-#include <zconf.h>
-#include <zlib.h>
-#endif
 #include <sys/stat.h>
 #include <sys/types.h>
+#include "core/sf_stdc++.h"
 
 #include "core/sf_msvc_safe.h"
 #include "core/sf_type.hpp"
@@ -152,9 +142,9 @@ inline long double sf_string_to_long_double(const std::string &str) {
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedValue"
 
-inline std::string make_time_str() {
-    auto tt =
-        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+inline std::string sf_make_time_str(
+    const std::chrono::system_clock::time_point &tp) {
+    auto tt = std::chrono::system_clock::to_time_t(tp);
     tm tm_d;
     auto ptm = &tm_d;
 #ifdef _MSC_VER

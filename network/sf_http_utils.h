@@ -36,6 +36,8 @@ class sf_http_multipart;
  */
 using sf_http_header_t = std::unordered_map<std::string, std::string>;
 
+using sf_http_param_t = std::unordered_map<std::string, std::string>;
+
 /**
  * @brief  websocket追加的uuid
  */
@@ -130,8 +132,7 @@ inline std::string sf_url_decode(const std::string &str);
  * @param param_str 要解析的参数字符串
  * @return 解析出来的参数
  */
-std::unordered_map<std::string, std::string> sf_parse_param(
-    std::string param_str);
+sf_http_param_t sf_parse_param(std::string param_str);
 
 /**
  * 解析url
@@ -141,8 +142,7 @@ std::unordered_map<std::string, std::string> sf_parse_param(
  * @param frame 锚点信息
  */
 inline void sf_parse_url(const std::string &raw_url, std::string &url,
-                         std::unordered_map<std::string, std::string> &param,
-                         std::string &frame);
+                         sf_http_param_t &param, std::string &frame);
 
 /**
  * 生成http时间字符串

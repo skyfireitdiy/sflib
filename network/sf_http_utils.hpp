@@ -71,8 +71,7 @@ inline std::string sf_url_decode(const std::string &str) {
     return strTemp;
 }
 
-inline std::unordered_map<std::string, std::string> sf_parse_param(
-    std::string param_str) {
+inline sf_http_param_t sf_parse_param(std::string param_str) {
     std::unordered_map<std::string, std::string> param;
     unsigned long url_pos;
     while ((url_pos = param_str.find('&')) != std::string::npos) {
@@ -99,8 +98,7 @@ inline std::unordered_map<std::string, std::string> sf_parse_param(
 }
 
 inline void sf_parse_url(const std::string &raw_url, std::string &url,
-                         std::unordered_map<std::string, std::string> &param,
-                         std::string &frame) {
+                         sf_http_param_t &param, std::string &frame) {
     const auto frame_pos = raw_url.find('#');
     std::string raw_url_without_frame;
     if (frame_pos == std::string::npos) {

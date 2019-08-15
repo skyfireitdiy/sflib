@@ -157,7 +157,8 @@ bool sf_string_end_with(const std::string &str, const std::string &suffix);
  * 生成时间字符串
  * @return 时间字符串
  */
-std::string make_time_str();
+std::string sf_make_time_str(const std::chrono::system_clock::time_point &tp =
+                                 std::chrono::system_clock::now());
 
 /**
  * long double 转为字符串
