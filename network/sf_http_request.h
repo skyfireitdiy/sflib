@@ -32,6 +32,7 @@ namespace skyfire{
     private:
         const byte_array raw__;
         bool valid__ = false;
+        bool error__ = false;
         sf_http_request_line request_line__;
         sf_http_header header__;
         byte_array body__;
@@ -59,6 +60,8 @@ namespace skyfire{
          * @return 是否合法
          */
         bool is_valid() const;
+
+        bool is_error() const;
 
         /**
          * 获取请求行

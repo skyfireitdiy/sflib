@@ -108,12 +108,14 @@ namespace skyfire
                     auto boundary_str_list = sf_split_string(tmp_str,"=");
                     if(boundary_str_list.size() != 2){
                         sf_error("boundary str size error");
+                        error__ = true;
                         return false;
                     }
                     multipart_data_context__.request_line = request_line__;
                     if(boundary_str_list[1].size()<=2)
                     {
                         sf_error("boundary is too short");
+                        error__ = true;
                         return false;
                     }
                     multipart_data_context__.boundary_str = {boundary_str_list[1].begin()+2, boundary_str_list[1].end()};
@@ -217,6 +219,10 @@ namespace skyfire
             return "";
         }
         return ck[sf_session_id_key];
+    }
+
+    inline bool sf_http_request::is_error() const {
+        return error__;
     }
 }
 #pragma clang diagnostic pop

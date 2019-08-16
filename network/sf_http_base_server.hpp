@@ -180,8 +180,7 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
         if (request_callback__) {
             http_handler__(sock, request);
         }
-    } else {
-        lck.lock();
+    } else if (request.is_error()) {
         sf_debug("invalid request", to_string(request_context__[sock].buffer));
         server__->close(sock);
     }
