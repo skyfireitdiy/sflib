@@ -28,8 +28,6 @@ inline bool sf_tcp_server::send(int sock, const byte_array &data) {
     auto send_data = data;
     before_raw_send_filter__(sock, send_data);
 
-    sf_debug("index", index, "sock", sock, "push data");
-
     {
         std::lock_guard<std::shared_mutex> lck(
             *sock_context__[sock].mu_data_buffer_out);
@@ -44,8 +42,6 @@ inline bool sf_tcp_server::send(int sock, const byte_array &data) {
 
 inline bool sf_tcp_server::send(int sock, int type, const byte_array &data) {
     auto &sock_context__ = epoll_data__().sock_context__;
-
-    sf_debug("find index", index);
 
     sf_pkg_header_t header{};
     header.type = type;
@@ -135,7 +131,7 @@ inline bool sf_tcp_server::listen(const std::string &ip, unsigned short port) {
 }
 
 inline void sf_tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd) {
-    sf_debug("start thread", index);
+    sf_debug("start thread");
     epoll_data__().epoll_fd = epoll_create(max_tcp_connection);
 
     auto &sock_context__ = epoll_data__().sock_context__;
@@ -168,7 +164,7 @@ inline void sf_tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd) {
             continue;
         }
 
-        sf_debug("new epoll event", wait_fds, index);
+        sf_debug("new epoll event", wait_fds);
 
         auto listen_err = false;
 
@@ -227,12 +223,11 @@ inline bool sf_tcp_server::handle_accept__() {
                 return true;
             }
         }
-        sf_debug("new connection", conn_fd, index);
+        sf_debug("new connection", conn_fd);
         new_connection(conn_fd);
     }
 
     if (errno == EAGAIN || errno == EINTR) {
-        sf_debug("accept finished", index);
         return true;
     } else {
         sf_debug("accept error");
@@ -367,10 +362,12 @@ inline void sf_tcp_server::handle_write__(const epoll_event &ev) {
                     error_flag = true;
                 }
                 if (tmp_write > 0) {
+                    sf_debug("write", tmp_write);
                     n -= tmp_write;
                 }
                 break;
             }
+            sf_debug("write", tmp_write);
             n -= tmp_write;
         }
         if (error_flag) {
