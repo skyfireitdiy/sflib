@@ -120,6 +120,7 @@ inline void sf_logger::logout(SF_LOG_LEVEL level, const std::string &file,
 
 inline sf_logger::sf_logger() {
     add_level_stream(SF_DEBUG_LEVEL, &std::cout);
+#ifdef SF_ASYNC_LOG
     std::thread([this]() {
         while (true) {
             std::deque<sf_logger_info_t__> tmp_info;
@@ -147,6 +148,7 @@ inline sf_logger::sf_logger() {
         }
         std::cout << "thread exit" << std::endl;
     }).detach();
+#endif
 }
 
 template <typename T, typename... U>
@@ -162,11 +164,22 @@ inline void sf_logger::logout__(std::ostringstream &oss,
                                 sf_logger_info_t__ &log_info, const T &tmp) {
     oss << "[" << tmp << "]";
     log_info.msg = oss.str();
+#ifdef SF_ASYNC_LOG
     {
         std::lock_guard<std::mutex> lck(deque_mu__);
         log_deque__.push_back(log_info);
     }
     cond__.notify_one();
+#else
+    std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
+    for (auto &level_func : logger_func_set__) {
+        if (log_info.level >= level_func.first) {
+            for (auto &func : level_func.second) {
+                func.second(log_info);
+            }
+        }
+    }
+#endif
 }
 
 template <typename... T>
@@ -197,11 +210,22 @@ inline void sf_logger::logout__(std::ostringstream &oss,
                                 const QString &tmp) {
     oss << "[" << tmp.toStdString() << "]";
     log_info.msg = oss.str();
+#ifdef SF_ASYNC_LOG
     {
         std::lock_guard<std::mutex> lck(deque_mu__);
         log_deque__.push_back(log_info);
     }
     cond__.notify_one();
+#else
+    std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
+    for (auto &level_func : logger_func_set__) {
+        if (log_info.level >= level_func.first) {
+            for (auto &func : level_func.second) {
+                func.second(log_info);
+            }
+        }
+    }
+#endif
 }
 
 template <typename... U>
