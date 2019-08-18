@@ -391,7 +391,7 @@ inline void sf_tcp_server::handle_write__(const epoll_event &ev) {
                          sock_context__[fd].data_buffer_out.size());
             } else {
                 sock_context__[fd].data_buffer_out.front() = {
-                    sock_context__[fd].data_buffer_out.front().begin() + n,
+                    sock_context__[fd].data_buffer_out.front().end() - n,
                     sock_context__[fd].data_buffer_out.front().end()};
                 sf_debug(fd, "write pendding",
                          sock_context__[fd].data_buffer_out.size());
