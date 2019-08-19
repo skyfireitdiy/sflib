@@ -37,9 +37,6 @@ inline bool sf_static_router::run_route(const sf_http_request &req,
         url = url.substr(1);
     }
     auto abs_path = fs::path(static_path__) / url;
-
-    sf_info(abs_path);
-
     sf_http_header header;
     byte_array body_data;
 

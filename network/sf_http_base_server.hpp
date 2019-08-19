@@ -88,7 +88,10 @@ inline void sf_http_base_server::http_handler__(
     if (!keep_alive) {
         close_request__(sock);
     }
-    sf_info(res.status__, http_request.request_line().method,
+
+    auto addr = http_request.addr();
+    sf_info(res.status__, addr.ip, addr.port,
+            http_request.request_line().method,
             http_request.request_line().http_version,
             http_request.request_line().url);
 }
