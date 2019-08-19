@@ -278,7 +278,7 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
 
             static std::unordered_map<std::string, long long> file_size_cache;
 
-            long long file_size = sf_get_file_size(p.file_info.filename);
+            long long file_size = fs::file_size(p.file_info.filename);
             tmp_str += "Content-Range: bytes " +
                        std::to_string(p.file_info.begin) + "-" +
                        std::to_string(p.file_info.end) + "/" +
@@ -336,7 +336,7 @@ inline bool sf_http_base_server::check_analysis_multipart_file__(
     for (auto &p : multipart_data) {
         if (p.type ==
             sf_http_response::multipart_info_t::multipart_info_type::file) {
-            const auto file_size = sf_get_file_size(p.file_info.filename);
+            const auto file_size = fs::file_size(p.file_info.filename);
             if (file_size == -1) return false;
             if (p.file_info.begin >= file_size) return false;
             if (p.file_info.end == -1) {
@@ -351,7 +351,7 @@ inline bool sf_http_base_server::check_analysis_multipart_file__(
 inline void sf_http_base_server::file_response__(SOCKET sock,
                                                  sf_http_response &res) const {
     auto file = res.file();
-    auto file_size = sf_get_file_size(file.filename);
+    auto file_size = fs::file_size(file.filename);
     sf_debug("file:", file.filename, file.begin, file.end);
     if (file.begin != 0 || (file.end != file_size && file.end != -1)) {
         auto &header = res.header();

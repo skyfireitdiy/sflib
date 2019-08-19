@@ -61,45 +61,6 @@ inline bool sf_equal_nocase_string(const std::string &str1,
 inline std::vector<std::string> sf_split_string(std::string str,
                                                 const std::string &split_str);
 
-/**
- * 判断路径是否是目录
- * @param path 路径
- * @return 是否是目录
- */
-inline bool sf_is_dir(const std::string &path);
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-
-/**
- * 目录拼接
- * @tparam Str 字符串类型
- * @param str1 当前目录
- * @param str2 后续目录
- * @return 拼接后的目录
- */
-template <typename... Str>
-std::string sf_path_join(std::string str1, Str... str2);
-
-#pragma clang diagnostic pop
-
-/**
- * 目录拼接
- * @param path1 当前目录
- * @param path2 后续目录
- * @return 拼接后的目录
- */
-inline std::string sf_path_join(std::string path1, std::string path2);
-
-/**
- * 获取文件大小
- * @param filename 文件名
- * @return 文件大小
- */
-long long sf_get_file_size(const std::string &filename);
-
-bool sf_file_exists(const std::string &filename);
-
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 

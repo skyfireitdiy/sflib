@@ -32,16 +32,18 @@ inline bool sf_static_router::run_route(const sf_http_request &req,
                                         sf_http_response &res,
                                         const std::string &raw_url,
                                         const std::string &method) {
-    std::string url;
-    std::unordered_map<std::string, std::string> param;
-    std::string frame;
-    sf_parse_url(raw_url, url, param, frame);
-    auto abs_path = static_path__ + url;
+    auto url = req.base_url();
+    if (sf_string_start_with(url, "/")) {
+        url = url.substr(1);
+    }
+    auto abs_path = fs::path(static_path__) / url;
+
+    sf_info(abs_path);
 
     sf_http_header header;
     byte_array body_data;
 
-    if (!sf_file_exists(abs_path) || sf_is_dir(abs_path)) {
+    if (!fs::exists(abs_path) || fs::is_directory(abs_path)) {
         return false;
     }
     callback__(req, res, url, abs_path);
@@ -86,7 +88,7 @@ inline sf_static_router::sf_static_router(std::string path,
             header.set_header("Content-Type", "text/html; charset=" + charset);
         };
 
-        auto file_size = sf_get_file_size(abs_path);
+        auto file_size = fs::file_size(abs_path);
         if (file_size == -1) {
             _404_res();
         } else {

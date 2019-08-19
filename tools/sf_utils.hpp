@@ -70,23 +70,6 @@ inline std::vector<std::string> sf_split_string(std::string str,
     return ret;
 }
 
-inline bool sf_is_dir(const std::string &path) {
-    return fs::is_directory(path);
-}
-
-inline std::string sf_path_join(std::string path1, const std::string path2) {
-    return (fs::path(path1) / path2).string();
-}
-
-template <typename... Str>
-std::string sf_path_join(std::string str1, Str... str2) {
-    return sf_path_join(str1, sf_path_join(str2...));
-}
-
-inline long long sf_get_file_size(const std::string &filename) {
-    return fs::file_size(filename);
-}
-
 inline bool sf_write_file(const std::string &file_name, const byte_array &data,
                           bool append) {
     std::ofstream fo(
@@ -193,10 +176,6 @@ void sf_hex_string_to_char_container(const std::string &str, T &data) {
 inline bool sf_string_start_with(const std::string &str,
                                  const std::string &prefix) {
     return str.find(prefix) == 0;
-}
-
-inline bool sf_file_exists(const std::string &filename) {
-    return fs::exists(fs::path(filename));
 }
 
 inline bool sf_string_end_with(const std::string &str,
