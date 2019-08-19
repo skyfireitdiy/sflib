@@ -25,7 +25,7 @@ class A: public sf_object
 // 3.定义一个槽函数，参数列表与信号参数列表一致
 void slot1(int a)
 {
-    std::cout<<std::this_thread::get_id()<<" "<<a<<std::endl;
+    std::cout<<std::this_thread::id()<<" "<<a<<std::endl;
 }
 
 int main()

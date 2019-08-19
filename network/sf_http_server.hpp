@@ -22,7 +22,7 @@
 namespace skyfire {
 inline void sf_http_server::default_request_callback__(
     const sf_http_request &req, sf_http_response &res) {
-    const auto req_line = req.get_request_line();
+    const auto req_line = req.request_line();
     std::string url;
     sf_http_header_t param;
     std::string frame;
@@ -131,35 +131,35 @@ inline void sf_http_server::default_websocket_binary_data_callback__(
 
 inline void sf_http_server::default_websocket_request_callback__(
     const sf_http_request &req, sf_http_response &res) const {
-    auto headers = req.get_header();
-    auto header_key = headers.get_key_list();
+    auto headers = req.header();
+    auto header_key = headers.key_list();
     // 基于sha加密方式的握手协议
     if (std::find(header_key.begin(), header_key.end(),
                   sf_to_header_key_format("Sec-WebSocket-Key")) !=
         header_key.end()) {
-        auto sec_websocket_key = headers.get_header_value("Sec-WebSocket-Key");
+        auto sec_websocket_key = headers.header_value("Sec-WebSocket-Key");
         if (sec_websocket_key.empty()) return;
         sec_websocket_key += websocket_sha1_append_str;
         const auto sha1_encoded_key =
             sf_sha1_encode(to_byte_array(sec_websocket_key));
         const auto base64_encoded_key = sf_base64_encode(sha1_encoded_key);
-        res.get_header().set_header("Upgrade", "websocket");
-        res.get_header().set_header("Connection", "Upgrade");
-        res.get_header().set_header("Sec-WebSocket-Accept",
-                                    sf_string_trim(base64_encoded_key));
-        res.get_header().set_header("Server", "skyfire websocket server");
-        res.get_header().set_header("Date", sf_make_http_time_str());
+        res.header().set_header("Upgrade", "websocket");
+        res.header().set_header("Connection", "Upgrade");
+        res.header().set_header("Sec-WebSocket-Accept",
+                                sf_string_trim(base64_encoded_key));
+        res.header().set_header("Server", "skyfire websocket server");
+        res.header().set_header("Date", sf_make_http_time_str());
         //  NOTE 其他头
-        //  res.get_header().set_header("Access-Control-Allow-Credentials","true");
-        //  res.get_header().set_header("Access-Control-Allow-Headers","Content-Type");
+        //  res.header().set_header("Access-Control-Allow-Credentials","true");
+        //  res.header().set_header("Access-Control-Allow-Headers","Content-Type");
         if (std::find(header_key.begin(), header_key.end(),
                       sf_to_header_key_format("Sec-WebSocket-Protocol")) !=
             header_key.end())
-            res.get_header().set_header(
+            res.header().set_header(
                 "Sec-WebSocket-Protocol",
-                headers.get_header_value("Sec-WebSocket-Protocol"));
+                headers.header_value("Sec-WebSocket-Protocol"));
         res.set_status(101);
-        res.set_http_version(req.get_request_line().http_version);
+        res.set_http_version(req.request_line().http_version);
     }
 }
 

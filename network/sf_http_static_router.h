@@ -35,7 +35,7 @@ namespace skyfire {
     public:
         bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method) override ;
 
-        [[nodiscard]] int get_priority() const override ;
+        [[nodiscard]] int priority() const override ;
 
         explicit sf_static_router(std::string path, std::vector<std::string> methods = { {"GET"s} },
                          std::string charset = "utf-8",

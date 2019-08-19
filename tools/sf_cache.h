@@ -21,7 +21,7 @@ namespace skyfire
     public:
         explicit sf_cache(int max_count = default_cache_max_count);
         template<typename T>
-        std::shared_ptr<T> get_data(const std::string& key);
+        std::shared_ptr<T> data(const std::string& key);
         template<typename T>
         void set_data(const std::string &key, const T& d);
     };

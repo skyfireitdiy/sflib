@@ -96,14 +96,14 @@ namespace skyfire
          * @param addr 地址
          * @return 是否获取成功
          */
-        bool get_local_addr(sf_addr_info_t& addr) const;
+        bool local_addr(sf_addr_info_t& addr) const;
 
         /**
          * 获取远端地址
          * @param addr 地址信息
          * @return 是否获取成功
          */
-        bool get_peer_addr(sf_addr_info_t& addr) const;
+        bool peer_addr(sf_addr_info_t& addr) const;
 
     private:
         std::shared_ptr<sf_tcp_client> p_client__ = sf_tcp_client::make_instance();

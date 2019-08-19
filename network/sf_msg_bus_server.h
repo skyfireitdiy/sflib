@@ -79,7 +79,7 @@ namespace skyfire {
          * @param addr 地址信息
          * @return 是否成功
          */
-        bool get_server_addr(sf_addr_info_t &addr) const;
+        bool server_addr(sf_addr_info_t &addr) const;
 
     private:
         std::shared_ptr<sf_tcp_server> p_server__ = sf_tcp_server::make_instance();

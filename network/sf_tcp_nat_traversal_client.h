@@ -73,7 +73,7 @@ namespace skyfire {
          * 获取id
          * @return id
          */
-        unsigned long long int get_id() const;
+        unsigned long long int id() const;
 
         /**
          * 连接到穿透服务器，连接成功后会注册
@@ -87,7 +87,7 @@ namespace skyfire {
          * 获取终端集合
          * @return 终端集合
          */
-        std::unordered_set<unsigned long long> get_clients() const;
+        std::unordered_set<unsigned long long> clients() const;
 
         /**
          * 来源，连接远程peer端

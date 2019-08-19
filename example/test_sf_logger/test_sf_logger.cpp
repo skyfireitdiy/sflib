@@ -21,7 +21,7 @@ using namespace skyfire;
 int main()
 {
     // 2.获取单例对象
-    auto logger = sf_logger::get_instance();
+    auto logger = sf_logger::instance();
     // 3.添加日志文件，SF_WARN_LEVEL以上的日志级别将会打印到此文件中
     logger->add_level_file(SF_WARN_LEVEL, "runlog.log");
     // 4.SF_INFO_LEVEL以上的日志级别将会打印到标准输出流

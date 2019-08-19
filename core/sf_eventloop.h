@@ -30,7 +30,7 @@ namespace skyfire
     class sf_eventloop final : sf_nocopy<>
     {
     private:
-        sf_msg_queue* __p_msg_queue__ = sf_msg_queue::get_instance();
+        sf_msg_queue* __p_msg_queue__ = sf_msg_queue::instance();
         std::atomic<int> running__ { 0 };
     public:
         /**

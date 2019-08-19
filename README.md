@@ -78,7 +78,7 @@ class A: public sf_object
 // 3.定义一个槽函数，参数列表与信号参数列表一致
 void slot1(int a)
 {
-    std::cout<<std::this_thread::get_id()<<" "<<a<<std::endl;
+    std::cout<<std::this_thread::id()<<" "<<a<<std::endl;
 }
 
 int main()
@@ -392,7 +392,7 @@ void connect(std::shared_ptr<sf_tcp_nat_traversal_client> client){
 }
 
 void ls(std::shared_ptr<sf_tcp_nat_traversal_client> client){
-    auto clients = client->get_clients();
+    auto clients = client->clients();
     for(auto &p:clients){
         std::cout<<p<<std::endl;
     }
@@ -449,7 +449,7 @@ int main() {
         }else if(cmd == "natconn"){ // 5.连接客户端
             nat_conn(pclient);
         }else if(cmd == "id"){ // 6.获取id
-            std::cout<<pclient->get_id()<<std::endl;
+            std::cout<<pclient->id()<<std::endl;
         }else if(cmd == "send"){ // 7.发送消息
             send(conn);
         }
@@ -463,7 +463,7 @@ int main() {
 
 2. 穿透客户端首先与穿透服务器连接（`connect_to_server`函数）。
 
-3. 获取可以连接的客户端列表。（`get_clients`函数）。
+3. 获取可以连接的客户端列表。（`clients`函数）。
 
 4. 根据客户端列表中的`id`，连接远程内网客户端。（`connect_to_peer`函数，传入`id`和是否使用原始通信格式）
 
@@ -484,7 +484,7 @@ using namespace skyfire;
 int main()
 {
     // 2.获取单例对象
-    auto logger = sf_logger::get_instance();
+    auto logger = sf_logger::instance();
     // 3.添加日志文件，SF_WARN_LEVEL以上的日志级别将会打印到此文件中
     logger->add_level_file(SF_WARN_LEVEL, "runlog.log");
     // 4.SF_INFO_LEVEL以上的日志级别将会打印到标准输出流
@@ -730,23 +730,23 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
     {
         std::string ret_str;
         // 获取请求头
-        auto header = req.get_multipart_data_context().header;
+        auto header = req.multipart_data_context().header;
         for(auto &p:header)
         {
             ret_str += p.first + ":" + p.second + "\n";
         }
         ret_str += "-----------header end-------------\n";
         // 获取分块
-        auto multipart = req.get_multipart_data_context().multipart;
+        auto multipart = req.multipart_data_context().multipart;
         for (auto &p: multipart)
         {
             // 获取分块请求头
-            auto tmp_header = p.get_header().get_header();
+            auto tmp_header = p.header().header();
             for (auto &q:tmp_header)
             {
                 ret_str += q.first + ":" + q.second + "\n";
             }
-            ret_str += "temp filename:" + p.get_filename() + "\n--------------------------\n\n";
+            ret_str += "temp filename:" + p.filename() + "\n--------------------------\n\n";
         }
         // 将上述拼接的头信息拼装至body返回
         res.set_body(to_byte_array(ret_str));
@@ -756,9 +756,9 @@ void upload_file_route(const sf_http_request &req,sf_http_response& res) {
         res.set_body(to_byte_array("upload ok, no file"s));
         sf_http_cookie_t cookie;
 
-        cookie.path = req.get_request_line().url;
+        cookie.path = req.request_line().url;
         cookie.key="token";
-        cookie.value=sf_random::get_instance()->get_uuid_str();
+        cookie.value=sf_random::instance()->uuid_str();
         // 添加cookie
         res.add_cookie(cookie);
         cookie.key="time";

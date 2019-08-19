@@ -140,9 +140,9 @@ namespace skyfire {
         );
     }
 
-    inline bool sf_msg_bus_server::get_server_addr(sf_addr_info_t &addr) const
+    inline bool sf_msg_bus_server::server_addr(sf_addr_info_t &addr) const
     {
-        return p_server__->get_server_addr(addr);
+        return p_server__->server_addr(addr);
     }
 }
 

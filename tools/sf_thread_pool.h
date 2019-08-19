@@ -63,16 +63,16 @@ namespace skyfire
 		void add_thread(size_t thread_num = 1);
 
         /**
-         * @brief get_thread_count 获取调度线程数量
+         * @brief thread_count 获取调度线程数量
          * @return 调度线程数量
          */
-		size_t get_thread_count() const;
+		size_t thread_count() const;
 
         /**
-         * @brief get_busy_thread_count 获取繁忙线程数量
+         * @brief busy_thread_count 获取繁忙线程数量
          * @return
          */
-		size_t get_busy_thread_count()const;
+		size_t busy_thread_count()const;
 
         /**
          * @brief clear_thread 清除所有的调度线程

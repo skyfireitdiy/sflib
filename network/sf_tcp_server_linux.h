@@ -72,7 +72,7 @@ class sf_tcp_server
     epoll_context_t &epoll_data__() const;
 
    public:
-    SOCKET get_raw_socket() override;
+    SOCKET raw_socket() override;
 
     explicit sf_tcp_server(bool raw = false);
 

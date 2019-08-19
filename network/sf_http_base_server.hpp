@@ -39,11 +39,11 @@ inline void sf_http_base_server::http_handler__(
     bool keep_alive = true;
     sf_http_response res;
     res.set_status(200);
-    res.set_http_version(http_request.get_request_line().http_version);
+    res.set_http_version(http_request.request_line().http_version);
 
     sf_http_cookie_t session_cookie;
     session_cookie.key = sf_session_id_key;
-    auto session_id = http_request.get_session_id();
+    auto session_id = http_request.session_id();
     session_cookie.value = session_id;
     keep_session_alive(session_id);
     res.add_cookie(session_cookie);
@@ -51,11 +51,11 @@ inline void sf_http_base_server::http_handler__(
     request_callback__(http_request, res);
 
     if (sf_equal_nocase_string(
-            http_request.get_header().get_header_value("Connection", "Close"),
+            http_request.header().header_value("Connection", "Close"),
             "Close")) {
         keep_alive = false;
     }
-    auto cookies = res.get_cookies();
+    auto cookies = res.cookies();
     for (auto &p : cookies) {
         std::string value_str = p.second.key + "="s + p.second.value + ";"s;
         if (p.second.life_type == cookie_life_type::time_point) {
@@ -72,26 +72,25 @@ inline void sf_http_base_server::http_handler__(
         if (p.second.http_only) {
             value_str += "HttpOnly;";
         }
-        res.get_header().cookie_str_vec__.push_back(value_str);
+        res.header().cookie_str_vec__.push_back(value_str);
     }
 
-    res.get_header().set_header("Server", "SkyFire HTTP Server");
-    res.get_header().set_header("Connection",
-                                keep_alive ? "Keep-Alive" : "Close");
+    res.header().set_header("Server", "SkyFire HTTP Server");
+    res.header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
 
-    if (res.get_type() == sf_http_response::response_type::file) {
+    if (res.type() == sf_http_response::response_type::file) {
         file_response__(sock, res);
-    } else if (res.get_type() == sf_http_response::response_type::multipart) {
+    } else if (res.type() == sf_http_response::response_type::multipart) {
         multipart_response__(sock, res);
-    } else if (res.get_type() == sf_http_response::response_type::normal) {
+    } else if (res.type() == sf_http_response::response_type::normal) {
         normal_response__(sock, res);
     }
     if (!keep_alive) {
         close_request__(sock);
     }
-    sf_info(res.status__, http_request.get_request_line().method,
-            http_request.get_request_line().http_version,
-            http_request.get_request_line().url);
+    sf_info(res.status__, http_request.request_line().method,
+            http_request.request_line().http_version,
+            http_request.request_line().url);
 }
 
 inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
@@ -132,8 +131,8 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
 
             if (multipart_data_context__[sock].multipart.back().is_end()) {
                 sf_debug("boundary data finished");
-                http_handler__(sock,
-                               sf_http_request(multipart_data_context__[sock]));
+                http_handler__(sock, sf_http_request(
+                                         multipart_data_context__[sock], sock));
                 multipart_data_context__.erase(sock);
             }
             request_context__[sock].buffer.clear();
@@ -142,21 +141,20 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
     }
 
     std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
-    sf_http_request request(request_context__[sock].buffer);
+    sf_http_request request(request_context__[sock].buffer, sock);
     if (request.is_valid()) {
         request_context__[sock].new_req = true;
         request_context__[sock].buffer.clear();
         lck.unlock();
 
-        auto req_header = request.get_header();
+        auto req_header = request.header();
 
         if (request.is_multipart_data()) {
             build_boundary_context_data(sock, request);
             return;
         }
 
-        const auto connection_header =
-            req_header.get_header_value("Connection");
+        const auto connection_header = req_header.header_value("Connection");
 
         auto connection_header_list = sf_split_string(connection_header, ",");
 
@@ -168,7 +166,7 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
                                                            "Upgrade");
                          }) != connection_header_list.end()) {
             // 筛选Websocket请求
-            if (sf_equal_nocase_string(req_header.get_header_value("Upgrade"),
+            if (sf_equal_nocase_string(req_header.header_value("Upgrade"),
                                        "websocket")) {
                 sf_debug("new websocket request");
                 build_websocket_context_data__(sock, request);
@@ -193,13 +191,12 @@ inline void sf_http_base_server::build_websocket_context_data__(
     request_context__.erase(sock);
     lck.unlock();
     sf_websocket_context_t ws_data;
-    ws_data.url = request.get_request_line().url;
+    ws_data.url = request.request_line().url;
 
     if (websocket_request_callback__) {
         sf_http_response res;
         websocket_request_callback__(request, res);
-        res.get_header().set_header("Content-Length",
-                                    std::to_string(res.get_length()));
+        res.header().set_header("Content-Length", std::to_string(res.length()));
         sf_debug("Response", to_string(res.to_package()));
         server__->send(sock, res.to_package());
         std::lock_guard<std::recursive_mutex> lck2(mu_websocket_context__);
@@ -217,15 +214,15 @@ inline void sf_http_base_server::build_boundary_context_data(
     SOCKET sock, const sf_http_request &request) {
     sf_debug("is boundary data");
     // 初始化boundary数据
-    auto multipart_data = request.get_multipart_data_context();
+    auto multipart_data = request.multipart_data_context();
     std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
     request_context__[sock].buffer =
-        append_multipart_data__(multipart_data, request.get_body());
+        append_multipart_data__(multipart_data, request.body());
     lck.unlock();
     if (!multipart_data.multipart.empty() &&
         multipart_data.multipart.back().is_end()) {
         sf_debug("boundary data success one time");
-        http_handler__(sock, sf_http_request(multipart_data));
+        http_handler__(sock, sf_http_request(multipart_data, sock));
     } else {
         sf_debug("boundary data prepare");
         std::lock_guard<std::recursive_mutex> lck2(mu_multipart_data_context__);
@@ -246,24 +243,23 @@ inline void sf_http_base_server::close_request__(SOCKET sock) {
 
 inline void sf_http_base_server::normal_response__(
     SOCKET sock, sf_http_response &res) const {
-    res.get_header().set_header("Content-Length",
-                                std::to_string(res.get_length()));
+    res.header().set_header("Content-Length", std::to_string(res.length()));
     server__->send(sock, res.to_package());
-    sf_debug("http body length", res.get_length());
+    sf_debug("http body length", res.length());
 }
 
 inline void sf_http_base_server::multipart_response__(SOCKET sock,
                                                       sf_http_response &res) {
-    auto multipart = res.get_multipart();
+    auto multipart = res.multipart();
     if (!check_analysis_multipart_file__(multipart)) {
         res.set_status(403);
         res.set_body(to_byte_array("<p>Forbidden</p>"));
-        res.get_header().set_header("Content-Type", "text/html");
+        res.header().set_header("Content-Type", "text/html");
         normal_response__(sock, res);
         return;
     }
 
-    auto boundary_str = sf_random::get_instance()->get_uuid_str();
+    auto boundary_str = sf_random::instance()->uuid_str();
     unsigned long long content_length = 0;
     std::vector<std::string> header_vec;
     std::string end_str = "--" + boundary_str + "--";
@@ -304,7 +300,7 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
 
     content_length += end_str.length();
 
-    auto &res_header = res.get_header();
+    auto &res_header = res.header();
     res_header.set_header("Content-Type",
                           "multipart/byteranges; boundary=" + boundary_str);
     res_header.set_header("Content-Length", std::to_string(content_length));
@@ -354,11 +350,11 @@ inline bool sf_http_base_server::check_analysis_multipart_file__(
 
 inline void sf_http_base_server::file_response__(SOCKET sock,
                                                  sf_http_response &res) const {
-    auto file = res.get_file();
+    auto file = res.file();
     auto file_size = sf_get_file_size(file.filename);
     sf_debug("file:", file.filename, file.begin, file.end);
     if (file.begin != 0 || (file.end != file_size && file.end != -1)) {
-        auto &header = res.get_header();
+        auto &header = res.header();
         if (file.end == -1) {
             file.end = file_size;
         }
@@ -397,7 +393,7 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
         fi.close();
     } else {
         file.end = file_size;
-        auto &header = res.get_header();
+        auto &header = res.header();
         header.set_header("Content-Length", std::to_string(file_size));
         auto suffix = sf_to_lower_string(sf_get_path_ext(file.filename));
         if (sf_http_content_type.count(suffix) != 0) {
@@ -420,7 +416,7 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
             send_response_file_part__(sock, file, fi);
             fi.close();
         } else {
-            auto data = file_cache__->get_data<byte_array>(file.filename);
+            auto data = file_cache__->data<byte_array>(file.filename);
             if (data) {
                 res.set_body(*data);
                 normal_response__(sock, res);
@@ -738,8 +734,7 @@ inline void sf_http_base_server::flush_session__() {
                   [](const auto &p) { return p.second->timeout <= 0; });
 }
 
-inline sf_json sf_http_base_server::get_session(
-    const std::string &session_key) {
+inline sf_json sf_http_base_server::session(const std::string &session_key) {
     std::lock_guard<std::recursive_mutex> lck(mu_session__);
     if (session_data__.count(session_key) == 0) {
         return sf_json();

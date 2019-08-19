@@ -48,7 +48,7 @@ namespace skyfire
         std::thread(&sf_tcp_client::recv_thread__, this).detach();
     }
 
-    inline SOCKET sf_tcp_client::get_raw_socket() {
+    inline SOCKET sf_tcp_client::raw_socket() {
         return sock__;
     }
 

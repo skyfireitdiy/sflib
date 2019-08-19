@@ -12,7 +12,7 @@ namespace skyfire
     }
 
     template <typename T>
-    std::shared_ptr<T> sf_cache::get_data(const std::string& key)
+    std::shared_ptr<T> sf_cache::data(const std::string& key)
     {
         std::lock_guard<std::recursive_mutex> lck(mu_data__);
         for(auto &p: data__)

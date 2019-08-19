@@ -21,7 +21,7 @@
 namespace skyfire {
 inline sf_tcp_server::sf_tcp_server(const bool raw) { raw__ = raw; }
 
-inline SOCKET sf_tcp_server::get_raw_socket() { return listen_fd__; }
+inline SOCKET sf_tcp_server::raw_socket() { return listen_fd__; }
 
 inline bool sf_tcp_server::send(int sock, const byte_array &data) {
     auto &sock_context__ = epoll_data__().sock_context__;

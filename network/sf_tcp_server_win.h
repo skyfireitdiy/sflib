@@ -78,7 +78,7 @@ namespace skyfire {
 
     public:
 
-        SOCKET get_raw_socket() override;
+        SOCKET raw_socket() override;
 
         explicit sf_tcp_server(bool raw = false);
 

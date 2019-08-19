@@ -91,14 +91,14 @@ namespace skyfire
         }
     }
 
-    inline bool sf_msg_bus_client::get_local_addr(sf_addr_info_t &addr) const
+    inline bool sf_msg_bus_client::local_addr(sf_addr_info_t &addr) const
     {
-        return p_client__->get_local_addr(addr);
+        return p_client__->local_addr(addr);
     }
 
-    inline bool sf_msg_bus_client::get_peer_addr(sf_addr_info_t &addr) const
+    inline bool sf_msg_bus_client::peer_addr(sf_addr_info_t &addr) const
     {
-        return p_client__->get_peer_addr(addr);
+        return p_client__->peer_addr(addr);
     }
 }
 

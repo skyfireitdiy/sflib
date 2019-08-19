@@ -124,7 +124,7 @@ class sf_http_base_server {
      * @param session_key session key
      * @return session的json对象（注意是浅拷贝）
      */
-    sf_json get_session(const std::string &session_key);
+    sf_json session(const std::string &session_key);
 
     void keep_session_alive(const std::string &session_key);
 

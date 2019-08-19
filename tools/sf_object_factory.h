@@ -17,13 +17,13 @@ namespace skyfire
 		bool set_config(const sf_json &config_obj);
 
 		template<typename T, typename ... ARGS>
-		std::shared_ptr<T> get_object(const std::string& obj_id, ARGS&& ... args);
+		std::shared_ptr<T> object(const std::string& obj_id, ARGS&& ... args);
 
 	private:
 		std::unordered_map<std::string, sf_object_factory_config_item_t> object_data__;
 
 		bool load_data__(const sf_json& config_obj);
-		sf_json get_object_data(const std::string& obj_name);
+		sf_json object_data(const std::string& obj_name);
 
     };
 }

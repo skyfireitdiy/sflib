@@ -57,7 +57,7 @@ namespace skyfire
         return true;
 	}
 
-	sf_json sf_object_factory::get_object_data(const std::string& obj_name)
+	sf_json sf_object_factory::object_data(const std::string& obj_name)
 	{
 		if (object_data__.count(obj_name) == 0)
 		{
@@ -66,7 +66,7 @@ namespace skyfire
 		auto obj = object_data__[obj_name].data.clone();
 		if (obj.has("__base__"))
 		{
-			auto base_obj = get_object_data(static_cast<std::string>(obj["__base__"]));
+			auto base_obj = object_data(static_cast<std::string>(obj["__base__"]));
 			obj.remove("__base__");
 			base_obj.join(obj);
 			return base_obj;
@@ -78,7 +78,7 @@ namespace skyfire
 	}
 
 	template<typename T, typename ... ARGS>
-	std::shared_ptr<T> sf_object_factory::get_object(const std::string& obj_id, ARGS&&... args)
+	std::shared_ptr<T> sf_object_factory::object(const std::string& obj_id, ARGS&&... args)
 	{
 		if (object_data__.count(obj_id) == 0)
 		{
@@ -96,7 +96,7 @@ namespace skyfire
 		std::shared_ptr<T> obj;
 		obj = std::make_shared<T>(std::forward<ARGS>(args)...);
 
-		auto obj_data = get_object_data(obj_id);
+		auto obj_data = object_data(obj_id);
 
 		from_json(obj_data, *obj);
 		tmp_config.object = obj;

@@ -36,9 +36,9 @@ int main()
 {
 	sf_object_factory factory;
 	factory.load_config_file(R"(/home/skyfire/Desktop/sflib/example/test_factory/config.json)");
-	auto student1 = factory.get_object<Student>("student1");
-	auto student2 = factory.get_object<StudentExt>("student2");
-	auto student3 = factory.get_object<StudentExt>("student3");
+	auto student1 = factory.object<Student>("student1");
+	auto student2 = factory.object<StudentExt>("student2");
+	auto student3 = factory.object<StudentExt>("student3");
 	print_student(*student1);
 	print_student_ext(*student2);
 	print_student_ext(*student3);

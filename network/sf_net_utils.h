@@ -39,7 +39,7 @@ namespace skyfire
      * @param addr 远端地址信息
      * @return 是否获取成功
      */
-    inline bool get_peer_addr(SOCKET sock, sf_addr_info_t &addr);
+    inline bool peer_addr(SOCKET sock, sf_addr_info_t &addr);
 
     /**
      * 获取本地地址
@@ -47,6 +47,6 @@ namespace skyfire
      * @param addr 本地地址信息
      * @return 是否获取成功
      */
-    inline bool get_local_addr(SOCKET sock, sf_addr_info_t &addr);
+    inline bool local_addr(SOCKET sock, sf_addr_info_t &addr);
 
 }

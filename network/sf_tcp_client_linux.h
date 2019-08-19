@@ -44,7 +44,7 @@ namespace skyfire
 
         sf_tcp_client(SOCKET sock, bool raw = false); // NOLINT(google-explicit-constructor)
 
-        SOCKET get_raw_socket() override;
+        SOCKET raw_socket() override;
 
         bool bind(const std::string& ip, unsigned short port) override;
 

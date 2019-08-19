@@ -71,7 +71,7 @@ namespace skyfire {
             return;
         }
         // 获取来源的外网IP和端口，填充到连接上下文
-        if (!get_peer_addr(static_cast<int>(context.src_id), context.src_addr)) {
+        if (!peer_addr(static_cast<int>(context.src_id), context.src_addr)) {
             context.error_code = sf_err_disconnect;
 			sf_debug("send", skyfire::to_json(context).to_string());
             server__->send(static_cast<int>(context.src_id), type_nat_traversal_error, to_byte_array(skyfire::to_json(context).to_string()));
@@ -136,7 +136,7 @@ namespace skyfire {
             return;
         }
 
-        if (!get_peer_addr(sock, context.dest_addr)) {
+        if (!peer_addr(sock, context.dest_addr)) {
             context.error_code = sf_err_disconnect;
 			sf_debug("send", skyfire::to_json(context).to_string());
             server__->send(static_cast<int>(context.dest_id), type_nat_traversal_error, to_byte_array(skyfire::to_json(context).to_string()));

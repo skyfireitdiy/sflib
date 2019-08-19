@@ -25,7 +25,7 @@ namespace skyfire
 {
     template<typename T>
     sf_check_point<T>::~sf_check_point() {
-        parent__.data__[point_name__][std::this_thread::get_id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - clock__).count();
+        parent__.data__[point_name__][std::this_thread::id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - clock__).count();
     }
 
     template<typename T>

@@ -20,7 +20,7 @@
 
 namespace skyfire {
 
-	inline SOCKET sf_tcp_server::get_raw_socket() {
+	inline SOCKET sf_tcp_server::raw_socket() {
 		return listen_sock__;
 	}
 

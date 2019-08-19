@@ -81,7 +81,7 @@ class sf_tcp_server_interface : public sf_nocopy<sf_object> {
      * 获取原始socket
      * @return 原始socket
      */
-    virtual SOCKET get_raw_socket() = 0;
+    virtual SOCKET raw_socket() = 0;
     /**
      * 监听端口
      * @param ip 本地ip
@@ -122,7 +122,7 @@ class sf_tcp_server_interface : public sf_nocopy<sf_object> {
      * @param addr server地址信息
      * @return 获取结果
      */
-    bool get_server_addr(sf_addr_info_t &addr);
+    bool server_addr(sf_addr_info_t &addr);
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"

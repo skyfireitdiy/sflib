@@ -17,9 +17,9 @@
 
 namespace skyfire
 {
-    inline bool sf_tcp_server_interface::get_server_addr(sf_addr_info_t &addr)
+    inline bool sf_tcp_server_interface::server_addr(sf_addr_info_t &addr)
     {
-        return get_local_addr(get_raw_socket(),addr);
+        return local_addr(raw_socket(),addr);
     }
 
     inline void sf_tcp_server_interface::after_raw_recv_filter__(SOCKET sock,byte_array &data) {

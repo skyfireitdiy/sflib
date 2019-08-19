@@ -85,7 +85,7 @@ namespace skyfire
 			return route_callback__(req, res, url);
 	}
 
-	inline int sf_http_router::get_priority() const {
+	inline int sf_http_router::priority() const {
 		return priority__;
 	}
 

@@ -35,13 +35,13 @@ namespace skyfire
          * 获取规则
          * @return 规则
          */
-        std::vector<sf_lex_rule_t> get_rules() const;
+        std::vector<sf_lex_rule_t> rules() const;
 
         /**
          * 获取终结符
          * @return 终结符
          */
-        std::unordered_set<std::string> get_real_term() const;
+        std::unordered_set<std::string> real_term() const;
     };
 
 

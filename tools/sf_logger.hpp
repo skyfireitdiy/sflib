@@ -95,7 +95,7 @@ inline bool sf_logger::check_key_can_use__(const int key) {
 
 inline int sf_logger::make_random_logger_id__() {
     const auto make_rand = [] {
-        return sf_random::get_instance()->get_int(0, INT_MAX);
+        return sf_random::instance()->rand_int(0, INT_MAX);
     };
     auto tmp_key = make_rand();
     while (!check_key_can_use__(tmp_key)) {
@@ -202,7 +202,7 @@ inline void sf_logger::stop_logger() {
     cond__.notify_all();
 }
 
-inline auto g_logger = sf_logger::get_instance();
+inline auto g_logger = sf_logger::instance();
 
 #ifdef QT_CORE_LIB
 inline void sf_logger::logout__(std::ostringstream &oss,

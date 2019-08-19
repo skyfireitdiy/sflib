@@ -19,23 +19,19 @@
 #include "core/sf_stdc++.h"
 #include "sf_single_instance.h"
 
-namespace skyfire
-{
+namespace skyfire {
 
-
-    template<typename ThisClass, typename BaseClass>
-    template<typename... Args>
-    std::shared_ptr<ThisClass> sf_single_instance<ThisClass, BaseClass>::get_instance(Args &&... args) {
-        if (instance == nullptr)
-        {
-            std::lock_guard<std::mutex> lck(mu);
-            if (instance == nullptr)
-            {
-                instance = std::shared_ptr<ThisClass>(new ThisClass(std::forward<Args>(args)...));
-            }
+template <typename ThisClass, typename BaseClass>
+template <typename... Args>
+std::shared_ptr<ThisClass> sf_single_instance<ThisClass, BaseClass>::instance(
+    Args &&... args) {
+    if (instance__ == nullptr) {
+        std::lock_guard<std::mutex> lck(mu);
+        if (instance__ == nullptr) {
+            instance__ = std::shared_ptr<ThisClass>(
+                new ThisClass(std::forward<Args>(args)...));
         }
-        return instance;
     }
+    return instance__;
 }
-
-
+}    // namespace skyfire

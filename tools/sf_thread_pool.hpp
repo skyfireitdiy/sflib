@@ -100,11 +100,11 @@ namespace skyfire
         thread_vec__.clear();
     }
 
-    inline size_t sf_thread_pool::get_busy_thread_count() const {
+    inline size_t sf_thread_pool::busy_thread_count() const {
         return static_cast<size_t>(busy_thread_num__);
     }
 
-    inline size_t sf_thread_pool::get_thread_count() const {
+    inline size_t sf_thread_pool::thread_count() const {
         return thread_count__;
     }
 
@@ -121,7 +121,7 @@ namespace skyfire
     auto sf_thread_pool::add_task(Func func, Args &&... args) {
 		using _Ret = std::invoke_result_t<Func,Args...>;
 		auto task = std::make_shared<std::packaged_task<_Ret()>>(std::bind(func,std::forward<Args>(args)...));
-		auto fu = task->get_future();
+		auto fu = task->future();
 		{
 			std::lock_guard<std::mutex> lck(mu_task_deque__);
 			task_deque__.push_back([=]()

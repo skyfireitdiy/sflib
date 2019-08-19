@@ -20,7 +20,7 @@
 namespace skyfire
 {
 
-    inline int sf_router::get_priority() const {
+    inline int sf_router::priority() const {
         return 0;
     }
 

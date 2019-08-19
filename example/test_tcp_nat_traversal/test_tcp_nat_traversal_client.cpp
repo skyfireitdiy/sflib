@@ -32,7 +32,7 @@ void connect(std::shared_ptr<sf_tcp_nat_traversal_client> client){
 }
 
 void ls(std::shared_ptr<sf_tcp_nat_traversal_client> client){
-    auto clients = client->get_clients();
+    auto clients = client->clients();
     for(auto &p:clients){
         std::cout<<p<<std::endl;
     }
@@ -89,7 +89,7 @@ int main() {
         }else if(cmd == "natconn"){ // 5.连接客户端
             nat_conn(pclient);
         }else if(cmd == "id"){ // 6.获取id
-            std::cout<<pclient->get_id()<<std::endl;
+            std::cout<<pclient->id()<<std::endl;
         }else if(cmd == "send"){ // 7.发送消息
             send(conn);
         }

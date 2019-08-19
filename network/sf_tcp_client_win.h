@@ -31,7 +31,7 @@ namespace skyfire
 
     public:
 
-        SOCKET get_raw_socket() override;
+        SOCKET raw_socket() override;
 
         bool bind(const std::string& ip, unsigned short port) override;
 

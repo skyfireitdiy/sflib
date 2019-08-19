@@ -153,7 +153,7 @@ namespace skyfire {
         virtual ~sf_object();
 
     protected:
-        sf_msg_queue *__p_msg_queue__ = sf_msg_queue::get_instance();
+        sf_msg_queue *__p_msg_queue__ = sf_msg_queue::instance();
     };
 
 }

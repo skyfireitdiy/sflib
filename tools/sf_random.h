@@ -20,41 +20,40 @@
 #include "tools/sf_nocopy.h"
 
 namespace skyfire {
+/**
+ *  @brief 随机数类
+ */
+class sf_random final : public sf_nocopy<> {
+   public:
+    SF_SINGLE_TON(sf_random)
+
+   private:
+    std::random_device rd__;
+    std::shared_ptr<std::default_random_engine> e__;
+
+    sf_random();
+
+   public:
     /**
-     *  @brief 随机数类
+     * 获取随机整数
+     * @param min 最小值
+     * @param max 最大值
+     * @return 随机数
      */
-    class sf_random final : public sf_nocopy<> {
-    public:
-        SF_SINGLE_TON(sf_random)
+    int rand_int(int min, int max) const;
+    /**
+     * 获取随机浮点数
+     * @param min 最小值
+     * @param max 最大值
+     * @return 随机数
+     */
+    double rand_double(double min, double max) const;
+    /**
+     * 获取uuid字符串
+     * @return uuid字符串
+     */
+    std::string uuid_str() const;
+};
 
-    private:
-
-        std::random_device rd__;
-        std::shared_ptr<std::default_random_engine> e__;
-
-        sf_random();
-
-    public:
-        /**
-         * 获取随机整数
-         * @param min 最小值
-         * @param max 最大值
-         * @return 随机数
-         */
-        int get_int(int min, int max) const;
-        /**
-         * 获取随机浮点数
-         * @param min 最小值
-         * @param max 最大值
-         * @return 随机数
-         */
-        double get_double(double min, double max) const;
-        /**
-         * 获取uuid字符串
-         * @return uuid字符串
-         */
-        std::string get_uuid_str() const;
-    };
-
-}
+}    // namespace skyfire
 #pragma clang diagnostic pop

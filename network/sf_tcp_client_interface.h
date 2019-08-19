@@ -59,7 +59,7 @@ namespace skyfire
          * 获取原始socket
          * @return 原始socket
          */
-        virtual SOCKET get_raw_socket() = 0;
+        virtual SOCKET raw_socket() = 0;
 
         /**
          * 绑定
@@ -102,14 +102,14 @@ namespace skyfire
          * @param addr 远端ip地址
          * @return 是否成功
          */
-        bool get_peer_addr(sf_addr_info_t &addr);
+        bool peer_addr(sf_addr_info_t &addr);
 
         /**
          * 获取本地ip地址
          * @param addr 本地ip地址
          * @return 是否成功
          */
-        bool get_local_addr(sf_addr_info_t &addr);
+        bool local_addr(sf_addr_info_t &addr);
     };
 
 

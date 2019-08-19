@@ -56,7 +56,7 @@ class sf_http_part_router final
 
     bool operator<(const sf_http_part_router &router) const;
 
-    [[nodiscard]] int get_priority() const override;
+    [[nodiscard]] int priority() const override;
 };
 }    // namespace skyfire
 #pragma clang diagnostic pop

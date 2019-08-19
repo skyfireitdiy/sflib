@@ -90,7 +90,7 @@ inline bool sf_http_part_router::run_route(const sf_http_request &req,
     return true;
 }
 
-inline int sf_http_part_router::get_priority() const { return priority__; }
+inline int sf_http_part_router::priority() const { return priority__; }
 
 inline bool sf_http_part_router::operator<(
     const sf_http_part_router &router) const {

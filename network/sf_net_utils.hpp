@@ -34,7 +34,7 @@ namespace skyfire
 {
 
 
-    inline bool get_peer_addr(SOCKET sock, sf_addr_info_t &addr) {
+    inline bool peer_addr(SOCKET sock, sf_addr_info_t &addr) {
 #ifdef _WIN32
         SOCKADDR_IN sock_addr;
         memset(&sock_addr,0, sizeof(sock_addr));
@@ -60,7 +60,7 @@ namespace skyfire
 #endif
     }
 
-    inline bool get_local_addr(SOCKET sock, sf_addr_info_t &addr) {
+    inline bool local_addr(SOCKET sock, sf_addr_info_t &addr) {
 #ifdef _WIN32
         SOCKADDR_IN sock_addr;
         memset(&sock_addr,0, sizeof(sock_addr));
