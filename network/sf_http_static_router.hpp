@@ -32,14 +32,16 @@ inline bool sf_static_router::run_route(const sf_http_request &req,
                                         sf_http_response &res,
                                         const std::string &raw_url,
                                         const std::string &method) {
-    auto url = req.base_url();
+    std::string url;
+    sf_http_param_t param;
+    std::string frame;
+    sf_parse_url(raw_url, url, param, frame);
     if (sf_string_start_with(url, "/")) {
         url = url.substr(1);
     }
     auto abs_path = fs::path(static_path__) / url;
     sf_http_header header;
     byte_array body_data;
-
     if (!fs::exists(abs_path) || fs::is_directory(abs_path)) {
         return false;
     }
