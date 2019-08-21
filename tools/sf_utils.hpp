@@ -183,5 +183,11 @@ inline bool sf_string_end_with(const std::string &str,
     return str.find_last_of(suffix) == str.length() - suffix.size();
 }
 
+inline std::string sf_safe_path(std::string danger_path) {
+    sf_string_replace(danger_path,
+                      std::string(1, fs::path::preferred_separator), "");
+    return danger_path;
+}
+
 }    // namespace skyfire
 #pragma clang diagnostic pop

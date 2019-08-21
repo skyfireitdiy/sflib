@@ -162,4 +162,6 @@ struct sf_make_instance_t : public Base {
     friend T;
 };
 
+std::string sf_safe_path(std::string danger_path);
+
 }    // namespace skyfire
