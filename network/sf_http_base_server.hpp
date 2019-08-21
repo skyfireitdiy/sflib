@@ -153,6 +153,7 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
         auto req_header = request.header();
 
         if (request.is_multipart_data()) {
+            sf_debug("build_boundary_context_data");
             build_boundary_context_data(sock, request);
             return;
         }

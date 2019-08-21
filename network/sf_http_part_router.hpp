@@ -62,6 +62,13 @@ inline bool sf_http_part_router::run_route(const sf_http_request &req,
 
     if (!match_flag) {
         return false;
+    } else {
+        auto new_str =
+            std::string(url.begin() + matched_prefix.size(), url.end());
+        if (!new_str.empty() && matched_prefix.back() != '/' &&
+            new_str[0] != '/') {
+            return false;
+        }
     }
 
     if (callback__(req, res)) {

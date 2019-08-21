@@ -154,6 +154,7 @@ inline sf_http_request::sf_http_request(
     multipart_data__ = true;
     multipart_data_context__ = multipart_data;
     sock__ = sock;
+    parse_cookies(header__, cookies__);
 }
 
 inline void sf_http_request::parse_cookies(
