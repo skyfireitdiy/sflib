@@ -96,7 +96,7 @@ struct sf_http_cookie_t final {
         std::chrono::system_clock::now();    // 生存期
     std::string path = "/";                  // 路径
     bool secure = false;                     // 安全性
-    bool http_only = false;                  // http only
+    bool http_only = true;                   // http only
 };
 
 /**
