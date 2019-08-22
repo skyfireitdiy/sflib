@@ -39,10 +39,11 @@ inline std::string sf_url_encode(const std::string &str) {
     size_t length = str.length();
     for (size_t i = 0; i < length; i++) {
         if (isalnum((unsigned char)str[i]) || (str[i] == '-') ||
-            (str[i] == '_') || (str[i] == '.') || (str[i] == '~'))
+            (str[i] == '_') || (str[i] == '.') || (str[i] == '~') ||
+            (str[i] == '+'))
             strTemp += str[i];
-        else if (str[i] == ' ')
-            strTemp += "+";
+        // else if (str[i] == ' ')
+        //     strTemp += "+";
         else {
             strTemp += '%';
             strTemp += sf_to_hex((unsigned char)str[i] >> 4);
@@ -57,16 +58,19 @@ inline std::string sf_url_decode(const std::string &str) {
     std::string strTemp{};
     const auto length = str.length();
     for (size_t i = 0; i < length; i++) {
-        if (str[i] == '+')
-            strTemp += ' ';
-        else if (str[i] == '%') {
+        if (str[i] == '%') {
             const auto high = sf_from_hex(static_cast<unsigned char>(str[++i]));
             const auto low = sf_from_hex(static_cast<unsigned char>(str[++i]));
             strTemp += static_cast<char>(
                 high * 16 +
                 low);    // NOLINT(bugprone-string-integer-assignment)
-        } else
+        }
+        // else if (str[i] == '+') {
+        //     strTemp += ' ';
+        // }
+        else {
             strTemp += str[i];
+        }
     }
     return strTemp;
 }
