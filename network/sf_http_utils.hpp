@@ -102,20 +102,22 @@ inline void sf_parse_url(const std::string &raw_url, std::string &url,
     const auto frame_pos = raw_url.find('#');
     std::string raw_url_without_frame;
     if (frame_pos == std::string::npos) {
-        raw_url_without_frame = raw_url;
+        raw_url_without_frame = sf_url_decode(raw_url);
         frame = "";
     } else {
-        raw_url_without_frame =
-            std::string(raw_url.begin(), raw_url.begin() + frame_pos);
-        frame = std::string(raw_url.begin() + frame_pos + 1, raw_url.end());
+        raw_url_without_frame = sf_url_decode(
+            std::string(raw_url.begin(), raw_url.begin() + frame_pos));
+        frame = sf_url_decode(
+            std::string(raw_url.begin() + frame_pos + 1, raw_url.end()));
     }
     const auto url_pos = raw_url_without_frame.find('?');
     if (url_pos == std::string::npos) {
-        url = raw_url_without_frame;
+        url = sf_url_decode(raw_url_without_frame);
         return;
     }
-    url = std::string(raw_url_without_frame.begin(),
-                      raw_url_without_frame.begin() + url_pos);
+    url = sf_url_decode(std::string(raw_url_without_frame.begin(),
+                                    raw_url_without_frame.begin() + url_pos));
+    // NOTE param不用url decode，在sf_parse_param里面会decode
     const auto param_str =
         std::string(raw_url_without_frame.begin() + url_pos + 1,
                     raw_url_without_frame.end());
