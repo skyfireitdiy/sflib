@@ -34,7 +34,7 @@ inline unsigned char sf_from_hex(unsigned char x) {
     return y;
 }
 
-inline std::string sf_url_encode(const std::string &str) {
+inline std::string sf_url_encode(const std::string &str, bool encode_plus) {
     std::string strTemp{};
     size_t length = str.length();
     for (size_t i = 0; i < length; i++) {
@@ -42,9 +42,9 @@ inline std::string sf_url_encode(const std::string &str) {
             (str[i] == '_') || (str[i] == '.') || (str[i] == '~') ||
             (str[i] == '+'))
             strTemp += str[i];
-        // else if (str[i] == ' ')
-        //     strTemp += "+";
-        else {
+        else if (str[i] == ' ' && encode_plus) {
+            strTemp += "+";
+        } else {
             strTemp += '%';
             strTemp += sf_to_hex((unsigned char)str[i] >> 4);
             strTemp += sf_to_hex(
@@ -54,7 +54,7 @@ inline std::string sf_url_encode(const std::string &str) {
     return strTemp;
 }
 
-inline std::string sf_url_decode(const std::string &str) {
+inline std::string sf_url_decode(const std::string &str, bool decode_plus) {
     std::string strTemp{};
     const auto length = str.length();
     for (size_t i = 0; i < length; i++) {
@@ -64,11 +64,9 @@ inline std::string sf_url_decode(const std::string &str) {
             strTemp += static_cast<char>(
                 high * 16 +
                 low);    // NOLINT(bugprone-string-integer-assignment)
-        }
-        // else if (str[i] == '+') {
-        //     strTemp += ' ';
-        // }
-        else {
+        } else if (str[i] == '+' && decode_plus) {
+            strTemp += ' ';
+        } else {
             strTemp += str[i];
         }
     }
@@ -116,11 +114,12 @@ inline void sf_parse_url(const std::string &raw_url, std::string &url,
     }
     const auto url_pos = raw_url_without_frame.find('?');
     if (url_pos == std::string::npos) {
-        url = sf_url_decode(raw_url_without_frame);
+        url = sf_url_decode(raw_url_without_frame, false);
         return;
     }
     url = sf_url_decode(std::string(raw_url_without_frame.begin(),
-                                    raw_url_without_frame.begin() + url_pos));
+                                    raw_url_without_frame.begin() + url_pos),
+                        false);
     // NOTE param不用url decode，在sf_parse_param里面会decode
     const auto param_str =
         std::string(raw_url_without_frame.begin() + url_pos + 1,

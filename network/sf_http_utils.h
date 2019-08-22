@@ -118,14 +118,16 @@ inline unsigned char sf_from_hex(unsigned char x);
  * @param str 字符串
  * @return 编码后的字符串
  */
-inline std::string sf_url_encode(const std::string &str);
+inline std::string sf_url_encode(const std::string &str,
+                                 bool decode_plus = true);
 
 /**
  * url解码
  * @param str 字符串
  * @return 解码后的字符串
  */
-inline std::string sf_url_decode(const std::string &str);
+inline std::string sf_url_decode(const std::string &str,
+                                 bool decode_plus = true);
 
 /**
  * 解析表单参数
