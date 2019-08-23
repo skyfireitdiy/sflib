@@ -321,7 +321,7 @@ inline void sf_json::append(const sf_json &value) const {
     value__->array_value.push_back(value.value__);
 }
 
-inline sf_json sf_json::clone() const {
+inline sf_json sf_json::deep_copy() const {
     sf_json tmp_json;
     value_copy__(value__, tmp_json.value__);
     return tmp_json;
@@ -414,9 +414,18 @@ inline std::string sf_json::to_string() const {
 
 inline sf_json &sf_json::operator=(const sf_json &value) {
     if (&value != this) {
-        value__ = value.value__;
+        value__->type = value.value__->type;
+        value__->value = value.value__->value;
+        value__->array_value = value.value__->array_value;
+        value__->object_value = value.value__->object_value;
     }
     return *this;
+}
+
+inline void sf_json::copy(const sf_json &src) {
+    if (this != &src) {
+        value__ = src.value__;
+    }
 }
 
 inline void sf_json::value_copy__(const std::shared_ptr<sf_json_value> &src,

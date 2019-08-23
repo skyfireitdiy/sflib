@@ -1156,7 +1156,7 @@ int main()
     std::cout<<"---------"<<std::endl;
     // 3. 合并json
     json1.join(json2);
-    json1.join(json3.clone());
+    json1.join(json3.deep_copy());
     std::cout<<json1<<std::endl;
     std::cout<<json2<<std::endl;
     std::cout<<json3<<std::endl;
@@ -1167,7 +1167,7 @@ int main()
     std::cout<<json2<<std::endl;
     std::cout<<json3<<std::endl;
     std::cout<<"---------"<<std::endl;
-    // 5. json3与json1进行合并时，使用clone()创建了副本（深拷贝）,操作json3不会影响json1
+    // 5. json3与json1进行合并时，使用deep_copy()创建了副本（深拷贝）,操作json3不会影响json1
     json3["company"]="lenovo";
     std::cout<<json1<<std::endl;
     std::cout<<json2<<std::endl;
@@ -1226,7 +1226,7 @@ int main()
 
 4. `sf_json`底层使用指针，数据属于浅拷贝，所以改变`json2`的值同样会影响`json1`的值。
 
-5. `json3`与`json1`进行合并时，使用`clone()`创建了副本（深拷贝）,操作`json3`不会影响`json1`。
+5. `json3`与`json1`进行合并时，使用`deep_copy()`创建了副本（深拷贝）,操作`json3`不会影响`json1`。
 
 对`json`的更多操作请参阅API文档。
 

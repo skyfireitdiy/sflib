@@ -68,11 +68,14 @@ inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt) {
 inline sf_json sf_argparser::parse_argv__(
     const std::vector<std::string> &argv) const {
     sf_json ret;
+    ret.convert_to_object();
     std::shared_ptr<sf_argv_opt_t> last_opt;
     int pos = 0;
     for (auto &p : none_position_arg__) {
         if (!p.default_value.is_null()) {
+            sf_debug(ret);
             ret[p.json_name] = p.default_value;
+            sf_debug(ret);
         }
         if (p.action == sf_argv_action::count) {
             ret[p.json_name] = 0;
@@ -223,12 +226,13 @@ inline sf_json sf_argparser::parse_argv(int argc, const char **argv,
     curr.convert_to_object();
     auto parser = shared_from_this();
     for (int i = 0; i < data.size(); ++i) {
+        sf_debug(ret);
         bool find_flag = false;
         for (auto &p : parser->sub_parsers_) {
             if (p.first == data[i]) {
                 find_flag = true;
                 curr[p.first] = sf_json();
-                curr = curr[p.first];
+                curr.copy(curr[p.first]);
                 curr.convert_to_object();
                 parser = p.second;
                 break;
