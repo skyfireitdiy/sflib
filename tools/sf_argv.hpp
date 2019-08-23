@@ -73,9 +73,7 @@ inline sf_json sf_argparser::parse_argv__(
     int pos = 0;
     for (auto &p : none_position_arg__) {
         if (!p.default_value.is_null()) {
-            sf_debug(ret);
             ret[p.json_name] = p.default_value;
-            sf_debug(ret);
         }
         if (p.action == sf_argv_action::count) {
             ret[p.json_name] = 0;
@@ -226,7 +224,6 @@ inline sf_json sf_argparser::parse_argv(int argc, const char **argv,
     curr.convert_to_object();
     auto parser = shared_from_this();
     for (int i = 0; i < data.size(); ++i) {
-        sf_debug(ret);
         bool find_flag = false;
         for (auto &p : parser->sub_parsers_) {
             if (p.first == data[i]) {
