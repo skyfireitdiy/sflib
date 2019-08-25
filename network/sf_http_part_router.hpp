@@ -13,15 +13,13 @@
 #include "tools/sf_utils.hpp"
 
 namespace skyfire {
-template <typename... StringType>
-sf_http_part_router::sf_http_part_router(
+inline sf_http_part_router::sf_http_part_router(
     const std::string &prefix,
     bool (*callback)(const sf_http_request &, sf_http_response &),
     const std::vector<std::string> &methods, const int priority)
     : sf_http_part_router(prefix, std::function(callback), methods, priority) {}
 
-template <typename... StringType>
-sf_http_part_router::sf_http_part_router(
+inline sf_http_part_router::sf_http_part_router(
     std::string prefix,
     std::function<bool(const sf_http_request &, sf_http_response &)> callback,
     std::vector<std::string> methods, int priority)

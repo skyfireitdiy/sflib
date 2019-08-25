@@ -175,8 +175,6 @@ inline byte_array read_file(const std::string &filename, size_t max_size) {
     return data;
 }
 
-}    // namespace skyfire
-
 inline std::string sf_base64_encode(const byte_array &data) {
     BIO *b64, *bio;
     BUF_MEM *bptr = nullptr;
@@ -230,5 +228,7 @@ inline byte_array sf_deflate_compress(const byte_array &input_buffer) {
     ret.resize(size);
     return ret;
 }
+
+}    // namespace skyfire
 
 #pragma clang diagnostic pop

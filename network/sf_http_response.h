@@ -106,6 +106,12 @@ class sf_http_response final {
      */
     void set_header(const sf_http_header& header);
 
+    /**
+     * @brief 添加http头
+     *
+     * @param key 键
+     * @param value 值
+     */
     void add_header(const std::string& key, const std::string& value);
 
     /**
@@ -142,15 +148,36 @@ class sf_http_response final {
      * @param cookie_data cookie信息
      */
     void add_cookie(const sf_http_cookie_t& cookie_data);
-
+    /**
+     * @brief 添加cookie
+     *
+     * @param key 键
+     * @param value 值
+     */
     void add_cookie(const std::string& key, const std::string& value);
-
+    /**
+     * @brief 清空cookie
+     *
+     * @param clear_session 是否清空session
+     */
     void clear_cookie(bool clear_session = false);
-
+    /**
+     * @brief Set the text object设置纯文本body
+     *
+     * @param text 文本
+     */
     void set_text(const std::string& text);
-
+    /**
+     * @brief 设置html body
+     *
+     * @param html html
+     */
     void set_html(const std::string& html);
-
+    /**
+     * @brief 设置返回content-type
+     *
+     * @param content_type content-type
+     */
     void set_content_type(const std::string& content_type);
 
     /**

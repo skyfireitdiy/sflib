@@ -17,68 +17,68 @@
 
 #pragma once
 
+#include <functional>
+#include <memory>
+#include <string>
+#include <tuple>
+#include "sf_rpc_utils.h"
 #include "sf_tcp_server.h"
 #include "tools/sf_nocopy.h"
-#include "sf_rpc_utils.h"
-#include <string>
-#include <functional>
-#include <tuple>
-#include <memory>
 
 namespace skyfire {
 
+/**
+ *  @brief rpc server类
+ */
+class sf_rpc_server
+    : public sf_make_instance_t<sf_rpc_server, sf_nocopy<sf_object>> {
     /**
-     *  @brief rpc server类
+     * 客户端连接信号
      */
-    class sf_rpc_server : public sf_make_instance_t<sf_rpc_server, sf_nocopy<sf_object>> {
-        /**
-         * 客户端连接信号
-         */
     SF_REG_SIGNAL(client_connected, SOCKET)
     /**
      * 客户端断开连接信号
      */
     SF_REG_SIGNAL(client_disconnected, SOCKET)
 
-    private:
+   private:
+    std::shared_ptr<sf_tcp_server> __tcp_server__ =
+        sf_tcp_server::make_instance();
 
-        std::shared_ptr<sf_tcp_server> __tcp_server__ = sf_tcp_server::make_instance();
+    std::vector<std::function<void(SOCKET, const sf_rpc_req_context_t &)>>
+        __func__vec__;
 
-        std::vector<std::function<void(SOCKET, const sf_rpc_req_context_t &)>> __func__vec__;
+    template <typename _Type>
+    void __send_back(SOCKET sock, int id_code, _Type data);
 
-        template<typename _Type>
-        void __send_back(SOCKET sock, int id_code, _Type data);
+    void __on_data_coming(SOCKET sock, const sf_pkg_header_t &header,
+                          const byte_array &data);
 
+   public:
+    sf_rpc_server();
 
-        void __on_data_coming(SOCKET sock, const sf_pkg_header_t &header, const byte_array &data);
+    /**
+     * @brief reg_rpc_func 注册远程调用函数
+     * @param id 标识
+     * @param func 函数
+     */
+    template <typename _Func>
+    void reg_rpc_func(const std::string &id, _Func func);
 
-    public:
-        sf_rpc_server();
+    /**
+     * @brief listen 监听
+     * @param ip ip
+     * @param port 端口
+     * @return 是否成功
+     */
+    bool listen(const std::string &ip, unsigned short port) const;
 
+    /**
+     * @brief close 关闭RPC服务器
+     */
+    void close() const;
 
-        /**
-         * @brief reg_rpc_func 注册远程调用函数
-         * @param id 标识
-         * @param func 函数
-         */
-        template<typename _Func>
-        void reg_rpc_func(const std::string &id, _Func func);
+    friend std::shared_ptr<sf_rpc_server>;
+};
 
-        /**
-         * @brief listen 监听
-         * @param ip ip
-         * @param port 端口
-         * @return 是否成功
-         */
-        bool listen(const std::string &ip, unsigned short port) const;
-
-        /**
-         * @brief close 关闭RPC服务器
-         */
-        void close() const;
-
-        friend std::shared_ptr<sf_rpc_server>;
-
-    };
-
-}
+}    // namespace skyfire

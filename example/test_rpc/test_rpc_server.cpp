@@ -15,40 +15,30 @@
 
 using namespace skyfire;
 
-void print()
-{
-    std::cout<<"print"<<std::endl;
-}
+void print() { std::cout << "print" << std::endl; }
 
-std::vector<int> add_one(std::vector<int> data)
-{
-    for(auto &p: data)
-    {
+std::vector<int> add_one(std::vector<int> data) {
+    for (auto &p : data) {
         ++p;
     }
     return data;
 }
 
-void output(const char *str)
-{
-    std::cout<<str<<std::endl;
+void output(const char *str) { std::cout << str << std::endl; }
+
+void print_str(byte_array data) {
+    std::cout << skyfire::to_string(data) << std::endl;
 }
 
-void print_str(byte_array data)
-{
-	std::cout << skyfire::to_string(data) << std::endl;
-}
-
-int main()
-{
+int main() {
     // 1.创建server对象
     auto server = sf_rpc_server::make_instance();
     // 2.注册rpc函数
     server->reg_rpc_func("print", print);
     server->reg_rpc_func("add_one", add_one);
-	server->reg_rpc_func("print_str", print_str);
+    server->reg_rpc_func("print_str", print_str);
     // 3.监听
-    std::cout<<server->listen("127.0.0.1",10001)<<std::endl;
+    std::cout << server->listen("127.0.0.1", 10001) << std::endl;
     sf_eventloop event_loop;
     // 4.启动时间循环
     event_loop.exec();

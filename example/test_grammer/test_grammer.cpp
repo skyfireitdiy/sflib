@@ -3,8 +3,7 @@
 
 using namespace skyfire;
 
-int main()
-{
+int main() {
     // 1. 一个测试用的json
     std::string json_str = R"({
     "code": 0,
@@ -94,32 +93,31 @@ int main()
 
     // 2. 创建一个词法分析器，并添加词法规则
     sf_lex lex;
-    lex.set_rules({
-                          {"string", R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
-                          {"[",      R"(\[)"},
-                          {"]",      R"(\])"},
-                          {"{",      R"(\{)"},
-                          {"}",      R"(\})"},
-                          {",",      R"(,)"},
-                          {":",      R"(:)"},
-                          {"ws",     R"([\r\n\t ]+)"},
-                          {"number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
-                          {"true",   R"(true)"},
-                          {"false",  R"(false)"},
-                          {"null",   R"(null)"}
-                  });
+    lex.set_rules(
+        {{"string",
+          R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")"},
+         {"[", R"(\[)"},
+         {"]", R"(\])"},
+         {"{", R"(\{)"},
+         {"}", R"(\})"},
+         {",", R"(,)"},
+         {":", R"(:)"},
+         {"ws", R"([\r\n\t ]+)"},
+         {"number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)"},
+         {"true", R"(true)"},
+         {"false", R"(false)"},
+         {"null", R"(null)"}});
 
     // 3.词法分析
     std::vector<sf_lex_result_t> lex_result;
-    if (lex.parse(json_str, lex_result))
-    {
+    if (lex.parse(json_str, lex_result)) {
         // 4. 移除词法分析结果中的空白(ws)
-        lex_result.erase(std::remove_if(lex_result.begin(), lex_result.end(), [](const sf_lex_result_t &r)
-        {
-            return r.id == "ws";
-        }), lex_result.end());
-        for (auto &p:lex_result)
-        {
+        lex_result.erase(std::remove_if(lex_result.begin(), lex_result.end(),
+                                        [](const sf_lex_result_t &r) {
+                                            return r.id == "ws";
+                                        }),
+                         lex_result.end());
+        for (auto &p : lex_result) {
             std::cout << p.matched_str << "(" << p.id << ")" << std::flush;
         }
 
@@ -127,118 +125,39 @@ int main()
 
         // 5. 生成语法分析器，添加语法规则
         sf_yacc yacc;
-        yacc.set_rules({
-                               {
-                                       "value",
-                                       {
-                                               {
-                                                       {"object"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"array"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"string"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"number"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"true"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"false"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"null"},
-                                                       nullptr
-                                               }
-                                       }
-                               },
-                               {
-                                   // 6. 表示 文法 object 可由 "{",  "}" （即{}）或者
-                                   // "{",  "members",  "}"（即{"hello":"world"}）推导出来
-                                   // 用通俗一点的话说，一个json对象，可以是空对象，或者一个或多个键值对构成
-                                       "object",
-                                       {
-                                               {
-                                                       {"{",  "}"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"{",  "members",  "}"},
-                                                       nullptr
-                                               }
-                                       }
-                               },
-                               {
-                                       "members",
-                                       {
-                                               {
-                                                       {"member"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"members",             ",",    "member"},
-                                                       nullptr
-                                               }
-                                       }
-                               },
-                               {
-                                       "member",
-                                       {
-                                               {
-                                                       {"string",              ":", "value"},
-                                                       nullptr
-                                               }
-                                       }
-                               },
-                               {
-                                       "array",
-                                       {
-                                               {
-                                                       {"[", "]"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"[", "values", "]"},
-                                                       nullptr
-                                               }
-                                       }
-                               },
-                               {
-                                       "values",
-                                       {
-                                               {
-                                                       {"value"},
-                                                       nullptr
-                                               },
-                                               {
-                                                       {"values",            ",",    "value"},
-                                                       nullptr
-                                               }
-                                       }
-                               }
-                       });
+        yacc.set_rules(
+            {{"value",
+              {{{"object"}, nullptr},
+               {{"array"}, nullptr},
+               {{"string"}, nullptr},
+               {{"number"}, nullptr},
+               {{"true"}, nullptr},
+               {{"false"}, nullptr},
+               {{"null"}, nullptr}}},
+             {// 6. 表示 文法 object 可由 "{",  "}" （即{}）或者
+              // "{",  "members",  "}"（即{"hello":"world"}）推导出来
+              // 用通俗一点的话说，一个json对象，可以是空对象，或者一个或多个键值对构成
+              "object",
+              {{{"{", "}"}, nullptr}, {{"{", "members", "}"}, nullptr}}},
+             {"members",
+              {{{"member"}, nullptr}, {{"members", ",", "member"}, nullptr}}},
+             {"member", {{{"string", ":", "value"}, nullptr}}},
+             {"array",
+              {{{"[", "]"}, nullptr}, {{"[", "values", "]"}, nullptr}}},
+             {"values",
+              {{{"value"}, nullptr}, {{"values", ",", "value"}, nullptr}}}});
 
-        // 7. 添加终结符号，即json最终解析出来的结果应该是value 或者 array 或者 object
+        // 7. 添加终结符号，即json最终解析出来的结果应该是value 或者 array 或者
+        // object
         yacc.add_terminate_ids({"array", "object"});
         // 8. 语法分析，使用词法分析的结果作为输入
         std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
         yacc.parse(lex_result, yacc_result);
         {
-            for (auto &p:yacc_result)
-            {
-                std::cout << "(" << p->id << ")[" << p->text << "]" << std::flush;
+            for (auto &p : yacc_result) {
+                std::cout << "(" << p->id << ")[" << p->text << "]"
+                          << std::flush;
             }
         }
     }
-
-
 }

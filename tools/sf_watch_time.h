@@ -21,48 +21,42 @@
 
 #include "core/sf_stdc++.h"
 
-namespace skyfire
-{
-	template<typename>
-	class sf_check_point;
+namespace skyfire {
+template <typename>
+class sf_check_point;
 
+template <typename T = std::string>
+class sf_watch_time {
+   public:
+    void watch();
 
-	template<typename T=std::string>
-	class sf_watch_time
-	{
-	public:
+   protected:
+    std::string to_string();
 
-		void watch();
+    std::unordered_map<T, std::unordered_map<std::thread::id, long long>>
+        data__;
+    std::string convert_ms_to_readable__(long long time) const;
 
-	protected:
-		std::string to_string();
+    friend class sf_check_point<T>;
+};
 
-		std::unordered_map<T, std::unordered_map<std::thread::id, long long>> data__;
-		std::string convert_ms_to_readable__(long long time) const;
+template <typename T = std::string>
+class sf_check_point {
+   private:
+    T point_name__;
+    std::chrono::high_resolution_clock::time_point clock__;
+    sf_watch_time<T> &parent__;
 
-		friend class sf_check_point<T>;
-	};
+   public:
+    /**
+     * @brief sf_check_point 设置检查点
+     * @param name 检查点名称
+     * @param parent 对象
+     */
+    sf_check_point(const T &name, sf_watch_time<T> &parent);
 
-	template<typename T=std::string>
-	class sf_check_point
-	{
-	private:
-		T point_name__;
-		std::chrono::high_resolution_clock::time_point clock__;
-		sf_watch_time<T> &parent__;
-	public:
-
-        /**
-         * @brief sf_check_point 设置检查点
-         * @param name 检查点名称
-         * @param parent 对象
-         */
-		sf_check_point(const T &name, sf_watch_time<T> &parent);
-
-		~sf_check_point();
-	};
-}
-
-
+    ~sf_check_point();
+};
+}    // namespace skyfire
 
 #pragma clang diagnostic pop

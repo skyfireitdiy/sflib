@@ -22,42 +22,40 @@
 #include "sf_msg_queue.hpp"
 #include "tools/sf_nocopy.h"
 
-namespace skyfire
-{
+namespace skyfire {
+/**
+ *  @brief 消息循环
+ */
+class sf_eventloop final : sf_nocopy<> {
+   private:
+    sf_msg_queue* __p_msg_queue__ = sf_msg_queue::instance();
+    std::atomic<int> running__{0};
+
+   public:
     /**
-     *  @brief 消息循环
+     * @brief sf_eventloop 构造一个事件循环对象
      */
-    class sf_eventloop final : sf_nocopy<>
-    {
-    private:
-        sf_msg_queue* __p_msg_queue__ = sf_msg_queue::instance();
-        std::atomic<int> running__ { 0 };
-    public:
-        /**
-         * @brief sf_eventloop 构造一个事件循环对象
-         */
-        sf_eventloop() = default;
+    sf_eventloop() = default;
 
-        /**
-         * @brief exec 执行事件循环
-         */
-        void exec();
+    /**
+     * @brief exec 执行事件循环
+     */
+    void exec();
 
-        /**
-         * @brief clear 清空事件
-         */
-        void clear() const;
+    /**
+     * @brief clear 清空事件
+     */
+    void clear() const;
 
-        /**
-         * @brief wake 激活事件（通常用于退出）
-         */
-        void wake() const;
+    /**
+     * @brief wake 激活事件（通常用于退出）
+     */
+    void wake() const;
 
-        /**
-         * @brief quit 退出事件循环
-         */
-        void quit();
-    };
+    /**
+     * @brief quit 退出事件循环
+     */
+    void quit();
+};
 
-
-}
+}    // namespace skyfire

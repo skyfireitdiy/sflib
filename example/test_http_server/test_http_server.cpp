@@ -40,12 +40,12 @@ void upload_file_route(const sf_http_request &req, sf_http_response &res) {
                        "\n--------------------------\n\n";
         }
         // 将上述拼接的头信息拼装至body返回
-        res.set_body(to_byte_array(ret_str));
+        res.set_text(ret_str);
     } else {
-        res.set_body(to_byte_array("upload ok, no file"s));
+        res.set_text("upload ok, no file"s);
         sf_http_cookie_t cookie;
 
-        cookie.path = req.request_line().url;
+        cookie.path = req.base_url();
         cookie.key = "token";
         cookie.value = sf_random::instance()->uuid_str();
         // 添加cookie
@@ -80,25 +80,27 @@ int main() {
 
     // 3. 添加一个http路由，地址为/upload_file，
     // 回调函数为upload_file_route，方法为所有
-    server->add_http_router("/upload_file"s, upload_file_route);
+    server->add_router(
+        sf_http_router::make_instance("/upload_file"s, upload_file_route));
 
     // 4. 同样支持lambda
-    server->add_http_router(
+    server->add_router(sf_http_router::make_instance(
         "/user/(.*)/name"s,
         // 使用lambda时需要使用function包装一下，例子中第一个string参数会接收整个url，第二个会接收(.*?)匹配的url，规则与<regex>相同
         std::function([](const sf_http_request &req, sf_http_response &res,
                          std::string, std::string user) {
             res.set_body(to_byte_array(user + "'s name is skyfire"s));
         }),
-        std::vector<std::string>{{"GET"s}});
+        std::vector<std::string>{{"GET"s}}));
 
     // 5. 添加一个websocket路由，地址为/ws，回调函数为websocket_route
-    server->add_websocket_router("/ws", websocket_route);
+    server->add_router(
+        sf_websocket_router::make_instance("/ws", websocket_route));
 
     // 6.
     // 设置一个静态资源路由，位置为"../example/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
-    server->add_static_router(
-        R"(C:\code\sflib\example\test_http_server\testWebsite)");
+    server->add_router(sf_static_router::make_instance(
+        R"(../example/test_http_server/testWebsite)"));
 
     // 7. 启动服务
     server->start();

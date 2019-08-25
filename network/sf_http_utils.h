@@ -171,7 +171,6 @@ inline std::string sf_to_header_key_format(std::string key);
 inline byte_array read_file(const std::string &filename,
                             size_t max_size = 4096);
 
-}    // namespace skyfire
 #pragma clang diagnostic pop
 
 /**
@@ -204,5 +203,6 @@ inline byte_array sf_sha1_encode(const byte_array &data);
  * @return 压缩后的字节数组
  */
 inline byte_array sf_deflate_compress(const byte_array &input_buffer);
+}    // namespace skyfire
 
 #pragma clang diagnostic pop

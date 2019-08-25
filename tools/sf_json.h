@@ -290,6 +290,11 @@ class sf_json final {
      */
     std::unordered_set<std::string> keys() const;
 
+    /**
+     * @brief 浅拷贝
+     *
+     * @param src 要拷贝的来源
+     */
     void copy(const sf_json &src);
 };
 

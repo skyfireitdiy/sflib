@@ -16,18 +16,13 @@
 //
 #pragma once
 
-#include "sf_finally.h"
 #include "core/sf_stdc++.h"
+#include "sf_finally.h"
 
-namespace skyfire
-{
-    inline sf_finally::sf_finally(std::function<void()> func) :func__(std::move(func))
-    {
-    }
+namespace skyfire {
+inline sf_finally::sf_finally(std::function<void()> func)
+    : func__(std::move(func)) {}
 
-    inline sf_finally::~sf_finally()
-    {
-        func__();
-    }
+inline sf_finally::~sf_finally() { func__(); }
 
-}
+}    // namespace skyfire

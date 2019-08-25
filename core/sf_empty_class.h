@@ -18,14 +18,12 @@
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedStructInspection"
-namespace skyfire
-{
-	/**
-	 * @brief 空类型
-	 */
-	// ReSharper disable once CppClassCanBeFinal
-	class sf_empty_class
-	{};
-}
+namespace skyfire {
+/**
+ * @brief 空类型
+ */
+// ReSharper disable once CppClassCanBeFinal
+class sf_empty_class {};
+}    // namespace skyfire
 
 #pragma clang diagnostic pop

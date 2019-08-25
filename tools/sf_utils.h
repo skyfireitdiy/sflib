@@ -146,12 +146,25 @@ std::string sf_char_container_to_hex_string(const T &data);
 template <typename T>
 void sf_hex_string_to_char_container(const std::string &str, T &data);
 
+/**
+ * @brief 创建实例的类
+ * 从这个类继承，就可以获得make_instance接口
+ * @tparam T 子类
+ * @tparam sf_empty_class 父类
+ */
 template <typename T, typename Base = sf_empty_class>
 struct sf_make_instance_t : public Base {
    private:
     sf_make_instance_t() = default;
 
    public:
+    /**
+     * @brief 创建对象
+     *
+     * @tparam Args 参数类型
+     * @param args 参数
+     * @return std::shared_ptr<T> 创建的对象
+     */
     template <typename... Args>
     static std::shared_ptr<T> make_instance(Args &&... args) {
         return std::shared_ptr<T>(new T(std::forward<Args>(args)...));

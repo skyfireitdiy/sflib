@@ -19,20 +19,18 @@
 
 #include "core/sf_empty_class.h"
 
-namespace skyfire
-{
-    /**
-     * @brief 禁止拷贝工具类
-     * @tparam _BaseClass 基类型
-     */
-    template <typename _BaseClass = sf_empty_class>
-    class sf_nocopy : public _BaseClass
-    {
-    public:
-        sf_nocopy(){};
-        sf_nocopy(const sf_nocopy&) = delete;
-        sf_nocopy(sf_nocopy&&) = delete;
-		sf_nocopy& operator=(const sf_nocopy&) = delete;
-		sf_nocopy& operator=(sf_nocopy&&) = delete;
-    };
-}
+namespace skyfire {
+/**
+ * @brief 禁止拷贝工具类
+ * @tparam _BaseClass 基类型
+ */
+template <typename _BaseClass = sf_empty_class>
+class sf_nocopy : public _BaseClass {
+   public:
+    sf_nocopy(){};
+    sf_nocopy(const sf_nocopy&) = delete;
+    sf_nocopy(sf_nocopy&&) = delete;
+    sf_nocopy& operator=(const sf_nocopy&) = delete;
+    sf_nocopy& operator=(sf_nocopy&&) = delete;
+};
+}    // namespace skyfire

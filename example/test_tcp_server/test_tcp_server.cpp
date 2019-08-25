@@ -19,23 +19,22 @@
 
 using namespace skyfire;
 
-
-
-int main()
-{
+int main() {
     // 1.创建服务器
     auto server = sf_tcp_server::make_instance(true);
     // 2.监听
-    if(!server->listen("0.0.0.0",9988))
-    {
+    if (!server->listen("0.0.0.0", 9988)) {
         std::cout << "listen on 9988 error" << std::endl;
         return -1;
     }
     // 3.设置数据到来事件响应
-    sf_bind_signal(server,raw_data_coming,[=](SOCKET sock, const byte_array& data){
-        std::cout << "recv:" << to_string(data) << std::endl;
-        server->send(sock, data);
-    },true);
+    sf_bind_signal(
+        server, raw_data_coming,
+        [=](SOCKET sock, const byte_array& data) {
+            std::cout << "recv:" << to_string(data) << std::endl;
+            server->send(sock, data);
+        },
+        true);
     // 4. 启动消息循环
     sf_eventloop loop;
     loop.exec();

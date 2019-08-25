@@ -17,39 +17,34 @@
 #include "sf_tcp_client_interface.h"
 #include "tools/sf_utils.h"
 
-namespace skyfire
-{
-    class sf_tcp_client final : public sf_make_instance_t<sf_tcp_client, sf_tcp_client_interface>
-    {
+namespace skyfire {
+class sf_tcp_client final
+    : public sf_make_instance_t<sf_tcp_client, sf_tcp_client_interface> {
+   private:
+    bool raw__ = false;
+    bool inited__ = false;
+    SOCKET sock__ = INVALID_SOCKET;
 
-    private:
-        bool raw__ = false;
-        bool inited__ = false;
-        SOCKET sock__ = INVALID_SOCKET;
+    void recv_thread__();
 
-		void recv_thread__();
+   public:
+    SOCKET raw_socket() override;
 
-    public:
+    bool bind(const std::string &ip, unsigned short port) override;
 
-        SOCKET raw_socket() override;
+    explicit sf_tcp_client(bool raw = false);
 
-        bool bind(const std::string& ip, unsigned short port) override;
+    explicit sf_tcp_client(SOCKET sock, bool raw = false);
 
-        explicit sf_tcp_client(bool raw = false);
+    ~sf_tcp_client();
 
-        explicit sf_tcp_client(SOCKET sock, bool raw = false);
+    bool connect_to_server(const std::string &ip, unsigned short port) override;
 
+    bool send(int type, const byte_array &data) override;
 
-        ~sf_tcp_client();
+    bool send(const byte_array &data) override;
 
-        bool connect_to_server(const std::string &ip, unsigned short port) override;
+    void close() override;
+};
 
-
-        bool send(int type, const byte_array &data) override;
-
-        bool send(const byte_array & data) override;
-
-        void close() override;
-    };
-
-}
+}    // namespace skyfire

@@ -15,20 +15,19 @@
 
 using namespace skyfire;
 
-int main()
-{
+int main() {
     int *p = new int;
     // 1. 注册一个删除函数，在作用域结束的时候执行（后执行）
-    sf_finally del_p([&](){
+    sf_finally del_p([&]() {
         delete p;
-        std::cout<<"Delete p"<< std::endl;
+        std::cout << "Delete p" << std::endl;
     });
     {
         int *q = new int;
         // 2. 注册一个删除函数，在作用域结束的时候执行（先执行）
-        sf_finally del_q([&](){
+        sf_finally del_q([&]() {
             delete q;
-            std::cout<<"Delete q"<< std::endl;
+            std::cout << "Delete q" << std::endl;
         });
     }
 }

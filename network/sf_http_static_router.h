@@ -15,34 +15,45 @@
 
 #include <memory>
 #include <string>
-#include "sf_http_router.hpp"
 #include "core/sf_define.h"
+#include "sf_http_router.hpp"
 #include "sf_http_utils.hpp"
 #include "tools/sf_logger.hpp"
 #include "tools/sf_utils.h"
 
-
 namespace skyfire {
-	using namespace std::literals;
+using namespace std::literals;
 
-	class sf_static_router: public sf_make_instance_t<sf_static_router, sf_router>
-    {
-    private:
-        int priority__ = default_http_static_priority;
-	    std::string static_path__ ;
-	    std::vector<std::string> methods__;
-        std::function<void(const sf_http_request &, sf_http_response &, const std::string &, const std::string &)> callback__;
-    public:
-        bool run_route(const sf_http_request &req, sf_http_response &res,const std::string &url, const std::string &method) override ;
+class sf_static_router
+    : public sf_make_instance_t<sf_static_router, sf_router> {
+   private:
+    int priority__ = default_http_static_priority;
+    std::string static_path__;
+    std::vector<std::string> methods__;
+    std::function<void(const sf_http_request &, sf_http_response &,
+                       const std::string &, const std::string &)>
+        callback__;
 
-        [[nodiscard]] int priority() const override ;
+   public:
+    bool run_route(const sf_http_request &req, sf_http_response &res,
+                   const std::string &url, const std::string &method) override;
 
-        explicit sf_static_router(std::string path, std::vector<std::string> methods = { {"GET"s} },
-                         std::string charset = "utf-8",
-                         bool deflate = true,
-                         int priority = default_http_static_priority);
-    };
+    [[nodiscard]] int priority() const override;
 
+    /**
+     * @brief Construct a new sf static router object
+     *
+     * @param path 路径
+     * @param methods 请求方法
+     * @param charset 编码
+     * @param deflate 是否启用压缩
+     * @param priority 优先级
+     */
+    explicit sf_static_router(std::string path,
+                              std::vector<std::string> methods = {{"GET"s}},
+                              std::string charset = "utf-8",
+                              bool deflate = true,
+                              int priority = default_http_static_priority);
+};
 
-
-}
+}    // namespace skyfire

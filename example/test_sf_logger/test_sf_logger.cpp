@@ -17,9 +17,7 @@
 
 using namespace skyfire;
 
-
-int main()
-{
+int main() {
     // 2.获取单例对象
     auto logger = sf_logger::instance();
     // 3.添加日志文件，SF_WARN_LEVEL以上的日志级别将会打印到此文件中

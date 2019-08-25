@@ -125,7 +125,11 @@ class sf_http_base_server {
      * @return session的json对象（注意是浅拷贝）
      */
     sf_json session(const std::string &session_key);
-
+    /**
+     * @brief 保持session活动（赋予session生命值）
+     *
+     * @param session_key seesion key
+     */
     void keep_session_alive(const std::string &session_key);
 
     /**
@@ -198,7 +202,6 @@ class sf_http_base_server {
         std::function<void(SOCKET, const std::string &url)>
             websocket_close_callback);
 
-   public:
     /**
      * 退出服务器
      */

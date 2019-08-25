@@ -61,6 +61,12 @@ class sf_http_request final {
      */
     bool is_valid() const;
 
+    /**
+     * @brief 是否错误
+     *
+     * @return true 有错误
+     * @return false 无错误
+     */
     bool is_error() const;
 
     /**
@@ -75,6 +81,13 @@ class sf_http_request final {
      */
     sf_http_header header() const;
 
+    /**
+     * @brief 获取http 头
+     *
+     * @param key 键
+     * @param default_value 默认值
+     * @return std::string 值
+     */
     std::string header(const std::string &key,
                        const std::string &default_value = "") const;
 
@@ -107,17 +120,45 @@ class sf_http_request final {
      * @return session id， 如果没有，就为空
      */
     std::string session_id() const;
-
+    /**
+     * @brief 获取请求url
+     *
+     * @return std::string 请求url
+     */
     std::string url() const;
 
+    /**
+     * @brief 获取基础url（去掉请求参数与frame）
+     *
+     * @return std::string 基础url
+     */
     std::string base_url() const;
 
+    /**
+     * @brief 获取客户端地址信息
+     *
+     * @return sf_addr_info_t 地址信息
+     */
     sf_addr_info_t addr() const;
 
+    /**
+     * @brief 获取请求参数
+     *
+     * @return sf_http_param_t 请求参数
+     */
     sf_http_param_t params() const;
 
+    /**
+     * @brief body 请求参数
+     *
+     * @return sf_http_param_t 请求参数
+     */
     sf_http_param_t body_params() const;
-
+    /**
+     * @brief frame
+     *
+     * @return std::string frame
+     */
     std::string frame() const;
 
     /**
