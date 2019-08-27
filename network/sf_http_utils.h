@@ -153,7 +153,7 @@ inline void sf_parse_url(const std::string &raw_url, std::string &url,
  */
 inline std::string sf_make_http_time_str(
     const std::chrono::system_clock::time_point &tp =
-        std::chrono::system_clock::now());
+        std::chrono::system_clock::now() + std::chrono::hours(8));
 
 /**
  * 转为http头格式格式
