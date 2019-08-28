@@ -26,13 +26,13 @@
 
 #define SF_PRIVATE_ARGS_GLUE(x, y) x y
 #define SF_PRIVATE_MACRO_VAR_ARGS_IMPL_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, \
-    _9, _10, N, ...)                                                         \
+    _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, N, ...)       \
     N
 #define SF_PRIVATE_MACRO_VAR_ARGS_IMPL(args) \
     SF_PRIVATE_MACRO_VAR_ARGS_IMPL_COUNT args
 #define SF_COUNT_MACRO_VAR_ARGS(...) \
     SF_PRIVATE_MACRO_VAR_ARGS_IMPL(  \
-        (__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))
+        (__VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))
 
 #define SF_PRIVATE_MACRO_CHOOSE_HELPER2(M, count) M##count
 #define SF_PRIVATE_MACRO_CHOOSE_HELPER1(M, count) \
@@ -278,7 +278,7 @@
         std::string(#_19), prefix._19, std::string(#_20), prefix._20,       \
         sstd::string(#_21), prefix._21
 
-#define SF_EXPAND_ARGS_WITH_NAME_22(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
+#define SF_EXPAND_ARGS_WITH_NAME_23(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
     _9, _10, _11, _12, _13, _14, _15, _16,                                  \
     _17, _18, _19, _20, _21, _22)                                           \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
@@ -292,6 +292,38 @@
         std::string(#_17), prefix._17, std::string(#_18), prefix._18,       \
         std::string(#_19), prefix._19, std::string(#_20), prefix._20,       \
         std::string(#_21), prefix._21, std::string(#_22), prefix._22
+
+#define SF_EXPAND_ARGS_WITH_NAME_24(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17, _18, _19, _20, _21, _22, _23)                                      \
+    std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
+        std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
+        std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
+        std::string(#_7), prefix._7, std::string(#_8), prefix._8,           \
+        std::string(#_9), prefix._9, std::string(#_10), prefix._10,         \
+        std::string(#_11), prefix._11, std::string(#_12), prefix._12,       \
+        std::string(#_13), prefix._13, std::string(#_14), prefix._14,       \
+        std::string(#_15), prefix._15, std::string(#_16), prefix._16,       \
+        std::string(#_17), prefix._17, std::string(#_18), prefix._18,       \
+        std::string(#_19), prefix._19, std::string(#_20), prefix._20,       \
+        std::string(#_21), prefix._21, std::string(#_22), prefix._22,       \
+        std::string(#_23), prefix._23
+
+#define SF_EXPAND_ARGS_WITH_NAME_25(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17, _18, _19, _20, _21, _22, _23, _24)                                 \
+    std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
+        std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
+        std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
+        std::string(#_7), prefix._7, std::string(#_8), prefix._8,           \
+        std::string(#_9), prefix._9, std::string(#_10), prefix._10,         \
+        std::string(#_11), prefix._11, std::string(#_12), prefix._12,       \
+        std::string(#_13), prefix._13, std::string(#_14), prefix._14,       \
+        std::string(#_15), prefix._15, std::string(#_16), prefix._16,       \
+        std::string(#_17), prefix._17, std::string(#_18), prefix._18,       \
+        std::string(#_19), prefix._19, std::string(#_20), prefix._20,       \
+        std::string(#_21), prefix._21, std::string(#_22), prefix._22,       \
+        std::string(#_23), prefix._23, std::string(#_24), prefix._24
 
 #define SF_EXPAND_OBJ_MEM_WITH_NAME(...) \
     SF_INVOKE_VAR_MACRO(SF_EXPAND_ARGS_WITH_NAME_, __VA_ARGS__)
