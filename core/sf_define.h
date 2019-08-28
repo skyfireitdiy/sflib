@@ -26,7 +26,7 @@
 
 #define SF_PRIVATE_ARGS_GLUE(x, y) x y
 #define SF_PRIVATE_MACRO_VAR_ARGS_IMPL_COUNT(_1, _2, _3, _4, _5, _6, _7, _8, \
-                                             _9, _10, N, ...)                \
+    _9, _10, N, ...)                                                         \
     N
 #define SF_PRIVATE_MACRO_VAR_ARGS_IMPL(args) \
     SF_PRIVATE_MACRO_VAR_ARGS_IMPL_COUNT args
@@ -42,7 +42,7 @@
 #define SF_INVOKE_VAR_MACRO(M, ...)                                    \
     SF_PRIVATE_ARGS_GLUE(SF_PRIVATE_MACRO_CHOOSE_HELPER(               \
                              M, SF_COUNT_MACRO_VAR_ARGS(__VA_ARGS__)), \
-                         (__VA_ARGS__))
+        (__VA_ARGS__))
 
 #define SF_EXPAND_ARGS_2(prefix, _1) prefix._1
 #define SF_EXPAND_ARGS_3(prefix, _1, _2) prefix._1, prefix._2
@@ -65,51 +65,51 @@
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,      \
         prefix._7, prefix._8, prefix._9, prefix._10
 #define SF_EXPAND_ARGS_12(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
-                          _11)                                             \
+    _11)                                                                   \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,      \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11
 #define SF_EXPAND_ARGS_13(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, \
-                          _11, _12)                                        \
+    _11, _12)                                                              \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,      \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12
 #define SF_EXPAND_ARGS_14(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13)                                     \
+    _11, _12, _13)                                                           \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13
 #define SF_EXPAND_ARGS_15(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13, _14)                                \
+    _11, _12, _13, _14)                                                      \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13, prefix._14
 #define SF_EXPAND_ARGS_16(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13, _14, _15)                           \
+    _11, _12, _13, _14, _15)                                                 \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13, prefix._14, prefix._15
 #define SF_EXPAND_ARGS_17(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13, _14, _15, _16)                      \
+    _11, _12, _13, _14, _15, _16)                                            \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13, prefix._14, prefix._15, prefix._16
 #define SF_EXPAND_ARGS_18(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13, _14, _15, _16, _17)                 \
+    _11, _12, _13, _14, _15, _16, _17)                                       \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13, prefix._14, prefix._15, prefix._16, prefix._17
 #define SF_EXPAND_ARGS_19(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13, _14, _15, _16, _17, _18)            \
+    _11, _12, _13, _14, _15, _16, _17, _18)                                  \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13, prefix._14, prefix._15, prefix._16, prefix._17, prefix._18
 #define SF_EXPAND_ARGS_20(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13, _14, _15, _16, _17, _18, _19)       \
+    _11, _12, _13, _14, _15, _16, _17, _18, _19)                             \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13, prefix._14, prefix._15, prefix._16, prefix._17,          \
         prefix._18, prefix._19
 #define SF_EXPAND_ARGS_21(prefix, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10,   \
-                          _11, _12, _13, _14, _15, _16, _17, _18, _19, _20)  \
+    _11, _12, _13, _14, _15, _16, _17, _18, _19, _20)                        \
     prefix._1, prefix._2, prefix._3, prefix._4, prefix._5, prefix._6,        \
         prefix._7, prefix._8, prefix._9, prefix._10, prefix._11, prefix._12, \
         prefix._13, prefix._14, prefix._15, prefix._16, prefix._17,          \
@@ -145,21 +145,21 @@
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,          \
         std::string(#_7), prefix._7, std::string(#_8), prefix._8
 #define SF_EXPAND_ARGS_WITH_NAME_10(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9)                                     \
+    _9)                                                                     \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
         std::string(#_7), prefix._7, std::string(#_8), prefix._8,           \
         std::string(#_9), prefix._9
 #define SF_EXPAND_ARGS_WITH_NAME_11(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10)                                \
+    _9, _10)                                                                \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
         std::string(#_7), prefix._7, std::string(#_8), prefix._8,           \
         std::string(#_9), prefix._9, std::string(#_10), prefix._10
 #define SF_EXPAND_ARGS_WITH_NAME_12(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11)                           \
+    _9, _10, _11)                                                           \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -167,7 +167,7 @@
         std::string(#_9), prefix._9, std::string(#_10), prefix._10,         \
         std::string(#_11), prefix._11
 #define SF_EXPAND_ARGS_WITH_NAME_13(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12)                      \
+    _9, _10, _11, _12)                                                      \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -175,7 +175,7 @@
         std::string(#_9), prefix._9, std::string(#_10), prefix._10,         \
         std::string(#_11), prefix._11, std::string(#_12), prefix._12
 #define SF_EXPAND_ARGS_WITH_NAME_14(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13)                 \
+    _9, _10, _11, _12, _13)                                                 \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -184,7 +184,7 @@
         std::string(#_11), prefix._11, std::string(#_12), prefix._12,       \
         std::string(#_13), prefix._13
 #define SF_EXPAND_ARGS_WITH_NAME_15(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13, _14)            \
+    _9, _10, _11, _12, _13, _14)                                            \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -193,7 +193,7 @@
         std::string(#_11), prefix._11, std::string(#_12), prefix._12,       \
         std::string(#_13), prefix._13, std::string(#_14), prefix._14
 #define SF_EXPAND_ARGS_WITH_NAME_16(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13, _14, _15)       \
+    _9, _10, _11, _12, _13, _14, _15)                                       \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -203,7 +203,7 @@
         std::string(#_13), prefix._13, std::string(#_14), prefix._14,       \
         std::string(#_15), prefix._15
 #define SF_EXPAND_ARGS_WITH_NAME_17(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13, _14, _15, _16)  \
+    _9, _10, _11, _12, _13, _14, _15, _16)                                  \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -213,8 +213,8 @@
         std::string(#_13), prefix._13, std::string(#_14), prefix._14,       \
         std::string(#_15), prefix._15, std::string(#_16), prefix._16
 #define SF_EXPAND_ARGS_WITH_NAME_18(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13, _14, _15, _16,  \
-                                    _17)                                    \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17)                                                                    \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -225,8 +225,8 @@
         std::string(#_15), prefix._15, std::string(#_16), prefix._16,       \
         std::string(#_17), prefix._17
 #define SF_EXPAND_ARGS_WITH_NAME_19(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13, _14, _15, _16,  \
-                                    _17, _18)                               \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17, _18)                                                               \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -237,8 +237,8 @@
         std::string(#_15), prefix._15, std::string(#_16), prefix._16,       \
         std::string(#_17), prefix._17, std::string(#_18), prefix._18
 #define SF_EXPAND_ARGS_WITH_NAME_20(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13, _14, _15, _16,  \
-                                    _17, _18, _19)                          \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17, _18, _19)                                                          \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -250,8 +250,8 @@
         std::string(#_17), prefix._17, std::string(#_18), prefix._18,       \
         std::string(#_19), prefix._19
 #define SF_EXPAND_ARGS_WITH_NAME_21(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
-                                    _9, _10, _11, _12, _13, _14, _15, _16,  \
-                                    _17, _18, _19, _20)                     \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17, _18, _19, _20)                                                     \
     std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
         std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
         std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
@@ -262,6 +262,36 @@
         std::string(#_15), prefix._15, std::string(#_16), prefix._16,       \
         std::string(#_17), prefix._17, std::string(#_18), prefix._18,       \
         std::string(#_19), prefix._19, std::string(#_20), prefix._20
+
+#define SF_EXPAND_ARGS_WITH_NAME_22(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17, _18, _19, _20, _21)                                                \
+    std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
+        std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
+        std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
+        std::string(#_7), prefix._7, std::string(#_8), prefix._8,           \
+        std::string(#_9), prefix._9, std::string(#_10), prefix._10,         \
+        std::string(#_11), prefix._11, std::string(#_12), prefix._12,       \
+        std::string(#_13), prefix._13, std::string(#_14), prefix._14,       \
+        std::string(#_15), prefix._15, std::string(#_16), prefix._16,       \
+        std::string(#_17), prefix._17, std::string(#_18), prefix._18,       \
+        std::string(#_19), prefix._19, std::string(#_20), prefix._20,       \
+        sstd::string(#_21), prefix._21
+
+#define SF_EXPAND_ARGS_WITH_NAME_22(prefix, _1, _2, _3, _4, _5, _6, _7, _8, \
+    _9, _10, _11, _12, _13, _14, _15, _16,                                  \
+    _17, _18, _19, _20, _21, _22)                                           \
+    std::string(#_1), prefix._1, std::string(#_2), prefix._2,               \
+        std::string(#_3), prefix._3, std::string(#_4), prefix._4,           \
+        std::string(#_5), prefix._5, std::string(#_6), prefix._6,           \
+        std::string(#_7), prefix._7, std::string(#_8), prefix._8,           \
+        std::string(#_9), prefix._9, std::string(#_10), prefix._10,         \
+        std::string(#_11), prefix._11, std::string(#_12), prefix._12,       \
+        std::string(#_13), prefix._13, std::string(#_14), prefix._14,       \
+        std::string(#_15), prefix._15, std::string(#_16), prefix._16,       \
+        std::string(#_17), prefix._17, std::string(#_18), prefix._18,       \
+        std::string(#_19), prefix._19, std::string(#_20), prefix._20,       \
+        std::string(#_21), prefix._21, std::string(#_22), prefix._22
 
 #define SF_EXPAND_OBJ_MEM_WITH_NAME(...) \
     SF_INVOKE_VAR_MACRO(SF_EXPAND_ARGS_WITH_NAME_, __VA_ARGS__)
@@ -355,6 +385,6 @@ enum sf_error_code {
     // 绑定错误
     sf_err_bind_err = 0x00010005,
 };
-}    // namespace skyfire
+} // namespace skyfire
 
 #pragma clang diagnostic pop
