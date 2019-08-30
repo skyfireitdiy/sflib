@@ -67,7 +67,7 @@
 
 * CMake 3.7 +
 * make（或mingw32-make）
-* g++ 7.2 +
+* g++ 8.1 +
 * openssl 1.1.0h （建议版本）
 * zlib 1.2.11 （建议版本）
 * doxygen （生成文档时必需）
