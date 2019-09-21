@@ -431,7 +431,7 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
                     res.set_status(404);
                     normal_response__(sock, res);
                 } else {
-                    file_cache__->set_data(file.filename, cahce_data_t { modify_time, content });
+                    file_cache__->set_data(file.filename, cahce_data_t { content, modify_time });
                     res.set_body(content);
                     normal_response__(sock, res);
                 }

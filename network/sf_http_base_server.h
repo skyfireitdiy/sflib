@@ -72,7 +72,7 @@ private:
 
     struct cahce_data_t {
         byte_array data;
-        std::chrono::system_clock::time_point modify_time;
+        fs::file_time_type modify_time;
     };
 
     mutable std::recursive_mutex mu_session__;
