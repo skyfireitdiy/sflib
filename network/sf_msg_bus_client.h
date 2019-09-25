@@ -73,7 +73,7 @@ class sf_msg_bus_client
      * @param port 端口
      * @return 连接结果
      */
-    bool connect_to_server(const std::string& ip, unsigned short port) const;
+    [[nodiscard]] bool connect_to_server(const std::string& ip, unsigned short port) const;
 
     /**
      * @brief send_msg 向消息总线发送消息
