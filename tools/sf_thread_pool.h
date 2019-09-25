@@ -19,13 +19,14 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "core/sf_stdc++.h"
+#include "sf_utils.h"
 
 namespace skyfire {
 
 /**
  *  @brief  线程池
  */
-class sf_thread_pool {
+class sf_thread_pool : public sf_make_instance_t<sf_thread_pool>{
    public:
     /**
      * @brief sf_thread_pool 构造函数

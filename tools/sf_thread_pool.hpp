@@ -19,6 +19,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_thread_pool.h"
+#include "sf_utils.hpp"
 
 namespace skyfire {
 
