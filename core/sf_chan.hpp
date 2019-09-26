@@ -1,3 +1,4 @@
+#pragma once
 #include "sf_chan.h"
 
 namespace skyfire{
@@ -12,6 +13,7 @@ namespace skyfire{
     template <typename T>
     void sf_chan<T>::close() {
         closed__ = true;
+        cond__.notify_all();
     }
 
 }
