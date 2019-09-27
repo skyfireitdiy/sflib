@@ -1,0 +1,12 @@
+digraph G {
+    sf_tcp_server->sf_http_base_server[label="标准HTTP请求"]
+    sf_http_base_server->sf_http_server[label=sf_http_request]
+    sf_http_server->sf_http_router[label=服务路由]
+    sf_http_server->sf_part_router[label=分层路由]
+    sf_part_router->sf_http_router1[label=服务请求]
+    sf_http_router1[label=sf_http_router]
+    sf_part_router->sf_part_router1[label=子分层]
+    sf_part_router1[label=sf_part_router]
+    sf_part_router->sf_http_static_router[label=静态资源请求]
+    sf_part_router1->sf_websocket_router[label=websocket请求]
+}
