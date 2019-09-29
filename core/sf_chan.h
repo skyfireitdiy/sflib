@@ -13,6 +13,11 @@
 
 namespace skyfire{
 
+
+    /**
+     * 管道（简化线程间通信）
+     * @tparam T 管道类型
+     */
     template <typename T>
     class sf_chan: public sf_make_instance_t<sf_chan<T>,sf_nocopy<>>{
     private:
@@ -23,11 +28,22 @@ namespace skyfire{
         std::condition_variable cond__;
     public:
 
-
+        /**
+         * 构造一个缓冲区大小为buffer_size的管道
+         * @param buffer_size 缓冲区大小
+         */
         explicit sf_chan(int buffer_size);
 
+        /**
+         * 关闭管道
+         */
         void close();
 
+        /**
+         * 读取管道
+         * @param d 读取的数据
+         * @param ch 管道
+         */
         friend void operator<<(T &d, sf_chan<T>& ch){
             if(ch.closed__){
                 throw sf_chan_close_exception();
@@ -44,7 +60,11 @@ namespace skyfire{
             ch.cond__.notify_all();
         }
 
-
+        /**
+         * 写入管道
+         * @param ch 管道
+         * @param d 写入的数据
+         */
         friend void operator<<(sf_chan<T>& ch, T d){
             if(ch.closed__){
                 throw sf_chan_close_exception();

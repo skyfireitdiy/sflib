@@ -245,7 +245,7 @@ inline void sf_tcp_server::handle_read__(const epoll_event &ev) {
     sf_pkg_header_t header{};
     auto &sock_context__ = epoll_data__().sock_context__;
     while (true) {
-        sf_debug("start read");
+        sf_debug("start read", ev.data.fd);
         auto count_read = static_cast<int>(
             recv(ev.data.fd, recv_buf.data(), sf_default_buffer_size, 0));
         sf_debug("read", count_read);

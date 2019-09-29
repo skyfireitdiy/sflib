@@ -104,7 +104,7 @@ inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
     {
         std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
         if (websocket_context__.count(sock) != 0) {
-            sf_debug("websocket connection");
+            sf_debug("websocket message");
             websocket_data_coming__(sock, data);
             return;
         }

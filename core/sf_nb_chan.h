@@ -5,6 +5,11 @@
 #include "core/sf_chan_utils.h"
 
 namespace skyfire{
+
+    /**
+     * 无缓冲管道
+     * @tparam T 管道类型
+     */
     template<typename T>
     class sf_nb_chan: public sf_make_instance_t<sf_nb_chan<T>, sf_nocopy<>>
     {
@@ -19,8 +24,16 @@ namespace skyfire{
 
     public:
 
+        /**
+         * 关闭管道
+         */
         void close();
 
+        /**
+         * 读取管道
+         * @param d 读取的数据
+         * @param ch 管道
+         */
         friend void operator<<(T &d, sf_nb_chan<T>& ch) {
             if (ch.closed__) {
                 throw sf_chan_close_exception();
@@ -32,6 +45,11 @@ namespace skyfire{
             ch.cond_pop_finish__.notify_one();
         }
 
+        /**
+         * 写入管道
+         * @param ch 管道
+         * @param d 写入的数据
+         */
         friend void operator<<(sf_nb_chan<T> &ch, T d){
             if(ch.closed__){
                 throw sf_chan_close_exception();

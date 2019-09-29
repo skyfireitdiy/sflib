@@ -235,11 +235,93 @@ int main()
     server->add_router(sf_static_router::make_instance("./"s));
 
     server->start();
-* Closing connection 0
 }
+* Closing connection 0
 ```
 
 静态路由通常与分层路由结合使用。
 
 ## websocket
+
+sf_http_server 支持 websocket 协议，如下：
+
+```cpp
+// main.cpp
+
+#include "network/sf_http_server.hpp"
+#include "network/sf_websocket_router.hpp"
+
+using namespace std;
+using namespace skyfire;
+
+int main()
+{
+    sf_http_server_config conf;
+    conf.host = "0.0.0.0";
+    conf.port = 8080;
+
+    auto server = sf_http_server::make_instance(conf);
+
+    server->add_router(sf_websocket_router::make_instance("/ws"s, function([](const sf_websocket_param_t& p) {
+        if (p.type == websocket_data_type::TextData) {
+            p.p_server->send_websocket_data(p.sock, "hello:" + p.text_msg);
+        }
+    })));
+
+    server->start();
+}
+```
+
+可使用 wscat 工具进行测试：
+
+```text
+skyfire@skyfire-pc ~/D/test_sflib> wscat -c ws://127.0.0.1:8080/ws
+connected (press CTRL+C to quit)
+> skyfire
+< hello:skyfire
+> test
+< hello:test
+> ⏎                   
+```
+
+详情请参阅API文档。
+
+## 使用session
+
+示例代码如下：
+
+```cpp
+// main.cpp
+
+#include "network/sf_http_server.hpp"
+#include "network/sf_websocket_router.hpp"
+
+using namespace std;
+using namespace skyfire;
+
+int main()
+{
+    sf_http_server_config conf;
+    conf.host = "0.0.0.0";
+    conf.port = 8080;
+
+    auto server = sf_http_server::make_instance(conf);
+
+    server->add_router(sf_http_router::make_instance("/test_session"s,
+        function([&server](const sf_http_request& req, sf_http_response& res) {
+            auto ss = server->session(req.session_id());
+            if (!ss.has("my_session")) {
+                res.set_text("no session");
+                ss["my_session"] = "my session content";
+            } else {
+                res.set_text(string(ss["my_session"]));
+            }
+        })));
+
+    server->start();
+}
+```
+
+使用浏览器访问 [http://localhost:8080/test_session](http://localhost:8080/test_session)进行测试。
+
 
