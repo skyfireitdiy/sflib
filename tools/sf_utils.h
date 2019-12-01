@@ -15,9 +15,7 @@
 
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <cstring>
-#include <fstream>
-#include <string>
+#include "core/sf_stdc++.h"
 #include "core/sf_empty_class.h"
 #include "core/sf_type.hpp"
 

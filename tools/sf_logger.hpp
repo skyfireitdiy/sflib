@@ -126,7 +126,7 @@ inline sf_logger::sf_logger() {
             std::deque<sf_logger_info_t__> tmp_info;
             {
                 std::unique_lock<std::mutex> lck(deque_mu__);
-                cond__.wait(lck,
+                cond_pop__.wait(lck,
                             [&] { return !log_deque__.empty() || !run__; });
                 tmp_info = std::move(log_deque__);
                 log_deque__.clear();
@@ -169,7 +169,7 @@ inline void sf_logger::logout__(std::ostringstream &oss,
         std::lock_guard<std::mutex> lck(deque_mu__);
         log_deque__.push_back(log_info);
     }
-    cond__.notify_one();
+    cond_pop__.notify_one();
 #else
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
     for (auto &level_func : logger_func_set__) {
@@ -215,7 +215,7 @@ inline void sf_logger::logout__(std::ostringstream &oss,
         std::lock_guard<std::mutex> lck(deque_mu__);
         log_deque__.push_back(log_info);
     }
-    cond__.notify_one();
+    cond_pop__.notify_one();
 #else
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
     for (auto &level_func : logger_func_set__) {

@@ -139,7 +139,7 @@ inline void sf_http_server::default_websocket_request_callback__(
     if (std::find(header_key.begin(), header_key.end(),
                   sf_to_header_key_format("Sec-WebSocket-Key")) !=
         header_key.end()) {
-        auto sec_websocket_key = headers.header_value("Sec-WebSocket-Key");
+        auto sec_websocket_key = sf_string_trim(headers.header_value("Sec-WebSocket-Key"));
         if (sec_websocket_key.empty()) return;
         sec_websocket_key += websocket_sha1_append_str;
         const auto sha1_encoded_key =
