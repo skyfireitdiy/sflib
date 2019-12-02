@@ -455,9 +455,8 @@ inline std::string sf_json::to_string(int indent, int current_indent) const
         for (auto& p : value__->object_value) {
             ret += indent_string + std::string(indent, ' ') + string_to_json_string(p.first) + ":" + sf_json(p.second).to_string(indent, current_indent + indent) + ",\n";
         }
-        if (ret.rfind(",\n") == ret.length() - 2) {
-            ret = ret.substr(0, ret.length() - 2);
-            ret += "\n";
+        if (!value__->object_value.empty()) {
+            ret.erase(ret.end() - 2);
         }
         ret += indent_string + "}";
     } break;
@@ -466,9 +465,8 @@ inline std::string sf_json::to_string(int indent, int current_indent) const
         for (auto& p : value__->array_value) {
             ret += indent_string + std::string(indent, ' ') + sf_json(p).to_string(indent, current_indent + indent) + ",\n";
         }
-        if (ret.rfind(",\n") == ret.length() - 2) {
-            ret = ret.substr(0, ret.length() - 2);
-            ret += "\n";
+        if (!value__->object_value.empty()) {
+            ret.erase(ret.end() - 2);
         }
         ret += indent_string + "]";
     } break;
