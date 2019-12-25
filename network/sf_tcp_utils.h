@@ -24,12 +24,12 @@
 #include <unistd.h>
 #endif
 
+#include "core/sf_define.h"
+#include "core/sf_type.hpp"
 #include <cassert>
 #include <cstring>
 #include <string>
 #include <vector>
-#include "core/sf_define.h"
-#include "core/sf_type.hpp"
 
 namespace skyfire {
 #pragma pack(1)
@@ -38,9 +38,9 @@ namespace skyfire {
  *  @brief 包头
  */
 struct sf_pkg_header_t {
-    unsigned char checksum;    // 校验和
-    int type;                  // 包类型
-    size_t length;             // 包长度
+    unsigned char checksum; // 校验和
+    int type; // 包类型
+    int length; // 包长度
 };
 
 #pragma pack()
@@ -97,4 +97,4 @@ inline unsigned long long sf_ntoh64(unsigned long long input);
  */
 inline unsigned long long sf_hton64(unsigned long long input);
 
-}    // namespace skyfire
+} // namespace skyfire

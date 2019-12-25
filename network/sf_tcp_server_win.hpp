@@ -22,9 +22,10 @@ namespace skyfire {
 
 inline SOCKET sf_tcp_server::raw_socket() { return listen_sock__; }
 
-void sf_tcp_server::handle_sock_error__(sf_per_handle_data_t *p_handle_data,
-                                        sf_per_io_operation_data_t *p_io_data,
-                                        int index) {
+void sf_tcp_server::handle_sock_error__(sf_per_handle_data_t* p_handle_data,
+    sf_per_io_operation_data_t* p_io_data,
+    int index)
+{
     disconnect_sock_filter__(p_handle_data->socket);
     close(p_handle_data->socket);
     closed(p_handle_data->socket);
@@ -33,9 +34,10 @@ void sf_tcp_server::handle_sock_error__(sf_per_handle_data_t *p_handle_data,
 }
 
 void sf_tcp_server::write_handle__(DWORD bytes_transferred,
-                                   sf_per_handle_data_t *p_handle_data,
-                                   sf_per_io_operation_data_t *p_io_data,
-                                   int index) {
+    sf_per_handle_data_t* p_handle_data,
+    sf_per_io_operation_data_t* p_io_data,
+    int index)
+{
     auto invalid = false;
     {
         p_io_data->data_trans_count += bytes_transferred;
@@ -43,16 +45,15 @@ void sf_tcp_server::write_handle__(DWORD bytes_transferred,
         // 没发完
         if (p_io_data->data_trans_count != p_io_data->buffer.size()) {
             sf_debug("not send complete", p_io_data->data_trans_count,
-                     p_io_data->buffer.size());
+                p_io_data->buffer.size());
             ZeroMemory(&p_io_data->overlapped, sizeof(p_io_data->overlapped));
-            p_io_data->wsa_buffer.buf =
-                p_io_data->buffer.data() + p_io_data->data_trans_count;
-            p_io_data->wsa_buffer.len =
-                p_io_data->buffer.size() - p_io_data->data_trans_count;
+            p_io_data->wsa_buffer.buf = p_io_data->buffer.data() + p_io_data->data_trans_count;
+            p_io_data->wsa_buffer.len = p_io_data->buffer.size() - p_io_data->data_trans_count;
             DWORD tmp_int = 0;
             if (WSASend(p_handle_data->socket, &(p_io_data->wsa_buffer), 1,
-                        &tmp_int, 0, &(p_io_data->overlapped),
-                        nullptr) == SOCKET_ERROR) {
+                    &tmp_int, 0, &(p_io_data->overlapped),
+                    nullptr)
+                == SOCKET_ERROR) {
                 const auto err = WSAGetLastError();
                 if (err != ERROR_IO_PENDING) {
                     write_error(p_handle_data->socket);
@@ -73,8 +74,9 @@ void sf_tcp_server::write_handle__(DWORD bytes_transferred,
 }
 
 inline void sf_tcp_server::receive_handle__(
-    DWORD bytes_transferred, sf_per_handle_data_t *p_handle_data,
-    sf_per_io_operation_data_t *p_io_data, int index) {
+    DWORD bytes_transferred, sf_per_handle_data_t* p_handle_data,
+    sf_per_io_operation_data_t* p_io_data, int index)
+{
     auto invalid = false;
     do {
         // 接收
@@ -86,29 +88,26 @@ inline void sf_tcp_server::receive_handle__(
             sf_debug("recv raw", p_io_data->buffer.size());
             raw_data_coming(p_handle_data->socket, tmp_data);
         } else {
-            sf_pkg_header_t header{};
+            sf_pkg_header_t header {};
             p_handle_data->sock_data_buffer.insert(
                 p_handle_data->sock_data_buffer.end(), tmp_data.begin(),
                 tmp_data.end());
             size_t read_pos = 0;
             // 循环解析
-            while (p_handle_data->sock_data_buffer.size() - read_pos >=
-                   sizeof(sf_pkg_header_t)) {
+            while (p_handle_data->sock_data_buffer.size() - read_pos >= sizeof(sf_pkg_header_t)) {
                 memmove_s(&header, sizeof(header),
-                          p_handle_data->sock_data_buffer.data() + read_pos,
-                          sizeof(header));
+                    p_handle_data->sock_data_buffer.data() + read_pos,
+                    sizeof(header));
                 if (!check_header_checksum(header)) {
                     invalid = true;
                     break;
                 }
-                if (p_handle_data->sock_data_buffer.size() - read_pos -
-                        sizeof(header) >=
-                    header.length) {
+                header.length = ntohl(header.length);
+                header.type = ntohl(header.type);
+                if (p_handle_data->sock_data_buffer.size() - read_pos - sizeof(header) >= header.length) {
                     auto data = byte_array(
-                        p_handle_data->sock_data_buffer.begin() + read_pos +
-                            sizeof(header),
-                        p_handle_data->sock_data_buffer.begin() + read_pos +
-                            sizeof(header) + header.length);
+                        p_handle_data->sock_data_buffer.begin() + read_pos + sizeof(header),
+                        p_handle_data->sock_data_buffer.begin() + read_pos + sizeof(header) + header.length);
                     after_recv_filter__(p_handle_data->socket, header, data);
                     // std::unique_lock<std::mutex>
                     // lck(*p_handle_data->read_lock);
@@ -136,8 +135,9 @@ inline void sf_tcp_server::receive_handle__(
         DWORD tmp_int = 0;
         // 重新发一个读取请求
         if (WSARecv(p_handle_data->socket, &(p_io_data->wsa_buffer), 1,
-                    &tmp_int, &flags, &(p_io_data->overlapped),
-                    nullptr) == SOCKET_ERROR) {
+                &tmp_int, &flags, &(p_io_data->overlapped),
+                nullptr)
+            == SOCKET_ERROR) {
             if (WSAGetLastError() != ERROR_IO_PENDING) {
                 invalid = true;
             }
@@ -148,19 +148,19 @@ inline void sf_tcp_server::receive_handle__(
     }
 }
 
-inline void sf_tcp_server::server_work_thread__(int index) {
-    iocp_context__[index].iocp_port =
-        CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
+inline void sf_tcp_server::server_work_thread__(int index)
+{
+    iocp_context__[index].iocp_port = CreateIoCompletionPort(INVALID_HANDLE_VALUE, nullptr, 0, 0);
     const auto completion_port = iocp_context__[index].iocp_port;
     DWORD bytes_transferred;
-    sf_per_handle_data_t *p_handle_data = nullptr;
-    sf_per_io_operation_data_t *p_io_data = nullptr;
+    sf_per_handle_data_t* p_handle_data = nullptr;
+    sf_per_io_operation_data_t* p_io_data = nullptr;
 
     while (true) {
         const auto result = GetQueuedCompletionStatus(
             completion_port, &bytes_transferred,
             reinterpret_cast<PULONG_PTR>(&p_handle_data),
-            reinterpret_cast<LPOVERLAPPED *>(&p_io_data), WSA_INFINITE);
+            reinterpret_cast<LPOVERLAPPED*>(&p_io_data), WSA_INFINITE);
         auto invalid = false;
         do {
             // 退出标记
@@ -205,12 +205,13 @@ inline void sf_tcp_server::server_work_thread__(int index) {
             write_handle__(bytes_transferred, p_handle_data, p_io_data, index);
         } else {
             receive_handle__(bytes_transferred, p_handle_data, p_io_data,
-                             index);
+                index);
         }
     }
 }
 
-bool sf_tcp_server::add_sock__(SOCKET accept_socket) {
+bool sf_tcp_server::add_sock__(SOCKET accept_socket)
+{
     auto index = 0;
     auto min_size = 0;
     {
@@ -242,9 +243,10 @@ bool sf_tcp_server::add_sock__(SOCKET accept_socket) {
     p_handle_data->socket = accept_socket;
 
     if (CreateIoCompletionPort(reinterpret_cast<HANDLE>(accept_socket),
-                               iocp_context__[index].iocp_port,
-                               reinterpret_cast<ULONG_PTR>(p_handle_data),
-                               0) == nullptr) {
+            iocp_context__[index].iocp_port,
+            reinterpret_cast<ULONG_PTR>(p_handle_data),
+            0)
+        == nullptr) {
         sf_debug("CreateIoCompletionPort error");
         return false;
     }
@@ -266,7 +268,8 @@ bool sf_tcp_server::add_sock__(SOCKET accept_socket) {
     // 投递一个接收请求
     sf_debug("post a read request");
     if (WSARecv(accept_socket, &(p_io_data->wsa_buffer), 1, &tmp_int, &flags,
-                &(p_io_data->overlapped), nullptr) == SOCKET_ERROR) {
+            &(p_io_data->overlapped), nullptr)
+        == SOCKET_ERROR) {
         if (WSAGetLastError() != ERROR_IO_PENDING) {
             handle_sock_error__(p_handle_data, p_io_data, index);
         }
@@ -274,7 +277,8 @@ bool sf_tcp_server::add_sock__(SOCKET accept_socket) {
     return true;
 }
 
-inline void sf_tcp_server::accept_thread__() {
+inline void sf_tcp_server::accept_thread__()
+{
     while (true) {
         SOCKET accept_socket;
         accept_socket = WSAAccept(listen_sock__, nullptr, nullptr, nullptr, 0);
@@ -297,9 +301,10 @@ inline void sf_tcp_server::accept_thread__() {
     }
 }
 
-inline sf_tcp_server::sf_tcp_server(const bool raw) {
+inline sf_tcp_server::sf_tcp_server(const bool raw)
+{
     // 初始化WinSock，线程数量等
-    WSADATA wsa_data{};
+    WSADATA wsa_data {};
 
     if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
         return;
@@ -310,7 +315,8 @@ inline sf_tcp_server::sf_tcp_server(const bool raw) {
     raw__ = raw;
 }
 
-inline bool sf_tcp_server::listen(const std::string &ip, unsigned short port) {
+inline bool sf_tcp_server::listen(const std::string& ip, unsigned short port)
+{
     if (!inited__) {
         return false;
     }
@@ -318,8 +324,7 @@ inline bool sf_tcp_server::listen(const std::string &ip, unsigned short port) {
     exit_flag__ = false;
 
     // 创建监听套接字
-    listen_sock__ =
-        WSASocketW(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
+    listen_sock__ = WSASocketW(AF_INET, SOCK_STREAM, 0, nullptr, 0, WSA_FLAG_OVERLAPPED);
     if (listen_sock__ == INVALID_SOCKET) {
         close();
         return false;
@@ -329,21 +334,18 @@ inline bool sf_tcp_server::listen(const std::string &ip, unsigned short port) {
 
     // 设置地址复用
     int op = 1;
-    if (SOCKET_ERROR == setsockopt(listen_sock__, SOL_SOCKET, SO_REUSEADDR,
-                                   reinterpret_cast<char *>(&op), sizeof(op))) {
+    if (SOCKET_ERROR == setsockopt(listen_sock__, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char*>(&op), sizeof(op))) {
         return false;
     }
 
     // 创建地址信息
-    sockaddr_in internet_addr{};
+    sockaddr_in internet_addr {};
     internet_addr.sin_family = AF_INET;
     sf_safe_inet_addr(AF_INET, ip.c_str(), internet_addr.sin_addr.s_addr);
     internet_addr.sin_port = htons(port);
 
     // 绑定端口
-    if (SOCKET_ERROR == ::bind(listen_sock__,
-                               reinterpret_cast<sockaddr *>(&internet_addr),
-                               sizeof(internet_addr))) {
+    if (SOCKET_ERROR == ::bind(listen_sock__, reinterpret_cast<sockaddr*>(&internet_addr), sizeof(internet_addr))) {
         close();
         return false;
     }
@@ -367,16 +369,18 @@ inline bool sf_tcp_server::listen(const std::string &ip, unsigned short port) {
     return true;
 }
 
-inline sf_per_io_operation_data_t *sf_tcp_server::make_req__() {
+inline sf_per_io_operation_data_t* sf_tcp_server::make_req__()
+{
     return new sf_per_io_operation_data_t();
 }
 
-inline void sf_tcp_server::close() {
+inline void sf_tcp_server::close()
+{
     exit_flag__ = true;
 
     for (auto i = 0; i < thread_count__; ++i) {
         std::unique_lock<std::shared_mutex> lck(*iocp_context__[i].mu_socks);
-        for (auto &p : iocp_context__[i].socks) {
+        for (auto& p : iocp_context__[i].socks) {
             ::shutdown(p, SD_BOTH);
             ::closesocket(p);
         }
@@ -390,15 +394,16 @@ inline void sf_tcp_server::close() {
         closesocket(listen_sock__);
         listen_sock__ = INVALID_SOCKET;
     }
-    for (auto &p : thread_vec__) {
+    for (auto& p : thread_vec__) {
         p.join();
     }
 }
 
-inline void sf_tcp_server::close(SOCKET sock) {
+inline void sf_tcp_server::close(SOCKET sock)
+{
     ::shutdown(sock, SD_BOTH);
     ::closesocket(sock);
-    for (auto &p : iocp_context__) {
+    for (auto& p : iocp_context__) {
         std::unique_lock<std::shared_mutex> lck(*p.mu_socks);
         if (p.socks.count(sock) != 0) {
             p.socks.erase(sock);
@@ -409,11 +414,12 @@ inline void sf_tcp_server::close(SOCKET sock) {
 
 inline bool sf_tcp_server::detach(SOCKET sock) { return false; }
 
-inline bool sf_tcp_server::send(SOCKET sock, int type, const byte_array &data) {
+inline bool sf_tcp_server::send(SOCKET sock, int type, const byte_array& data)
+{
     DWORD send_bytes;
-    sf_pkg_header_t header{};
-    header.type = type;
-    header.length = data.size();
+    sf_pkg_header_t header {};
+    header.type = htonl(type);
+    header.length = htonl(data.size());
     make_header_checksum(header);
     auto tmp_data = data;
     before_send_filter__(sock, header, tmp_data);
@@ -427,7 +433,8 @@ inline bool sf_tcp_server::send(SOCKET sock, int type, const byte_array &data) {
     p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
     p_io_data->wsa_buffer.len = p_io_data->buffer.size();
     if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &send_bytes, 0,
-                &(p_io_data->overlapped), nullptr) == SOCKET_ERROR) {
+            &(p_io_data->overlapped), nullptr)
+        == SOCKET_ERROR) {
         if (WSAGetLastError() != ERROR_IO_PENDING) {
             delete p_io_data;
             p_io_data = nullptr;
@@ -438,7 +445,8 @@ inline bool sf_tcp_server::send(SOCKET sock, int type, const byte_array &data) {
     return true;
 }
 
-inline bool sf_tcp_server::send(SOCKET sock, const byte_array &data) {
+inline bool sf_tcp_server::send(SOCKET sock, const byte_array& data)
+{
     DWORD send_bytes;
 
     auto tmp_data = data;
@@ -452,7 +460,8 @@ inline bool sf_tcp_server::send(SOCKET sock, const byte_array &data) {
     p_io_data->wsa_buffer.buf = p_io_data->buffer.data();
     p_io_data->wsa_buffer.len = p_io_data->buffer.size();
     if (WSASend(sock, &(p_io_data->wsa_buffer), 1, &send_bytes, 0,
-                &(p_io_data->overlapped), nullptr) == SOCKET_ERROR) {
+            &(p_io_data->overlapped), nullptr)
+        == SOCKET_ERROR) {
         if (WSAGetLastError() != ERROR_IO_PENDING) {
             delete p_io_data;
             p_io_data = nullptr;
@@ -462,9 +471,10 @@ inline bool sf_tcp_server::send(SOCKET sock, const byte_array &data) {
     return true;
 }
 
-inline sf_tcp_server::~sf_tcp_server() {
+inline sf_tcp_server::~sf_tcp_server()
+{
     sf_tcp_server::close();
     WSACleanup();
 }
 
-}    // namespace skyfire
+} // namespace skyfire
