@@ -281,8 +281,6 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
                 tmp_str += "Content-Type: application/octet-stream\r\n";
             }
 
-            static std::unordered_map<std::string, long long> file_size_cache;
-
             long long file_size = fs::file_size(p.file_info.filename);
             tmp_str += "Content-Range: bytes " + std::to_string(p.file_info.begin) + "-" + std::to_string(p.file_info.end) + "/" + std::to_string(file_size) + "\r\n\r\n";
             header_vec.push_back(tmp_str);
