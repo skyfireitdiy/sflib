@@ -29,19 +29,19 @@ namespace skyfire {
  */
 template <typename ThisClass, typename BaseClass = sf_empty_class>
 class sf_single_instance : public BaseClass {
-   public:
+public:
     template <typename... Args>
     static std::shared_ptr<ThisClass> instance(Args&&... args);
 
-   private:
+private:
     sf_single_instance() = default;
 
-    inline static std::shared_ptr<ThisClass> instance__{nullptr};
-    inline static std::mutex mu;
+    inline static std::shared_ptr<ThisClass> instance__ { nullptr };
+    inline static std::once_flag flag;
     friend ThisClass;
 };
 
-}    // namespace skyfire
+} // namespace skyfire
 
 /*
  * 侵入式单例宏实现
@@ -51,9 +51,10 @@ class sf_single_instance : public BaseClass {
     ClassName(const ClassName&) = delete;                \
     ClassName(ClassName&&) = delete;                     \
     ClassName& operator=(const ClassName&) = delete;     \
-    static ClassName* instance() {                       \
+    static ClassName* instance()                         \
+    {                                                    \
         static std::mutex init_mutex;                    \
-        static ClassName* instance__{nullptr};           \
+        static ClassName* instance__ { nullptr };        \
         if (instance__ == nullptr) {                     \
             std::lock_guard<std::mutex> lck(init_mutex); \
             if (instance__ == nullptr) {                 \

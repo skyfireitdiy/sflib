@@ -24,14 +24,14 @@ namespace skyfire {
 template <typename ThisClass, typename BaseClass>
 template <typename... Args>
 std::shared_ptr<ThisClass> sf_single_instance<ThisClass, BaseClass>::instance(
-    Args &&... args) {
-    if (instance__ == nullptr) {
-        std::lock_guard<std::mutex> lck(mu);
-        if (instance__ == nullptr) {
-            instance__ = std::shared_ptr<ThisClass>(
-                new ThisClass(std::forward<Args>(args)...));
-        }
-    }
+    Args&&... args)
+{
+    std::call_once(flag, [&] {
+        instance__ = std::shared_ptr<ThisClass>(
+            new ThisClass(std::forward<Args>(args)...));
+    });
+
     return instance__;
 }
-}    // namespace skyfire
+
+} // namespace skyfire
