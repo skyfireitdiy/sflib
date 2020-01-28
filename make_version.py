@@ -13,8 +13,6 @@ add_info = '''
 /**
 * @version ''' + version + '''
 * @author skyfire
-* @mail skyfireitdiy@hotmail.com
-* @see http://github.com/skyfireitdiy/sflib
 '''
 
 last_msg = '\n* ' + '\n* '.join(version_info) + '\n*/\n\n'

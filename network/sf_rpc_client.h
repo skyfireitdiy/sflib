@@ -2,13 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @mail skyfireitdiy@hotmail.com
-* @see http://github.com/skyfireitdiy/sflib
 * @file sf_rpc_client.h
-
-* sflib第一版本发布
-* 版本号1.0.0
-* 发布日期：2018-10-22
 */
 
 /*
@@ -115,15 +109,6 @@ class sf_rpc_client
     template <typename... __SF_RPC_ARGS__>
     sf_rpc_ret_t call(const std::string &func_id, __SF_RPC_ARGS__... args);
 
-    /**
-     * @brief async_call 异步调用
-     * @param func_id 函数id
-     * @param rpc_callback 返回后的回调函数
-     */
-    // template<typename T>
-    // void async_call(const std::string &func_id,
-    //                std::function<void()> rpc_callback
-    //);
 
     /**
      * @brief async_call 异步调用（无返回）

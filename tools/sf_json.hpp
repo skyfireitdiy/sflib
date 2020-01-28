@@ -1,4 +1,13 @@
 
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_json.hpp
+
+* 
+*/
+
+
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cppcoreguidelines-c-copy-assignment-signature"

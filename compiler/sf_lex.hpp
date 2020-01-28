@@ -1,4 +1,13 @@
 
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_lex.hpp
+
+* 
+*/
+
+
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"

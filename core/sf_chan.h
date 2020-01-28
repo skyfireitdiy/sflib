@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_chan.h
+
+* 
+*/
+
 #pragma once
 
 #include <condition_variable>

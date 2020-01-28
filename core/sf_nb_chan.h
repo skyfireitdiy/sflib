@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_nb_chan.h
+
+* 
+*/
+
 #pragma once
 #include "tools/sf_nocopy.h"
 #include "tools/sf_utils.h"

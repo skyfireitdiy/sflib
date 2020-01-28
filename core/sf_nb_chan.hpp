@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_nb_chan.hpp
+
+* 
+*/
+
 #pragma once
 #include "sf_nb_chan.h"
 

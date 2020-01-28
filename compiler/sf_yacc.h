@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_yacc.h
+
+* 
+*/
+
 #pragma once
 
 #include "core/sf_stdc++.h"

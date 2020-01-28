@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_server_socket_filter.h
+
+* 
+*/
+
 #pragma once
 
 #include "core/sf_type.h"

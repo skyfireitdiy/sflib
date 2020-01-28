@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_msvc_safe.h
+
+* 
+*/
+
 #pragma once
 
 #ifdef _MSC_VER

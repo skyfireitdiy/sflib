@@ -2,13 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @mail skyfireitdiy@hotmail.com
-* @see http://github.com/skyfireitdiy/sflib
 * @file sf_http_request.h
-
-* sflib第一版本发布
-* 版本号1.0.0
-* 发布日期：2018-10-22
 */
 
 #pragma once
@@ -28,7 +22,7 @@ namespace skyfire {
  * @brief  http请求
  */
 class sf_http_request final {
-   private:
+private:
     const byte_array raw__;
     bool valid__ = false;
     bool error__ = false;
@@ -41,19 +35,21 @@ class sf_http_request final {
     std::unordered_map<std::string, std::string> cookies__;
     SOCKET sock__;
 
-   public:
+public:
     /**
      * 构造函数
      * @param raw 原始数据
+     * @param sock 请求套接字
      */
     explicit sf_http_request(byte_array raw, SOCKET sock);
 
     /**
      * 构造函数
      * @param multipart_data 分块数据集合
+     * @param sock 请求套接字
      */
     explicit sf_http_request(sf_multipart_data_context_t multipart_data,
-                             SOCKET sock);
+        SOCKET sock);
 
     /**
      * 判断请求是否合法
@@ -88,8 +84,8 @@ class sf_http_request final {
      * @param default_value 默认值
      * @return std::string 值
      */
-    std::string header(const std::string &key,
-                       const std::string &default_value = "") const;
+    std::string header(const std::string& key,
+        const std::string& default_value = "") const;
 
     /**
      * 获取请求体（在非分块请求可用）
@@ -169,9 +165,9 @@ class sf_http_request final {
      * @param body 请求体数据
      * @return 是否分割成功
      */
-    static bool split_request(const byte_array &raw, std::string &request_line,
-                              std::vector<std::string> &header_lines,
-                              byte_array &body);
+    static bool split_request(const byte_array& raw, std::string& request_line,
+        std::vector<std::string>& header_lines,
+        byte_array& body);
 
     /**
      * 解析请求行数据
@@ -179,8 +175,8 @@ class sf_http_request final {
      * @param request_line_para 请求行函数
      * @return 是否解析成功
      */
-    static bool parse_request_line(const std::string &request_line,
-                                   sf_http_request_line &request_line_para);
+    static bool parse_request_line(const std::string& request_line,
+        sf_http_request_line& request_line_para);
 
     /**
      * 解析请求头
@@ -189,7 +185,7 @@ class sf_http_request final {
      * @return 是否解析成功
      */
     static bool parse_header(std::vector<std::string> header_lines,
-                             sf_http_header &header);
+        sf_http_header& header);
 
     /**
      * 解析cookies
@@ -197,8 +193,8 @@ class sf_http_request final {
      * @param cookies cookie
      */
     static void parse_cookies(
-        const sf_http_header &header_data,
-        std::unordered_map<std::string, std::string> &cookies);
+        const sf_http_header& header_data,
+        std::unordered_map<std::string, std::string>& cookies);
 };
-}    // namespace skyfire
+} // namespace skyfire
 #pragma clang diagnostic pop

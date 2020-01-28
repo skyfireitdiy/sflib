@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_stdc++.h
+
+* 
+*/
+
 #pragma once
 
 #include <cassert>

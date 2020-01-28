@@ -1,16 +1,18 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "bugprone-lambda-function-name"
 
 /**
 * @version 1.0.0
 * @author skyfire
-* @mail skyfireitdiy@hotmail.com
-* @see http://github.com/skyfireitdiy/sflib
 * @file sf_http_router.hpp
 
-* sflib第一版本发布
-* 版本号1.0.0
-* 发布日期：2018-10-22
+* 
+*/
+
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-lambda-function-name"
+
+/**
+* @author skyfire
+* @file sf_http_router.hpp
 */
 #pragma once
 #pragma clang diagnostic push

@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_json_utils.h
+
+* 
+*/
+
 #pragma once
 
 #include "core/sf_stdc++.h"

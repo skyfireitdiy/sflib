@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file sf_http_part_router.hpp
+
+* 
+*/
+
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-lambda-function-name"
 

@@ -1,3 +1,12 @@
+
+/**
+* @version 1.0.0
+* @author skyfire
+* @file test_nb_chan.cpp
+
+* 
+*/
+
 //
 // Created by skyfire on 19-9-26.
 //
