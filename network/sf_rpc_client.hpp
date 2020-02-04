@@ -40,9 +40,9 @@ void sf_rpc_client::call(const std::string& func_id,
     using __Ret = typename std::decay<_Ret>::type;
     std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param { args... };
     const auto call_id = make_call_id__();
-    __rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
-    __rpc_data__[call_id]->is_async = true;
-    __rpc_data__[call_id]->async_callback = [=](const byte_array& data) {
+    rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
+    rpc_data__[call_id]->is_async = true;
+    rpc_data__[call_id]->async_callback = [=](const byte_array& data) {
         __Ret ret;
         sf_rpc_res_context_t res;
         from_json(sf_json::from_string(to_string(data)), res);
@@ -54,13 +54,13 @@ void sf_rpc_client::call(const std::string& func_id,
     req.func_id = func_id;
     req.params = skyfire::to_json(param);
     sf_debug("async call", skyfire::to_json(req));
-    __tcp_client__->send(rpc_req_type,
+    tcp_client__->send(rpc_req_type,
         to_byte_array(skyfire::to_json(req).to_string()));
     auto p_timer = std::make_shared<sf_timer>();
     sf_bind_signal(p_timer, timeout, ([this, call_id]() {
-        if (__rpc_data__.count(call_id) != 0) {
-            __rpc_data__[call_id]->back_cond.notify_one();
-            __rpc_data__.erase(call_id);
+        if (rpc_data__.count(call_id) != 0) {
+            rpc_data__[call_id]->back_cond.notify_one();
+            rpc_data__.erase(call_id);
         }
     }),
         true);
@@ -79,9 +79,9 @@ void sf_rpc_client::call(const std::string& func_id,
         "Param can't be pointer");
     std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param { args... };
     const auto call_id = make_call_id__();
-    __rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
-    __rpc_data__[call_id]->is_async = true;
-    __rpc_data__[call_id]->async_callback = [=](const byte_array& data) {
+    rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
+    rpc_data__[call_id]->is_async = true;
+    rpc_data__[call_id]->async_callback = [=](const byte_array& data) {
         rpc_callback();
     };
     sf_rpc_req_context_t req;
@@ -89,13 +89,13 @@ void sf_rpc_client::call(const std::string& func_id,
     req.func_id = func_id;
     req.params = to_json(param);
     sf_debug("async call", skyfire::to_json(req));
-    __tcp_client__->send(rpc_req_type,
+    tcp_client__->send(rpc_req_type,
         to_byte_array(skyfire::to_json(req).to_string()));
     auto p_timer = std::make_shared<sf_timer>();
     sf_bind_signal(p_timer, timeout, ([this, call_id]() {
-        if (__rpc_data__.count(call_id) != 0) {
-            __rpc_data__[call_id]->back_cond.notify_one();
-            __rpc_data__.erase(call_id);
+        if (rpc_data__.count(call_id) != 0) {
+            rpc_data__[call_id]->back_cond.notify_one();
+            rpc_data__.erase(call_id);
         }
     }),
         true);
@@ -107,22 +107,22 @@ void sf_rpc_client::call(const std::string& func_id,
 // std::function<void()> rpc_callback) {
 // const auto call_id = make_call_id__();
 //    sf_debug("async call 3", call_id);
-//    __rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
-//    __rpc_data__[call_id]->is_async = true;
-//    __rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
+//    rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
+//    rpc_data__[call_id]->is_async = true;
+//    rpc_data__[call_id]->async_callback = [=](const byte_array &data) {
 //        rpc_callback();
 //    };
 //    sf_rpc_req_context_t req;
 //    req.call_id = call_id;
 //    req.func_id = func_id;
 //    req.params = skyfire::to_json(byte_array());
-//    __tcp_client__->send(rpc_req_type,
+//    tcp_client__->send(rpc_req_type,
 //    to_byte_array(skyfire::to_json(req).to_string())); auto p_timer =
 //    std::make_shared<sf_timer>(); sf_bind_signal(p_timer, timeout, [=]() {
-//        if(__rpc_data__.count(call_id)!=0)
+//        if(rpc_data__.count(call_id)!=0)
 //        {
-//            __rpc_data__[call_id]->back_cond.notify_one();
-//            __rpc_data__.erase(call_id);
+//            rpc_data__[call_id]->back_cond.notify_one();
+//            rpc_data__.erase(call_id);
 //        }
 //    }, true);
 //    p_timer->start(rpc_timeout__, true);
@@ -140,36 +140,36 @@ sf_rpc_ret_t sf_rpc_client::call(const std::string& func_id,
 
     std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param { args... };
     const auto call_id = make_call_id__();
-    __rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
-    __rpc_data__[call_id]->is_async = false;
+    rpc_data__[call_id] = std::make_shared<sf_rpc_context_t>();
+    rpc_data__[call_id]->is_async = false;
 
     sf_rpc_req_context_t req;
     req.call_id = call_id;
     req.func_id = func_id;
     req.params = skyfire::to_json(param);
     sf_debug("call", skyfire::to_json(req));
-    __tcp_client__->send(rpc_req_type,
+    tcp_client__->send(rpc_req_type,
         to_byte_array(skyfire::to_json(req).to_string()));
     {
         bool wait_ret {};
         {
-            std::unique_lock<std::mutex> lck(__rpc_data__[call_id]->back_mu);
-            wait_ret = __rpc_data__[call_id]->back_cond.wait_for(
+            std::unique_lock<std::mutex> lck(rpc_data__[call_id]->back_mu);
+            wait_ret = rpc_data__[call_id]->back_cond.wait_for(
                 lck, std::chrono::milliseconds(rpc_timeout__),
-                [&]() -> bool { return __rpc_data__[call_id]->back_finished; });
+                [&]() -> bool { return rpc_data__[call_id]->back_finished; });
         }
         if (!wait_ret) {
-            __rpc_data__.erase(call_id);
+            rpc_data__.erase(call_id);
             sf_json ret;
             return { false, sf_json() };
         }
     }
 
     // 连接断开
-    if (!__rpc_data__[call_id]->back_finished) {
+    if (!rpc_data__[call_id]->back_finished) {
         return { false, sf_json() };
     }
-    return { true, sf_json::from_string(to_string(__rpc_data__[call_id]->data)) };
+    return { true, sf_json::from_string(to_string(rpc_data__[call_id]->data)) };
 }
 
 inline void sf_rpc_client::set_rpc_timeout(unsigned int ms)
@@ -180,22 +180,22 @@ inline void sf_rpc_client::set_rpc_timeout(unsigned int ms)
 inline sf_rpc_client::sf_rpc_client()
 {
     sf_bind_signal(
-        __tcp_client__, data_coming,
+        tcp_client__, data_coming,
         [this](const sf_pkg_header_t& header_t, const byte_array& data_t) {
             back_callback__(header_t, data_t);
         },
         true);
 
     sf_bind_signal(
-        __tcp_client__, closed, [this]() { close(); }, true);
+        tcp_client__, closed, [this]() { close(); }, true);
 }
 
-inline void sf_rpc_client::close() const { __tcp_client__->close(); }
+inline void sf_rpc_client::close() const { tcp_client__->close(); }
 
 inline bool sf_rpc_client::connect_to_server(const std::string ip,
     unsigned short port) const
 {
-    return __tcp_client__->connect_to_server(ip, port);
+    return tcp_client__->connect_to_server(ip, port);
 }
 
 inline void sf_rpc_client::back_callback__(const sf_pkg_header_t& header_t,
@@ -207,24 +207,24 @@ inline void sf_rpc_client::back_callback__(const sf_pkg_header_t& header_t,
     sf_rpc_res_context_t res;
     from_json(sf_json::from_string(to_string(data_t)), res);
     const auto call_id = res.call_id;
-    if (__rpc_data__.count(call_id) == 0) {
+    if (rpc_data__.count(call_id) == 0) {
         return;
     }
     sf_debug("call ret", to_string(data_t));
-    if (__rpc_data__[call_id]->is_async) {
-        __rpc_data__[call_id]->async_callback(data_t);
-        __rpc_data__.erase(call_id);
+    if (rpc_data__[call_id]->is_async) {
+        rpc_data__[call_id]->async_callback(data_t);
+        rpc_data__.erase(call_id);
     } else {
-        __rpc_data__[call_id]->header = header_t;
-        __rpc_data__[call_id]->data = data_t;
-        __rpc_data__[call_id]->back_finished = true;
-        __rpc_data__[call_id]->back_cond.notify_one();
+        rpc_data__[call_id]->header = header_t;
+        rpc_data__[call_id]->data = data_t;
+        rpc_data__[call_id]->back_finished = true;
+        rpc_data__[call_id]->back_cond.notify_one();
     }
 }
 
 inline void sf_rpc_client::on_closed__()
 {
-    for (auto& p : __rpc_data__) {
+    for (auto& p : rpc_data__) {
         if (!p.second->is_async) {
             p.second->back_finished = false;
             p.second->back_cond.notify_one();

@@ -36,7 +36,11 @@ class sf_rpc_server
     SF_REG_SIGNAL(client_disconnected, SOCKET)
 
 private:
-    std::shared_ptr<sf_tcp_server> __tcp_server__ = sf_tcp_server::make_instance();
+    std::unordered_set<SOCKET> client_list__;
+
+    std::shared_mutex mu_client_list__;
+
+    std::shared_ptr<sf_tcp_server> tcp_server__ = sf_tcp_server::make_instance();
 
     std::vector<std::function<void(SOCKET, const sf_rpc_req_context_t&)>>
         func_vec__;

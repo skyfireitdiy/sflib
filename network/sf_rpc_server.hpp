@@ -23,7 +23,7 @@ void sf_rpc_server::send_back__(const SOCKET sock, const int id_code,
     res.call_id = id_code;
     res.ret = skyfire::to_json(data);
     sf_debug("call ret", skyfire::to_json(res));
-    __tcp_server__->send(sock, rpc_res_type,
+    tcp_server__->send(sock, rpc_res_type,
         to_byte_array(skyfire::to_json(res).to_string()));
 }
 
@@ -81,25 +81,39 @@ void sf_rpc_server::reg_rpc_func(const std::string& id, _Func func)
 inline sf_rpc_server::sf_rpc_server()
 {
     sf_bind_signal(
-        sf_rpc_server::__tcp_server__, data_coming,
+        sf_rpc_server::tcp_server__, data_coming,
         [this](SOCKET sock, const sf_pkg_header_t& header,
             const byte_array& data) {
             on_data_coming__(sock, header, data);
         },
         true);
     sf_bind_signal(
-        sf_rpc_server::__tcp_server__, new_connection,
-        [this](SOCKET sock) { client_connected(sock); }, true);
+        sf_rpc_server::tcp_server__, new_connection,
+        [this](SOCKET sock) {
+            {
+                std::unique_lock<std::shared_mutex> lck(mu_client_list__);
+                client_list__.insert(sock);
+            }
+            client_connected(sock);
+        },
+        true);
     sf_bind_signal(
-        sf_rpc_server::__tcp_server__, closed,
-        [this](SOCKET sock) { client_disconnected(sock); }, true);
+        sf_rpc_server::tcp_server__, closed,
+        [this](SOCKET sock) {
+            {
+                std::unique_lock<std::shared_mutex> lck(mu_client_list__);
+                client_list__.erase(sock);
+            }
+            client_disconnected(sock);
+        },
+        true);
 }
 
 inline bool sf_rpc_server::listen(const std::string& ip,
     unsigned short port) const
 {
-    return __tcp_server__->listen(ip, port);
+    return tcp_server__->listen(ip, port);
 }
 
-inline void sf_rpc_server::close() const { __tcp_server__->close(); }
+inline void sf_rpc_server::close() const { tcp_server__->close(); }
 } // namespace skyfire
