@@ -11,13 +11,13 @@
 
 #pragma once
 
+#include "sf_rpc_utils.h"
+#include "sf_tcp_server.h"
+#include "tools/sf_nocopy.h"
 #include <functional>
 #include <memory>
 #include <string>
 #include <tuple>
-#include "sf_rpc_utils.h"
-#include "sf_tcp_server.h"
-#include "tools/sf_nocopy.h"
 
 namespace skyfire {
 
@@ -35,20 +35,19 @@ class sf_rpc_server
      */
     SF_REG_SIGNAL(client_disconnected, SOCKET)
 
-   private:
-    std::shared_ptr<sf_tcp_server> __tcp_server__ =
-        sf_tcp_server::make_instance();
+private:
+    std::shared_ptr<sf_tcp_server> __tcp_server__ = sf_tcp_server::make_instance();
 
-    std::vector<std::function<void(SOCKET, const sf_rpc_req_context_t &)>>
-        __func__vec__;
+    std::vector<std::function<void(SOCKET, const sf_rpc_req_context_t&)>>
+        func_vec__;
 
     template <typename _Type>
-    void __send_back(SOCKET sock, int id_code, _Type data);
+    void send_back__(SOCKET sock, int id_code, _Type data);
 
-    void __on_data_coming(SOCKET sock, const sf_pkg_header_t &header,
-                          const byte_array &data);
+    void on_data_coming__(SOCKET sock, const sf_pkg_header_t& header,
+        const byte_array& data);
 
-   public:
+public:
     sf_rpc_server();
 
     /**
@@ -57,7 +56,7 @@ class sf_rpc_server
      * @param func 函数
      */
     template <typename _Func>
-    void reg_rpc_func(const std::string &id, _Func func);
+    void reg_rpc_func(const std::string& id, _Func func);
 
     /**
      * @brief listen 监听
@@ -65,7 +64,7 @@ class sf_rpc_server
      * @param port 端口
      * @return 是否成功
      */
-    bool listen(const std::string &ip, unsigned short port) const;
+    bool listen(const std::string& ip, unsigned short port) const;
 
     /**
      * @brief close 关闭RPC服务器
@@ -75,4 +74,4 @@ class sf_rpc_server
     friend std::shared_ptr<sf_rpc_server>;
 };
 
-}    // namespace skyfire
+} // namespace skyfire
