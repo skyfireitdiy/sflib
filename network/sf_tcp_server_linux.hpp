@@ -17,29 +17,66 @@ inline sf_tcp_server::sf_tcp_server(const bool raw) { raw__ = raw; }
 
 inline SOCKET sf_tcp_server::raw_socket() { return listen_fd__; }
 
+inline epoll_context_t* sf_tcp_server::find_context__(SOCKET sock) const
+{
+    auto& epoll_data = epoll_data__();
+    {
+        std::shared_lock<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
+        if (epoll_data.sock_context__.count(sock) != 0) {
+            return &epoll_data;
+        }
+    }
+    {
+        std::shared_lock<std::shared_mutex> lck(mu_context_pool__);
+        for (auto& p : context_pool__) {
+            {
+                std::shared_lock<std::shared_mutex> lck(p->mu_epoll_context__);
+                if (p->sock_context__.count(sock) != 0) {
+                    sf_debug("found sock in sock_context__", sock, &p->sock_context__, context_pool__.size());
+                    return p;
+                }
+                sf_debug("not found sock in sock_context__", sock, &p->sock_context__, context_pool__.size());
+            }
+        }
+    }
+    sf_debug(sock, "socket fd not found");
+    return nullptr;
+}
+
 inline bool sf_tcp_server::send(int sock, const byte_array& data)
 {
-    auto& sock_context__ = epoll_data__().sock_context__;
+    sf_debug("send", to_string(data));
+    auto psock_context_data__ = find_context__(sock);
+    if (psock_context_data__ == nullptr) {
+        sf_debug("psock_context_data__ is nullptr");
+        return false;
+    }
+
+    std::shared_lock<std::shared_mutex> lck(psock_context_data__->mu_epoll_context__);
+    auto& sock_context__ = psock_context_data__->sock_context__;
+
     auto send_data = data;
     before_raw_send_filter__(sock, send_data);
 
-    {
-        std::lock_guard<std::shared_mutex> lck(
-            *sock_context__[sock].mu_data_buffer_out);
-        sock_context__[sock].data_buffer_out.push_back(send_data);
-    }
+    sock_context__[sock].data_buffer_out.push_back(send_data);
+    sf_debug("add data to buf", to_string(send_data), &sock_context__[sock].data_buffer_out);
 
     sock_context__[sock].ev.events |= EPOLLOUT;
 
-    return epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_MOD, sock,
+    return epoll_ctl(psock_context_data__->epoll_fd, EPOLL_CTL_MOD, sock,
                &sock_context__[sock].ev)
         != -1;
 }
 
 inline bool sf_tcp_server::send(int sock, int type, const byte_array& data)
 {
-    auto& sock_context__ = epoll_data__().sock_context__;
-
+    auto psock_context_data__ = find_context__(sock);
+    if (psock_context_data__ == nullptr) {
+        sf_debug("psock_context_data__ is nullptr");
+        return false;
+    }
+    std::shared_lock<std::shared_mutex> lck(psock_context_data__->mu_epoll_context__);
+    auto& sock_context__ = psock_context_data__->sock_context__;
     sf_pkg_header_t header {};
     header.type = htonl(type);
     header.length = htonl(data.size());
@@ -50,15 +87,11 @@ inline bool sf_tcp_server::send(int sock, int type, const byte_array& data)
 
     before_raw_send_filter__(sock, send_data);
 
-    {
-        std::shared_lock<std::shared_mutex> lck(
-            *sock_context__[sock].mu_data_buffer_out);
-        sock_context__[sock].data_buffer_out.push_back(send_data);
-    }
+    sock_context__[sock].data_buffer_out.push_back(send_data);
 
     sock_context__[sock].ev.events |= EPOLLOUT;
 
-    return epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_MOD, sock,
+    return epoll_ctl(psock_context_data__->epoll_fd, EPOLL_CTL_MOD, sock,
                &sock_context__[sock].ev)
         != -1;
 }
@@ -136,19 +169,30 @@ inline void sf_tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
     sf_debug("start thread");
     epoll_data__().epoll_fd = epoll_create(max_tcp_connection);
 
-    auto& sock_context__ = epoll_data__().sock_context__;
+    auto& epoll_data = epoll_data__();
+    {
+        std::unique_lock<std::shared_mutex>
+            lck(mu_context_pool__);
+        context_pool__.push_back(&epoll_data);
+        sf_debug("create epoll_data, sock_context__", &epoll_data.sock_context__, context_pool__.size());
+    }
 
-    if (listen_thread) {
-        sock_context__[listen_fd] = sock_data_context_t {};
-        sock_context__[listen_fd].ev.events = EPOLLIN | EPOLLET;
-        sock_context__[listen_fd].ev.data.fd = listen_fd;
+    {
+        std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
+        auto& sock_context__ = epoll_data.sock_context__;
 
-        if (epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_ADD, listen_fd,
-                &sock_context__[listen_fd].ev)
-            < 0) {
-            sf_debug("add to epoll error");
-            close(listen_fd);
-            return;
+        if (listen_thread) {
+            sock_context__[listen_fd] = sock_data_context_t {};
+            sock_context__[listen_fd].ev.events = EPOLLIN | EPOLLET;
+            sock_context__[listen_fd].ev.data.fd = listen_fd;
+
+            if (epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_ADD, listen_fd,
+                    &sock_context__[listen_fd].ev)
+                < 0) {
+                sf_debug("add to epoll error");
+                close(listen_fd);
+                return;
+            }
         }
     }
     std::vector<epoll_event> evs(max_tcp_connection);
@@ -195,11 +239,14 @@ inline sf_tcp_server::~sf_tcp_server() { close(); }
 inline bool sf_tcp_server::in_dispatch__(SOCKET fd)
 {
     sf_debug("add new fd", fd);
-
-    auto& sock_context__ = epoll_data__().sock_context__;
+    auto& epoll_data = epoll_data__();
+    std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
+    auto& sock_context__ = epoll_data.sock_context__;
     sock_context__[fd] = sock_data_context_t {};
     sock_context__[fd].ev.events = EPOLLIN | EPOLLET;
     sock_context__[fd].ev.data.fd = fd;
+
+    sf_debug("add sock to sock_context__", fd, &sock_context__);
 
     if (epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_ADD, fd,
             &sock_context__[fd].ev)
@@ -241,9 +288,11 @@ inline bool sf_tcp_server::handle_accept__()
     } else {
         sf_debug("accept error");
         {
-            epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_DEL, listen_fd__,
-                &epoll_data__().sock_context__[listen_fd__].ev);
-            epoll_data__().sock_context__.erase(listen_fd__);
+            auto& epoll_data = epoll_data__();
+            std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
+            epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_DEL, listen_fd__,
+                &epoll_data.sock_context__[listen_fd__].ev);
+            epoll_data.sock_context__.erase(listen_fd__);
         }
         return false;
     }
@@ -253,7 +302,8 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
 {
     byte_array recv_buf(sf_default_buffer_size);
     sf_pkg_header_t header {};
-    auto& sock_context__ = epoll_data__().sock_context__;
+    auto& epoll_data = epoll_data__();
+    auto& sock_context__ = epoll_data.sock_context__;
     while (true) {
         sf_debug("start read", ev.data.fd);
         auto count_read = static_cast<int>(
@@ -268,6 +318,7 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
             } else {
                 disconnect_sock_filter__(ev.data.fd);
                 {
+                    std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
                     epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_DEL,
                         ev.data.fd, &sock_context__[ev.data.fd].ev);
                     sock_context__.erase(ev.data.fd);
@@ -285,6 +336,7 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
             raw_data_coming(ev.data.fd, recv_buf);
             sf_debug("after resolve");
         } else {
+            std::shared_lock<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
             sock_context__[ev.data.fd].data_buffer_in.insert(
                 sock_context__[ev.data.fd].data_buffer_in.end(),
                 recv_buf.begin(), recv_buf.end());
@@ -326,21 +378,20 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
 
 inline void sf_tcp_server::handle_write__(const epoll_event& ev)
 {
-    auto& sock_context__ = epoll_data__().sock_context__;
+    auto& epoll_data = epoll_data__();
+    auto& sock_context__ = epoll_data.sock_context__;
     SOCKET fd = ev.data.fd;
     {
-        std::shared_lock<std::shared_mutex> lck(
-            *sock_context__[fd].mu_data_buffer_out);
+        std::shared_lock<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
         if (sock_context__[fd].data_buffer_out.empty()) {
-            sf_debug("sock", fd, "empty");
+            sf_debug("sock", fd, "empty", &sock_context__[fd].data_buffer_out);
             return;
         }
     }
     while (true) {
         byte_array p;
         {
-            std::shared_lock<std::shared_mutex> lck(
-                *sock_context__[fd].mu_data_buffer_out);
+            std::shared_lock<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
             if (sock_context__[fd].data_buffer_out.empty()) {
                 write_finished(fd);
                 sock_context__[fd].ev.events &= ~EPOLLOUT;
@@ -352,6 +403,7 @@ inline void sf_tcp_server::handle_write__(const epoll_event& ev)
             }
             p = sock_context__[fd].data_buffer_out.front();
         }
+
         sf_debug("pkg size:", p.size());
         auto data_size = p.size();
         auto n = data_size;
@@ -375,6 +427,7 @@ inline void sf_tcp_server::handle_write__(const epoll_event& ev)
             n -= tmp_write;
         }
         if (error_flag) {
+            std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
             sf_debug("write error");
             disconnect_sock_filter__(fd);
             epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_DEL, fd,
@@ -384,8 +437,7 @@ inline void sf_tcp_server::handle_write__(const epoll_event& ev)
             sock_context__.erase(fd);
             break;
         } else {
-            std::lock_guard<std::shared_mutex> lck(
-                *sock_context__[fd].mu_data_buffer_out);
+            std::shared_lock<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
             if (n == 0) {
                 sf_debug("pop front");
                 sf_debug(fd, "before",
