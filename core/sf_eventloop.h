@@ -13,7 +13,7 @@
 
 #include "sf_stdc++.h"
 
-#include "sf_msg_queue.hpp"
+#include "core/sf_object_msg_queue.hpp"
 #include "tools/sf_nocopy.h"
 
 namespace skyfire {
@@ -21,11 +21,11 @@ namespace skyfire {
  *  @brief 消息循环
  */
 class sf_eventloop final : sf_nocopy<> {
-   private:
-    sf_msg_queue* __p_msg_queue__ = sf_msg_queue::instance();
-    std::atomic<int> running__{0};
+private:
+    sf_object_msg_queue* __p_msg_queue__ = sf_object_msg_queue::instance();
+    std::atomic<int> running__ { 0 };
 
-   public:
+public:
     /**
      * @brief sf_eventloop 构造一个事件循环对象
      */
@@ -52,4 +52,4 @@ class sf_eventloop final : sf_nocopy<> {
     void quit();
 };
 
-}    // namespace skyfire
+} // namespace skyfire

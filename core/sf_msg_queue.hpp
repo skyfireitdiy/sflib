@@ -15,41 +15,51 @@
 
 namespace skyfire {
 
-inline void sf_msg_queue::add_msg(void *id, std::function<void()> func) {
-    std::lock_guard<std::mutex> lck(mu_func_data_op__);
-    func_data__.emplace_back(id, func);
+template <typename T>
+void sf_msg_queue<T>::add_msg(T msg)
+{
+    std::lock_guard<std::mutex> lck(mu_data_op__);
+    data__.emplace_back(msg);
     wait_cond__.notify_all();
 }
 
-inline void sf_msg_queue::remove_msg(void *id) {
-    std::lock_guard<std::mutex> lck(mu_func_data_op__);
-    func_data__.remove_if(
-        [=](const std::pair<void *, std::function<void()>> dt) {
-            return dt.first == id;
-        });
+template <typename T>
+void sf_msg_queue<T>::remove_msg(std::function<bool(const T&)> op)
+{
+    std::lock_guard<std::mutex> lck(mu_data_op__);
+    data__.remove_if(
+        op);
 }
 
-inline void sf_msg_queue::clear() {
-    std::lock_guard<std::mutex> lck(mu_func_data_op__);
-    func_data__.clear();
+template <typename T>
+void sf_msg_queue<T>::clear()
+{
+    std::lock_guard<std::mutex> lck(mu_data_op__);
+    data__.clear();
 }
 
-inline std::function<void()> sf_msg_queue::take() {
-    std::lock_guard<std::mutex> lck(mu_func_data_op__);
-    if (func_data__.empty()) {
-        return std::function<void()>();
+template <typename T>
+std::shared_ptr<T> sf_msg_queue<T>::take_msg()
+{
+    std::lock_guard<std::mutex> lck(mu_data_op__);
+    if (data__.empty()) {
+        return nullptr;
     }
-    auto ret = func_data__.begin()->second;
-    func_data__.pop_front();
+    auto ret = std::make_shared<T>(data__.front());
+    data__.pop_front();
     return ret;
 }
 
-inline bool sf_msg_queue::empty() const { return func_data__.empty(); }
+template <typename T>
+bool sf_msg_queue<T>::empty() const { return data__.empty(); }
 
-inline void sf_msg_queue::wait_msg() {
-    std::unique_lock<std::mutex> lck(mu_func_data_op__);
+template <typename T>
+void sf_msg_queue<T>::wait_msg()
+{
+    std::unique_lock<std::mutex> lck(mu_data_op__);
     wait_cond__.wait(lck);
 }
 
-inline void sf_msg_queue::add_empty_msg() { wait_cond__.notify_all(); }
-}    // namespace skyfire
+template <typename T>
+void sf_msg_queue<T>::add_empty_msg() { wait_cond__.notify_all(); }
+} // namespace skyfire

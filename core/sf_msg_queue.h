@@ -18,30 +18,26 @@ namespace skyfire {
 /**
  *  @brief 消息队列
  */
-class sf_msg_queue final {
-   public:
-    SF_SINGLE_TON(sf_msg_queue);
-
-   private:
-    sf_msg_queue() = default;
-    std::list<std::pair<void *, std::function<void()>>> func_data__;
-    std::mutex mu_func_data_op__;
+template <typename T>
+class sf_msg_queue {
+private:
+    std::list<T> data__;
+    std::mutex mu_data_op__;
 
     std::condition_variable wait_cond__;
 
-   public:
+public:
     /**
      * 增加消息
-     * @param id 对象
-     * @param func 要调用的函数
+     * @param msg 要调用的函数
      */
-    void add_msg(void *id, std::function<void()> func);
+    void add_msg(T msg);
 
     /**
-     * 删除对象的所有消息
-     * @param id 对象
+     * 删除消息
+     * @param op 判断是否删除的谓词
      */
-    void remove_msg(void *id);
+    void remove_msg(std::function<bool(const T&)> op);
 
     /**
      * 清空消息
@@ -50,9 +46,9 @@ class sf_msg_queue final {
 
     /**
      * 获取一条消息
-     * @return
+     * @return 返回消息，如果没有消息，返回nullptr
      */
-    std::function<void()> take();
+    std::shared_ptr<T> take_msg();
 
     /**
      * 判断是否队列为空
@@ -71,4 +67,4 @@ class sf_msg_queue final {
     void add_empty_msg();
 };
 
-}    // namespace skyfire
+} // namespace skyfire
