@@ -13,7 +13,8 @@ namespace skyfire {
 
 template <typename T>
 typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(
-    const T &data) {
+    const T& data)
+{
     byte_array ret(sizeof(data));
 #ifdef _WIN32
     memmove_s(ret.data(), sizeof(data), &data, sizeof(data));
@@ -27,7 +28,8 @@ typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 template <typename T>
 typename std::enable_if<std::is_pod<T>::value, T>::type take_pkg(
-    const byte_array &data) {
+    const byte_array& data)
+{
     assert(data.size() == sizeof(T));
     T ret;
 #ifdef _WIN32
@@ -39,28 +41,34 @@ typename std::enable_if<std::is_pod<T>::value, T>::type take_pkg(
 }
 #pragma clang diagnostic pop
 
-inline void make_header_checksum(sf_pkg_header_t &header) {
+inline void make_header_checksum(sf_pkg_header_t& header)
+{
     header.checksum = 0;
     auto offset = SF_GET_OFFSET(sf_pkg_header_t, type);
-    auto p_byte = reinterpret_cast<const unsigned char *>(&header);
+    auto p_byte = reinterpret_cast<const unsigned char*>(&header);
     for (auto i = offset; i < sizeof(header); ++i) {
         header.checksum ^= p_byte[i];
     }
 }
 
-inline bool check_header_checksum(const sf_pkg_header_t &header) {
+inline bool check_header_checksum(const sf_pkg_header_t& header)
+{
     unsigned char checksum = 0;
     auto offset = SF_GET_OFFSET(sf_pkg_header_t, type);
-    auto p_byte = reinterpret_cast<const unsigned char *>(&header);
+    auto p_byte = reinterpret_cast<const unsigned char*>(&header);
     for (auto i = offset; i < sizeof(header); ++i) {
         checksum ^= p_byte[i];
     }
     return checksum == header.checksum;
 }
 
-inline unsigned long long sf_ntoh64(unsigned long long input) {
+inline unsigned long long sf_ntoh64(unsigned long long input)
+{
+    if (sf_big_endian()) {
+        return input;
+    }
     unsigned long long val;
-    auto *data = reinterpret_cast<unsigned char *>(&val);
+    auto* data = reinterpret_cast<unsigned char*>(&val);
 
     data[0] = static_cast<unsigned char>(input >> 56);
     data[1] = static_cast<unsigned char>(input >> 48);
@@ -73,7 +81,14 @@ inline unsigned long long sf_ntoh64(unsigned long long input) {
     return val;
 }
 
-inline unsigned long long sf_hton64(unsigned long long input) {
+inline unsigned long long sf_hton64(unsigned long long input)
+{
     return (sf_ntoh64(input));
 }
-}    // namespace skyfire
+
+inline bool sf_big_endian()
+{
+    char data[4] = { 0x12, 0x34, 0x56, 0x78 };
+    return *reinterpret_cast<int*>(data) == 0x12345678;
+}
+} // namespace skyfire

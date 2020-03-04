@@ -91,4 +91,12 @@ inline unsigned long long sf_ntoh64(unsigned long long input);
  */
 inline unsigned long long sf_hton64(unsigned long long input);
 
+/**
+ * @brief 是否是大端序
+ * 
+ * @return true 大端序
+ * @return false 非大端序
+ */
+inline bool sf_big_endian();
+
 } // namespace skyfire

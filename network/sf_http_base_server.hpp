@@ -498,7 +498,6 @@ inline void sf_http_base_server::websocket_data_coming__(
         auto op_code = -1;
         byte_array body;
 
-        // TODO 根据不同的len，获取body
         auto len = sf_get_size(*header1);
         sf_debug("base len", len);
         if (len == 126) {
