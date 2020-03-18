@@ -41,46 +41,6 @@ inline sf_object::~sf_object()
 }
 
 template <typename _VectorType>
-void sf_object::__sf_aop_unbind_helper(std::recursive_mutex& mu,
-    _VectorType& vec, int bind_id)
-{
-    std::lock_guard<std::recursive_mutex> lck(mu);
-    vec.erase(std::remove_if(vec.begin(), vec.end(),
-                  [=](auto p) { return std::get<1>(p) == bind_id; }),
-        vec.end());
-}
-
-template <typename _VectorType, typename _FuncType>
-int sf_object::__sf_aop_after_add_helper(std::recursive_mutex& mu,
-    _VectorType& vec, _FuncType func)
-{
-    std::lock_guard<std::recursive_mutex> lck(mu);
-    int bind_id = sf_random::instance()->rand_int(0, INT_MAX);
-    while (std::find_if(vec.begin(), vec.end(), [=](auto p) {
-        return std::get<1>(p) == bind_id;
-    }) != vec.end()) {
-        bind_id = sf_random::instance()->rand_int(0, INT_MAX);
-    }
-    vec.push_back(std::make_tuple(func, bind_id));
-    return bind_id;
-}
-
-template <typename _VectorType, typename _FuncType>
-int sf_object::__sf_aop_before_add_helper(std::recursive_mutex& mu,
-    _VectorType& vec, _FuncType func)
-{
-    std::lock_guard<std::recursive_mutex> lck(mu);
-    int bind_id = sf_random::instance()->rand_int(0, INT_MAX);
-    while (std::find_if(vec.begin(), vec.end(), [=](auto p) {
-        return std::get<1>(p) == bind_id;
-    }) != vec.end()) {
-        bind_id = sf_random::instance()->rand_int(0, INT_MAX);
-    }
-    vec.insert(vec.begin(), std::make_tuple(func, bind_id));
-    return bind_id;
-}
-
-template <typename _VectorType>
 void sf_object::__sf_signal_unbind_helper(std::recursive_mutex& mu,
     _VectorType& vec, int bind_id)
 {

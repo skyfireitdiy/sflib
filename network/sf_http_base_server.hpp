@@ -413,7 +413,7 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
                 normal_response__(sock, res);
                 return;
             }
-            auto data = file_cache__->data<cahce_data_t>(file.filename);
+            auto data = file_cache__->data<file_cache_data_t>(file.filename);
             if (data && data->modify_time == modify_time) {
                 res.set_body(data->data);
                 normal_response__(sock, res);
@@ -423,7 +423,7 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
                     res.set_status(404);
                     normal_response__(sock, res);
                 } else {
-                    file_cache__->set_data(file.filename, cahce_data_t { content, modify_time });
+                    file_cache__->set_data(file.filename, file_cache_data_t { content, modify_time });
                     res.set_body(content);
                     normal_response__(sock, res);
                 }

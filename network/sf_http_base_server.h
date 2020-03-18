@@ -64,7 +64,7 @@ private:
         sf_json data;
     };
 
-    struct cahce_data_t {
+    struct file_cache_data_t {
         byte_array data;
         fs::file_time_type modify_time;
     };
