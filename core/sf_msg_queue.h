@@ -51,13 +51,25 @@ public:
     std::shared_ptr<T> take_msg();
 
     /**
+     * @brief 获取所有消息
+     * 
+     * @return std::list<T> 所有消息
+     */
+    std::list<T> take_all_msg();
+
+    /**
      * 判断是否队列为空
      * @return 是否为空
      */
     bool empty() const;
 
     /**
-     * 等待消息到来
+     * 等待新消息到来
+     */
+    void wait_new_msg();
+
+    /**
+     * 等待消息(有消息会直接返回)
      */
     void wait_msg();
 

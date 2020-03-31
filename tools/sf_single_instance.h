@@ -41,21 +41,14 @@ private:
  * 侵入式单例宏实现
  */
 
-#define SF_SINGLE_TON(ClassName)                         \
-    ClassName(const ClassName&) = delete;                \
-    ClassName(ClassName&&) = delete;                     \
-    ClassName& operator=(const ClassName&) = delete;     \
-    static ClassName* instance()                         \
-    {                                                    \
-        static std::mutex init_mutex;                    \
-        static ClassName* instance__ { nullptr };        \
-        if (instance__ == nullptr) {                     \
-            std::lock_guard<std::mutex> lck(init_mutex); \
-            if (instance__ == nullptr) {                 \
-                instance__ = new ClassName;              \
-            }                                            \
-        }                                                \
-        return instance__;                               \
+#define SF_SINGLE_TON(ClassName)                     \
+    ClassName(const ClassName&) = delete;            \
+    ClassName(ClassName&&) = delete;                 \
+    ClassName& operator=(const ClassName&) = delete; \
+    static ClassName* instance()                     \
+    {                                                \
+        static ClassName instance__;                 \
+        return &instance__;                          \
     }
 
 #pragma clang diagnostic pop

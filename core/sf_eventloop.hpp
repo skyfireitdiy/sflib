@@ -32,7 +32,7 @@ inline void sf_eventloop::exec()
             break;
         }
         if (__p_msg_queue__->empty()) {
-            __p_msg_queue__->wait_msg();
+            __p_msg_queue__->wait_new_msg();
         }
         if (!__p_msg_queue__->empty()) {
             auto fp = __p_msg_queue__->take_msg();
