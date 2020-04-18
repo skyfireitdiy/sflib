@@ -10,7 +10,7 @@
 
 * 根对象`sf_object`
 
-  `提供基于观察者模式的事件循环机制，附加包括sf_eventloop（事件循环）、sf_timer（定时器）、sf_event_waiter（事件等待）,并且支持侵入式面向切面编程。`
+  `提供基于观察者模式的事件循环机制，附加包括sf_eventloop（事件循环）、sf_timer（定时器）、sf_event_waiter（事件等待）。`
   
 * RAII管理类`sf_finally`
 
