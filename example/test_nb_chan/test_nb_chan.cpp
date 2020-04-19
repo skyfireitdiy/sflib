@@ -24,7 +24,7 @@ void product(const shared_ptr<sf_chan<int>>& ch)
 {
     for (int i = 0; i < 100; ++i) {
         this_thread::sleep_for(chrono::seconds(3));
-        ch << i;
+        i >> ch;
         {
             lock_guard<mutex> lck(mu);
             cout << "thread:" << this_thread::get_id() << " product:" << i << endl;
@@ -39,7 +39,7 @@ void custom(const shared_ptr<sf_chan<int>>& ch)
         while (true) {
             int i;
             this_thread::sleep_for(chrono::seconds(1));
-            i << ch;
+            ch >> i;
             {
                 lock_guard<mutex> lck(mu);
                 cout << "\t\tthread:" << this_thread::get_id() << " custom:" << i << endl;

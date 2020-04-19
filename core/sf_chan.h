@@ -57,7 +57,7 @@ public:
      * @param d 读取的数据
      * @param ch 管道
      */
-    friend void operator<<(T& d, sf_chan<T>& ch)
+    friend void operator>>(sf_chan<T>& ch, T& d)
     {
         if (ch.closed__) {
             throw sf_chan_close_exception();
@@ -86,7 +86,7 @@ public:
      * @param ch 管道
      * @param d 写入的数据
      */
-    friend void operator<<(sf_chan<T>& ch, T d)
+    friend void operator>>(T d, sf_chan<T>& ch)
     {
         if (ch.closed__) {
             throw sf_chan_close_exception();
@@ -116,14 +116,14 @@ public:
         }
     }
 
-    friend void operator<<(T& d, const std::shared_ptr<sf_chan<T>> ch)
+    friend void operator>>(T& d, const std::shared_ptr<sf_chan<T>> ch)
     {
-        d << *ch;
+        d >> *ch;
     }
 
-    friend void operator<<(const std::shared_ptr<sf_chan<T>> ch, T d)
+    friend void operator>>(const std::shared_ptr<sf_chan<T>> ch, T d)
     {
-        *ch << d;
+        *ch >> d;
     }
 };
 
