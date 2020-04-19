@@ -20,8 +20,8 @@ namespace skyfire {
 /**
  *  @brief  线程池
  */
-class sf_thread_pool : public sf_make_instance_t<sf_thread_pool>{
-   public:
+class sf_thread_pool : public sf_make_instance_t<sf_thread_pool> {
+public:
     /**
      * @brief sf_thread_pool 构造函数
      * @param thread_count 线程数量
@@ -36,7 +36,7 @@ class sf_thread_pool : public sf_make_instance_t<sf_thread_pool>{
      * @param args 参数
      */
     template <typename Func, typename... Args>
-    auto add_task(Func func, Args &&... args);
+    auto add_task(Func func, Args&&... args);
 
     /**
      * @brief pause 暂停
@@ -81,17 +81,17 @@ class sf_thread_pool : public sf_make_instance_t<sf_thread_pool>{
      */
     void wait_all_task_finished();
 
-   private:
-    std::atomic<size_t> thread_count__{4};
+private:
+    std::atomic<size_t> thread_count__ { 0 };
     std::deque<std::function<void()>> task_deque__;
 
-    static void thread_run__(sf_thread_pool *this__);
+    static void thread_run__(sf_thread_pool* this__);
 
     std::mutex mu_task_deque__;
     std::vector<std::shared_ptr<std::thread>> thread_vec__;
-    bool is_pause__{false};
-    bool is_exit__{false};
-    std::atomic_int busy_thread_num__{0};
+    bool is_pause__ { false };
+    bool is_exit__ { false };
+    std::atomic_int busy_thread_num__ { 0 };
     std::mutex mu_thread__cv__;
     std::condition_variable thread_cv__;
     std::mutex mu_wait_finish__;
@@ -100,6 +100,6 @@ class sf_thread_pool : public sf_make_instance_t<sf_thread_pool>{
     void add_thread__(size_t num);
 };
 
-}    // namespace skyfire
+} // namespace skyfire
 
 #pragma clang diagnostic pop

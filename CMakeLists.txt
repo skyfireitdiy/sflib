@@ -54,6 +54,7 @@ add_executable(test_factory example/test_factory/test_factory.cpp ${headers})
 add_executable(test_argv example/test_argv/test_argv.cpp ${headers})
 add_executable(test_chan example/test_chan/test_chan.cpp ${headers})
 add_executable(test_nb_chan example/test_nb_chan/test_nb_chan.cpp ${headers})
+add_executable(test_sf_test example/test_sf_test/test_sf_test.cpp ${headers})
 
 
 IF (WIN32)
@@ -85,6 +86,7 @@ ELSE()
     target_link_libraries(test_argv pthread)
     target_link_libraries(test_chan pthread)
     target_link_libraries(test_nb_chan pthread)
+    target_link_libraries(test_sf_test pthread)
 
 ENDIF ()
 

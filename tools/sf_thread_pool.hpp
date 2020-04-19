@@ -17,14 +17,18 @@
 
 namespace skyfire {
 
-inline sf_thread_pool::sf_thread_pool(const size_t thread_count) {
+inline sf_thread_pool::sf_thread_pool(size_t thread_count)
+{
+    if (thread_count < 1) {
+        thread_count = 1;
+    }
     add_thread__(thread_count);
 }
 
-inline void sf_thread_pool::thread_run__(sf_thread_pool *this__) {
+inline void sf_thread_pool::thread_run__(sf_thread_pool* this__)
+{
     while (true) {
-        while ((!this__->is_exit__) &&
-               (this__->is_pause__ || this__->task_deque__.empty())) {
+        while ((!this__->is_exit__) && (this__->is_pause__ || this__->task_deque__.empty())) {
             ++this__->busy_thread_num__;
             std::unique_lock<std::mutex> lck_cv(this__->mu_thread__cv__);
             this__->thread_cv__.wait(lck_cv);
@@ -52,7 +56,8 @@ inline void sf_thread_pool::thread_run__(sf_thread_pool *this__) {
     }
 }
 
-inline void sf_thread_pool::add_thread__(size_t num) {
+inline void sf_thread_pool::add_thread__(size_t num)
+{
     if (num < 1) {
         num = 1;
     }
@@ -63,45 +68,52 @@ inline void sf_thread_pool::add_thread__(size_t num) {
     }
 }
 
-inline void sf_thread_pool::wait_all_task_finished() {
+inline void sf_thread_pool::wait_all_task_finished()
+{
     while (!task_deque__.empty()) {
         std::unique_lock<std::mutex> lck_cv(mu_wait_finish__);
         wait_finish_cv__.wait(lck_cv);
     }
 }
 
-inline void sf_thread_pool::clear_task() {
+inline void sf_thread_pool::clear_task()
+{
     std::lock_guard<std::mutex> lck(mu_task_deque__);
     task_deque__.clear();
 }
 
-inline void sf_thread_pool::clear_thread() {
+inline void sf_thread_pool::clear_thread()
+{
     is_pause__ = false;
     is_exit__ = true;
     thread_cv__.notify_all();
-    for (auto &p : thread_vec__) {
+    for (auto& p : thread_vec__) {
         p->join();
     }
     thread_vec__.clear();
 }
 
-inline size_t sf_thread_pool::busy_thread_count() const {
+inline size_t sf_thread_pool::busy_thread_count() const
+{
     return static_cast<size_t>(busy_thread_num__);
 }
 
 inline size_t sf_thread_pool::thread_count() const { return thread_count__; }
 
-inline void sf_thread_pool::add_thread(const size_t thread_num) {
+inline void sf_thread_pool::add_thread(const size_t thread_num)
+{
     add_thread__(thread_num);
 }
 
-inline void sf_thread_pool::resume() {
+inline void sf_thread_pool::resume()
+{
     is_pause__ = false;
     thread_cv__.notify_all();
 }
 
 template <typename Func, typename... Args>
-auto sf_thread_pool::add_task(Func func, Args &&... args) {
+auto sf_thread_pool::add_task(Func func, Args&&... args)
+{
     using _Ret = std::invoke_result_t<Func, Args...>;
     auto task = std::make_shared<std::packaged_task<_Ret()>>(
         std::bind(func, std::forward<Args>(args)...));
@@ -118,6 +130,6 @@ inline sf_thread_pool::~sf_thread_pool() { clear_thread(); }
 
 inline void sf_thread_pool::pause() { is_pause__ = true; }
 
-}    // namespace skyfire
+} // namespace skyfire
 
 #pragma clang diagnostic pop
