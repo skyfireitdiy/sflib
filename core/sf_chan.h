@@ -15,7 +15,7 @@
 #include <mutex>
 #include <queue>
 
-#include "core/sf_chan_utils.h"
+#include "core/sf_error.h"
 #include "tools/sf_nocopy.h"
 #include "tools/sf_utils.h"
 

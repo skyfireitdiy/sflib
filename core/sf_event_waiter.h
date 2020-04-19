@@ -13,25 +13,23 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include <condition_variable>
-#include <mutex>
 #include "sf_object.hpp"
 #include "tools/sf_meta.hpp"
 #include "tools/sf_nocopy.h"
+#include <condition_variable>
+#include <mutex>
 
 /*
  * @brief sf_wait 等待事件
  * @param obj 对象
  * @param name 信号
  */
-#define SF_WAIT(obj, name)                                                 \
-    {                                                                      \
-        auto p_waiter =                                                    \
-            skyfire::sf_make_waiter((obj)->__##name##_signal_func_vec__);  \
-        auto bind_id =                                                     \
-            sf_bind_signal(obj, name, p_waiter->__make_quit_func(), true); \
-        p_waiter->wait();                                                  \
-        sf_unbind_signal(obj, name, bind_id);                              \
+#define SF_WAIT(obj, name)                                                            \
+    {                                                                                 \
+        auto p_waiter = skyfire::sf_make_waiter((obj)->__##name##_signal_func_vec__); \
+        auto bind_id = sf_bind_signal(obj, name, p_waiter->make_quit_func__(), true); \
+        p_waiter->wait();                                                             \
+        sf_unbind_signal(obj, name, bind_id);                                         \
     }
 
 namespace skyfire {
@@ -41,19 +39,19 @@ namespace skyfire {
  */
 template <typename... ARGS>
 class sf_event_waiter : public sf_nocopy<> {
-   private:
+private:
     std::mutex mu_cond__;
     std::condition_variable cond__;
 
     template <std::size_t... Index>
-    auto __make_quit_func_helper(std::index_sequence<Index...>);
+    auto make_quit_func_helper__(std::index_sequence<Index...>);
 
-   public:
+public:
     /**
      * 生成退出函数
      * @return 退出函数
      */
-    auto __make_quit_func();
+    auto make_quit_func__();
 
     /**
      * @brief wait 等待
@@ -73,8 +71,8 @@ class sf_event_waiter : public sf_nocopy<> {
  */
 template <typename... ARGS>
 std::shared_ptr<sf_event_waiter<ARGS...>> sf_make_waiter(
-    const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>> &);
+    const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>>&);
 
-}    // namespace skyfire
+} // namespace skyfire
 
 #pragma clang diagnostic pop
