@@ -9,6 +9,7 @@
 #pragma ide diagnostic ignored "OCDFAInspection"
 
 #include "sf_tcp_nat_traversal_client.h"
+#include "core/sf_error.h"
 
 namespace skyfire {
 
@@ -34,7 +35,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
     if (!local_addr(client__->raw_socket(), server_addr)) {
         context.error_code = sf_err_disconnect;
         client__->send(
-            type_nat_traversal_error,
+            sf_err_nat_traversal_err,
             to_byte_array(
                 skyfire::to_json(connect_context_map__[context.connect_id]
                                      .tcp_nat_traversal_context)
@@ -53,7 +54,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
             server_addr.ip, auto_port)) {
         context.error_code = sf_err_bind_err;
         client__->send(
-            type_nat_traversal_error,
+            sf_err_nat_traversal_err,
             to_byte_array(
                 skyfire::to_json(connect_context_map__[context.connect_id]
                                      .tcp_nat_traversal_context)
@@ -90,7 +91,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
             server_addr.ip, auto_port)) {
         context.error_code = sf_err_bind_err;
         client__->send(
-            type_nat_traversal_error,
+            sf_err_nat_traversal_err,
             to_byte_array(
                 skyfire::to_json(connect_context_map__[context.connect_id]
                                      .tcp_nat_traversal_context)
@@ -105,7 +106,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
             server_addr.ip, auto_port)) {
         context.error_code = sf_err_disconnect;
         client__->send(
-            type_nat_traversal_error,
+            sf_err_nat_traversal_err,
             to_byte_array(
                 skyfire::to_json(connect_context_map__[context.connect_id]
                                      .tcp_nat_traversal_context)
@@ -144,7 +145,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
                                                   server_addr__.port)) {
         context.error_code = sf_err_disconnect;
         client__->send(
-            type_nat_traversal_error,
+            sf_err_nat_traversal_err,
             to_byte_array(
                 skyfire::to_json(connect_context_map__[context.connect_id]
                                      .tcp_nat_traversal_context)
@@ -163,7 +164,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
                     .to_string()))) {
         context.error_code = sf_err_disconnect;
         client__->send(
-            type_nat_traversal_error,
+            sf_err_nat_traversal_err,
             to_byte_array(
                 skyfire::to_json(connect_context_map__[context.connect_id]
                                      .tcp_nat_traversal_context)
@@ -301,9 +302,9 @@ inline void sf_tcp_nat_traversal_client::on_server_reply_b_addr(
     context.step = 5;
     if (connect_context_map__.count(context.connect_id) == 0) {
         context.error_code = sf_err_not_exist;
-        sf_debug("send", "type_nat_traversal_error",
+        sf_debug("send", "sf_err_nat_traversal_err",
                  skyfire::to_json(context).to_string());
-        client__->send(type_nat_traversal_error,
+        client__->send(sf_err_nat_traversal_err,
                        to_byte_array(skyfire::to_json(context).to_string()));
         return;
     }
@@ -325,9 +326,9 @@ inline void sf_tcp_nat_traversal_client::on_server_reply_b_addr(
         connect_context_map__.erase(context.connect_id);
     } else {
         context.error_code = sf_err_disconnect;
-        sf_debug("send", "type_nat_traversal_error",
+        sf_debug("send", "sf_err_nat_traversal_err",
                  skyfire::to_json(context).to_string());
-        client__->send(type_nat_traversal_error,
+        client__->send(sf_err_nat_traversal_err,
                        to_byte_array(skyfire::to_json(context).to_string()));
         return;
     }

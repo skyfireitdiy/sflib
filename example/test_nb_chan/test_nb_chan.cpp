@@ -45,7 +45,7 @@ void custom(const shared_ptr<sf_chan<int>>& ch)
                 cout << "\t\tthread:" << this_thread::get_id() << " custom:" << i << endl;
             }
         }
-    } catch (sf_chan_close_exception& e) {
+    } catch (sf_exception& e) {
         cout << e.what() << endl;
     }
 }
