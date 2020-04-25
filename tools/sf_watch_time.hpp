@@ -13,91 +13,34 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_watch_time.h"
+#include "tools/sf_utils.hpp"
 
 namespace skyfire {
 template <typename T>
-sf_check_point<T>::~sf_check_point() {
-    parent__.data__[point_name__][std::this_thread::id()] +=
-        std::chrono::duration_cast<std::chrono::nanoseconds>(
-            std::chrono::high_resolution_clock::now() - clock__)
-            .count();
+sf_check_point<T>::~sf_check_point()
+{
+    parent__.data__[point_name__][std::this_thread::id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(
+        std::chrono::high_resolution_clock::now() - clock__)
+                                                                 .count();
 }
 
 template <typename T>
-sf_check_point<T>::sf_check_point(const T &name, sf_watch_time<T> &parent)
-    : point_name__(name),
-      clock__(std::chrono::high_resolution_clock::now()),
-      parent__(parent) {}
+sf_check_point<T>::sf_check_point(const T& name, sf_watch_time<T>& parent)
+    : point_name__(name)
+    , clock__(std::chrono::high_resolution_clock::now())
+    , parent__(parent)
+{
+}
 
 template <typename T>
-void sf_watch_time<T>::watch() {
+void sf_watch_time<T>::watch()
+{
     std::cout << to_string() << std::flush;
 }
 
 template <typename T>
-std::string sf_watch_time<T>::convert_ms_to_readable__(long long time) const {
-    std::ostringstream so;
-    auto old = so.flags();
-    so << std::left;
-    const long long ns = 1;
-    const long long us = 1000;
-    const auto ms = 1000 * us;
-    const auto s = 1000 * ms;
-    const auto m = 60 * s;
-    const auto h = 60 * m;
-    const auto d = 24 * h;
-
-    if (time >= d) {
-        so << std::to_string(time / d) + "d";
-        time %= d;
-    } else {
-        so << "";
-    }
-    so << std::setw(6);
-    if (time >= h) {
-        so << std::to_string(time / h) + "h";
-        time %= h;
-    } else {
-        so << "";
-    }
-    so << std::setw(6);
-    if (time >= m) {
-        so << std::to_string(time / m) + "m";
-        time %= m;
-    } else {
-        so << "";
-    }
-    so << std::setw(6);
-    if (time >= s) {
-        so << std::to_string(time / s) + "s";
-        time %= s;
-    } else {
-        so << "";
-    }
-    so << std::setw(6);
-    if (time >= ms) {
-        so << std::to_string(time / ms) + "ms";
-        time %= ms;
-    } else {
-        so << "";
-    }
-    so << std::setw(6);
-    if (time >= us) {
-        so << std::to_string(time / us) + "us";
-        time %= us;
-    } else {
-        so << "";
-    }
-    so << std::setw(6);
-    if (time >= ns) {
-        so << std::to_string(time / ns) + "ns";
-    }
-    so.setf(old);
-    return so.str();
-}
-
-template <typename T>
-std::string sf_watch_time<T>::to_string() {
+std::string sf_watch_time<T>::to_string()
+{
     std::ostringstream so;
     auto old = so.flags();
 
@@ -115,11 +58,11 @@ std::string sf_watch_time<T>::to_string() {
           "====================="
        << std::endl;
 
-    for (auto &p : data__) {
-        for (auto &q : p.second) {
+    for (auto& p : data__) {
+        for (auto& q : p.second) {
             so << std::setw(30) << p.first << std::setw(6) << "|"
                << std::setw(12) << q.first << std::setw(6) << "|"
-               << convert_ms_to_readable__(q.second) << std::endl;
+               << sf_convert_ns_to_readable(q.second) << std::endl;
         }
     }
     so << "--------------------------------------------------------------------"
@@ -128,6 +71,6 @@ std::string sf_watch_time<T>::to_string() {
     so.flags(old);
     return so.str();
 }
-}    // namespace skyfire
+} // namespace skyfire
 
 #pragma clang diagnostic pop

@@ -49,6 +49,8 @@ add_executable(test_argv test_argv/test_argv.cpp ${headers})
 add_executable(test_chan test_chan/test_chan.cpp ${headers})
 add_executable(test_nb_chan test_nb_chan/test_nb_chan.cpp ${headers})
 add_executable(test_sf_test test_sf_test/test_sf_test.cpp ${headers})
+add_executable(test_colored_string test_colored_string/test_colored_string.cpp ${headers})
+
 
 
 IF (WIN32)

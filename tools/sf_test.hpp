@@ -1,7 +1,10 @@
 #pragma once
+#include "core/sf_colored_string.hpp"
+#include "core/sf_string.hpp"
 #include "tools/sf_single_instance.hpp"
 #include "tools/sf_test.h"
 #include "tools/sf_thread_pool.hpp"
+#include "tools/sf_utils.hpp"
 
 namespace skyfire {
 
@@ -15,22 +18,27 @@ sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bo
 }
 
 template <typename T>
-void sf_test_base__<T>::run(int thread_count)
+void sf_test_base__<T>::run(int thread_count, bool flashing)
 {
+    auto start_time = std::chrono::system_clock::now();
     auto pool = sf_thread_pool::make_instance(thread_count);
     std::vector<std::future<bool>> result;
     std::mutex mu;
     for (auto& p : test_data__) {
         result.push_back(pool->add_task(
-            [p, &mu]() -> bool {
+            [p, flashing, &mu]() -> bool {
                 auto r = p.func();
                 {
                     std::lock_guard<std::mutex> lck(mu);
                     if (r) {
-                        std::cout << p.function_name << " passed!" << std::endl;
+                        std::cout << "thread: " << std::this_thread::get_id() << " " << sf_colored_string(sf_make_time_str() + " " + p.function_name + " passed!", { sf_color_fg_green }) << std::endl;
                         return true;
                     } else {
-                        std::cerr << p.function_name << " failed!" << std::endl;
+                        std::vector<sf_color_value> failed_style = { sf_color_fg_red };
+                        if (flashing) {
+                            failed_style = { sf_color_fg_red, sf_color_style_flashing };
+                        }
+                        std::cerr << "thread: " << std::this_thread::get_id() << " " << sf_colored_string(sf_make_time_str() + " " + p.function_name + " failed!", failed_style) << std::endl;
                         return false;
                     }
                 }
@@ -46,9 +54,24 @@ void sf_test_base__<T>::run(int thread_count)
             ++count_failed;
         }
     }
+
+    std::vector<sf_color_value> pass_style { sf_color_fg_green };
+    std::vector<sf_color_value> failed_style { sf_color_fg_red };
+    if (flashing) {
+        failed_style = { sf_color_fg_red, sf_color_style_flashing };
+    }
+    if (count_failed == 0) {
+        failed_style = pass_style;
+    }
+
     thread_count = pool->thread_count();
     std::cout << std::endl
+              << sf_string::repeat("=", 60)
               << std::endl
-              << "thread_count: " << thread_count << " pass: " << count_pass << " failed: " << count_failed << std::endl;
+              << "thread_count: " << thread_count << std::endl
+              << "cost: " << sf_convert_ns_to_readable(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_time).count()) << std::endl
+              << sf_colored_string("pass: " + std::to_string(count_pass), pass_style) << std::endl
+              << sf_colored_string("failed: " + std::to_string(count_failed), failed_style) << std::endl
+              << sf_string::repeat("=", 60) << std::endl;
 }
 }

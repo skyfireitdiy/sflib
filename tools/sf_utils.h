@@ -7,11 +7,11 @@
 
 #pragma once
 
+#include "core/sf_empty_class.h"
+#include "core/sf_stdc++.h"
+#include "core/sf_type.hpp"
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "core/sf_stdc++.h"
-#include "core/sf_empty_class.h"
-#include "core/sf_type.hpp"
 
 namespace skyfire {
 /**
@@ -19,7 +19,7 @@ namespace skyfire {
  * @param str 字符串
  * @return 处理后的字符串
  */
-inline std::string sf_string_trim(const std::string &str);
+inline std::string sf_string_trim(const std::string& str);
 
 /**
  * 字符串转小写
@@ -33,7 +33,7 @@ inline std::string sf_to_lower_string(std::string str);
  * @param path 路径
  * @return 后缀
  */
-inline std::string sf_get_path_ext(const std::string &path);
+inline std::string sf_get_path_ext(const std::string& path);
 
 /**
  * 不区分大小写比较字符串
@@ -41,8 +41,8 @@ inline std::string sf_get_path_ext(const std::string &path);
  * @param str2 字符串2
  * @return 是否相等
  */
-inline bool sf_equal_nocase_string(const std::string &str1,
-                                   const std::string &str2);
+inline bool sf_equal_nocase_string(const std::string& str1,
+    const std::string& str2);
 
 /**
  * 分割字符串
@@ -51,7 +51,7 @@ inline bool sf_equal_nocase_string(const std::string &str1,
  * @return 分割后的字符串数组
  */
 inline std::vector<std::string> sf_split_string(std::string str,
-                                                const std::string &split_str);
+    const std::string& split_str);
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
@@ -63,8 +63,8 @@ inline std::vector<std::string> sf_split_string(std::string str,
  * @param append 是否追加
  * @return 是否写入成功
  */
-bool sf_write_file(const std::string &file_name, const byte_array &data,
-                   bool append);
+bool sf_write_file(const std::string& file_name, const byte_array& data,
+    bool append);
 
 #pragma clang diagnostic pop
 
@@ -77,7 +77,7 @@ bool sf_write_file(const std::string &file_name, const byte_array &data,
  * @param data 数据
  * @return 是否读取成功
  */
-bool sf_read_file(const std::string &file_name, byte_array &data);
+bool sf_read_file(const std::string& file_name, byte_array& data);
 
 #pragma clang diagnostic pop
 
@@ -87,8 +87,8 @@ bool sf_read_file(const std::string &file_name, byte_array &data);
  * @param from 要替换的字符串
  * @param to 替换后的新字符串
  */
-void sf_string_replace(std::string &str, const std::string &from,
-                       const std::string &to);
+void sf_string_replace(std::string& str, const std::string& from,
+    const std::string& to);
 
 /**
  * 判断字符串是否是由指定前缀开始的
@@ -96,7 +96,7 @@ void sf_string_replace(std::string &str, const std::string &from,
  * @param prefix 前缀
  * @return 字符串是否是由指定前缀开始的
  */
-bool sf_string_start_with(const std::string &str, const std::string &prefix);
+bool sf_string_start_with(const std::string& str, const std::string& prefix);
 
 /**
  * 判断字符串是否是由指定后缀结束
@@ -104,22 +104,20 @@ bool sf_string_start_with(const std::string &str, const std::string &prefix);
  * @param suffix 后缀
  * @return 字符串是否是由指定后缀结束
  */
-bool sf_string_end_with(const std::string &str, const std::string &suffix);
+bool sf_string_end_with(const std::string& str, const std::string& suffix);
 
 /**
  * 生成时间字符串
  * @return 时间字符串
  */
-std::string sf_make_time_str(const std::chrono::system_clock::time_point &tp =
-                                 std::chrono::system_clock::now() +
-                                 std::chrono::hours(8));
+std::string sf_make_time_str(const std::chrono::system_clock::time_point& tp = std::chrono::system_clock::now() + std::chrono::hours(8));
 
 /**
  * long double 转为字符串
  * @param num 数字
  * @return 字符串
  */
-std::string sf_long_double_to_string(const long double &num);
+std::string sf_long_double_to_string(const long double& num);
 
 /**
  * char容器转换为十六进制字符串
@@ -128,7 +126,7 @@ std::string sf_long_double_to_string(const long double &num);
  * @return 十六进制字符串
  */
 template <typename T>
-std::string sf_char_container_to_hex_string(const T &data);
+std::string sf_char_container_to_hex_string(const T& data);
 
 /**
  * 16进制字符串转为char容器
@@ -137,7 +135,15 @@ std::string sf_char_container_to_hex_string(const T &data);
  * @param data 用于返回的数据
  */
 template <typename T>
-void sf_hex_string_to_char_container(const std::string &str, T &data);
+void sf_hex_string_to_char_container(const std::string& str, T& data);
+
+/**
+ * @brief 转换毫秒为人类可读的字符串
+ * 
+ * @param time 时间
+ * @return std::string 可读字符串
+ */
+std::string sf_convert_ns_to_readable(long long time);
 
 /**
  * @brief 创建实例的类
@@ -147,10 +153,10 @@ void sf_hex_string_to_char_container(const std::string &str, T &data);
  */
 template <typename T, typename Base = sf_empty_class>
 struct sf_make_instance_t : public Base {
-   private:
+private:
     sf_make_instance_t() = default;
 
-   public:
+public:
     /**
      * @brief 创建对象
      *
@@ -159,7 +165,8 @@ struct sf_make_instance_t : public Base {
      * @return std::shared_ptr<T> 创建的对象
      */
     template <typename... Args>
-    static std::shared_ptr<T> make_instance(Args &&... args) {
+    static std::shared_ptr<T> make_instance(Args&&... args)
+    {
         return std::shared_ptr<T>(new T(std::forward<Args>(args)...));
     }
 
@@ -170,4 +177,4 @@ struct sf_make_instance_t : public Base {
 
 std::string sf_safe_path(std::string danger_path);
 
-}    // namespace skyfire
+} // namespace skyfire

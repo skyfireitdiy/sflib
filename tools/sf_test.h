@@ -48,7 +48,7 @@ protected:
 
 public:
     sf_test_base__(const std::string& func_name, std::function<bool()> func);
-    static void run(int thread_count = 1);
+    static void run(int thread_count = 1, bool flashing = true);
 };
 
 class sf_test final : public sf_test_base__<> {

@@ -29,8 +29,6 @@ class sf_watch_time {
 
     std::unordered_map<T, std::unordered_map<std::thread::id, long long>>
         data__;
-    std::string convert_ms_to_readable__(long long time) const;
-
     friend class sf_check_point<T>;
 };
 

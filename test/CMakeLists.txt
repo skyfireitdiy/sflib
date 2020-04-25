@@ -28,12 +28,16 @@ file(GLOB headers
 set(CMAKE_CXX_FLAGS "-g")
 
 add_executable(test_sf_chan sf_chan/test_sf_chan.cpp ${headers})
+add_executable(test_sf_string sf_string/test_sf_string.cpp ${headers})
+
 
 
 IF (WIN32)
 
 ELSE()
     target_link_libraries(test_sf_chan pthread)
+    target_link_libraries(test_sf_string pthread)
+    
 ENDIF ()
 
 
