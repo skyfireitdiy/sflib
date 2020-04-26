@@ -24,37 +24,39 @@
 #include "sf_random.hpp"
 #include "sf_single_instance.hpp"
 #include "sf_utils.hpp"
+#include "tools/sf_json.h"
 
 namespace skyfire {
 
 /**
  * @brief  日志等级
  */
-enum SF_LOG_LEVEL {
-    SF_DEBUG_LEVEL = 0,
-    SF_INFO_LEVEL = 1,
-    SF_WARN_LEVEL = 2,
-    SF_ERROR_LEVEL = 3,
-    SF_FATAL_LEVEL = 4
-};
+
+constexpr int SF_DEBUG_LEVEL = 0;
+constexpr int SF_INFO_LEVEL = 1;
+constexpr int SF_WARN_LEVEL = 2;
+constexpr int SF_ERROR_LEVEL = 3;
+constexpr int SF_FATAL_LEVEL = 4;
 
 /**
  *  @brief 日志信息
  */
-struct sf_logger_info_t__ {
-    SF_LOG_LEVEL level; // 日志等级
+struct sf_logger_info_t {
+    int level; // 日志等级
     std::string time; // 时间
     int line; // 行号
     std::string file; // 文件名称
-    std::thread::id thread_id; // 线程号
+    std::string thread_id; // 线程号
     std::string func; // 函数名称
     std::string msg; // 消息
 };
 
+SF_JSONIFY(sf_logger_info_t, level, time, line, file, thread_id, func, msg);
+
 /**
  * 各种level对应的字符串
  */
-inline std::unordered_map<SF_LOG_LEVEL, std::string> logger_level_str__ {
+inline std::unordered_map<int, std::string> logger_level_str__ {
     { SF_DEBUG_LEVEL, "DEBUG" },
     { SF_INFO_LEVEL, "INFO " },
     { SF_WARN_LEVEL, "WARN " },
@@ -65,7 +67,8 @@ inline std::unordered_map<SF_LOG_LEVEL, std::string> logger_level_str__ {
 /**
  *  @brief 默认日志格式
  */
-constexpr char sf_default_log_format[] = "[{level}][{time}][{thread}][{file} ({line}) {func}] --> {msg}\n";
+constexpr char sf_default_log_format[]
+    = "{level} {time} {thread} {file}:{line} {func} --> {msg}\n";
 
 /**
  * 日志类
@@ -80,8 +83,8 @@ public:
      * @param func 函数
      * @return id号（可用于移除回调）
      */
-    int add_level_func(SF_LOG_LEVEL level,
-        std::function<void(const sf_logger_info_t__&)> func);
+    int add_level_func(int level,
+        std::function<void(const sf_logger_info_t&, bool)> func, bool color = true);
 
     /**
      * 添加指定等级日志输出流
@@ -90,8 +93,8 @@ public:
      * @param format 格式化字符串
      * @return id号（可用于移除回调）
      */
-    int add_level_stream(SF_LOG_LEVEL level, std::ostream* os,
-        std::string format = sf_default_log_format);
+    int add_level_stream(int level, std::ostream* os,
+        std::string format = sf_default_log_format, bool color = true);
 
     /**
      * 添加指定等级日志输出文件
@@ -100,8 +103,8 @@ public:
      * @param format 格式化字符串
      * @return id号（可用于移除回调）
      */
-    int add_level_file(SF_LOG_LEVEL level, const std::string& filename,
-        std::string format = sf_default_log_format);
+    int add_level_file(int level, const std::string& filename,
+        std::string format = sf_default_log_format, bool color = true);
 
     /**
      * 根据id删除过滤器
@@ -110,11 +113,11 @@ public:
     void remove_filter(int key);
 
     template <typename T>
-    void logout(SF_LOG_LEVEL level, const std::string& file, int line,
+    void logout(int level, const std::string& file, int line,
         const std::string& func, const T& dt);
 
     template <typename... T>
-    void logout(SF_LOG_LEVEL level, const std::string& file, int line,
+    void logout(int level, const std::string& file, int line,
         const std::string& func, const T&... dt);
 
     void stop_logger();
@@ -122,14 +125,18 @@ public:
     static void empty_func__() {}
 
     static std::string format(std::string format_str,
-        const sf_logger_info_t__& log_info);
+        const sf_logger_info_t& log_info, bool color);
 
 private:
-    std::deque<sf_logger_info_t__> log_deque__;
+    struct log_attr {
+        std::function<void(const sf_logger_info_t&, bool)> callback;
+        bool colored = true;
+    };
+    std::deque<sf_logger_info_t> log_deque__;
     std::condition_variable cond__;
     std::mutex deque_mu__;
     std::unordered_map<
-        int, std::unordered_map<int, std::function<void(const sf_logger_info_t__&)>>>
+        int, std::unordered_map<int, log_attr>>
         logger_func_set__;
     std::atomic<bool> run__ { true };
     std::recursive_mutex func_set_mutex__;
@@ -144,19 +151,19 @@ private:
     ~sf_logger();
 
     template <typename T, typename... U>
-    void logout__(std::ostringstream& oss, sf_logger_info_t__& log_info,
+    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
         const T& tmp, const U&... tmp2);
 
 #ifdef QT_CORE_LIB
     template <typename... U>
-    void logout__(std::ostringstream& oss, sf_logger_info_t__& log_info,
+    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
         const QString& tmp, const U&... tmp2);
     // template<>
-    void logout__(std::ostringstream& oss, sf_logger_info_t__& log_info,
+    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
         const QString& tmp);
 #endif
     template <typename T>
-    void logout__(std::ostringstream& oss, sf_logger_info_t__& log_info,
+    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
         const T& tmp);
 };
 

@@ -13,59 +13,71 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
+#include "core/sf_colored_string.hpp"
 #include "sf_logger.h"
 #include "sf_thread_pool.hpp"
+#include "tools/sf_json.hpp"
 
 namespace skyfire {
-inline int sf_logger::add_level_func(
-    SF_LOG_LEVEL level, const std::function<void(const sf_logger_info_t__&
 
-                            )>
-                            func)
+inline std::unordered_map<int, std::vector<sf_color_value>> sf_log_color_map = {
+    { SF_DEBUG_LEVEL, { sf_color_fg_cyan } },
+    { SF_INFO_LEVEL, { sf_color_fg_blue } },
+    { SF_WARN_LEVEL, { sf_color_fg_yellow } },
+    { SF_ERROR_LEVEL, { sf_color_fg_magenta } },
+    { SF_FATAL_LEVEL, { sf_color_fg_red } },
+};
+
+inline int
+sf_logger::add_level_func(
+    int level, const std::function<void(const sf_logger_info_t&, bool)> func, bool colored)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
     if (logger_func_set__.count(level) == 0) {
         logger_func_set__[level] = std::unordered_map<
-            int, std::function<void(const sf_logger_info_t__&)>>();
+            int, log_attr>();
     }
     const auto key = make_random_logger_id__();
-    logger_func_set__[level][key] = func;
+    logger_func_set__[level][key] = { func, colored };
     return key;
 }
 
-inline int sf_logger::add_level_stream(const SF_LOG_LEVEL level,
+inline int sf_logger::add_level_stream(const int level,
     std::ostream* os,
-    std::string format_str)
+    std::string format_str, bool colored)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
     if (logger_func_set__.count(level) == 0) {
         logger_func_set__[level] = std::unordered_map<
-            int, std::function<void(const sf_logger_info_t__&)>>();
+            int, log_attr>();
     }
     const auto key = make_random_logger_id__();
-    logger_func_set__[level][key] = [=](const sf_logger_info_t__& log_info) {
-        *os << format(format_str, log_info) << std::flush;
-    };
+    logger_func_set__[level][key] = { [=](const sf_logger_info_t& log_info, bool colored) {
+                                         *os << format(format_str, log_info, colored) << std::flush;
+                                     },
+        colored };
     return key;
 }
 
-inline int sf_logger::add_level_file(const SF_LOG_LEVEL level,
+inline int sf_logger::add_level_file(const int level,
     const std::string& filename,
-    std::string format_str)
+    std::string format_str, bool colored)
 {
     const auto ofs = std::make_shared<std::ofstream>(filename, std::ios::app);
     if (*ofs) {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
         if (logger_func_set__.count(level) == 0) {
             logger_func_set__[level] = std::unordered_map<
-                int, std::function<void(const sf_logger_info_t__&)>>();
+                int, log_attr>();
         }
 
         const auto key = make_random_logger_id__();
-        logger_func_set__[level][key] =
-            [=](const sf_logger_info_t__& log_info) {
-                *ofs << format(format_str, log_info) << std::flush;
-            };
+        logger_func_set__[level][key] = {
+            [=](const sf_logger_info_t& log_info, bool colored) {
+                *ofs << format(format_str, log_info, colored) << std::flush;
+            },
+            colored
+        };
         return key;
 
     } else {
@@ -106,14 +118,16 @@ inline int sf_logger::make_random_logger_id__()
 }
 
 template <typename T>
-inline void sf_logger::logout(SF_LOG_LEVEL level, const std::string& file,
+inline void sf_logger::logout(int level, const std::string& file,
     int line, const std::string& func, const T& dt)
 {
-    sf_logger_info_t__ log_info;
+    std::ostringstream so;
+    so << std::this_thread::get_id();
+    sf_logger_info_t log_info;
     log_info.level = level;
     log_info.file = file;
     log_info.line = line;
-    log_info.thread_id = std::this_thread::get_id();
+    log_info.thread_id = so.str();
     log_info.time = sf_make_time_str();
     log_info.func = func;
     std::ostringstream oss;
@@ -126,7 +140,7 @@ inline sf_logger::sf_logger()
 #ifdef SF_ASYNC_LOG
     log_thread__ = std::make_shared(std::thread, [this]() {
         while (true) {
-            std::deque<sf_logger_info_t__> tmp_info;
+            std::deque<sf_logger_info_t> tmp_info;
             {
                 std::unique_lock<std::mutex> lck(deque_mu__);
                 cond_pop__.wait(lck,
@@ -139,7 +153,7 @@ inline sf_logger::sf_logger()
                 for (auto& level_func : logger_func_set__) {
                     if (log.level >= level_func.first) {
                         for (auto& func : level_func.second) {
-                            func.second(log);
+                            func.second.callback(log, func.second.colored);
                         }
                     }
                 }
@@ -164,7 +178,7 @@ inline sf_logger::~sf_logger()
 
 template <typename T, typename... U>
 inline void sf_logger::logout__(std::ostringstream& oss,
-    sf_logger_info_t__& log_info, const T& tmp,
+    sf_logger_info_t& log_info, const T& tmp,
     const U&... tmp2)
 {
     oss << "[" << tmp << "]";
@@ -173,7 +187,7 @@ inline void sf_logger::logout__(std::ostringstream& oss,
 
 template <typename T>
 inline void sf_logger::logout__(std::ostringstream& oss,
-    sf_logger_info_t__& log_info, const T& tmp)
+    sf_logger_info_t& log_info, const T& tmp)
 {
     oss << "[" << tmp << "]";
     log_info.msg = oss.str();
@@ -188,7 +202,7 @@ inline void sf_logger::logout__(std::ostringstream& oss,
     for (auto& level_func : logger_func_set__) {
         if (log_info.level >= level_func.first) {
             for (auto& func : level_func.second) {
-                func.second(log_info);
+                func.second.callback(log_info, func.second.colored);
             }
         }
     }
@@ -196,15 +210,17 @@ inline void sf_logger::logout__(std::ostringstream& oss,
 }
 
 template <typename... T>
-inline void sf_logger::logout(const SF_LOG_LEVEL level, const std::string& file,
+inline void sf_logger::logout(const int level, const std::string& file,
     const int line, const std::string& func,
     const T&... dt)
 {
-    sf_logger_info_t__ log_info;
+    std::ostringstream so;
+    so << std::this_thread::get_id();
+    sf_logger_info_t log_info;
     log_info.level = level;
     log_info.file = file;
     log_info.line = line;
-    log_info.thread_id = std::this_thread::get_id();
+    log_info.thread_id = so.str();
     log_info.time = sf_make_time_str();
     log_info.func = func;
     std::ostringstream oss;
@@ -221,7 +237,7 @@ inline auto g_logger = sf_logger::instance();
 
 #ifdef QT_CORE_LIB
 inline void sf_logger::logout__(std::ostringstream& oss,
-    sf_logger_info_t__& log_info,
+    sf_logger_info_t& log_info,
     const QString& tmp)
 {
     oss << "[" << tmp.toStdString() << "]";
@@ -245,7 +261,7 @@ inline void sf_logger::logout__(std::ostringstream& oss,
 }
 
 template <typename... U>
-void sf_logger::logout__(std::ostringstream& oss, sf_logger_info_t__& log_info,
+void sf_logger::logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
     const QString& tmp, const U&... tmp2)
 {
     oss << "[" << tmp.toStdString() << "]";
@@ -255,7 +271,7 @@ void sf_logger::logout__(std::ostringstream& oss, sf_logger_info_t__& log_info,
 #endif
 
 inline std::string sf_logger::format(std::string format_str,
-    const sf_logger_info_t__& log_info)
+    const sf_logger_info_t& log_info, bool colored)
 {
     const auto replace = [](std::string& str, const std::string& from,
                              const std::string& to) {
@@ -265,19 +281,14 @@ inline std::string sf_logger::format(std::string format_str,
             start_pos += to.length();
         }
     };
-    const auto thread_to_str = [](std::thread::id id) {
-        std::ostringstream oss;
-        oss << id;
-        return oss.str();
-    };
     replace(format_str, "{func}", log_info.func);
     replace(format_str, "{time}", log_info.time);
-    replace(format_str, "{thread}", thread_to_str(log_info.thread_id));
+    replace(format_str, "{thread}", log_info.thread_id);
     replace(format_str, "{line}", std::to_string(log_info.line));
     replace(format_str, "{file}", log_info.file);
     replace(format_str, "{level}", logger_level_str__[log_info.level]);
     replace(format_str, "{msg}", log_info.msg);
-    return format_str;
+    return colored ? sf_colored_string(format_str, sf_log_color_map[log_info.level]) : format_str;
 }
 
 } // namespace skyfire

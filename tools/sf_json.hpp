@@ -7,7 +7,6 @@
 * 
 */
 
-
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "cppcoreguidelines-c-copy-assignment-signature"
@@ -29,7 +28,7 @@ inline sf_json sf_json::from_string(const std::string& json_str)
     sf_lex lex;
     lex.set_rules(
         { { "string",
-              R"("([^\\"]|(\\["\\/bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")" },
+              R"("([^\\"]|(\\["\\bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")" },
             { "[", R"(\[)" },
             { "]", R"(\])" },
             { "{", R"(\{)" },
@@ -279,7 +278,7 @@ inline std::string sf_json::json_string_to_string(std::string json_str)
     json_str.erase(json_str.begin());
     json_str.pop_back();
     sf_string_replace(json_str, "\\\"", "\"");
-    sf_string_replace(json_str, "\\/", "/");
+    // sf_string_replace(json_str, "\\/", "/");
     sf_string_replace(json_str, "\\b", "\b");
     sf_string_replace(json_str, "\\f", "\f");
     sf_string_replace(json_str, "\\n", "\n");
@@ -297,7 +296,7 @@ inline std::string sf_json::string_to_json_string(std::string str)
 {
     sf_string_replace(str, "\\", "\\\\");
     sf_string_replace(str, "\"", "\\\"");
-    sf_string_replace(str, "/", "\\/");
+    // sf_string_replace(str, "/", "\\/");
     sf_string_replace(str, "\b", "\\b");
     sf_string_replace(str, "\f", "\\f");
     sf_string_replace(str, "\n", "\\n");

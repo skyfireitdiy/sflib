@@ -7,7 +7,6 @@
 * 
 */
 
-
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
