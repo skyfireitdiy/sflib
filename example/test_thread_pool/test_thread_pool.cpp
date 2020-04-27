@@ -6,7 +6,7 @@
 */
 
 #include <iostream>
-#include "tools/sf_thread_pool.hpp"
+#include "sf_thread_pool.hpp"
 
 using namespace skyfire;
 

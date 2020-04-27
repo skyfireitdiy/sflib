@@ -1,4 +1,4 @@
-#include <tools/sf_test>
+#include <sf_test>
 
 using namespace std;
 

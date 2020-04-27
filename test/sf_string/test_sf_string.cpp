@@ -1,5 +1,5 @@
-#include <core/sf_string>
-#include <tools/sf_test>
+#include <sf_string>
+#include <sf_test>
 
 using namespace skyfire;
 

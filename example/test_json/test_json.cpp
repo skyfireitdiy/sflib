@@ -7,7 +7,7 @@
 * 
 */
 
-#include "tools/sf_json.hpp"
+#include "sf_json.hpp"
 
 using namespace skyfire;
 

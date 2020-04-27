@@ -19,10 +19,7 @@ link_directories(
 include_directories(.. .)
 
 file(GLOB headers
-        compiler/*
-        core/*
-        network/*
-        tools/*
+        *
         )
 
 

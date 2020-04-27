@@ -1,7 +1,7 @@
-#include <core/sf_chan>
-#include <core/sf_stdc++>
-#include <tools/sf_json>
-#include <tools/sf_test>
+#include <sf_chan>
+#include <sf_stdc++>
+#include <sf_json>
+#include <sf_test>
 
 using namespace skyfire;
 

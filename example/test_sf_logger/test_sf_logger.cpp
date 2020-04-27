@@ -7,7 +7,7 @@
 
 // 1.SF_DEBUG表示启用sf_debug宏
 #define SF_DEBUG
-#include "tools/sf_logger"
+#include "sf_logger"
 
 using namespace skyfire;
 using namespace std;

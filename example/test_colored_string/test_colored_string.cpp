@@ -1,4 +1,4 @@
-#include <core/sf_colored_string>
+#include <sf_colored_string>
 
 using namespace skyfire;
 using namespace std;

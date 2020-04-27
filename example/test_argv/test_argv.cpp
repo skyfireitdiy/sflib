@@ -8,7 +8,7 @@
 */
 
 
-#include "tools/sf_argv.hpp"
+#include "sf_argv.hpp"
 
 using namespace skyfire;
 using namespace std;

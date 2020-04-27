@@ -5,7 +5,7 @@
 * @file test_finally.cpp
 */
 
-#include "tools/sf_finally.hpp"
+#include "sf_finally.hpp"
 
 using namespace skyfire;
 

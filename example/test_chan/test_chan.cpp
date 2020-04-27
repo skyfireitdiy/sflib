@@ -11,8 +11,8 @@
 // Created by skyfire on 19-9-25.
 //
 
-#include "core/sf_chan.hpp"
-#include "tools/sf_thread_pool.hpp"
+#include "sf_chan.hpp"
+#include "sf_thread_pool.hpp"
 #include <iostream>
 
 using namespace std;

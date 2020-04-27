@@ -26,8 +26,8 @@ sf_http_server依赖zlib和openssl，编译器版本要求gcc 9.1及以上。
 ```cpp
 // main.cpp
 
-#include "network/sf_http_server.hpp"
-#include "network/sf_http_router.hpp"
+#include "sf_http_server.hpp"
+#include "sf_http_router.hpp"
 
 using namespace std;
 using namespace skyfire;
@@ -64,7 +64,7 @@ g++ main.cpp -I ../sflib/ -lpthread -lcrypto -lssl -lstdc++fs -lz -std=c++2a -o 
 打印出server配置并停顿说明运行成功，http服务已启动：
 
 ```text
-[INFO ][2019-09-28 00:35:30][139725116159872][../sflib/network/sf_http_base_server.hpp (614) sf_http_base_server] --> [server config:][{"tmp_file_path":".","max_cache_file_size":1048576,"debu
+[INFO ][2019-09-28 00:35:30][139725116159872][../sflib/sf_http_base_server.hpp (614) sf_http_base_server] --> [server config:][{"tmp_file_path":".","max_cache_file_size":1048576,"debu
 g":false,"host":"0.0.0.0","port":8080,"session_timeout":1800,"max_cache_count":1024}]
 ```
 另起一个终端使用curl测试，或者直接使用浏览器访问[http://localhost:8080](http://localhost:8080)
@@ -116,9 +116,9 @@ sf_http_part_router 用于对路由进行分层，同时有拦截的功能。
 ```cpp
 // main.cpp
 
-#include "network/sf_http_part_router.hpp"
-#include "network/sf_http_router.hpp"
-#include "network/sf_http_server.hpp"
+#include "sf_http_part_router.hpp"
+#include "sf_http_router.hpp"
+#include "sf_http_server.hpp"
 
 using namespace std;
 using namespace skyfire;
@@ -165,9 +165,9 @@ sf_http_part_router 和 sf_http_server 一样有 add_router 接口，且参数�
 ```cpp
 // main.cpp
 
-#include "network/sf_http_router.hpp"
-#include "network/sf_http_server.hpp"
-#include "network/sf_http_static_router.hpp"
+#include "sf_http_router.hpp"
+#include "sf_http_server.hpp"
+#include "sf_http_static_router.hpp"
 
 using namespace std;
 using namespace skyfire;
@@ -217,9 +217,9 @@ curl -v http://localhost:8080/main.cpp
 < 
 // main.cpp
 
-#include "network/sf_http_router.hpp"
-#include "network/sf_http_server.hpp"
-#include "network/sf_http_static_router.hpp"
+#include "sf_http_router.hpp"
+#include "sf_http_server.hpp"
+#include "sf_http_static_router.hpp"
 
 using namespace std;
 using namespace skyfire;
@@ -248,8 +248,8 @@ sf_http_server 支持 websocket 协议，如下：
 ```cpp
 // main.cpp
 
-#include "network/sf_http_server.hpp"
-#include "network/sf_websocket_router.hpp"
+#include "sf_http_server.hpp"
+#include "sf_websocket_router.hpp"
 
 using namespace std;
 using namespace skyfire;
@@ -293,8 +293,8 @@ connected (press CTRL+C to quit)
 ```cpp
 // main.cpp
 
-#include "network/sf_http_server.hpp"
-#include "network/sf_websocket_router.hpp"
+#include "sf_http_server.hpp"
+#include "sf_websocket_router.hpp"
 
 using namespace std;
 using namespace skyfire;

@@ -7,7 +7,7 @@
 
 #define SF_DEBUG
 
-#include "network/sf_tcp_nat_traversal_server.hpp"
+#include "sf_tcp_nat_traversal_server.hpp"
 
 using namespace skyfire;
 
