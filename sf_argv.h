@@ -114,6 +114,16 @@ public:
      * @return sf_json 解析的参数对象（json格式）
      */
     sf_json parse_argv(int argc, const char** argv, bool skip0 = true) const;
+
+    /**
+     * @brief 解析参数
+     *
+     * @param args 参数列表
+     * @return sf_json 解析的参数对象（json格式）
+     */
+    sf_json parse_argv(const std::vector<std::string>& args, bool skip0 = true) const;
+
+    
 };
 
 } // namespace skyfire
