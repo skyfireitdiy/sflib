@@ -225,13 +225,11 @@ inline sf_json sf_argparser::parse_argv__(
     return ret;
 }
 
-inline sf_json sf_argparser::parse_argv(int argc, const char **argv,
-                                        bool skip0) const {
-    return parse_argv(std::vector<std::string>({argv, argv + argc}));
+inline sf_json sf_argparser::parse_argv(int argc, const char **argv, bool skip0) const {
+    return parse_argv(std::vector<std::string>({argv, argv + argc}), skip0);
 }
 
-inline sf_json sf_argparser::parse_argv(const std::vector<std::string>& args,
-                                        bool skip0) const {
+inline sf_json sf_argparser::parse_argv(const std::vector<std::string>& args, bool skip0) const {
     std::vector<std::string> data({args.begin() + skip0, args.end()});
     sf_json ret;
     sf_json curr = ret;
