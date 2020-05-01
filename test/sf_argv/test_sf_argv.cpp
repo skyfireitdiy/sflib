@@ -9,8 +9,8 @@ bool test_parser(){
     auto parser = sf_argparser::make_parser();
     parser->add_argument("-t", "--test",sf_json_type::string);
     auto result = parser->parse_argv({"-t", "hello"}, false);
-    sf_debug(result);
-    return string(result["--test"]) == "hello"s;
+    sf_debug(result.result);
+    return string(result.result["--test"]) == "hello"s;
 }
 
 int main(){

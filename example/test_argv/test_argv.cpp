@@ -36,19 +36,19 @@ int main() {
     add_int_parser->add_argument("-b", "--b", sf_json_type::number);
 
     const char* argv1[]{"add", "5", "10"};
-    cout << parser->parse_argv(3, argv1, false) << endl;
+    cout << parser->parse_argv(3, argv1, false).result << endl;
 
     const char* argv2[]{"mul", "-f", "5.5", "-s", "1.9"};
-    cout << parser->parse_argv(5, argv2, false) << endl;
+    cout << parser->parse_argv(5, argv2, false).result << endl;
 
     const char* argv3[]{"mul", "-f", "5.5", "--array",  "20",
                         "68",  "90", "70",  "--second", "6.5"};
-    cout << parser->parse_argv(10, argv3, false) << endl;
+    cout << parser->parse_argv(10, argv3, false).result << endl;
 
     const char* argv4[]{"mul", "-f", "5.5",      "--array", "20", "68",
                         "90",  "70", "--second", "6.5",     "-F"};
-    cout << parser->parse_argv(11, argv4, false) << endl;
+    cout << parser->parse_argv(11, argv4, false).result << endl;
 
     const char* argv5[]{"add", "int", "-a", "5", "-b", "10"};
-    cout << parser->parse_argv(6, argv5, false);
+    cout << parser->parse_argv(6, argv5, false).result;
 }

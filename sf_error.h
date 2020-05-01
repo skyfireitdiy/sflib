@@ -29,6 +29,15 @@ enum sf_error_code {
 
     // channel 关闭
     sf_chan_close = 0x00010006,
+
+    // 解析错误
+    sf_parse_err = 0x00010007,
+
+    // 不支持的类型
+    sf_parse_unsupport_type_err = 0x00010008,
+
+    // 缺少必要参数
+    sf_no_enough_argv_err = 0x00010009,
 };
 
 class sf_exception : public std::exception {

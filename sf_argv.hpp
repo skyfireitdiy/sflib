@@ -10,26 +10,33 @@
 #pragma once
 
 #include "sf_argv.h"
+#include "sf_error.h"
 #include "sf_utils.hpp"
 
 namespace skyfire {
 inline sf_argparser::sf_argparser(
-    const std::string &help, const std::pair<std::string, std::string> &prefix)
-    : help_(help), prefix_(prefix) {}
+    const std::string& help, const std::pair<std::string, std::string>& prefix)
+    : help_(help)
+    , prefix_(prefix)
+{
+}
 
 inline std::shared_ptr<sf_argparser> sf_argparser::make_parser(
-    const std::string &help,
-    const std::pair<std::string, std::string> &prefix) {
+    const std::string& help,
+    const std::pair<std::string, std::string>& prefix)
+{
     return std::shared_ptr<sf_argparser>(new sf_argparser(help, prefix));
 }
 
 inline void sf_argparser::add_sub_parser(
-    const std::string &name,
-    std::shared_ptr<skyfire::sf_argparser> sub_parser) {
+    const std::string& name,
+    std::shared_ptr<skyfire::sf_argparser> sub_parser)
+{
     sub_parsers_[name] = sub_parser;
 }
 
-inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt) {
+inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt)
+{
     if (opt.json_name.empty()) {
         opt.json_name = opt.long_name;
     }
@@ -39,19 +46,18 @@ inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt) {
     if (opt.json_name.empty()) {
         return false;
     }
-    for (sf_argv_opt_t &p : none_position_arg__) {
+    for (sf_argv_opt_t& p : none_position_arg__) {
         if (opt.json_name == p.json_name) {
             return false;
         }
     }
-    for (sf_argv_opt_t &p : position_arg_) {
+    for (sf_argv_opt_t& p : position_arg_) {
         if (opt.json_name == p.json_name) {
             return false;
         }
     }
-    if (sf_string_start_with(opt.short_name, prefix_.first) &&
-        sf_string_start_with(opt.long_name, prefix_.second)) {
-        for (sf_argv_opt_t &p : none_position_arg__) {
+    if (sf_string_start_with(opt.short_name, prefix_.first) && sf_string_start_with(opt.long_name, prefix_.second)) {
+        for (sf_argv_opt_t& p : none_position_arg__) {
             if (p.short_name == opt.short_name) {
                 return false;
             } else if (p.long_name == opt.short_name) {
@@ -64,7 +70,7 @@ inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt) {
         }
         none_position_arg__.push_back(opt);
     } else {
-        for (sf_argv_opt_t &p : position_arg_) {
+        for (sf_argv_opt_t& p : position_arg_) {
             if (p.short_name == opt.short_name) {
                 return false;
             }
@@ -74,13 +80,14 @@ inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt) {
     return true;
 }
 
-inline sf_json sf_argparser::parse_argv__(
-    const std::vector<std::string> &argv) const {
+inline sf_argv_result_t sf_argparser::parse_argv__(
+    const std::vector<std::string>& argv) const
+{
     sf_json ret;
     ret.convert_to_object();
     std::shared_ptr<sf_argv_opt_t> last_opt;
     int pos = 0;
-    for (auto &p : none_position_arg__) {
+    for (auto& p : none_position_arg__) {
         if (!p.default_value.is_null()) {
             ret[p.json_name] = p.default_value;
         }
@@ -94,10 +101,10 @@ inline sf_json sf_argparser::parse_argv__(
             ret[p.json_name] = false;
         }
     }
-    for (const std::string &p : argv) {
+    for (const std::string& p : argv) {
         if (!last_opt) {
             bool find_flag = false;
-            for (const sf_argv_opt_t &nopt : none_position_arg__) {
+            for (const sf_argv_opt_t& nopt : none_position_arg__) {
                 if (nopt.long_name == p || nopt.short_name == p) {
                     find_flag = true;
                     if (nopt.action == sf_argv_action::store_true) {
@@ -107,12 +114,10 @@ inline sf_json sf_argparser::parse_argv__(
                         ret[nopt.json_name] = false;
                         break;
                     } else if (nopt.action == sf_argv_action::count) {
-                        ret[nopt.json_name] =
-                            static_cast<int>(ret[nopt.json_name]) + 1;
+                        ret[nopt.json_name] = static_cast<int>(ret[nopt.json_name]) + 1;
                         break;
                     }
-                    last_opt =
-                        std::shared_ptr<sf_argv_opt_t>(new sf_argv_opt_t(nopt));
+                    last_opt = std::shared_ptr<sf_argv_opt_t>(new sf_argv_opt_t(nopt));
                     break;
                 }
             }
@@ -120,43 +125,45 @@ inline sf_json sf_argparser::parse_argv__(
                 continue;
             }
             if (pos >= position_arg_.size()) {
-                sf_debug("parse error");
-                return sf_json();
+                return {
+                    sf_json(),
+                    sf_parse_err,
+                    "too many postion argv"
+                };
             }
             auto d = sf_json();
             last_opt = std::shared_ptr<sf_argv_opt_t>(
                 new sf_argv_opt_t(position_arg_[pos]));
             ++pos;
             switch (last_opt->type) {
-                case sf_json_type::string:
-                    d = p;
-                    ret[last_opt->json_name] = d;
-                    last_opt = nullptr;
-                    break;
-                case sf_json_type::array:
-                    d = p;
-                    ret[last_opt->json_name].append(sf_json(p));
-                    break;
-                case sf_json_type::boolean:
-                    d = !(p == "0" || p == "false");
-                    ret[last_opt->json_name] = d;
-                    last_opt = nullptr;
-                    break;
-                case sf_json_type::number:
-                    d = sf_string_to_long_double(p);
-                    ret[last_opt->json_name] = d;
-                    last_opt = nullptr;
-                    break;
-                default:
-                    sf_debug("unsupport");
-                    return sf_json();
+            case sf_json_type::string:
+                d = p;
+                ret[last_opt->json_name] = d;
+                last_opt = nullptr;
+                break;
+            case sf_json_type::array:
+                d = p;
+                ret[last_opt->json_name].append(sf_json(p));
+                break;
+            case sf_json_type::boolean:
+                d = !(p == "0" || p == "false");
+                ret[last_opt->json_name] = d;
+                last_opt = nullptr;
+                break;
+            case sf_json_type::number:
+                d = sf_string_to_long_double(p);
+                ret[last_opt->json_name] = d;
+                last_opt = nullptr;
+                break;
+            default:
+                throw sf_exception(sf_parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)));
             }
         } else {
             auto d = sf_json();
 
             if (last_opt->type == sf_json_type::array) {
                 auto find_flag = false;
-                for (const sf_argv_opt_t &nopt : none_position_arg__) {
+                for (const sf_argv_opt_t& nopt : none_position_arg__) {
                     if (nopt.long_name == p || nopt.short_name == p) {
                         find_flag = true;
                         if (nopt.action == sf_argv_action::store_true) {
@@ -166,8 +173,7 @@ inline sf_json sf_argparser::parse_argv__(
                             ret[nopt.json_name] = false;
                             break;
                         } else if (nopt.action == sf_argv_action::count) {
-                            ret[nopt.json_name] =
-                                static_cast<int>(ret[nopt.json_name]) + 1;
+                            ret[nopt.json_name] = static_cast<int>(ret[nopt.json_name]) + 1;
                             break;
                         }
                         last_opt = std::shared_ptr<sf_argv_opt_t>(
@@ -181,63 +187,70 @@ inline sf_json sf_argparser::parse_argv__(
             }
 
             switch (last_opt->type) {
-                case sf_json_type::string:
-                    d = p;
-                    ret[last_opt->json_name] = d;
-                    last_opt = nullptr;
-                    break;
-                case sf_json_type::array:
-                    d = p;
-                    ret[last_opt->json_name].append(d);
-                    break;
-                case sf_json_type::boolean:
-                    d = !(p == "0" || p == "false");
-                    ret[last_opt->json_name] = d;
-                    last_opt = nullptr;
-                    break;
-                case sf_json_type::number:
-                    d = sf_string_to_long_double(p);
-                    ret[last_opt->json_name] = d;
-                    last_opt = nullptr;
-                    break;
-                default:
-                    sf_debug("unsupport");
-                    return sf_json();
+            case sf_json_type::string:
+                d = p;
+                ret[last_opt->json_name] = d;
+                last_opt = nullptr;
+                break;
+            case sf_json_type::array:
+                d = p;
+                ret[last_opt->json_name].append(d);
+                break;
+            case sf_json_type::boolean:
+                d = !(p == "0" || p == "false");
+                ret[last_opt->json_name] = d;
+                last_opt = nullptr;
+                break;
+            case sf_json_type::number:
+                d = sf_string_to_long_double(p);
+                ret[last_opt->json_name] = d;
+                last_opt = nullptr;
+                break;
+            default:
+                throw sf_exception(sf_parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)));
             }
         }
     }
-    for (auto &p : none_position_arg__) {
+    for (auto& p : none_position_arg__) {
         if (p.required) {
             if (!ret.has(p.json_name)) {
-                sf_debug(p.short_name + "/" + p.long_name + " is required");
-                return sf_json();
+                return {
+                    sf_json(),
+                    sf_no_enough_argv_err,
+                    p.short_name + "/" + p.long_name + " is required"
+                };
             }
         }
     }
-    for (auto &p : position_arg_) {
+    for (auto& p : position_arg_) {
         if (p.required) {
             if (!ret.has(p.json_name)) {
-                sf_debug(p.short_name + "/" + p.long_name + " is required");
-                return sf_json();
+                return {
+                    sf_json(),
+                    sf_no_enough_argv_err,
+                    p.short_name + "/" + p.long_name + " is required"
+                };
             }
         }
     }
-    return ret;
+    return {ret, sf_err_ok , ""};
 }
 
-inline sf_json sf_argparser::parse_argv(int argc, const char **argv, bool skip0) const {
-    return parse_argv(std::vector<std::string>({argv, argv + argc}), skip0);
+inline sf_argv_result_t sf_argparser::parse_argv(int argc, const char** argv, bool skip0) const
+{
+    return parse_argv(std::vector<std::string>({ argv, argv + argc }), skip0);
 }
 
-inline sf_json sf_argparser::parse_argv(const std::vector<std::string>& args, bool skip0) const {
-    std::vector<std::string> data({args.begin() + skip0, args.end()});
+inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>& args, bool skip0) const
+{
+    std::vector<std::string> data({ args.begin() + skip0, args.end() });
     sf_json ret;
     sf_json curr = ret;
     curr.convert_to_object();
     auto parser = shared_from_this();
     for (int i = 0; i < data.size(); ++i) {
         bool find_flag = false;
-        for (auto &p : parser->sub_parsers_) {
+        for (auto& p : parser->sub_parsers_) {
             if (p.first == data[i]) {
                 find_flag = true;
                 curr[p.first] = sf_json();
@@ -248,19 +261,22 @@ inline sf_json sf_argparser::parse_argv(const std::vector<std::string>& args, bo
             }
         }
         if (!find_flag) {
-            curr.join(parser->parse_argv__({data.begin() + i, data.end()}));
-            return ret;
+            auto result = parser->parse_argv__({ data.begin() + i, data.end() });
+            if (result.ec != sf_err_ok){
+                return result;
+            }
+            curr.join(result.result);
+            return { ret, sf_err_ok , ""};
         }
     }
-    return sf_json();
+    return {sf_json(), sf_err_ok, ""};
 }
 
-
-
 bool sf_argparser::add_argument(std::string short_name, std::string long_name,
-                                sf_json_type type, bool required,
-                                sf_json default_value, std::string json_name,
-                                sf_argv_action action) {
+    sf_json_type type, bool required,
+    sf_json default_value, std::string json_name,
+    sf_argv_action action)
+{
     sf_argv_opt_t opt;
     opt.short_name = short_name;
     opt.long_name = long_name;
@@ -272,4 +288,4 @@ bool sf_argparser::add_argument(std::string short_name, std::string long_name,
     return add_argument(opt);
 }
 
-}    // namespace skyfire
+} // namespace skyfire

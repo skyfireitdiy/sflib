@@ -11,6 +11,7 @@
 
 #include "sf_stdc++.h"
 #include "sf_json.hpp"
+#include "sf_error.h"
 
 namespace skyfire {
 
@@ -39,6 +40,12 @@ struct sf_argv_opt_t {
     sf_json default_value {}; // 默认值
 };
 
+struct sf_argv_result_t {
+    sf_json result;
+    sf_error_code ec;
+    std::string err_string;
+};
+
 /**
  * @brief 参数解析类
  *
@@ -51,7 +58,7 @@ private:
     std::pair<std::string, std::string> prefix_;
     std::string help_;
 
-    sf_json parse_argv__(const std::vector<std::string>& argv) const;
+    sf_argv_result_t parse_argv__(const std::vector<std::string>& argv) const;
 
     sf_argparser(const std::string& help = "",
         const std::pair<std::string, std::string>& prefix = { "-",
@@ -111,17 +118,17 @@ public:
      * @param argc 参数数量
      * @param argv 参数列表
      * @param skip0 跳过参数0
-     * @return sf_json 解析的参数对象（json格式）
+     * @return sf_argv_result_t 解析结果
      */
-    sf_json parse_argv(int argc, const char** argv, bool skip0 = true) const;
+    sf_argv_result_t parse_argv(int argc, const char** argv, bool skip0 = true) const;
 
     /**
      * @brief 解析参数
      *
      * @param args 参数列表
-     * @return sf_json 解析的参数对象（json格式）
+     * @return sf_argv_result_t 解析结果
      */
-    sf_json parse_argv(const std::vector<std::string>& args, bool skip0 = true) const;
+    sf_argv_result_t parse_argv(const std::vector<std::string>& args, bool skip0 = true) const;
 
     
 };
