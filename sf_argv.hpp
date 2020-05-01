@@ -71,7 +71,7 @@ inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt)
         none_position_arg__.push_back(opt);
     } else {
         for (sf_argv_opt_t& p : position_arg_) {
-            if (p.short_name == opt.short_name) {
+            if (p.long_name == opt.long_name) {
                 return false;
             }
         }

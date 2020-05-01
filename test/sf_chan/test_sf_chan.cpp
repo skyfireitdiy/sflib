@@ -12,7 +12,7 @@ bool test_chan_order()
     std::vector<int> result { 1, 2, 3, 4, 5 };
     auto th1 = std::thread([&ch] {
         for (int i = 0; i < 5; ++i) {
-            i + 1 >> ch;
+            (i + 1) >> ch;
         }
     });
     auto th2 = std::thread([&data, &ch] {
@@ -35,7 +35,7 @@ bool test_chan_order_with_buffer()
     std::vector<int> result { 1, 2, 3, 4, 5 };
     auto th1 = std::thread([&ch] {
         for (int i = 0; i < 5; ++i) {
-            i + 1 >> ch;
+            (i + 1) >> ch;
         }
     });
     auto th2 = std::thread([&data, &ch] {
