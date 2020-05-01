@@ -31,14 +31,18 @@ void sf_test_base__<T>::run(int thread_count, bool flashing)
                 {
                     std::lock_guard<std::mutex> lck(mu);
                     if (r) {
-                        std::cout << "thread: " << std::this_thread::get_id() << " " << sf_colored_string(sf_make_time_str() + " " + p.function_name + " passed!", { sf_color_fg_green }) << std::endl;
+                        std::ostringstream so;
+                        so << "thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " " + p.function_name << " passed!"; 
+                        std::cout << sf_colored_string(so.str(), { sf_color_fg_green }) << std::endl;
                         return true;
                     } else {
                         std::vector<sf_color_value> failed_style = { sf_color_fg_red };
                         if (flashing) {
                             failed_style = { sf_color_fg_red, sf_color_style_flashing };
                         }
-                        std::cerr << "thread: " << std::this_thread::get_id() << " " << sf_colored_string(sf_make_time_str() + " " + p.function_name + " failed!", failed_style) << std::endl;
+                        std::ostringstream so;
+                        so << "thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " " << p.function_name << " failed!";
+                        std::cerr << sf_colored_string(so.str(), failed_style) << std::endl;
                         return false;
                     }
                 }
