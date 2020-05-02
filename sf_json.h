@@ -313,6 +313,22 @@ public:
      * @param src 要拷贝的来源
      */
     void copy(const sf_json& src);
+
+    /**
+     * @brief 比较运算符
+     * 
+     * @param other 另一个实例
+     * @return 两个实例是否相等
+     */
+    bool operator==(const sf_json& other) const;
+
+    /**
+     * @brief 不相等运算符
+     * 
+     * @param other 另一个实例
+     * @return 两个实例是否不相等
+     */
+    bool operator!=(const sf_json& other) const;
 };
 
 /**

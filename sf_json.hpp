@@ -21,6 +21,7 @@
 #include "sf_meta.hpp"
 #include "sf_msvc_safe.h"
 #include "sf_utils.hpp"
+#include "sf_error.h"
 
 namespace skyfire {
 inline sf_json sf_json::from_string(const std::string& json_str)
@@ -617,6 +618,62 @@ template <typename T>
 sf_json to_json(std::shared_ptr<T> pt)
 {
     return sf_json(*pt);
+}
+
+inline bool sf_json::operator!=(const sf_json& other) const {
+    return !(*this == other);
+}
+
+inline bool sf_json::operator==(const sf_json& other) const {
+    if(value__->type != other.value__->type){
+        return false;
+    }
+    switch (value__->type) {
+        case sf_json_type::null:
+        return true;
+        case sf_json_type::array:
+        {
+            auto sz = size();
+            auto osz = other.size();
+            if (sz != osz ){
+                return false;
+            }
+            for(int i=0;i<sz;++i){
+                if((*this)[i] != other[i]){
+                    return false;
+                }
+            }
+            return true;
+        }
+        case sf_json_type::boolean:
+        {
+            return bool(*this) == bool(other);
+        }
+        case sf_json_type::number:
+        {
+            return static_cast<long double>(*this) == static_cast<long double>(other);
+        }
+        case sf_json_type::object:
+        {
+            auto this_keys = keys();
+            auto other_keys = other.keys();
+            if (this_keys != other_keys){
+                return false;
+            }
+            for(auto p:this_keys){
+                if((*this)[p] != other[p]){
+                    return false;
+                }
+            }
+            return true;
+        }
+        case sf_json_type::string:
+        {
+            return static_cast<std::string>(*this) == static_cast<std::string>(other);
+        }
+        default:
+        throw sf_exception(sf_parse_unsupport_type_err, "unsupport type:"+std::to_string(static_cast<int>(value__->type)));
+    }
 }
 
 template <typename T, typename>
