@@ -26,7 +26,7 @@ public:
      * @brief sf_thread_pool 构造函数
      * @param thread_count 线程数量
      */
-    explicit sf_thread_pool(size_t thread_count = 4);
+    explicit sf_thread_pool(size_t thread_count = std::thread::hardware_concurrency());
 
     ~sf_thread_pool();
 

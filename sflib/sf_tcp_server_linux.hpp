@@ -13,7 +13,11 @@
 #include "sf_tcp_server_linux.h"
 
 namespace skyfire {
-inline sf_tcp_server::sf_tcp_server(bool raw, int thread_count):raw__(raw), thread_count__(thread_count) {  }
+inline sf_tcp_server::sf_tcp_server(bool raw, int thread_count):raw__(raw), thread_count__(thread_count) { 
+    if(thread_count__ < 1){
+        thread_count__ = 1;
+    }
+ }
 
 inline SOCKET sf_tcp_server::raw_socket() { return listen_fd__; }
 

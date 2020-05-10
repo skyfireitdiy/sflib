@@ -305,6 +305,9 @@ inline sf_tcp_server::sf_tcp_server(const bool raw, int thread_count): raw__(raw
     }
 
     iocp_context__.resize(thread_count__);
+    if (thread_count__ < 1) {
+        thread_count__ = 1;
+    }
     inited__ = true;
 }
 
