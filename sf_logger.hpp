@@ -13,14 +13,14 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
-#include "sf_colored_string.hpp"
+#include "sf_color.hpp"
 #include "sf_logger.h"
 #include "sf_thread_pool.hpp"
 #include "sf_json.hpp"
 
 namespace skyfire {
 
-inline std::unordered_map<int, std::vector<sf_color_value>> sf_log_color_map = {
+inline std::unordered_map<int, std::vector<sf_color>> sf_log_color_map = {
     { SF_DEBUG_LEVEL, { sf_color_fg_cyan } },
     { SF_INFO_LEVEL, { sf_color_fg_blue } },
     { SF_WARN_LEVEL, { sf_color_fg_yellow } },
@@ -288,7 +288,7 @@ inline std::string sf_logger::format(std::string format_str,
     replace(format_str, "{file}", log_info.file);
     replace(format_str, "{level}", logger_level_str__[log_info.level]);
     replace(format_str, "{msg}", log_info.msg);
-    return colored ? sf_colored_string(format_str, sf_log_color_map[log_info.level]) : format_str;
+    return colored ? sf_color_string(format_str, sf_log_color_map[log_info.level]) : format_str;
 }
 
 } // namespace skyfire

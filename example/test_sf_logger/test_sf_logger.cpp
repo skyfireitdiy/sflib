@@ -21,7 +21,7 @@ int main()
     // 4. json格式
     logger->add_level_func(
         SF_DEBUG_LEVEL, [](const sf_logger_info_t& log_info, bool) {
-            cout << sf_colored_string(to_json(log_info).to_string(), sf_log_color_map[log_info.level]) << endl;
+            cout << sf_color_string(to_json(log_info).to_string(), sf_log_color_map[log_info.level]) << endl;
         },
         false);
     // 5.日志打印

@@ -1,7 +1,8 @@
 #pragma once
-#include "sf_colored_string.hpp"
-#include "sf_string.hpp"
+#include "sf_color.hpp"
 #include "sf_single_instance.hpp"
+#include "sf_string.hpp"
+#include "sf_table.hpp"
 #include "sf_test.h"
 #include "sf_thread_pool.hpp"
 #include "sf_utils.hpp"
@@ -32,17 +33,17 @@ void sf_test_base__<T>::run(int thread_count, bool flashing)
                     std::lock_guard<std::mutex> lck(mu);
                     if (r) {
                         std::ostringstream so;
-                        so << "thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " " + p.function_name << " passed!"; 
-                        std::cout << sf_colored_string(so.str(), { sf_color_fg_green }) << std::endl;
+                        so << "thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " " + p.function_name << " passed!";
+                        std::cout << sf_color_string(so.str(), { sf_color_fg_green }) << std::endl;
                         return true;
                     } else {
-                        std::vector<sf_color_value> failed_style = { sf_color_fg_red };
+                        std::vector<sf_color> failed_style = { sf_color_fg_red };
                         if (flashing) {
                             failed_style = { sf_color_fg_red, sf_color_style_flashing };
                         }
                         std::ostringstream so;
                         so << "thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " " << p.function_name << " failed!";
-                        std::cerr << sf_colored_string(so.str(), failed_style) << std::endl;
+                        std::cerr << sf_color_string(so.str(), failed_style) << std::endl;
                         return false;
                     }
                 }
@@ -59,8 +60,8 @@ void sf_test_base__<T>::run(int thread_count, bool flashing)
         }
     }
 
-    std::vector<sf_color_value> pass_style { sf_color_fg_green };
-    std::vector<sf_color_value> failed_style { sf_color_fg_red };
+    std::vector<sf_color> pass_style { sf_color_fg_green };
+    std::vector<sf_color> failed_style { sf_color_fg_red };
     if (flashing) {
         failed_style = { sf_color_fg_red, sf_color_style_flashing };
     }
@@ -69,13 +70,34 @@ void sf_test_base__<T>::run(int thread_count, bool flashing)
     }
 
     thread_count = pool->thread_count();
-    std::cout << std::endl
-              << sf_string::repeat("=", 60)
-              << std::endl
-              << "thread_count: " << thread_count << std::endl
-              << "cost: " << sf_convert_ns_to_readable(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_time).count()) << std::endl
-              << sf_colored_string("pass: " + std::to_string(count_pass), pass_style) << std::endl
-              << sf_colored_string("failed: " + std::to_string(count_failed), failed_style) << std::endl
-              << sf_string::repeat("=", 60) << std::endl;
+
+    sf_table table(4);
+
+    table.set_config({ {
+                           sf_table_align::align_center,
+                           {},
+                           20,
+                       },
+        {
+            sf_table_align::align_center,
+            {},
+            20,
+        },
+        {
+            sf_table_align::align_center,
+            pass_style,
+            20,
+        },
+        {
+            sf_table_align::align_center,
+            failed_style,
+            20,
+        } });
+
+    table.set_header({ "thread count", "cost", "pass", "failed" });
+    table.add_row({ std::to_string(thread_count),
+        sf_string_trim(sf_convert_ns_to_readable(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_time).count())), std::to_string(count_pass), std::to_string(count_failed) });
+
+    std::cout << table.to_string() << std::endl;
 }
 }

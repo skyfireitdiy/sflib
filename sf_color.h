@@ -3,7 +3,7 @@
 
 namespace skyfire {
 
-enum sf_color_value {
+enum sf_color {
     sf_color_style_default = 0,
     sf_color_style_highlight = 1,
     sf_color_style_nobold = 22,
@@ -33,6 +33,6 @@ enum sf_color_value {
     sf_color_bg_white = 47,
 };
 
-std::string sf_colored_string(const std::string& str, const std::vector<sf_color_value>& cv);
+std::string sf_color_string(const std::string& str, const std::vector<sf_color>& cv);
 
 }

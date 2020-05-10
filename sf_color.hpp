@@ -1,9 +1,9 @@
 #pragma once
 
-#include "sf_colored_string.h"
+#include "sf_color.h"
 
 namespace skyfire {
-std::string sf_colored_string(const std::string& str, const std::vector<sf_color_value>& cv)
+std::string sf_color_string(const std::string& str, const std::vector<sf_color>& cv)
 {
     if (cv.empty() || cv.size() > 3) {
         return str;
