@@ -20,6 +20,7 @@ include_directories(.. .)
 
 file(GLOB headers
         *
+        sflib/*
         )
 
 

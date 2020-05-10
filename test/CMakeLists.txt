@@ -40,6 +40,7 @@ include_directories(.. .)
 
 file(GLOB headers
         *
+        sflib/*
         )
 
 set(CMAKE_CXX_FLAGS "-g")
