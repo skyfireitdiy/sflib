@@ -74,7 +74,7 @@ private:
 public:
     SOCKET raw_socket() override;
 
-    explicit sf_tcp_server(bool raw = false);
+    explicit sf_tcp_server(bool raw = false, int thread_count = std::thread::hardware_concurrency() * 2 + 2);
 
     ~sf_tcp_server() override;
 

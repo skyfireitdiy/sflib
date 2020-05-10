@@ -295,7 +295,7 @@ inline void sf_tcp_server::accept_thread__()
     }
 }
 
-inline sf_tcp_server::sf_tcp_server(const bool raw)
+inline sf_tcp_server::sf_tcp_server(const bool raw, int thread_count): raw__(raw), thread_count__(thread_count)
 {
     // 初始化WinSock，线程数量等
     WSADATA wsa_data {};
@@ -306,7 +306,6 @@ inline sf_tcp_server::sf_tcp_server(const bool raw)
 
     iocp_context__.resize(thread_count__);
     inited__ = true;
-    raw__ = raw;
 }
 
 inline bool sf_tcp_server::listen(const std::string& ip, unsigned short port)

@@ -601,6 +601,7 @@ inline sf_http_base_server::sf_http_base_server(
     const sf_http_server_config& config)
     : config__(config)
     , file_cache__(sf_cache::make_instance(config.max_cache_count))
+    , server__(std::make_shared<sf_tcp_server>(true, config.thread_count))
 {
     sf_info("server config:", to_json(config));
 

@@ -31,7 +31,7 @@ class sf_http_base_server {
 private:
     const sf_http_server_config config__;
 
-    std::shared_ptr<sf_tcp_server> server__ = std::make_shared<sf_tcp_server>(true);
+    std::shared_ptr<sf_tcp_server> server__ ;
 
     sf_eventloop event_loop__;
 

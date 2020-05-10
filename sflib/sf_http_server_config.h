@@ -8,6 +8,7 @@
 #pragma once
 
 #include "sf_json.hpp"
+#include <thread>
 
 namespace skyfire {
 
@@ -24,8 +25,9 @@ struct sf_http_server_config final {
         default_cache_max_file_size;    // 最大cache
                                         // 文件大小，超过此大小的文件不缓存
     bool debug = false;    // debug 模式不会使用缓存
+    int thread_count = std::thread::hardware_concurrency() * 16; // 线程数量
 };
 
 SF_JSONIFY(sf_http_server_config, host, port, tmp_file_path, session_timeout,
-           max_cache_count, max_cache_file_size, debug)
+           max_cache_count, max_cache_file_size, debug, thread_count)
 }    // namespace skyfire

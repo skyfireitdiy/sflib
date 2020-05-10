@@ -746,12 +746,18 @@ void from_json(const sf_json& js, std::tuple<ARGS...>& value)
 template <typename T>
 void from_json(const sf_json& js, T& value)
 {
+    if (js.is_null()) {
+        return;
+    }
     value = static_cast<T>(js);
 }
 
 template <typename T>
 void from_json(const sf_json& js, std::shared_ptr<T>& value)
 {
+    if (js.is_null()){
+        return;
+    }
     value = std::make_shared<T>(static_cast<T>(js));
 }
 
