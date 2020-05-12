@@ -19,6 +19,18 @@ sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bo
 }
 
 template <typename T>
+template <typename U>
+sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool(const U&)> func, const std::vector<U>& data)
+{
+    for (int i=0;i<data.size();++i) {
+        auto test_data = data[i];
+        sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { func_name + " " + std::to_string(i), [test_data, func]()->bool{
+            return func(test_data);
+        } });
+    }
+}
+
+template <typename T>
 void sf_test_base__<T>::run(int thread_count, bool flashing)
 {
     auto start_time = std::chrono::system_clock::now();

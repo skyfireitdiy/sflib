@@ -53,8 +53,8 @@ bool test_chan_order_with_buffer()
 
 int main()
 {
-    sf_test_func(test_chan_order);
-    sf_test_func(test_chan_order_with_buffer);
+    sf_test(test_chan_order);
+    sf_test(test_chan_order_with_buffer);
 
-    sf_test::run();
+    sf_test_run();
 }

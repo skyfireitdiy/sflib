@@ -20,9 +20,9 @@ bool test_sf_string_output()
 
 int main()
 {
-    sf_test_func(test_sf_string_repeat);
-    sf_test_func(test_sf_string_output);
-    sf_test_func(test_sf_string_operator);
+    sf_test(test_sf_string_repeat);
+    sf_test(test_sf_string_output);
+    sf_test(test_sf_string_operator);
 
-    sf_test::run();
+    sf_test_run();
 }

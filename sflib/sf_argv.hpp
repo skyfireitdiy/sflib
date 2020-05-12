@@ -248,6 +248,23 @@ inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>&
     sf_json curr = ret;
     curr.convert_to_object();
     auto parser = shared_from_this();
+
+    // NOTE 首先处理默认参数
+    for (auto& p : none_position_arg__) {
+        if (!p.default_value.is_null()) {
+            ret[p.json_name] = p.default_value;
+        }
+        if (p.action == sf_argv_action::count) {
+            ret[p.json_name] = 0;
+        }
+        if (p.action == sf_argv_action::store_false) {
+            ret[p.json_name] = true;
+        }
+        if (p.action == sf_argv_action::store_true) {
+            ret[p.json_name] = false;
+        }
+    }
+
     for (int i = 0; i < data.size(); ++i) {
         bool find_flag = false;
         for (auto& p : parser->sub_parsers_) {
@@ -269,7 +286,7 @@ inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>&
             return { ret, sf_err_ok , ""};
         }
     }
-    return {sf_json(), sf_err_ok, ""};
+    return {ret, sf_err_ok, ""};
 }
 
 bool sf_argparser::add_argument(std::string short_name, std::string long_name,
