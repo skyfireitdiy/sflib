@@ -5,7 +5,6 @@
 using namespace skyfire;
 using namespace std;
 
-
 bool test_parser_postion()
 {
     auto parser = sf_argparser::make_parser();
@@ -17,7 +16,6 @@ bool test_parser_postion()
         sf_error(result.err_string);
         return false;
     }
-    sf_debug(result.result);
     return string(result.result["pos1"]) == "hello"s && (int)result.result["pos2"] == 20;
 }
 
@@ -31,7 +29,6 @@ bool test_parser_array()
         sf_error(result.err_string);
         return false;
     }
-    sf_debug(result.result);
     return result.result == sf_json::from_string(R"({"--arr":["20","60","98"]})");
 }
 
@@ -45,7 +42,6 @@ bool test_parser_default_value()
         sf_error(result.err_string);
         return false;
     }
-    sf_debug(result.result);
     return static_cast<std::string>(result.result["--param"]) == "hello";
 }
 
@@ -59,11 +55,8 @@ bool test_parser_default_value_array()
         sf_error(result.err_string);
         return false;
     }
-    sf_debug(result.result);
     return result.result["--param"] == R"(["hello","world"])"_json;
 }
-
-
 
 bool test_parser_subparser()
 {
@@ -72,21 +65,21 @@ bool test_parser_subparser()
     parser->add_sub_parser("sub", sub_parser);
     sub_parser->add_argument("-a", "--arr");
 
-    auto result = parser->parse_argv({"sub", "-a", "test" }, false);
+    auto result = parser->parse_argv({ "sub", "-a", "test" }, false);
     if (result.ec != sf_err_ok) {
         sf_error(result.err_string);
         return false;
     }
-    sf_debug(result.result);
     return static_cast<string>(result.result["sub"]["--arr"]) == "test";
 }
 
-struct test_argv_param{
+struct test_argv_param {
     std::vector<std::string> args;
     sf_json result;
 };
 
-bool test_parser_none_postion(const test_argv_param& p){
+bool test_parser_none_postion(const test_argv_param& p)
+{
     auto parser = sf_argparser::make_parser();
     parser->add_argument("-t", "--test", sf_json_type::string);
     auto result = parser->parse_argv(p.args, false);
@@ -94,28 +87,21 @@ bool test_parser_none_postion(const test_argv_param& p){
         sf_error(result.err_string);
         return false;
     }
-    sf_debug(result.result);
     return result.result == p.result;
 }
 
-    int main()
+int main()
 {
-    sf_test(test_parser_none_postion, 
-    {
-        {
-            {"-t", "hello"},
-            R"({"--test":"hello"})"_json
-        },
-        {
-            {"--test", "hello"},
-            R"({"--test":"hello"})"_json
-        }
-    });
+    sf_test(test_parser_none_postion,
+        { { { "-t", "hello" },
+              R"({"--test":"hello"})"_json },
+            { { "--test", "hello" },
+                R"({"--test":"hello"})"_json } });
     sf_test(test_parser_postion);
     sf_test(test_parser_array);
     sf_test(test_parser_default_value);
     sf_test(test_parser_default_value_array);
     sf_test(test_parser_subparser);
 
-    sf_test_run(1);
+    sf_test_run(4);
 }
