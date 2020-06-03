@@ -116,6 +116,28 @@ bool test_default_value(const test_argv_param& p)
     return result.result == p.result;
 }
 
+bool test_subparser(const test_argv_param& p)
+{
+    auto parser = sf_argparser::make_parser();
+    parser->add_argument("-s", "--string", sf_json_type::string, true, sf_json("default value"));
+
+    auto sub_parser1 = sf_argparser::make_parser();
+    parser->add_sub_parser("sub1", sub_parser1);
+
+    auto sub_parser2 = sf_argparser::make_parser();
+    parser->add_sub_parser("sub2", sub_parser2);
+
+    sub_parser1->add_argument("-o", "--one");
+    sub_parser2->add_argument("-t", "--two");
+
+    auto result = parser->parse_argv(p.args, false);
+    if (result.ec != sf_err_ok) {
+        sf_error(result.err_string);
+        return false;
+    }
+    return result.result == p.result;
+}
+
 int main()
 {
     sf_test(test_parser_none_postion,
@@ -165,8 +187,12 @@ int main()
     sf_test(test_default_value,
         {
             { {}, R"({"--string":"default value"})"_json },
-            { {"-s", "my value"}, R"({"--string":"my value"})"_json },
+            { { "-s", "my value" }, R"({"--string":"my value"})"_json },
         });
 
-    return sf_test_run(4);
+    sf_test(test_subparser,
+        { { { "sub1", "-s", "string", "-o", "one" }, R"({"sub1":{"--string":"string", "--one": "one"}})"_json },
+            { { "sub2", "-t", "two", "-s", "string" }, R"({"sub2":{"--string":"string", "--two": "two"}})"_json } });
+
+    return sf_test_run();
 }

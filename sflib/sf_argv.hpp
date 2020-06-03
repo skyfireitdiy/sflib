@@ -15,17 +15,15 @@
 
 namespace skyfire {
 inline sf_argparser::sf_argparser(
-    const std::string& help, const std::pair<std::string, std::string>& prefix)
+    const std::string& help)
     : help_(help)
-    , prefix_(prefix)
 {
 }
 
 inline std::shared_ptr<sf_argparser> sf_argparser::make_parser(
-    const std::string& help,
-    const std::pair<std::string, std::string>& prefix)
+    const std::string& help)
 {
-    return std::shared_ptr<sf_argparser>(new sf_argparser(help, prefix));
+    return std::shared_ptr<sf_argparser>(new sf_argparser(help));
 }
 
 inline void sf_argparser::add_sub_parser(
@@ -81,7 +79,7 @@ inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt)
 }
 
 inline sf_argv_result_t sf_argparser::parse_argv__(
-    const std::vector<std::string>& argv) const
+    const std::vector<std::string>& argv) 
 {
     sf_json ret;
     ret.convert_to_object();
@@ -239,18 +237,33 @@ inline sf_argv_result_t sf_argparser::parse_argv__(
     return {ret, sf_err_ok , ""};
 }
 
-inline sf_argv_result_t sf_argparser::parse_argv(int argc, const char** argv, bool skip0) const
+inline sf_argv_result_t sf_argparser::parse_argv(int argc, const char** argv, bool skip0) 
 {
     return parse_argv(std::vector<std::string>({ argv, argv + argc }), skip0);
 }
 
-inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>& args, bool skip0) const
+inline void prepare_parser__(std::shared_ptr<sf_argparser> &parser){
+    if (parser->sub_parsers_.empty()){
+        return;
+    }
+    for(auto& p : parser->sub_parsers_){
+        p.second->position_arg_.insert(p.second->position_arg_.end(), parser->position_arg_.begin(), parser->position_arg_.end());
+        p.second->none_position_arg__.insert(p.second->none_position_arg__.end(), parser->none_position_arg__.begin(), parser->none_position_arg__.end());
+        prepare_parser__(p.second);
+    }
+    parser->none_position_arg__.clear();
+    parser->position_arg_.clear();
+}
+
+inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>& args, bool skip0) 
 {
     std::vector<std::string> data({ args.begin() + skip0, args.end() });
     sf_json ret;
     sf_json curr = ret;
     curr.convert_to_object();
     auto parser = shared_from_this();
+
+    prepare_parser__(parser);
 
     // NOTE 首先处理默认参数
     for (auto& p : none_position_arg__) {

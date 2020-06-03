@@ -55,14 +55,12 @@ private:
     std::unordered_map<std::string, std::shared_ptr<sf_argparser>> sub_parsers_;
     std::vector<sf_argv_opt_t> position_arg_;
     std::vector<sf_argv_opt_t> none_position_arg__;
-    std::pair<std::string, std::string> prefix_;
+    std::pair<std::string, std::string> prefix_  {"-", "--"};
     std::string help_;
 
-    sf_argv_result_t parse_argv__(const std::vector<std::string>& argv) const;
+    sf_argv_result_t parse_argv__(const std::vector<std::string>& argv) ;
 
-    sf_argparser(const std::string& help = "",
-        const std::pair<std::string, std::string>& prefix = { "-",
-            "--" });
+    sf_argparser(const std::string& help = "");
 
 public:
     /**
@@ -72,8 +70,7 @@ public:
      * @return 解析器对象
      */
     static std::shared_ptr<sf_argparser> make_parser(
-        const std::string& help = "",
-        const std::pair<std::string, std::string>& prefix = { "-", "--" });
+        const std::string& help = "");
 
     /**
      * @brief 添加一个参数
@@ -120,7 +117,7 @@ public:
      * @param skip0 跳过参数0
      * @return sf_argv_result_t 解析结果
      */
-    sf_argv_result_t parse_argv(int argc, const char** argv, bool skip0 = true) const;
+    sf_argv_result_t parse_argv(int argc, const char** argv, bool skip0 = true) ;
 
     /**
      * @brief 解析参数
@@ -128,9 +125,9 @@ public:
      * @param args 参数列表
      * @return sf_argv_result_t 解析结果
      */
-    sf_argv_result_t parse_argv(const std::vector<std::string>& args, bool skip0 = true) const;
+    sf_argv_result_t parse_argv(const std::vector<std::string>& args, bool skip0 = true) ;
 
-    
+    friend void prepare_parser__(std::shared_ptr<sf_argparser> &parser);
 };
 
 } // namespace skyfire
