@@ -51,7 +51,7 @@ public:
     template<typename U>
     sf_test_base__(const std::string& func_name, std::function<bool(const U &)> func, const std::vector<U>& data);
     
-    static void run(int thread_count = 1, bool flashing = true);
+    static int run(int thread_count = 1, bool flashing = true);
 };
 
 class sf_test_impl__ final : public sf_test_base__<> {

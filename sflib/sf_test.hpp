@@ -31,15 +31,16 @@ sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bo
 }
 
 template <typename T>
-void sf_test_base__<T>::run(int thread_count, bool flashing)
+int sf_test_base__<T>::run(int thread_count, bool flashing)
 {
+    int ret = 0;
     auto start_time = std::chrono::system_clock::now();
     auto pool = sf_thread_pool::make_instance(thread_count);
     std::vector<std::future<bool>> result;
     std::mutex mu;
     for (auto& p : test_data__) {
         result.push_back(pool->add_task(
-            [p, flashing, &mu]() -> bool {
+            [p, flashing, &mu, &ret]() -> bool {
                 auto r = p.func();
                 {
                     std::lock_guard<std::mutex> lck(mu);
@@ -49,6 +50,7 @@ void sf_test_base__<T>::run(int thread_count, bool flashing)
                         std::cout << sf_color_string(so.str(), { sf_color_fg_green }) << std::endl;
                         return true;
                     } else {
+                        ret = -1;
                         std::vector<sf_color> failed_style = { sf_color_fg_red };
                         if (flashing) {
                             failed_style = { sf_color_fg_red, sf_color_style_flashing };
@@ -111,5 +113,6 @@ void sf_test_base__<T>::run(int thread_count, bool flashing)
         sf_string_trim(sf_convert_ns_to_readable(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_time).count())), std::to_string(count_pass), std::to_string(count_failed) });
 
     std::cout << table.to_string() << std::endl;
+    return ret;
 }
 }

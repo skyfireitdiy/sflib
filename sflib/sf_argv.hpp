@@ -88,6 +88,9 @@ inline sf_argv_result_t sf_argparser::parse_argv__(
     std::shared_ptr<sf_argv_opt_t> last_opt;
     int pos = 0;
     for (auto& p : none_position_arg__) {
+        if (p.type == sf_json_type::array){
+            ret[p.json_name].convert_to_array();
+        }
         if (!p.default_value.is_null()) {
             ret[p.json_name] = p.default_value;
         }
@@ -251,6 +254,9 @@ inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>&
 
     // NOTE 首先处理默认参数
     for (auto& p : none_position_arg__) {
+        if (p.type == sf_json_type::array) {
+            ret[p.json_name].convert_to_array();
+        }
         if (!p.default_value.is_null()) {
             ret[p.json_name] = p.default_value;
         }
