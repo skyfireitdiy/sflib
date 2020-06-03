@@ -6,7 +6,7 @@
 */
 
 //#define SF_DEBUG
-#include "sf_http_server.hpp"
+#include "sf_http_server"
 
 using namespace std::literals;
 

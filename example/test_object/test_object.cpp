@@ -5,7 +5,7 @@
 * @file test_object.cpp
 */
 
-#include "sf_object.hpp"
+#include "sf_object"
 
 using namespace skyfire;
 
