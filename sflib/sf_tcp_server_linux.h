@@ -31,26 +31,17 @@
 
 namespace skyfire {
 
-struct sock_data_context_in_t {
+struct sock_data_context_t {
     epoll_event ev {};
     byte_array data_buffer_in {};
-};
-
-struct sock_data_context_out_t {
-    epoll_event ev {};
     std::deque<byte_array> data_buffer_out {};
 };
 
-struct epoll_context_in_t {
-    int epoll_fd {};
-    std::unordered_map<SOCKET, sock_data_context_in_t> sock_context_in__ {};
-};
-
-struct epoll_context_out_t {
+struct epoll_context_t {
     int epoll_fd {};
 
     std::shared_mutex mu_epoll_context__;
-    std::unordered_map<SOCKET, sock_data_context_out_t> sock_context_out__ {};
+    std::unordered_map<SOCKET, sock_data_context_t> sock_context__ {};
 };
 
 class sf_tcp_server
@@ -62,9 +53,11 @@ private:
 
     std::vector<std::thread> thread_vec__;
 
-    void work_thread__(bool listen_thread = false, SOCKET listen_fd = -1);
+    std::vector<epoll_context_t*> context_pool__;
 
-    void write_thread__();
+    mutable std::shared_mutex mu_context_pool__;
+
+    void work_thread__(bool listen_thread = false, SOCKET listen_fd = -1);
 
     bool in_dispatch__(SOCKET fd);
 
@@ -74,10 +67,9 @@ private:
 
     void handle_write__(const epoll_event& ev);
 
-    epoll_context_in_t& epoll_data_in__() const;
+    epoll_context_t& epoll_data__() const;
 
-    epoll_context_out_t& epoll_data_out__() const;
-
+    epoll_context_t* find_context__(SOCKET sock) const;
 
 public:
     SOCKET raw_socket() override;
