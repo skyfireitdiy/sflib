@@ -12,7 +12,7 @@
 namespace skyfire {
 
 template <typename T>
-typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(
+typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value, byte_array>::type make_pkg(
     const T& data)
 {
     byte_array ret(sizeof(data));
@@ -27,7 +27,7 @@ typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 template <typename T>
-typename std::enable_if<std::is_pod<T>::value, T>::type take_pkg(
+typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value, T>::type take_pkg(
     const byte_array& data)
 {
     assert(data.size() == sizeof(T));

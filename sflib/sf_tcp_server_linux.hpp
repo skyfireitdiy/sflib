@@ -49,7 +49,7 @@ inline epoll_context_t* sf_tcp_server::find_context__(SOCKET sock) const
 
 inline bool sf_tcp_server::send(int sock, const byte_array& data)
 {
-    sf_debug("send", to_string(data));
+    sf_debug("send", data.size());
     auto psock_context_data__ = find_context__(sock);
     if (psock_context_data__ == nullptr) {
         sf_debug("psock_context_data__ is nullptr");
@@ -60,11 +60,10 @@ inline bool sf_tcp_server::send(int sock, const byte_array& data)
     auto& sock_context__ = psock_context_data__->sock_context__;
 
     auto send_data = data;
+    lck.unlock();
     before_raw_send_filter__(sock, send_data);
-
+    lck.lock();
     sock_context__[sock].data_buffer_out.push_back(send_data);
-    sf_debug("add data to buf", to_string(send_data), &sock_context__[sock].data_buffer_out);
-
     sock_context__[sock].ev.events |= EPOLLOUT;
 
     return epoll_ctl(psock_context_data__->epoll_fd, EPOLL_CTL_MOD, sock,
@@ -86,10 +85,12 @@ inline bool sf_tcp_server::send(int sock, int type, const byte_array& data)
     header.length = htonl(data.size());
     make_header_checksum(header);
     auto tmp_data = data;
+
+    lck.unlock();
     before_send_filter__(sock, header, tmp_data);
     auto send_data = make_pkg(header) + tmp_data;
-
     before_raw_send_filter__(sock, send_data);
+    lck.lock();
 
     sock_context__[sock].data_buffer_out.push_back(send_data);
 
@@ -171,9 +172,8 @@ inline bool sf_tcp_server::listen(const std::string& ip, unsigned short port)
 inline void sf_tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
 {
     sf_debug("start thread");
-    epoll_data__().epoll_fd = epoll_create(max_tcp_connection);
-
     auto& epoll_data = epoll_data__();
+    epoll_data.epoll_fd = epoll_create(max_tcp_connection);
     {
         std::unique_lock<std::shared_mutex>
             lck(mu_context_pool__);
@@ -203,7 +203,7 @@ inline void sf_tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
 
     while (true) {
         int wait_fds = 0;
-        if ((wait_fds = epoll_wait(epoll_data__().epoll_fd, evs.data(),
+        if ((wait_fds = epoll_wait(epoll_data.epoll_fd, evs.data(),
                  max_tcp_connection, -1))
             == -1) {
             if (errno == EINTR) {
@@ -252,7 +252,7 @@ inline bool sf_tcp_server::in_dispatch__(SOCKET fd)
 
     sf_debug("add sock to sock_context__", fd, &sock_context__);
 
-    if (epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_ADD, fd,
+    if (epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_ADD, fd,
             &sock_context__[fd].ev)
         < 0) {
         sf_debug("add to epoll error");
@@ -323,7 +323,7 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
                 disconnect_sock_filter__(ev.data.fd);
                 {
                     std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
-                    epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_DEL,
+                    epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_DEL,
                         ev.data.fd, &sock_context__[ev.data.fd].ev);
                     sock_context__.erase(ev.data.fd);
                 }
@@ -351,7 +351,9 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
                     sock_context__[ev.data.fd].data_buffer_in.data() + read_pos,
                     sizeof(header));
                 if (!check_header_checksum(header)) {
+                    lck.unlock();
                     disconnect_sock_filter__(ev.data.fd);
+                    lck.lock();
                     close(ev.data.fd);
                     closed(ev.data.fd);
                     break;
@@ -363,10 +365,10 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
                         sock_context__[ev.data.fd].data_buffer_in.begin() + read_pos + sizeof(header),
                         sock_context__[ev.data.fd].data_buffer_in.begin() + read_pos + sizeof(header) + header.length) };
                     read_pos += sizeof(header) + header.length;
-
+                    lck.unlock();
                     after_recv_filter__(ev.data.fd, header, data);
                     data_coming(ev.data.fd, header, data);
-
+                    lck.lock();
                 } else {
                     break;
                 }
@@ -397,9 +399,11 @@ inline void sf_tcp_server::handle_write__(const epoll_event& ev)
         {
             std::shared_lock<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
             if (sock_context__[fd].data_buffer_out.empty()) {
+                lck.unlock();
                 write_finished(fd);
+                lck.lock();
                 sock_context__[fd].ev.events &= ~EPOLLOUT;
-                epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_MOD, fd,
+                epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_MOD, fd,
                     &sock_context__[fd].ev);
                 sf_debug(fd, "write_finished",
                     sock_context__[fd].data_buffer_out.size());
@@ -414,6 +418,7 @@ inline void sf_tcp_server::handle_write__(const epoll_event& ev)
         decltype(n) tmp_write;
         bool error_flag = false;
         while (n > 0) {
+            // FIXME 此处如果链接断开会触发 SIGPIPE 信号 终止程序
             tmp_write = static_cast<unsigned long>(
                 write(fd, p.data() + data_size - n, n));
             if (tmp_write < n) {
@@ -431,10 +436,10 @@ inline void sf_tcp_server::handle_write__(const epoll_event& ev)
             n -= tmp_write;
         }
         if (error_flag) {
-            std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
             sf_debug("write error");
             disconnect_sock_filter__(fd);
-            epoll_ctl(epoll_data__().epoll_fd, EPOLL_CTL_DEL, fd,
+            std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
+            epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_DEL, fd,
                 &sock_context__[fd].ev);
             close(fd);
             closed(fd);

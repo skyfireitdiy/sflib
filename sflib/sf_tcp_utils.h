@@ -48,7 +48,7 @@ constexpr int max_tcp_connection = 1000000;
  * @return 二进制数据包
  */
 template <typename T>
-typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(
+typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value, byte_array>::type make_pkg(
     const T& data);
 
 #pragma clang diagnostic push
@@ -60,7 +60,7 @@ typename std::enable_if<std::is_pod<T>::value, byte_array>::type make_pkg(
  * @return 解析出来的数据包
  */
 template <typename T>
-typename std::enable_if<std::is_pod<T>::value, T>::type take_pkg(
+typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value, T>::type take_pkg(
     const byte_array& data);
 #pragma clang diagnostic pop
 

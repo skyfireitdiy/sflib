@@ -610,16 +610,16 @@ inline sf_http_base_server::sf_http_base_server(
         [this](SOCKET sock, const byte_array& data) {
             raw_data_coming__(sock, data);
         },
-        true);
+        false);
     sf_bind_signal(
         server__, new_connection,
-        [this](SOCKET sock) { build_new_request__(sock); }, true);
+        [this](SOCKET sock) { build_new_request__(sock); }, false);
     sf_bind_signal(
         server__, closed, [this](SOCKET sock) { on_socket_closed__(sock); },
-        true);
+        false);
 
     sf_bind_signal(
-        &session_timer__, timeout, [this] { flush_session__(); }, true);
+        &session_timer__, timeout, [this] { flush_session__(); }, false);
 
     session_timer__.start(1000);
 }
