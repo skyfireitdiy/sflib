@@ -8,8 +8,8 @@
 */
 
 #define SF_DEBUG
-#include "sf_stdc++.h"
-#include "sf_object_factory.hpp"
+#include "sf_stdc++"
+#include "sf_object_factory"
 using namespace skyfire;
 
 struct Student {

@@ -5,7 +5,7 @@
 * @file test_rpc_server.cpp
 */
 #define SF_DEBUG
-#include "sf_rpc_server.hpp"
+#include "sf_rpc_server"
 
 using namespace skyfire;
 

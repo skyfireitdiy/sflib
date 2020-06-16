@@ -48,13 +48,20 @@ protected:
 
 public:
     sf_test_base__(const std::string& func_name, std::function<bool()> func);
-    static void run(int thread_count = 1, bool flashing = true);
+    template<typename U>
+    sf_test_base__(const std::string& func_name, std::function<bool(const U &)> func, const std::vector<U>& data);
+    
+    static int run(int thread_count = 1, bool flashing = true);
 };
 
-class sf_test final : public sf_test_base__<> {
+class sf_test_impl__ final : public sf_test_base__<> {
 public:
     using sf_test_base__::sf_test_base__;
 };
+
 }
 
-#define sf_test_func(x) skyfire::sf_test(#x, x);
+
+
+#define sf_test(a, ...) skyfire::sf_test_impl__(std::string(#a), std::function(a) , ##__VA_ARGS__)
+#define sf_test_run(...) sf_test_impl__::run(__VA_ARGS__)

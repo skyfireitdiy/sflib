@@ -26,7 +26,7 @@ int main()
     sf_should_no_throw(func1(2, 4), "should ok");
     sf_should_no_throw(func1(2, 0), "ddd");
 
-    sf_test_func(test1);
-    sf_test_func(test2);
-    skyfire::sf_test::run();
+    sf_test(test1);
+    sf_test(test2);
+    skyfire::sf_test_run();
 }

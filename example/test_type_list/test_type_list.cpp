@@ -5,7 +5,7 @@
 * @file test_type_list.cpp
 */
 
-#include "sf_type_list.h"
+#include "sf_type_list"
 using namespace skyfire;
 
 template <typename  T>

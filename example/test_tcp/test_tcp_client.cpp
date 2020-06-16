@@ -8,8 +8,8 @@
 */
 
 #define SF_DEBUG
-#include "sf_tcp_client.h"
-#include "sf_logger.hpp"
+#include "sf_tcp_client"
+#include "sf_logger"
 
 using namespace skyfire;
 using namespace std;

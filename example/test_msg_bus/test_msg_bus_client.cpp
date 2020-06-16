@@ -5,7 +5,7 @@
 * @file test_msg_bus_client.cpp
 */
 
-#include "sf_msg_bus_client.hpp"
+#include "sf_msg_bus_client"
 
 using namespace skyfire;
 

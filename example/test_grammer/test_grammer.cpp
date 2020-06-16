@@ -7,8 +7,8 @@
 * 
 */
 
-#include "sf_lex.hpp"
-#include "sf_yacc.hpp"
+#include "sf_lex"
+#include "sf_yacc"
 
 using namespace skyfire;
 
