@@ -36,10 +36,8 @@ inline epoll_context_t* sf_tcp_server::find_context__(SOCKET sock) const
             {
                 std::shared_lock<std::shared_mutex> lck(p->mu_epoll_context__);
                 if (p->sock_context__.count(sock) != 0) {
-                    sf_debug("found sock in sock_context__", sock, &p->sock_context__, context_pool__.size());
                     return p;
                 }
-                sf_debug("not found sock in sock_context__", sock, &p->sock_context__, context_pool__.size());
             }
         }
     }
@@ -415,21 +413,14 @@ inline void sf_tcp_server::handle_write__(const epoll_event& ev)
         sf_debug("pkg size:", p.size());
         auto data_size = p.size();
         auto n = data_size;
-        decltype(n) tmp_write;
+        int tmp_write;
         bool error_flag = false;
         while (n > 0) {
-            // FIXME 此处如果链接断开会触发 SIGPIPE 信号 终止程序
             tmp_write = static_cast<unsigned long>(
-                write(fd, p.data() + data_size - n, n));
-            if (tmp_write < n) {
-                if (tmp_write == -1 && errno != EAGAIN) {
-                    write_error(fd);
-                    error_flag = true;
-                }
-                if (tmp_write > 0) {
-                    sf_debug("write", tmp_write);
-                    n -= tmp_write;
-                }
+                ::send(fd, p.data() + data_size - n, n, MSG_NOSIGNAL));
+            if (tmp_write == -1 && errno != EAGAIN) {
+                write_error(fd);
+                error_flag = true;
                 break;
             }
             sf_debug("write", tmp_write);

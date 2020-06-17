@@ -21,6 +21,8 @@
 #include "sf_json.hpp"
 #include "sf_logger.hpp"
 #include "sf_random.hpp"
+#include "sf_finally.hpp"
+#include "sf_logger.hpp"
 #include <memory>
 #include <utility>
 
@@ -198,7 +200,10 @@ inline void sf_http_base_server::build_websocket_context_data__(
         websocket_request_callback__(request, res);
         res.header().set_header("Content-Length", std::to_string(res.length()));
         sf_debug("Response", to_string(res.to_package()));
-        server__->send(sock, res.to_package());
+        if(!server__->send(sock, res.to_package())){
+            sf_debug("send res error");
+            return;
+        }
         std::lock_guard<std::recursive_mutex> lck2(mu_websocket_context__);
         websocket_context__.insert({ sock, ws_data });
         websocket_context__[sock].sock = sock;
@@ -245,8 +250,10 @@ inline void sf_http_base_server::normal_response__(
     SOCKET sock, sf_http_response& res) const
 {
     res.header().set_header("Content-Length", std::to_string(res.length()));
-    server__->send(sock, res.to_package());
     sf_debug("http body length", res.length());
+    if (!server__->send(sock, res.to_package())){
+        sf_debug("send res error");
+    }
 }
 
 inline void sf_http_base_server::multipart_response__(SOCKET sock,
@@ -298,9 +305,16 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
     res.set_status(206);
 
     // 发送header
-    server__->send(sock, res.to_header_package());
+    if(!server__->send(sock, res.to_header_package()))
+    {
+        sf_debug("send res error");
+        return;
+    }
     for (auto i = 0UL; multipart.size() > i; ++i) {
-        server__->send(sock, to_byte_array(header_vec[i]));
+        if(!server__->send(sock, to_byte_array(header_vec[i]))){
+            sf_debug("send res error");
+            return;
+        }
         if (multipart[i].type == sf_http_response::multipart_info_t::multipart_info_type::file) {
             std::ifstream fi(multipart[i].file_info.filename,
                 std::ios::in | std::ios::binary);
@@ -310,14 +324,29 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
             }
             send_response_file_part__(sock, multipart[i].file_info, fi);
             fi.close();
-            server__->send(sock, to_byte_array("\r\n"s));
+            if(!server__->send(sock, to_byte_array("\r\n"s))){
+                sf_debug("send res error");
+                return;
+            }
         } else if (multipart[i].type == sf_http_response::multipart_info_t::multipart_info_type::form) {
-            server__->send(sock, to_byte_array(header_vec[i]));
-            server__->send(sock, multipart[i].form_info.body);
-            server__->send(sock, to_byte_array("\r\n"s));
+            if(!server__->send(sock, to_byte_array(header_vec[i]))){
+                sf_debug("send res error");
+                return;
+            }
+            if(!server__->send(sock, multipart[i].form_info.body)){
+                sf_debug("send res error");
+                return;
+            }
+            if(!server__->send(sock, to_byte_array("\r\n"s))){
+                sf_debug("send res error");
+                return;
+            }
         }
     }
-    server__->send(sock, to_byte_array(end_str));
+    if(!server__->send(sock, to_byte_array(end_str))){
+        sf_debug("send res error");
+        return;
+    }
 }
 
 inline bool sf_http_base_server::check_analysis_multipart_file__(
@@ -377,9 +406,15 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
             return;
         }
         res.set_status(206);
-        server__->send(sock, res.to_header_package());
+        sf_finally _([&fi](){
+            fi.close();
+        });
+        if(!server__->send(sock, res.to_header_package())){
+            sf_debug("send res error");
+            return;
+        }
         send_response_file_part__(sock, file, fi);
-        fi.close();
+        
     } else {
         file.end = file_size;
         auto& header = res.header();
@@ -400,10 +435,14 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
                 normal_response__(sock, res);
                 return;
             }
-
-            server__->send(sock, res.to_header_package());
+            sf_finally _([&fi]() {
+                fi.close();
+            });
+            if(!server__->send(sock, res.to_header_package())){
+                sf_debug("send res error");
+                return;
+            }
             send_response_file_part__(sock, file, fi);
-            fi.close();
         } else {
             std::error_code err;
             auto modify_time = fs::last_write_time(file.filename, err);
@@ -443,13 +482,19 @@ inline void sf_http_base_server::send_response_file_part__(
     while (curr_read_pos < file.end - buffer_size) {
         sf_debug("read file", curr_read_pos, file.end);
         fi.read(buffer.data(), buffer_size);
-        server__->send(sock, buffer);
-        curr_read_pos += buffer_size;
+        if(server__->send(sock, buffer)){
+            curr_read_pos += buffer_size;
+        } else {
+            sf_debug("not send all data");
+            return;
+        }
     }
     fi.read(buffer.data(),
         static_cast<std::streamsize>(file.end - curr_read_pos));
     buffer.resize(static_cast<unsigned long>(file.end - curr_read_pos));
-    server__->send(sock, buffer);
+    if (!server__->send(sock, buffer)){
+        sf_debug("not send all data");
+    }
 }
 
 template <typename T>
