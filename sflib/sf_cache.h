@@ -41,7 +41,7 @@ public:
     /**
      * @brief 取得缓存数据
      *
-     * @tparam T 数据类型（如果数据类型不符合会抛出bad_cast异常）
+     * @tparam T 数据类型（如果数据类型不匹配会返回nullptr）
      * @param key 键
      * @return std::shared_ptr<T> 数据
      */
