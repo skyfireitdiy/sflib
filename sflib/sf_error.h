@@ -58,6 +58,10 @@ public:
         buf__ = "ec:" + std::to_string(ec__) + " msg:" + msg__;
         return buf__.c_str();
     }
+    int code() const noexcept
+    {
+        return ec__;
+    }
     sf_exception(int ec, std::string msg)
         : ec__(ec)
         , msg__(msg)
@@ -65,4 +69,16 @@ public:
     }
 };
 
+class sf_err {
+private:
+    sf_exception exp__;
+
+public:
+    sf_err(sf_exception e = sf_exception(sf_err_ok, ""))
+        : exp__(e)
+    {
+    }
+    operator bool() const { return exp__.code() == sf_err_ok; }
+    sf_exception exception() const { return exp__; }
+};
 }

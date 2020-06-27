@@ -23,6 +23,7 @@ sf_chan<T>::sf_chan(int buffer_size)
 template <typename T>
 void sf_chan<T>::close()
 {
+    std::unique_lock<std::mutex> lck(mu__);
     closed__ = true;
     if (max_size__ != 0) {
         cond__.notify_all();

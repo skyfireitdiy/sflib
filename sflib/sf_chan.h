@@ -59,12 +59,12 @@ public:
      * @param d 读取的数据
      * @param ch 管道
      */
-    friend void operator>>(sf_chan<T>& ch, T& d)
+    friend sf_err operator>>(sf_chan<T>& ch, T& d)
     {
-        if (ch.closed__) {
-            throw sf_exception(sf_chan_close, "channel already closed");
-        }
         std::unique_lock<std::mutex> lck(ch.mu__);
+        if (ch.closed__) {
+            return sf_err { sf_exception(sf_chan_close, "channel already closed") };
+        }
         if (ch.max_size__ != 0) {
             if (ch.data__.empty()) {
                 ch.cond__.wait(lck, [&ch]() { return ch.data__.size() > 0 || ch.closed__; });
@@ -77,11 +77,11 @@ public:
             ch.cond__.notify_all();
         } else {
             ch.cond_pop__.wait(lck, [&ch]() -> bool { return ch.has_value__; });
-            sf_debug("d", d, "ch.buf__=", ch.buf__, "addr of d:", &d);
             d = ch.buf__;
             ch.has_value__ = false;
             ch.cond_pop_finish__.notify_one();
         }
+        return sf_err {};
     }
 
     /**
@@ -89,12 +89,12 @@ public:
      * @param ch 管道
      * @param d 写入的数据
      */
-    friend void operator>>(T d, sf_chan<T>& ch)
+    friend sf_err operator>>(T d, sf_chan<T>& ch)
     {
-        if (ch.closed__) {
-            throw sf_exception(sf_chan_close, "channel already closed");
-        }
         std::unique_lock<std::mutex> lck(ch.mu__);
+        if (ch.closed__) {
+            return sf_err(sf_exception(sf_chan_close, "channel already closed"));
+        }
         if (ch.max_size__ != 0) {
             if (ch.data__.size() == ch.max_size__) {
                 ch.cond__.wait(lck, [&ch]() { return ch.data__.size() < ch.max_size__ || ch.closed__; });
@@ -111,23 +111,23 @@ public:
                     throw sf_exception(sf_chan_close, "channel already closed");
                 }
             }
-            sf_debug("d=", d);
             ch.buf__ = d;
             ch.has_value__ = true;
             ch.cond_pop__.notify_one();
             ch.cond_pop_finish__.wait(lck, [&ch] { return !ch.has_value__; });
             ch.cond_push_prepare__.notify_one();
         }
+        return sf_err {};
     }
 
-    friend void operator>>(T d, const std::shared_ptr<sf_chan<T>> ch)
+    friend sf_err operator>>(T d, const std::shared_ptr<sf_chan<T>> ch)
     {
-        d >> *ch;
+        return d >> *ch;
     }
 
-    friend void operator>>(const std::shared_ptr<sf_chan<T>> ch, T& d)
+    friend sf_err operator>>(const std::shared_ptr<sf_chan<T>> ch, T& d)
     {
-        *ch >> d;
+        return *ch >> d;
     }
 };
 
