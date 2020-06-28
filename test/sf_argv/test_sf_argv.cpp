@@ -15,11 +15,7 @@ bool test_parser_none_postion(const test_argv_param& p)
     auto parser = sf_argparser::make_parser();
     parser->add_argument("-t", "--test", sf_json_type::string);
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+    return sf_json(result) == p.result;
 }
 
 bool test_other_name(const test_argv_param& p)
@@ -27,11 +23,7 @@ bool test_other_name(const test_argv_param& p)
     auto parser = sf_argparser::make_parser();
     parser->add_argument("-t", "--test", sf_json_type::string, true, {}, "other");
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+    return sf_json(result) == p.result;
 }
 
 bool test_param_type(const test_argv_param& p)
@@ -43,11 +35,7 @@ bool test_param_type(const test_argv_param& p)
     parser->add_argument("-b", "--boolean", sf_json_type::boolean);
 
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+    return sf_json(result) == p.result;
 }
 
 bool test_bool_value(const test_argv_param& p)
@@ -56,11 +44,8 @@ bool test_bool_value(const test_argv_param& p)
     parser->add_argument("-b", "--boolean", sf_json_type::boolean);
 
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+
+    return sf_json(result) == p.result;
 }
 
 bool test_array(const test_argv_param& p)
@@ -69,11 +54,8 @@ bool test_array(const test_argv_param& p)
     parser->add_argument("-a", "--array", sf_json_type::array);
 
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+
+    return sf_json(result) == p.result;
 }
 
 bool test_not_required(const test_argv_param& p)
@@ -82,11 +64,7 @@ bool test_not_required(const test_argv_param& p)
     parser->add_argument("-s", "--string", sf_json_type::string, false);
 
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+    return sf_json(result) == p.result;
 }
 
 bool test_save_bool(const test_argv_param& p)
@@ -96,11 +74,8 @@ bool test_save_bool(const test_argv_param& p)
     parser->add_argument("-f", "--false", sf_json_type::string, true, {}, "", sf_argv_action::store_false);
 
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+
+    return sf_json(result) == p.result;
 }
 
 bool test_default_value(const test_argv_param& p)
@@ -109,11 +84,8 @@ bool test_default_value(const test_argv_param& p)
     parser->add_argument("-s", "--string", sf_json_type::string, true, sf_json("default value"));
 
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+
+    return sf_json(result) == p.result;
 }
 
 bool test_subparser(const test_argv_param& p)
@@ -131,11 +103,8 @@ bool test_subparser(const test_argv_param& p)
     sub_parser2->add_argument("-t", "--two");
 
     auto result = parser->parse_argv(p.args, false);
-    if (result.ec != sf_err_ok) {
-        sf_error(result.err_string);
-        return false;
-    }
-    return result.result == p.result;
+
+    return sf_json(result) == p.result;
 }
 
 int main()

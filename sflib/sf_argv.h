@@ -12,6 +12,7 @@
 #include "sf_stdc++.h"
 #include "sf_json.hpp"
 #include "sf_error.h"
+#include "sf_multi_value.h"
 
 namespace skyfire {
 
@@ -40,11 +41,7 @@ struct sf_argv_opt_t {
     sf_json default_value {}; // 默认值
 };
 
-struct sf_argv_result_t {
-    sf_json result;
-    sf_error_code ec;
-    std::string err_string;
-};
+using sf_argv_result_t = sf_multi_value<sf_err,sf_json>;
 
 /**
  * @brief 参数解析类

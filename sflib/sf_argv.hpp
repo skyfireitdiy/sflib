@@ -79,14 +79,14 @@ inline bool sf_argparser::add_argument(skyfire::sf_argv_opt_t opt)
 }
 
 inline sf_argv_result_t sf_argparser::parse_argv__(
-    const std::vector<std::string>& argv) 
+    const std::vector<std::string>& argv)
 {
     sf_json ret;
     ret.convert_to_object();
     std::shared_ptr<sf_argv_opt_t> last_opt;
     int pos = 0;
     for (auto& p : none_position_arg__) {
-        if (p.type == sf_json_type::array){
+        if (p.type == sf_json_type::array) {
             ret[p.json_name].convert_to_array();
         }
         if (!p.default_value.is_null()) {
@@ -127,9 +127,10 @@ inline sf_argv_result_t sf_argparser::parse_argv__(
             }
             if (pos >= position_arg_.size()) {
                 return {
-                    sf_json(),
-                    sf_parse_err,
-                    "too many postion argv"
+                    sf_err { { sf_parse_err,
+                        "too many postion argv" } },
+                    sf_json()
+
                 };
             }
             auto d = sf_json();
@@ -157,7 +158,9 @@ inline sf_argv_result_t sf_argparser::parse_argv__(
                 last_opt = nullptr;
                 break;
             default:
-                throw sf_exception(sf_parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)));
+                return sf_argv_result_t {
+                    sf_err { { sf_parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, sf_json {}
+                };
             }
         } else {
             auto d = sf_json();
@@ -208,7 +211,7 @@ inline sf_argv_result_t sf_argparser::parse_argv__(
                 last_opt = nullptr;
                 break;
             default:
-                throw sf_exception(sf_parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)));
+                return sf_argv_result_t { sf_err { { sf_parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, sf_json {} };
             }
         }
     }
@@ -216,9 +219,9 @@ inline sf_argv_result_t sf_argparser::parse_argv__(
         if (p.required) {
             if (!ret.has(p.json_name)) {
                 return {
-                    sf_json(),
-                    sf_no_enough_argv_err,
-                    p.short_name + "/" + p.long_name + " is required"
+                    sf_err { { sf_no_enough_argv_err,
+                        p.short_name + "/" + p.long_name + " is required" } },
+                    sf_json()
                 };
             }
         }
@@ -227,26 +230,27 @@ inline sf_argv_result_t sf_argparser::parse_argv__(
         if (p.required) {
             if (!ret.has(p.json_name)) {
                 return {
-                    sf_json(),
-                    sf_no_enough_argv_err,
-                    p.short_name + "/" + p.long_name + " is required"
+                    sf_err { { sf_no_enough_argv_err,
+                        p.short_name + "/" + p.long_name + " is required" } },
+                    sf_json()
                 };
             }
         }
     }
-    return {ret, sf_err_ok , ""};
+    return { sf_err { { sf_err_ok, "" } }, ret };
 }
 
-inline sf_argv_result_t sf_argparser::parse_argv(int argc, const char** argv, bool skip0) 
+inline sf_argv_result_t sf_argparser::parse_argv(int argc, const char** argv, bool skip0)
 {
     return parse_argv(std::vector<std::string>({ argv, argv + argc }), skip0);
 }
 
-inline void prepare_parser__(std::shared_ptr<sf_argparser> &parser){
-    if (parser->sub_parsers_.empty()){
+inline void prepare_parser__(std::shared_ptr<sf_argparser>& parser)
+{
+    if (parser->sub_parsers_.empty()) {
         return;
     }
-    for(auto& p : parser->sub_parsers_){
+    for (auto& p : parser->sub_parsers_) {
         p.second->position_arg_.insert(p.second->position_arg_.end(), parser->position_arg_.begin(), parser->position_arg_.end());
         p.second->none_position_arg__.insert(p.second->none_position_arg__.end(), parser->none_position_arg__.begin(), parser->none_position_arg__.end());
         prepare_parser__(p.second);
@@ -255,7 +259,7 @@ inline void prepare_parser__(std::shared_ptr<sf_argparser> &parser){
     parser->position_arg_.clear();
 }
 
-inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>& args, bool skip0) 
+inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>& args, bool skip0)
 {
     std::vector<std::string> data({ args.begin() + skip0, args.end() });
     sf_json ret;
@@ -298,14 +302,14 @@ inline sf_argv_result_t sf_argparser::parse_argv(const std::vector<std::string>&
         }
         if (!find_flag) {
             auto result = parser->parse_argv__({ data.begin() + i, data.end() });
-            if (result.ec != sf_err_ok){
+            if (sf_err(result).exception().code() != sf_err_ok) {
                 return result;
             }
-            curr.join(result.result);
-            return { ret, sf_err_ok , ""};
+            curr.join(sf_json(result));
+            return { sf_err { { sf_err_ok, "" } }, ret };
         }
     }
-    return {ret, sf_err_ok, ""};
+    return { sf_err { { sf_err_ok, "" } }, ret };
 }
 
 bool sf_argparser::add_argument(std::string short_name, std::string long_name,
