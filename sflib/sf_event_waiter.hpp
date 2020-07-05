@@ -24,21 +24,13 @@ void sf_event_waiter<ARGS...>::wait()
 }
 
 template <typename... ARGS>
-template <size_t... Index>
-auto sf_event_waiter<ARGS...>::make_quit_func_helper__(
-    std::index_sequence<Index...>)
-{
-    return [this]() { quit(make_placeholders<Index + 1>()...); };
-}
-
-template <typename... ARGS>
 auto sf_event_waiter<ARGS...>::make_quit_func__()
 {
-    return make_quit_func_helper__(std::make_index_sequence<sizeof...(ARGS)> {});
+    return [this](ARGS...) { quit(); };
 }
 
 template <typename... ARGS>
-void sf_event_waiter<ARGS...>::quit(ARGS...)
+void sf_event_waiter<ARGS...>::quit()
 {
     cond__.notify_one();
 }

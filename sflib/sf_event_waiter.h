@@ -43,9 +43,6 @@ private:
     std::mutex mu_cond__;
     std::condition_variable cond__;
 
-    template <std::size_t... Index>
-    auto make_quit_func_helper__(std::index_sequence<Index...>);
-
 public:
     /**
      * 生成退出函数
@@ -61,7 +58,7 @@ public:
     /**
      * @brief quit 退出等待
      */
-    void quit(ARGS...);
+    void quit();
 };
 
 /**

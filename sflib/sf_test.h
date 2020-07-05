@@ -64,4 +64,4 @@ public:
 
 
 #define sf_test(a, ...) skyfire::sf_test_impl__(std::string(#a), std::function(a) , ##__VA_ARGS__)
-#define sf_test_run(...) sf_test_impl__::run(__VA_ARGS__)
+#define sf_test_run(...) skyfire::sf_test_impl__::run(__VA_ARGS__)
