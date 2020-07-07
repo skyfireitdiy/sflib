@@ -22,25 +22,25 @@ class sf_tcp_client_interface : public sf_nocopy<sf_object> {
     /**
      * 数据到来信号
      */
-    SF_REG_SIGNAL(data_coming, const sf_pkg_header_t &, const byte_array &)
+    sf_singal(data_coming, const sf_pkg_header_t &, const byte_array &)
     /**
      * 原始数据到来信号
      */
-    SF_REG_SIGNAL(raw_data_coming, const byte_array &)
+    sf_singal(raw_data_coming, const byte_array &)
     /**
      * 关闭信号
      */
-    SF_REG_SIGNAL(closed)
+    sf_singal(closed)
 
     /**
      * 写入成功
      */
-    SF_REG_SIGNAL(write_finished)
+    sf_singal(write_finished)
 
     /**
      * 写入出错
      */
-    SF_REG_SIGNAL(write_error)
+    sf_singal(write_error)
 
    private:
    public:

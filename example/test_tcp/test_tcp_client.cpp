@@ -18,7 +18,7 @@ int main()
 {
     auto client = sf_tcp_client::make_instance(false);
     if (client->connect_to_server("127.0.0.1", 9988)) {
-        sf_bind_signal(
+        sf_bind(
             client, data_coming, [](const sf_pkg_header_t header, const byte_array& data) {
                 sf_debug(header.type, header.length, to_string(data));
             },

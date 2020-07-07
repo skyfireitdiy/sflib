@@ -52,15 +52,15 @@ class sf_tcp_nat_traversal_connection : public sf_nocopy<sf_object> {
     /**
      * 数据到来信号
      */
-    SF_REG_SIGNAL(data_coming, const sf_pkg_header_t &, const byte_array &)
+    sf_singal(data_coming, const sf_pkg_header_t &, const byte_array &)
     /**
      * 原始数据到来信号
      */
-    SF_REG_SIGNAL(raw_data_coming, const byte_array &)
+    sf_singal(raw_data_coming, const byte_array &)
     /**
      * 关闭信号
      */
-    SF_REG_SIGNAL(closed)
+    sf_singal(closed)
 
    private:
     std::shared_ptr<sf_tcp_client> client__;

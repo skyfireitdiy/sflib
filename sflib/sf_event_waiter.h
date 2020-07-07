@@ -2,20 +2,20 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file sf_event_waiter.h
+* @file __sf_event_waiter__.h
 */
 
 /*
- * sf_event_waiter 事件等待
+ * __sf_event_waiter__ 事件等待
  */
 
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_object.hpp"
 #include "sf_meta.hpp"
 #include "sf_nocopy.h"
+#include "sf_object.hpp"
 #include <condition_variable>
 #include <mutex>
 
@@ -24,12 +24,12 @@
  * @param obj 对象
  * @param name 信号
  */
-#define SF_WAIT(obj, name)                                                            \
+#define sf_wait(obj, name)                                                            \
     {                                                                                 \
         auto p_waiter = skyfire::sf_make_waiter((obj)->__##name##_signal_func_vec__); \
-        auto bind_id = sf_bind_signal(obj, name, p_waiter->make_quit_func__(), true); \
-        p_waiter->wait();                                                             \
-        sf_unbind_signal(obj, name, bind_id);                                         \
+        auto bind_id = sf_bind(obj, name, p_waiter->make_quit_func__(), true);        \
+        p_waiter->wait__();                                                           \
+        sf_unbind(obj, name, bind_id);                                                \
     }
 
 namespace skyfire {
@@ -38,7 +38,7 @@ namespace skyfire {
  * @tparam ARGS 等待参数列表
  */
 template <typename... ARGS>
-class sf_event_waiter : public sf_nocopy<> {
+class __sf_event_waiter__ : public sf_nocopy<> {
 private:
     std::mutex mu_cond__;
     std::condition_variable cond__;
@@ -51,14 +51,14 @@ public:
     auto make_quit_func__();
 
     /**
-     * @brief wait 等待
+     * @brief wait__ 等待
      */
-    void wait();
+    void wait__();
 
     /**
-     * @brief quit 退出等待
+     * @brief quit__ 退出等待
      */
-    void quit();
+    void quit__();
 };
 
 /**
@@ -67,7 +67,7 @@ public:
  * @return 等待器
  */
 template <typename... ARGS>
-std::shared_ptr<sf_event_waiter<ARGS...>> sf_make_waiter(
+std::shared_ptr<__sf_event_waiter__<ARGS...>> sf_make_waiter(
     const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>>&);
 
 } // namespace skyfire

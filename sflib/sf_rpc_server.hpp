@@ -80,14 +80,14 @@ void sf_rpc_server::reg_rpc_func(const std::string& id, _Func func)
 
 inline sf_rpc_server::sf_rpc_server()
 {
-    sf_bind_signal(
+    sf_bind(
         sf_rpc_server::tcp_server__, data_coming,
         [this](SOCKET sock, const sf_pkg_header_t& header,
             const byte_array& data) {
             on_data_coming__(sock, header, data);
         },
         true);
-    sf_bind_signal(
+    sf_bind(
         sf_rpc_server::tcp_server__, new_connection,
         [this](SOCKET sock) {
             {
@@ -97,7 +97,7 @@ inline sf_rpc_server::sf_rpc_server()
             client_connected(sock);
         },
         true);
-    sf_bind_signal(
+    sf_bind(
         sf_rpc_server::tcp_server__, closed,
         [this](SOCKET sock) {
             {

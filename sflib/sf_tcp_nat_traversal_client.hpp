@@ -116,7 +116,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
 
     // lambda 里面需要此绑定id，所以需要传递指针
     std::shared_ptr<int> tmp_bind_id = std::make_shared<int>();
-    *tmp_bind_id = sf_bind_signal(
+    *tmp_bind_id = sf_bind(
         connect_context_map__[context.connect_id].point_b_server,
         new_connection, ([this, context, tmp_bind_id](SOCKET sock) {
             sf_debug("B new connection,NAT conection built");
@@ -128,7 +128,7 @@ inline void sf_tcp_nat_traversal_client::on_new_connect_required__(
                     sf_tcp_nat_traversal_connection_type::type_server_valid));
             new_nat_connection(connection, context.connect_id);
             // 解除绑定
-            sf_unbind_signal(
+            sf_unbind(
                 connect_context_map__[context.connect_id].point_b_server,
                 new_connection, *tmp_bind_id);
             sf_debug("unbind id",
@@ -247,13 +247,13 @@ inline bool sf_tcp_nat_traversal_client::connect_to_server(
 }
 
 inline sf_tcp_nat_traversal_client::sf_tcp_nat_traversal_client() {
-    sf_bind_signal(
+    sf_bind(
         client__, data_coming,
         [this](const sf_pkg_header_t &header, const byte_array &data) {
             on_client_data_coming__(header, data);
         },
         true);
-    sf_bind_signal(
+    sf_bind(
         client__, closed, [this] { close(); }, true);
 }
 

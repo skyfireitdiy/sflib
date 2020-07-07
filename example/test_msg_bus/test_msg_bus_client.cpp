@@ -16,7 +16,7 @@ int main()
     // 2. 连接到消息总线服务器
     (void)client->connect_to_server("127.0.0.1", 5678);
     // 3. 添加事件到来相应
-    sf_bind_signal(
+    sf_bind(
         client, msg_come,
         [](std::string, byte_array data) {
             std::string str;

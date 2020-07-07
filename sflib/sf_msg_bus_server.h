@@ -28,7 +28,7 @@ class sf_msg_bus_server final
     /**
      * @brief msg_come 消息到来信号
      */
-    SF_REG_SIGNAL(msg_come, SOCKET, std::string, byte_array);
+    sf_singal(msg_come, SOCKET, std::string, byte_array);
 
    public:
     /**

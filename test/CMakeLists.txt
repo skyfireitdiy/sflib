@@ -50,7 +50,7 @@ add_executable(test_sf_string sf_string/test_sf_string.cpp ${headers})
 add_executable(test_sf_argv sf_argv/test_sf_argv.cpp ${headers})
 add_executable(test_sf_cahce sf_cache/test_sf_cache.cpp ${headers})
 add_executable(test_sf_event_waiter sf_event_waiter/test_sf_event_waiter.cpp ${headers})
-
+add_executable(test_sf_finally sf_finally/test_sf_finally.cpp ${headers})
 
 
 
@@ -62,7 +62,7 @@ ELSE()
     target_link_libraries(test_sf_argv pthread)
     target_link_libraries(test_sf_cahce pthread)
     target_link_libraries(test_sf_event_waiter pthread)
-    
+    target_link_libraries(test_sf_finally pthread)
     
     
     

@@ -112,12 +112,12 @@ inline bool sf_msg_bus_server::listen(const std::string &ip,
 inline sf_msg_bus_server::~sf_msg_bus_server() { close(); }
 
 inline sf_msg_bus_server::sf_msg_bus_server() {
-    sf_bind_signal(
+    sf_bind(
         p_server__, data_coming,
         [this](SOCKET sock, const sf_pkg_header_t &header,
                const byte_array &data) { on_reg_data__(sock, header, data); },
         true);
-    sf_bind_signal(
+    sf_bind(
         p_server__, closed, [this](SOCKET sock) { on_disconnect__(sock); },
         true);
 }

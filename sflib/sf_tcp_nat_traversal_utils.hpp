@@ -37,28 +37,28 @@ inline sf_tcp_nat_traversal_connection::sf_tcp_nat_traversal_connection(
       connect_id__(connect_id),
       type__(type) {
     if (type__ == sf_tcp_nat_traversal_connection_type::type_client_valid) {
-        sf_bind_signal(
+        sf_bind(
             client__, data_coming,
             [this](const sf_pkg_header_t &header, const byte_array &data) {
                 data_coming(header, data);
             },
             true);
-        sf_bind_signal(
+        sf_bind(
             client__, raw_data_coming,
             [this](const byte_array &data) { raw_data_coming(data); }, true);
-        sf_bind_signal(
+        sf_bind(
             client__, closed, [this]() { closed(); }, true);
     } else {
-        sf_bind_signal(
+        sf_bind(
             server__, data_coming,
             [this](SOCKET, const sf_pkg_header_t &header,
                    const byte_array &data) { data_coming(header, data); },
             true);
-        sf_bind_signal(
+        sf_bind(
             server__, raw_data_coming,
             [this](SOCKET, const byte_array &data) { raw_data_coming(data); },
             true);
-        sf_bind_signal(
+        sf_bind(
             server__, closed, [this](SOCKET) { closed(); }, true);
     }
 }

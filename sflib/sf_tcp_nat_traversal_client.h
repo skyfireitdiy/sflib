@@ -38,7 +38,7 @@ class sf_tcp_nat_traversal_client
     : public sf_make_instance_t<sf_tcp_nat_traversal_client,
           sf_nocopy<sf_object>> {
     // 新连接，返回建立连接成功的tcpserver和已经连接上的socket，可通过这两个与被连接方通信
-    SF_REG_SIGNAL(new_nat_connection,
+    sf_singal(new_nat_connection,
         std::shared_ptr<sf_tcp_nat_traversal_connection>, std::string)
 
 private:

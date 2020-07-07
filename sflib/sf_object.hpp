@@ -19,7 +19,7 @@
 namespace skyfire {
 
 template <typename _VectorType, typename _FuncType>
-int sf_object::__sf_bind_helper(std::recursive_mutex& mu, _VectorType& vec,
+int sf_object::__sf_bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
     _FuncType func, bool single_thread)
 {
     std::lock_guard<std::recursive_mutex> lck(mu);
@@ -41,7 +41,7 @@ inline sf_object::~sf_object()
 }
 
 template <typename _VectorType>
-void sf_object::__sf_signal_unbind_helper(std::recursive_mutex& mu,
+void sf_object::__sf_unbind_helper__(std::recursive_mutex& mu,
     _VectorType& vec, int bind_id)
 {
     std::lock_guard<std::recursive_mutex> lck(mu);

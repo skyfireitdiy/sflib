@@ -58,7 +58,7 @@ int main() {
     std::shared_ptr<sf_tcp_nat_traversal_connection> conn;
 
     // 2.设新连接到来响应
-    sf_bind_signal(
+    sf_bind(
         pclient, new_nat_connection,
         std::function<void(std::shared_ptr<sf_tcp_nat_traversal_connection>,
                            std::string)>(
@@ -66,7 +66,7 @@ int main() {
                 std::string) {
                 std::cout << "new connection!" << std::endl;
                 conn = conn_t;
-                sf_bind_signal(
+                sf_bind(
                     conn, data_coming,
                     [](const sf_pkg_header_t &header, const byte_array &data) {
                         std::string msg;

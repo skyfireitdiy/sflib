@@ -57,7 +57,7 @@ void sf_rpc_client::call(const std::string& func_id,
     tcp_client__->send(rpc_req_type,
         to_byte_array(skyfire::to_json(req).to_string()));
     auto p_timer = std::make_shared<sf_timer>();
-    sf_bind_signal(p_timer, timeout, ([this, call_id]() {
+    sf_bind(p_timer, timeout, ([this, call_id]() {
         if (rpc_data__.count(call_id) != 0) {
             rpc_data__[call_id]->back_cond.notify_one();
             rpc_data__.erase(call_id);
@@ -92,7 +92,7 @@ void sf_rpc_client::call(const std::string& func_id,
     tcp_client__->send(rpc_req_type,
         to_byte_array(skyfire::to_json(req).to_string()));
     auto p_timer = std::make_shared<sf_timer>();
-    sf_bind_signal(p_timer, timeout, ([this, call_id]() {
+    sf_bind(p_timer, timeout, ([this, call_id]() {
         if (rpc_data__.count(call_id) != 0) {
             rpc_data__[call_id]->back_cond.notify_one();
             rpc_data__.erase(call_id);
@@ -118,7 +118,7 @@ void sf_rpc_client::call(const std::string& func_id,
 //    req.params = skyfire::to_json(byte_array());
 //    tcp_client__->send(rpc_req_type,
 //    to_byte_array(skyfire::to_json(req).to_string())); auto p_timer =
-//    std::make_shared<sf_timer>(); sf_bind_signal(p_timer, timeout, [=]() {
+//    std::make_shared<sf_timer>(); sf_bind(p_timer, timeout, [=]() {
 //        if(rpc_data__.count(call_id)!=0)
 //        {
 //            rpc_data__[call_id]->back_cond.notify_one();
@@ -179,14 +179,14 @@ inline void sf_rpc_client::set_rpc_timeout(unsigned int ms)
 
 inline sf_rpc_client::sf_rpc_client()
 {
-    sf_bind_signal(
+    sf_bind(
         tcp_client__, data_coming,
         [this](const sf_pkg_header_t& header_t, const byte_array& data_t) {
             back_callback__(header_t, data_t);
         },
         true);
 
-    sf_bind_signal(
+    sf_bind(
         tcp_client__, closed, [this]() { close(); }, true);
 }
 

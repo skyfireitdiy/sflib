@@ -31,13 +31,13 @@ inline bool sf_tcp_nat_traversal_server::listen(const std::string &ip,
 }
 
 inline sf_tcp_nat_traversal_server::sf_tcp_nat_traversal_server() {
-    sf_bind_signal(
+    sf_bind(
         server__, new_connection,
         [=](SOCKET sock) { on_new_connection__(sock); }, true);
-    sf_bind_signal(
+    sf_bind(
         server__, closed, [this](SOCKET sock) { on_disconnect__(sock); }, true);
 
-    sf_bind_signal(
+    sf_bind(
         server__, data_coming,
         [this](SOCKET sock, const sf_pkg_header_t &header,
                const byte_array &data) { on_msg_coming__(sock, header, data); },

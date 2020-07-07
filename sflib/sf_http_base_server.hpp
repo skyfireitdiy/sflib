@@ -650,20 +650,20 @@ inline sf_http_base_server::sf_http_base_server(
 {
     sf_info("server config:", to_json(config));
 
-    sf_bind_signal(
+    sf_bind(
         server__, raw_data_coming,
         [this](SOCKET sock, const byte_array& data) {
             raw_data_coming__(sock, data);
         },
         false);
-    sf_bind_signal(
+    sf_bind(
         server__, new_connection,
         [this](SOCKET sock) { build_new_request__(sock); }, false);
-    sf_bind_signal(
+    sf_bind(
         server__, closed, [this](SOCKET sock) { on_socket_closed__(sock); },
         false);
 
-    sf_bind_signal(
+    sf_bind(
         &session_timer__, timeout, [this] { flush_session__(); }, false);
 
     session_timer__.start(1000);

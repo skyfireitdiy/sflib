@@ -29,11 +29,11 @@ class sf_rpc_server
     /**
      * 客户端连接信号
      */
-    SF_REG_SIGNAL(client_connected, SOCKET)
+    sf_singal(client_connected, SOCKET)
     /**
      * 客户端断开连接信号
      */
-    SF_REG_SIGNAL(client_disconnected, SOCKET)
+    sf_singal(client_disconnected, SOCKET)
 
 private:
     std::unordered_set<SOCKET> client_list__;

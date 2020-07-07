@@ -25,7 +25,7 @@ class sf_timer : public sf_nocopy<sf_object> {
     /**
      * timeout 定时器触发信号
      */
-    SF_REG_SIGNAL(timeout);
+    sf_singal(timeout);
 
    public:
     /**

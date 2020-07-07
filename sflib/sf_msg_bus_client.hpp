@@ -17,7 +17,7 @@
 
 namespace skyfire {
 inline sf_msg_bus_client::sf_msg_bus_client() {
-    sf_bind_signal(
+    sf_bind(
         p_client__, data_coming,
         std::function<void(const sf_pkg_header_t &, const byte_array &)>(
             std::bind(&sf_msg_bus_client::on_reg_data__, this,

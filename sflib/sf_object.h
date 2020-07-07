@@ -10,7 +10,7 @@
  * 提供了信号---槽的通信机制
  * 
  * sf_object提供的信号--槽通信机制分为两种工作模式：单线程与多线程
- * 由sf_bind_signal宏的最后一个参数决定，如果该参数是true，代表在
+ * 由sf_bind宏的最后一个参数决定，如果该参数是true，代表在
  * 单线程中工作，所有的调用都是同步调用，而如果该参数传递微为false，
  * 则会使用消息队列异步处理信号。
  * 
@@ -24,25 +24,25 @@
  * using namespace std;
  * 
  * class car : public sf_object {
- *     SF_REG_SIGNAL(run)
- *     SF_REG_SIGNAL(stop, int)
+ *     sf_singal(run)
+ *     sf_singal(stop, int)
  * };
  * 
  * int main()
  * {
  *     car c;
- *     sf_bind_signal(
+ *     sf_bind(
  *         &c, run, []() {
  *             cout << "car run" << endl;
  *         },
  *         true);
- *     sf_bind_signal(
+ *     sf_bind(
  *         &c, stop, [](int d) {
  *             this_thread::sleep_for(chrono::seconds(3));
  *             cout << "car stop at:" << d << endl;
  *         },
  *         true);
- *     sf_bind_signal(
+ *     sf_bind(
  *         &c, stop, [](int d) {
  *             cout << "Wow!!! car run " << d << " kms!" << endl;
  *         },
@@ -70,25 +70,25 @@
  * using namespace std;
  * 
  * class car : public sf_object {
- *     SF_REG_SIGNAL(run)
- *     SF_REG_SIGNAL(stop, int)
+ *     sf_singal(run)
+ *     sf_singal(stop, int)
  * };
  * 
  * int main()
  * {
  *     car c;
- *     sf_bind_signal(
+ *     sf_bind(
  *         &c, run, []() {
  *             cout << "car run" << endl;
  *         },
  *         false);
- *     sf_bind_signal(
+ *     sf_bind(
  *         &c, stop, [](int d) {
  *             cout << "car stop at:" << d << endl;
  *             this_thread::sleep_for(chrono::seconds(3));
  *         },
  *         false);
- *     sf_bind_signal(
+ *     sf_bind(
  *         &c, stop, [](int d) {
  *             cout << "Wow!!! car run " << d << " kms!" << endl;
  *         },
@@ -116,22 +116,22 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedMacroInspection"
 
+#include "sf_json.hpp"
 #include "sf_object_msg_queue.hpp"
 #include "sf_stdc++.h"
-#include "sf_json.hpp"
 
 /*
- * SF_REG_SIGNAL 注册信号的宏
+ * sf_singal 注册信号的宏
  */
-#define SF_REG_SIGNAL(name, ...)                                           \
+#define sf_singal(name, ...)                                               \
 public:                                                                    \
-    std::recursive_mutex __mu_##name##_signal_;                            \
+    std::recursive_mutex __mu_##name##_signal__;                           \
     std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>   \
         __##name##_signal_func_vec__;                                      \
     template <typename... __SF_OBJECT_ARGS__>                              \
     void name(__SF_OBJECT_ARGS__&&... args)                                \
     {                                                                      \
-        std::lock_guard<std::recursive_mutex> lck(__mu_##name##_signal_);  \
+        std::lock_guard<std::recursive_mutex> lck(__mu_##name##_signal__); \
         for (auto& p : __##name##_signal_func_vec__) {                     \
             if (std::get<1>(p)) {                                          \
                 std::get<0>(p)(std::forward<__SF_OBJECT_ARGS__>(args)...); \
@@ -144,19 +144,19 @@ public:                                                                    \
     }
 
 /*
- * sf_bind_signal 信号绑定
+ * sf_bind 信号绑定
  */
-#define sf_bind_signal(objptr, name, func, ...)                 \
-    (objptr)->__sf_bind_helper((objptr)->__mu_##name##_signal_, \
-        (objptr)->__##name##_signal_func_vec__, func,           \
+#define sf_bind(objptr, name, func, ...)                           \
+    (objptr)->__sf_bind_helper__((objptr)->__mu_##name##_signal__, \
+        (objptr)->__##name##_signal_func_vec__, func,              \
         __VA_ARGS__)
 
 /*
- * sf_unbind_signal 信号解绑
+ * sf_unbind 信号解绑
  */
-#define sf_unbind_signal(objptr, name, bind_id) \
-    (objptr)->__sf_signal_unbind_helper(        \
-        (objptr)->__mu_##name##_signal_,        \
+#define sf_unbind(objptr, name, bind_id)  \
+    (objptr)->__sf_unbind_helper__(       \
+        (objptr)->__mu_##name##_signal__, \
         (objptr)->__##name##_signal_func_vec__, bind_id);
 
 namespace skyfire {
@@ -166,11 +166,11 @@ namespace skyfire {
 class sf_object {
 public:
     template <typename _VectorType, typename _FuncType>
-    int __sf_bind_helper(std::recursive_mutex& mu, _VectorType& vec,
+    int __sf_bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
         _FuncType func, bool single_thread = true);
 
     template <typename _VectorType>
-    void __sf_signal_unbind_helper(std::recursive_mutex& mu, _VectorType& vec,
+    void __sf_unbind_helper__(std::recursive_mutex& mu, _VectorType& vec,
         int bind_id);
 
     virtual ~sf_object();

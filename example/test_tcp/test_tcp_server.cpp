@@ -24,7 +24,7 @@ int main()
     //     return -1;
     // }
     // // 3.设置数据到来事件响应
-    // sf_bind_signal(
+    // sf_bind(
     //     server, data_coming,
     //     [=](SOCKET sock, const sf_pkg_header_t& header, const byte_array& data) {
     //         sf_debug(header.type, header.length, to_string(data));
@@ -42,7 +42,7 @@ int main()
         return -1;
     }
     // 3.设置数据到来事件响应
-    sf_bind_signal(
+    sf_bind(
         server, raw_data_coming,
         [=](SOCKET sock, const byte_array& data) {
             sf_debug(to_string(data));

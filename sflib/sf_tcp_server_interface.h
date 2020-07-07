@@ -23,30 +23,30 @@ class sf_tcp_server_interface : public sf_nocopy<sf_object> {
     /**
      * 新连接到来信号
      */
-    SF_REG_SIGNAL(new_connection, SOCKET);
+    sf_singal(new_connection, SOCKET);
     /**
      * 数据包到来信号
      */
-    SF_REG_SIGNAL(data_coming, SOCKET, const sf_pkg_header_t&,
+    sf_singal(data_coming, SOCKET, const sf_pkg_header_t&,
         const byte_array&);
     /**
      * 原始数据到来信号
      */
-    SF_REG_SIGNAL(raw_data_coming, SOCKET, const byte_array&);
+    sf_singal(raw_data_coming, SOCKET, const byte_array&);
     /**
      * 关闭信号
      */
-    SF_REG_SIGNAL(closed, SOCKET);
+    sf_singal(closed, SOCKET);
 
     /**
      * 写成功信号
      */
-    SF_REG_SIGNAL(write_finished, SOCKET);
+    sf_singal(write_finished, SOCKET);
 
     /**
      * 写失败信号
      */
-    SF_REG_SIGNAL(write_error, SOCKET);
+    sf_singal(write_error, SOCKET);
 
 private:
     std::vector<std::shared_ptr<sf_server_socket_filter>> filters__;
