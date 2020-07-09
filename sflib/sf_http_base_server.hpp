@@ -9,20 +9,19 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_http_base_server.h"
 
+#include "sf_cache.hpp"
 #include "sf_eventloop.hpp"
+#include "sf_finally.hpp"
 #include "sf_http_content_type.h"
 #include "sf_http_server_config.h"
 #include "sf_http_utils.hpp"
+#include "sf_json.hpp"
+#include "sf_logger.hpp"
 #include "sf_object.hpp"
+#include "sf_random.hpp"
 #include "sf_tcp_server.h"
 #include "sf_timer.hpp"
 #include "sf_websocket_utils.hpp"
-#include "sf_cache.hpp"
-#include "sf_json.hpp"
-#include "sf_logger.hpp"
-#include "sf_random.hpp"
-#include "sf_finally.hpp"
-#include "sf_logger.hpp"
 #include <memory>
 #include <utility>
 
@@ -200,7 +199,7 @@ inline void sf_http_base_server::build_websocket_context_data__(
         websocket_request_callback__(request, res);
         res.header().set_header("Content-Length", std::to_string(res.length()));
         sf_debug("Response", to_string(res.to_package()));
-        if(!server__->send(sock, res.to_package())){
+        if (!server__->send(sock, res.to_package())) {
             sf_debug("send res error");
             return;
         }
@@ -251,7 +250,7 @@ inline void sf_http_base_server::normal_response__(
 {
     res.header().set_header("Content-Length", std::to_string(res.length()));
     sf_debug("http body length", res.length());
-    if (!server__->send(sock, res.to_package())){
+    if (!server__->send(sock, res.to_package())) {
         sf_debug("send res error");
     }
 }
@@ -305,13 +304,12 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
     res.set_status(206);
 
     // 发送header
-    if(!server__->send(sock, res.to_header_package()))
-    {
+    if (!server__->send(sock, res.to_header_package())) {
         sf_debug("send res error");
         return;
     }
     for (auto i = 0UL; multipart.size() > i; ++i) {
-        if(!server__->send(sock, to_byte_array(header_vec[i]))){
+        if (!server__->send(sock, to_byte_array(header_vec[i]))) {
             sf_debug("send res error");
             return;
         }
@@ -324,26 +322,26 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
             }
             send_response_file_part__(sock, multipart[i].file_info, fi);
             fi.close();
-            if(!server__->send(sock, to_byte_array("\r\n"s))){
+            if (!server__->send(sock, to_byte_array("\r\n"s))) {
                 sf_debug("send res error");
                 return;
             }
         } else if (multipart[i].type == sf_http_response::multipart_info_t::multipart_info_type::form) {
-            if(!server__->send(sock, to_byte_array(header_vec[i]))){
+            if (!server__->send(sock, to_byte_array(header_vec[i]))) {
                 sf_debug("send res error");
                 return;
             }
-            if(!server__->send(sock, multipart[i].form_info.body)){
+            if (!server__->send(sock, multipart[i].form_info.body)) {
                 sf_debug("send res error");
                 return;
             }
-            if(!server__->send(sock, to_byte_array("\r\n"s))){
+            if (!server__->send(sock, to_byte_array("\r\n"s))) {
                 sf_debug("send res error");
                 return;
             }
         }
     }
-    if(!server__->send(sock, to_byte_array(end_str))){
+    if (!server__->send(sock, to_byte_array(end_str))) {
         sf_debug("send res error");
         return;
     }
@@ -406,15 +404,15 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
             return;
         }
         res.set_status(206);
-        sf_finally _([&fi](){
+        sf_finally([&fi]() {
             fi.close();
         });
-        if(!server__->send(sock, res.to_header_package())){
+        if (!server__->send(sock, res.to_header_package())) {
             sf_debug("send res error");
             return;
         }
         send_response_file_part__(sock, file, fi);
-        
+
     } else {
         file.end = file_size;
         auto& header = res.header();
@@ -435,10 +433,10 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
                 normal_response__(sock, res);
                 return;
             }
-            sf_finally _([&fi]() {
+            sf_finally([&fi]() {
                 fi.close();
             });
-            if(!server__->send(sock, res.to_header_package())){
+            if (!server__->send(sock, res.to_header_package())) {
                 sf_debug("send res error");
                 return;
             }
@@ -482,7 +480,7 @@ inline void sf_http_base_server::send_response_file_part__(
     while (curr_read_pos < file.end - buffer_size) {
         sf_debug("read file", curr_read_pos, file.end);
         fi.read(buffer.data(), buffer_size);
-        if(server__->send(sock, buffer)){
+        if (server__->send(sock, buffer)) {
             curr_read_pos += buffer_size;
         } else {
             sf_debug("not send all data");
@@ -492,7 +490,7 @@ inline void sf_http_base_server::send_response_file_part__(
     fi.read(buffer.data(),
         static_cast<std::streamsize>(file.end - curr_read_pos));
     buffer.resize(static_cast<unsigned long>(file.end - curr_read_pos));
-    if (!server__->send(sock, buffer)){
+    if (!server__->send(sock, buffer)) {
         sf_debug("not send all data");
     }
 }
