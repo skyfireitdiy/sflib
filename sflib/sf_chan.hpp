@@ -14,9 +14,7 @@ namespace skyfire {
 template <typename T>
 sf_chan<T>::sf_chan(int buffer_size)
 {
-    if (buffer_size < 0) {
-        buffer_size = 0;
-    }
+    // 此处可以为负数，为负数表示不限制大小
     max_size__ = buffer_size;
 }
 
@@ -25,6 +23,7 @@ void sf_chan<T>::close()
 {
     std::unique_lock<std::mutex> lck(mu__);
     closed__ = true;
+    data__.clear();
     if (max_size__ != 0) {
         cond__.notify_all();
     } else {
