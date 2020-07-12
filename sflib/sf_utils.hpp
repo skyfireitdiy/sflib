@@ -135,10 +135,8 @@ inline long double sf_string_to_long_double(const std::string& str)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnusedValue"
 
-inline std::string sf_make_time_str(
-    const std::chrono::system_clock::time_point& tp)
+inline std::string tm2string(std::time_t tt, const std::string& fmt)
 {
-    auto tt = std::chrono::system_clock::to_time_t(tp);
     tm tm_d;
     auto ptm = &tm_d;
 #ifdef _MSC_VER
@@ -147,8 +145,19 @@ inline std::string sf_make_time_str(
     ptm = localtime(&tt);
 #endif
     std::ostringstream os;
-    os << std::put_time(ptm, "%Y-%m-%d %H:%M:%S");
+    os << std::put_time(ptm, fmt.c_str());
     return os.str();
+}
+
+inline std::string sf_make_time_str(
+    const std::chrono::system_clock::time_point& tp, const std::string& fmt)
+{
+    return tm2string(std::chrono::system_clock::to_time_t(tp), fmt);
+}
+
+inline std::string sf_make_time_str(const std::filesystem::file_time_type& tp, const std::string& fmt)
+{
+    return tm2string(std::time_t(std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count()), fmt);
 }
 
 #pragma clang diagnostic pop

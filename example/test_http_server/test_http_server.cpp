@@ -5,7 +5,7 @@
 * @file test_http_server.cpp
 */
 
-//#define SF_DEBUG
+#define SF_DEBUG
 #include "sf_http_server"
 
 using namespace std::literals;
@@ -94,7 +94,7 @@ int main() {
     // 6.
     // 设置一个静态资源路由，位置为"../example/test_http_server/testWebsite"，请求为所有，默认文件编码为utf-8，启用deflate压缩
     server->add_router(sf_static_router::make_instance(
-        R"(../example/test_http_server/testWebsite)"));
+        R"(../../example/test_http_server/testWebsite)"));
 
     // 7. 启动服务
     server->start();

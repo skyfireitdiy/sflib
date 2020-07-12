@@ -33,7 +33,7 @@ inline void sf_http_base_server::http_handler__(
     const SOCKET sock, const sf_http_request& http_request)
 {
     bool keep_alive = true;
-    sf_http_response res;
+    sf_http_response res(http_request);
     res.set_status(200);
     res.set_http_version(http_request.request_line().http_version);
 
@@ -195,7 +195,7 @@ inline void sf_http_base_server::build_websocket_context_data__(
     ws_data.url = request.request_line().url;
 
     if (websocket_request_callback__) {
-        sf_http_response res;
+        sf_http_response res(request);
         websocket_request_callback__(request, res);
         res.header().set_header("Content-Length", std::to_string(res.length()));
         sf_debug("Response", to_string(res.to_package()));
@@ -367,10 +367,42 @@ inline bool sf_http_base_server::check_analysis_multipart_file__(
     return true;
 }
 
+inline sf_http_base_server::file_etag_t sf_http_base_server::make_etag__(const sf_http_response::response_file_info_t& file) const
+{
+    std::error_code err;
+    auto modify_time = fs::last_write_time(file.filename, err);
+    if (err) {
+        sf_debug("get file modify time error", file.filename);
+    }
+    return sf_http_base_server::file_etag_t {
+        "W/\"" + std::to_string(modify_time.time_since_epoch().count()) + "-" + std::to_string(file.file_size) + "\"",
+        sf_make_time_str(modify_time)
+    };
+}
+
+inline void sf_http_base_server::set_file_etag__(sf_http_response& res, const file_etag_t &etag) const
+{
+    sf_debug("set etag", etag.etag);
+    res.header().set_header("Etag", etag.etag);
+    res.header().set_header("Last-Modified", etag.last_modify);
+}
+
 inline void sf_http_base_server::file_response__(SOCKET sock,
     sf_http_response& res) const
 {
+    // 先检测是否可以返回304
     auto file = res.file();
+    auto req = res.get_req();
+    auto etag = make_etag__(file);
+    if (req.header().has_key("If-None-Match") && req.header().has_key("If-Modified-Since")) {
+        if (etag.etag == req.header().header_value("If-None-Match") && etag.last_modify == req.header().header_value("If-Modified-Since")) {
+            sf_debug("file not modify");
+            res.set_status(304);
+            normal_response__(sock, res);
+            return;
+        }
+    }
+
     auto file_size = fs::file_size(file.filename);
     sf_debug("file:", file.filename, file.begin, file.end);
     if (file.begin != 0 || (file.end != file_size && file.end != -1)) {
@@ -436,6 +468,9 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
             sf_finally([&fi]() {
                 fi.close();
             });
+
+            set_file_etag__(res, etag);
+
             if (!server__->send(sock, res.to_header_package())) {
                 sf_debug("send res error");
                 return;
@@ -452,6 +487,7 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
             }
             auto data = file_cache__->data<file_cache_data_t>(file.filename);
             if (data && data->modify_time == modify_time) {
+                set_file_etag__(res, etag);
                 res.set_body(data->data);
                 normal_response__(sock, res);
             } else {
@@ -460,6 +496,7 @@ inline void sf_http_base_server::file_response__(SOCKET sock,
                     res.set_status(404);
                     normal_response__(sock, res);
                 } else {
+                    set_file_etag__(res, etag);
                     file_cache__->set_data(file.filename, file_cache_data_t { content, modify_time });
                     res.set_body(content);
                     normal_response__(sock, res);

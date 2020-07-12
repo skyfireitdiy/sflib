@@ -110,7 +110,10 @@ bool sf_string_end_with(const std::string& str, const std::string& suffix);
  * 生成时间字符串
  * @return 时间字符串
  */
-std::string sf_make_time_str(const std::chrono::system_clock::time_point& tp = std::chrono::system_clock::now() + std::chrono::hours(8));
+std::string sf_make_time_str(const std::chrono::system_clock::time_point& tp = std::chrono::system_clock::now(),
+    const std::string& fmt = "%Y-%m-%d %H:%M:%S");
+
+std::string sf_make_time_str(const std::filesystem::file_time_type& tp, const std::string& fmt = "%Y-%m-%d %H:%M:%S");
 
 /**
  * long double 转为字符串

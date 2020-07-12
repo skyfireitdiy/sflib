@@ -9,9 +9,10 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_header.h"
+#include "sf_http_request.h"
 #include "sf_http_utils.h"
-#include "sf_stdc++.h"
 #include "sf_json.h"
+#include "sf_stdc++.h"
 
 namespace skyfire {
 class sf_http_base_server;
@@ -38,6 +39,7 @@ public:
         std::string filename;
         long long begin;
         long long end;
+        long unsigned int file_size;
     };
 
     /**
@@ -78,12 +80,29 @@ private:
     response_file_info_t file_info__;
     std::vector<multipart_info_t> multipart_info_vec__;
 
+    const sf_http_request req__;
+
 public:
+    /**
+     * @brief 构造函数，生成一个response
+     * 
+     * @param req 关联的req
+     */
+    sf_http_response(const sf_http_request& req);
+
+    /**
+     * @brief 获取请求对象
+     * 
+     * @return const sf_http_request 请求对象
+     */
+    const sf_http_request get_req() const;
+
     /**
      * 设置http状态码
      * @param status
      */
-    void set_status(int status);
+    void
+    set_status(int status);
     /**
      * 设置http版本（当前只支持HTTP/1.1，默认也是此值）
      * @param http_version

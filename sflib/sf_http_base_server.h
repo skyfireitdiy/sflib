@@ -31,7 +31,7 @@ class sf_http_base_server {
 private:
     const sf_http_server_config config__;
 
-    std::shared_ptr<sf_tcp_server> server__ ;
+    std::shared_ptr<sf_tcp_server> server__;
 
     sf_eventloop event_loop__;
 
@@ -68,6 +68,12 @@ private:
         byte_array data;
         fs::file_time_type modify_time;
     };
+
+    struct file_etag_t {
+        std::string etag;
+        std::string last_modify;
+    };
+
 
     mutable std::recursive_mutex mu_session__;
     std::unordered_map<std::string, std::shared_ptr<session_data_t>>
@@ -116,13 +122,18 @@ private:
         SOCKET sock, const sf_http_response::response_file_info_t& file,
         std::ifstream& fi) const;
 
-public:
-    /**
+    void set_file_etag__(sf_http_response &res, const file_etag_t& etag) const;
+
+    file_etag_t make_etag__(const sf_http_response::response_file_info_t& file) const;
+
+        public :
+        /**
      * 获取session
      * @param session_key session key
      * @return session的json对象（注意是浅拷贝）
      */
-    sf_json session(const std::string& session_key);
+        sf_json
+        session(const std::string& session_key);
     /**
      * @brief 保持session活动（赋予session生命值）
      *

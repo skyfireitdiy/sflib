@@ -1,26 +1,29 @@
 <html>
-    <meta charset="utf-8" />
-    <head>
-        <title>
-            这是一个测试网页！
-        </title>
-        <h1>
-            This is a test website!!!
-        </h1>
-    </head>
-    <body>
-        <form action="/upload_file" method="post" enctype="multipart/form-data">
+<meta charset="utf-8" />
+
+<head>
+    <title>
+        这是一个测试网页！
+    </title>
+    <h1>
+        This is a test website!!!
+    </h1>
+</head>
+
+<body>
+    <form action="/upload_file" method="post" enctype="multipart/form-data">
         <!--<form action="http://localhost/testUpload/upload.php" method="post" enctype="multipart/form-data">-->
-            <label for="file">Filename:</label>
-            <input type="file" name="file" id="file" />
-            <br />
-            <label for="file2">Filename:</label>
-            <input type="file" name="file2" id="file2" />
-            <br />
-            <label for="name">Name:</label>
-            <input type="text" name="name" id="name" />
-            <br />
-            <input type="submit" name="submit" value="Submit" />
-        </form>
-    </body>
+        <label for="file">Filename:</label>
+        <input type="file" name="file" id="file" />
+        <br />
+        <label for="file2">Filename:</label>
+        <input type="file" name="file2" id="file2" />
+        <br />
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" />
+        <br />
+        <input type="submit" name="submit" value="Submit" />
+    </form>
+</body>
+
 </html>
