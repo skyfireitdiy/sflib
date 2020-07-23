@@ -11,23 +11,54 @@ namespace skyfire {
 
 template <typename T>
 std::vector<sf_test_func_t__> sf_test_base__<T>::test_data__;
+template <typename T>
+std::unordered_map<std::string, std::function<void()>> sf_test_base__<T>::setup_func_map__;
+template <typename T>
+std::unordered_map<std::string, std::function<void()>> sf_test_base__<T>::teardown_func_map__;
 
 template <typename T>
-sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool()> func)
+sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool()> func, const std::string& class_name, std::function<void()> before, std::function<void()> after)
 {
-    sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { func_name, func });
+    sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name, func, class_name });
 }
 
 template <typename T>
 template <typename U>
-sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool(const U&)> func, const std::vector<U>& data)
+sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool(const U&)> func, const std::string& class_name, const std::vector<U>& data, std::function<void()> before, std::function<void()> after)
 {
-    for (int i=0;i<data.size();++i) {
+    for (int i = 0; i < data.size(); ++i) {
         auto test_data = data[i];
-        sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { func_name + " " + std::to_string(i), [test_data, func]()->bool{
-            return func(test_data);
-        } });
+        sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name + " " + std::to_string(i), [test_data, func]() -> bool {
+                                                                       return func(test_data);
+                                                                   },
+            class_name });
     }
+}
+
+template <typename T>
+sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool()> func, std::function<void()> before, std::function<void()> after)
+{
+    sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name, func, "" });
+}
+
+template <typename T>
+template <typename U>
+sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool(const U&)> func, const std::vector<U>& data, std::function<void()> before, std::function<void()> after)
+{
+    for (int i = 0; i < data.size(); ++i) {
+        auto test_data = data[i];
+        sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name + " " + std::to_string(i), [test_data, func]() -> bool {
+                                                                       return func(test_data);
+                                                                   },
+            "" });
+    }
+}
+
+template <typename T>
+void sf_test_base__<T>::set_env(const std::string& class_name, std::function<void()> setup, std::function<void()> teardown)
+{
+    setup_func_map__[class_name] = setup;
+    teardown_func_map__[class_name] = teardown;
 }
 
 template <typename T>
@@ -41,7 +72,35 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
     for (auto& p : test_data__) {
         result.push_back(pool->add_task(
             [p, flashing, &mu, &ret]() -> bool {
+                std::function<void()> setup;
+                std::function<void()> teardown;
+
+                if (p.class_name != "") {
+                    try {
+                        setup = setup_func_map__.at(p.class_name);
+                    } catch (std::out_of_range& e) {
+                        setup = nullptr;
+                    }
+                    try {
+                        teardown = teardown_func_map__.at(p.class_name);
+                    } catch (std::out_of_range& e) {
+                        teardown = nullptr;
+                    }
+                }
+
+                if (p.before) {
+                    p.before();
+                }
+                if (setup) {
+                    setup();
+                }
                 auto r = p.func();
+                if (teardown) {
+                    teardown();
+                }
+                if (p.after) {
+                    p.after();
+                }
                 {
                     std::lock_guard<std::mutex> lck(mu);
                     if (r) {

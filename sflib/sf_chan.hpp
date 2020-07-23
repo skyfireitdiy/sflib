@@ -23,7 +23,9 @@ void sf_chan<T>::close()
 {
     std::unique_lock<std::mutex> lck(mu__);
     closed__ = true;
-    data__.clear();
+    // FIXME deque没有clear成员了？
+    // data__.clear();
+    data__ = std::queue<T> {};
     if (max_size__ != 0) {
         cond__.notify_all();
     } else {
