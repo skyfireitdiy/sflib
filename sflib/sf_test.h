@@ -50,6 +50,8 @@ protected:
     static std::vector<sf_test_func_t__> test_data__;
     static std::unordered_map<std::string, std::function<void()>> setup_func_map__;
     static std::unordered_map<std::string, std::function<void()>> teardown_func_map__;
+    static std::function<void()> global_setup__;
+    static std::function<void()> global_teardown__;
 
 public:
     sf_test_base__(const std::string& func_name, std::function<bool()> func, std::function<void()> before = nullptr, std::function<void()> after = nullptr);
@@ -61,6 +63,7 @@ public:
 
     static int run(int thread_count = 1, bool flashing = true);
     static void set_env(const std::string& class_name, std::function<void()> setup, std::function<void()> teardown);
+    static void set_global_env(std::function<void()> setup, std::function<void()> teardown);
 };
 
 class sf_test_impl__ final : public sf_test_base__<> {
@@ -73,3 +76,5 @@ public:
 #define sf_test(a, ...) skyfire::sf_test_impl__(std::string(#a), std::function(a), ##__VA_ARGS__)
 #define sf_test_run(...) skyfire::sf_test_impl__::run(__VA_ARGS__)
 #define sf_test_env(...) skyfire::sf_test_impl__::set_env(__VA_ARGS__)
+#define sf_test_global_env(...) skyfire::sf_test_impl__::set_global_env(__VA_ARGS__)
+

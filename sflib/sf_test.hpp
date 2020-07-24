@@ -17,6 +17,11 @@ template <typename T>
 std::unordered_map<std::string, std::function<void()>> sf_test_base__<T>::teardown_func_map__;
 
 template <typename T>
+std::function<void()> sf_test_base__<T>::global_setup__;
+template <typename T>
+std::function<void()> sf_test_base__<T>::global_teardown__;
+
+template <typename T>
 sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool()> func, const std::string& class_name, std::function<void()> before, std::function<void()> after)
 {
     sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name, func, class_name });
@@ -62,10 +67,20 @@ void sf_test_base__<T>::set_env(const std::string& class_name, std::function<voi
 }
 
 template <typename T>
+void sf_test_base__<T>::set_global_env(std::function<void()> setup, std::function<void()> teardown)
+{
+    global_setup__ = setup;
+    global_teardown__ = teardown;
+}
+
+template <typename T>
 int sf_test_base__<T>::run(int thread_count, bool flashing)
 {
     int ret = 0;
     auto start_time = std::chrono::system_clock::now();
+    if (global_setup__) {
+        global_setup__();
+    }
     auto pool = sf_thread_pool::make_instance(thread_count);
     std::vector<std::future<bool>> result;
     std::mutex mu;
@@ -131,6 +146,10 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
         } else {
             ++count_failed;
         }
+    }
+
+    if (global_teardown__) {
+        global_teardown__();
     }
 
     std::vector<sf_color> pass_style { sf_color_fg_green };
