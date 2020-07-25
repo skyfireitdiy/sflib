@@ -309,7 +309,7 @@ inline void sf_tcp_server::handle_read__(const epoll_event& ev)
     while (true) {
         sf_debug("start read", ev.data.fd);
         auto count_read = static_cast<int>(
-            recv(ev.data.fd, recv_buf.data(), sf_default_buffer_size, 0));
+            recv(ev.data.fd, recv_buf.data(), sf_default_buffer_size, MSG_NOSIGNAL));
         sf_debug("read", count_read);
         if (count_read <= 0) {
             sf_debug("errno", errno);

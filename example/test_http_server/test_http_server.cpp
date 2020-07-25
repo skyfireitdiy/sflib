@@ -5,7 +5,7 @@
 * @file test_http_server.cpp
 */
 
-#define SF_DEBUG
+// #define SF_DEBUG
 #include "sf_http_server"
 
 using namespace std::literals;

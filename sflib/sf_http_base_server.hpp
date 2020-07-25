@@ -85,10 +85,12 @@ inline void sf_http_base_server::http_handler__(
     }
 
     auto addr = http_request.addr();
-    sf_info(res.status__, addr.ip, addr.port,
-        http_request.request_line().method,
-        http_request.request_line().http_version,
-        http_request.request_line().url);
+    if (config__.log) {
+        sf_info(res.status__, addr.ip, addr.port,
+            http_request.request_line().method,
+            http_request.request_line().http_version,
+            http_request.request_line().url);
+    }
 }
 
 inline void sf_http_base_server::raw_data_coming__(SOCKET sock,
@@ -380,7 +382,7 @@ inline sf_http_base_server::file_etag_t sf_http_base_server::make_etag__(const s
     };
 }
 
-inline void sf_http_base_server::set_file_etag__(sf_http_response& res, const file_etag_t &etag) const
+inline void sf_http_base_server::set_file_etag__(sf_http_response& res, const file_etag_t& etag) const
 {
     sf_debug("set etag", etag.etag);
     res.header().set_header("Etag", etag.etag);
