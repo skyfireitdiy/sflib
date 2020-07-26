@@ -7,6 +7,7 @@
 
 // #define SF_DEBUG
 #include "sf_http_server"
+#include "sf_http_middleware_logger"
 
 using namespace std::literals;
 
@@ -71,6 +72,8 @@ int main() {
     config.port = 8080;         // 端口
     // 2. 根据配置生成一个http server
     auto server = sf_http_server::make_instance(config);
+
+    server->add_middleware(sf_http_middleware_logger::make_instance());
 
     // 3. 添加一个http路由，地址为/upload_file，
     // 回调函数为upload_file_route，方法为所有

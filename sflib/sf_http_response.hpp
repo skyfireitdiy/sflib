@@ -21,6 +21,14 @@ inline sf_http_response::sf_http_response(const sf_http_request& request)
 {
 }
 
+inline int sf_http_response::status() const {
+    return status__;
+}
+
+inline std::string sf_http_response::status_desc() const {
+    return status_desc__;
+}
+
 inline const sf_http_request sf_http_response::get_req() const { return req__; }
 
 inline void sf_http_response::set_status(int status)

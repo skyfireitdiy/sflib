@@ -46,6 +46,13 @@ inline void sf_http_base_server::http_handler__(
 
     request_callback__(http_request, res);
 
+    // 运行中间件
+    for(auto &m:middleware__){
+        if(!m->before(http_request, res)){
+            return;
+        }
+    }
+
     if (sf_equal_nocase_string(
             http_request.header().header_value("Connection", "Close"),
             "Close")) {
@@ -73,6 +80,14 @@ inline void sf_http_base_server::http_handler__(
     res.header().set_header("Server", "SkyFire HTTP Server");
     res.header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
 
+    // 运行中间件，以相反的顺序执行
+    for(auto m = middleware__.rbegin(); m != middleware__.rend(); ++m){
+        if(!(*m)->after(http_request, res)){
+            return;
+        }
+    }
+
+    // http响应的实现
     if (res.type() == sf_http_response::response_type::file) {
         file_response__(sock, res);
     } else if (res.type() == sf_http_response::response_type::multipart) {
@@ -83,14 +98,10 @@ inline void sf_http_base_server::http_handler__(
     if (!keep_alive) {
         close_request__(sock);
     }
+}
 
-    auto addr = http_request.addr();
-    if (config__.log) {
-        sf_info(res.status__, addr.ip, addr.port,
-            http_request.request_line().method,
-            http_request.request_line().http_version,
-            http_request.request_line().url);
-    }
+inline void sf_http_base_server::add_middleware(std::shared_ptr<sf_http_middleware> m){
+    middleware__.push_back(m);
 }
 
 inline void sf_http_base_server::raw_data_coming__(SOCKET sock,

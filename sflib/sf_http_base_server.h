@@ -21,6 +21,7 @@
 #include <mutex>
 #include <utility>
 #include <vector>
+#include "sf_http_middleware.h"
 
 namespace skyfire {
 
@@ -58,6 +59,7 @@ private:
     std::recursive_mutex mu_multipart_data_context__;
 
     std::shared_ptr<sf_cache> file_cache__;
+    std::vector<std::shared_ptr<sf_http_middleware>> middleware__;
 
     struct session_data_t {
         int timeout;
@@ -247,6 +249,13 @@ private:
      * @param sock websocket标识
      */
     void close_websocket(SOCKET sock);
+
+    /**
+     * @brief 增加 middleware
+     * 
+     * @param m middleware
+     */
+    void add_middleware(std::shared_ptr<sf_http_middleware> m);
 };
 } // namespace skyfire
 #pragma clang diagnostic pop

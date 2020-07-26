@@ -24,7 +24,6 @@ struct sf_http_server_config final {
     int max_cache_file_size = default_cache_max_file_size; // 最大cache
         // 文件大小，超过此大小的文件不缓存
     bool debug = false; // debug 模式不会使用缓存
-    bool log = true; // 打印log
     int thread_count = std::thread::hardware_concurrency() * 16; // 线程数量
 };
 

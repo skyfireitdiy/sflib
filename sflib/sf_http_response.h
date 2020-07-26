@@ -254,6 +254,20 @@ public:
      */
     void redirect(const std::string& new_location, int code = 302);
 
+    /**
+     * @brief 获取状态码
+     * 
+     * @return int 状态码
+     */
+    int status() const;
+
+    /**
+     * @brief 获取状态描述
+     * 
+     * @return std::string 状态描述 
+     */
+    std::string status_desc() const;
+
     friend sf_http_base_server;
 };
 } // namespace skyfire
