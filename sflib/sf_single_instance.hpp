@@ -20,11 +20,8 @@ template <typename... Args>
 std::shared_ptr<ThisClass> sf_single_instance<ThisClass, BaseClass>::instance(
     Args&&... args)
 {
-    std::call_once(flag, [&] {
-        instance__ = std::shared_ptr<ThisClass>(
+    static auto instance__ = std::shared_ptr<ThisClass>(
             new ThisClass(std::forward<Args>(args)...));
-    });
-
     return instance__;
 }
 

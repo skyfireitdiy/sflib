@@ -29,9 +29,7 @@ public:
 
 private:
     sf_single_instance() = default;
-
-    inline static std::shared_ptr<ThisClass> instance__ { nullptr };
-    inline static std::once_flag flag;
+    
     friend ThisClass;
 };
 

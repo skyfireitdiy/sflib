@@ -37,4 +37,4 @@ private:
 
 #define __SF_VAR_NAME_WP__(prefix, line) prefix##line
 #define __SF_VAR_NAME__(prefix, line) __SF_VAR_NAME_WP__(prefix, line)
-#define sf_finally(...) skyfire::__sf_finally__ __SF_VAR_NAME__(__SF_FINALLY_N_, __LINE__)(__VA_ARGS__)
+#define sf_finally(...) skyfire::__sf_finally__ __SF_VAR_NAME__(__SF_FINALLY_N_, __LINE__)(std::function<void()>(__VA_ARGS__))
