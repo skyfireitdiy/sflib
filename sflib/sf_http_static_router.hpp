@@ -108,11 +108,13 @@ inline sf_static_router::sf_static_router(std::string path,
                             multipart_info_vec;
                         bool error_flag = false;
                         for (auto& range_str : range_list) {
-#ifdef _MSC_VER
+#if defined(LLONG_MAX)
                             long long start = LLONG_MAX;
-#else
+#elif defined(LONG_LONG_MAX)
                             long long start = LONG_LONG_MAX;
-#endif // _MSC_VER
+#else
+                            #error long long max not define!
+#endif
                             long long end = -1;
 #ifdef _MSC_VER
                             if (scanf_s(range_str.c_str(), "%lld-%lld", &start,
@@ -142,11 +144,13 @@ inline sf_static_router::sf_static_router(std::string path,
                             return;
                         }
                     } else {
-#ifdef _MSC_VER
+#if defined(LLONG_MAX)
                         auto start = LLONG_MAX;
-#else
+#elif defined(LONG_LONG_MAX)
                         auto start = LONG_LONG_MAX;
-#endif // _MSC_VER
+#else
+                        #error long long max not define!
+#endif 
                         long long end = -1;
 #ifdef _MSC_VER
                         if (sscanf_s(range_list[0].c_str(), "%lld-%lld", &start,
