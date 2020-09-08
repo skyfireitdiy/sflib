@@ -120,7 +120,7 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
                     std::lock_guard<std::mutex> lck(mu);
                     if (r) {
                         std::ostringstream so;
-                        so << "thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " " + p.function_name << " passed!";
+                        so << "Thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " [" + p.function_name << "] Passed!";
                         std::cout << sf_color_string(so.str(), { sf_color_fg_green }) << std::endl;
                         return true;
                     } else {
@@ -130,7 +130,7 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
                             failed_style = { sf_color_fg_red, sf_color_style_flashing };
                         }
                         std::ostringstream so;
-                        so << "thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " " << p.function_name << " failed!";
+                        so << "Thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " [" << p.function_name << "] Failed!";
                         std::cerr << sf_color_string(so.str(), failed_style) << std::endl;
                         return false;
                     }

@@ -78,3 +78,16 @@ public:
 #define sf_test_env(...) skyfire::sf_test_impl__::set_env(__VA_ARGS__)
 #define sf_test_global_env(...) skyfire::sf_test_impl__::set_global_env(__VA_ARGS__)
 
+#define sf_test_assert(exp)                                                                                                    \
+    if (!(exp)) {                                                                                                              \
+        std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : exp[\"" << #exp << "\"] return false!" << endl; \
+        return false;                                                                                                          \
+    }
+
+#define sf_test_equal(a, b)                                                                                                             \
+    auto __sf_test_a__ = (a);                                                                                                           \
+    auto __sf_test_b__ = (b);                                                                                                           \
+    if (__sf_test_a__ != __sf_test_b__) {                                                                                               \
+        std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : exp[\"" << #a << "\"] != exp[\"" << #b << "\"]" << endl; \
+        return false;                                                                                                                   \
+    }
