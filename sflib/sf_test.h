@@ -78,16 +78,29 @@ public:
 #define sf_test_env(...) skyfire::sf_test_impl__::set_env(__VA_ARGS__)
 #define sf_test_global_env(...) skyfire::sf_test_impl__::set_global_env(__VA_ARGS__)
 
-#define sf_test_assert(exp)                                                                                                    \
-    if (!(exp)) {                                                                                                              \
-        std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : exp[\"" << #exp << "\"] return false!" << endl; \
-        return false;                                                                                                          \
+#define sf_test_assert(exp)                                                                                                       \
+    if (!(exp)) {                                                                                                                 \
+        std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : `" << #exp << "` return false!" << std::endl; \
+        return false;                                                                                                             \
     }
 
-#define sf_test_equal(a, b)                                                                                                             \
-    auto __sf_test_a__ = (a);                                                                                                           \
-    auto __sf_test_b__ = (b);                                                                                                           \
-    if (__sf_test_a__ != __sf_test_b__) {                                                                                               \
-        std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : exp[\"" << #a << "\"] != exp[\"" << #b << "\"]" << endl; \
-        return false;                                                                                                                   \
+#define sf_test_p_eq(a, b)                                                                                                  \
+    {                                                                                                                         \
+        auto __a__ = (a);                                                                                                     \
+        auto __b__ = (b);                                                                                                     \
+        if (__a__ != __b__) {                                                                                                 \
+            std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " != " << __b__ << std::endl; \
+            return false;                                                                                                     \
+        }                                                                                                                     \
+    }
+
+#define sf_test_num_eq sf_test_p_eq
+#define sf_test_str_eq sf_test_p_eq
+
+#define sf_test_np_eq(a, b)                                                                                                  \
+    {                                                                                                                         \
+        if ((a) != (b)) {                                                                                                     \
+            std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` != `" #b "`" << std::endl; \
+            return false;                                                                                                     \
+        }                                                                                                                     \
     }
