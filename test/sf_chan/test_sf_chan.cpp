@@ -93,10 +93,10 @@ bool test_read_from_closed_chan()
 
 int main()
 {
-    sf_test(test_chan_order);
-    sf_test(test_chan_order_with_buffer);
-    sf_test(test_write_to_closed_chan);
-    sf_test(test_read_from_closed_chan);
+    sf_test_add(test_chan_order);
+    sf_test_add(test_chan_order_with_buffer);
+    sf_test_add(test_write_to_closed_chan);
+    sf_test_add(test_read_from_closed_chan);
 
     sf_test_run(4);
 }

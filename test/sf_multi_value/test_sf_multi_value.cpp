@@ -13,6 +13,6 @@ bool test_multi_value(){
 }
 
 int main(){
-    sf_test(test_multi_value);
+    sf_test_add(test_multi_value);
     sf_test_run();
 }

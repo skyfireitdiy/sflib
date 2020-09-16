@@ -9,82 +9,136 @@
 
 namespace skyfire {
 
-template <typename T>
-std::vector<sf_test_func_t__> sf_test_base__<T>::test_data__;
-template <typename T>
-std::unordered_map<std::string, std::function<void()>> sf_test_base__<T>::setup_func_map__;
-template <typename T>
-std::unordered_map<std::string, std::function<void()>> sf_test_base__<T>::teardown_func_map__;
-
-template <typename T>
-std::function<void()> sf_test_base__<T>::global_setup__;
-template <typename T>
-std::function<void()> sf_test_base__<T>::global_teardown__;
-
-template <typename T>
-sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool()> func, const std::string& class_name, std::function<void()> before, std::function<void()> after)
+inline std::vector<sf_test_func_t__>* sf_get_test_data__()
 {
-    sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name, func, class_name });
+    static std::vector<sf_test_func_t__> test_data__;
+    return &test_data__;
 }
 
-template <typename T>
+inline std::unordered_map<std::string, std::function<void()>>* sf_get_setup_func_map__()
+{
+    static std::unordered_map<std::string, std::function<void()>> setup_func_map__;
+    return &setup_func_map__;
+}
+
+inline std::unordered_map<std::string, std::function<void()>>* sf_get_teardown_func_map__()
+{
+    static std::unordered_map<std::string, std::function<void()>> teardown_func_map__;
+    return &teardown_func_map__;
+}
+
+inline std::function<void()>* sf_get_global_setup__()
+{
+    static std::function<void()> global_setup__;
+    return &global_setup__;
+}
+
+inline std::function<void()>* sf_get_global_teardown__()
+{
+    static std::function<void()> global_teardown__;
+    return &global_teardown__;
+}
+
+inline void sf_test_base__(
+    const std::string& file,
+    int line,
+    const std::string& func_name,
+    std::function<bool()> func,
+    const std::string& class_name,
+    std::function<void()> before,
+    std::function<void()> after)
+{
+    sf_get_test_data__()->push_back(sf_test_func_t__ { before, after, func_name, func, class_name, file, line });
+}
+
 template <typename U>
-sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool(const U&)> func, const std::string& class_name, const std::vector<U>& data, std::function<void()> before, std::function<void()> after)
+void sf_test_base__(
+    const std::string& file,
+    int line,
+    const std::string& func_name,
+    std::function<bool(const U&)> func,
+    const std::string& class_name,
+    const std::vector<U>& data,
+    std::function<void()> before,
+    std::function<void()> after)
 {
     for (int i = 0; i < data.size(); ++i) {
         auto test_data = data[i];
-        sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name + " " + std::to_string(i), [test_data, func]() -> bool {
-                                                                       return func(test_data);
-                                                                   },
-            class_name });
+        sf_get_test_data__()->push_back(sf_test_func_t__ {
+            before,
+            after,
+            func_name + " " + std::to_string(i),
+            [test_data, func]() -> bool {
+                return func(test_data);
+            },
+            class_name,
+            file,
+            line });
     }
 }
 
-template <typename T>
-sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool()> func, std::function<void()> before, std::function<void()> after)
+inline void sf_test_base__(
+    const std::string& file,
+    int line,
+    const std::string& func_name,
+    std::function<bool()> func,
+    std::function<void()> before,
+    std::function<void()> after)
 {
-    sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name, func, "" });
+    sf_get_test_data__()->push_back(sf_test_func_t__ { before, after, func_name, func, "", file, line });
 }
 
-template <typename T>
 template <typename U>
-sf_test_base__<T>::sf_test_base__(const std::string& func_name, std::function<bool(const U&)> func, const std::vector<U>& data, std::function<void()> before, std::function<void()> after)
+void sf_test_base__(
+    const std::string& file,
+    int line,
+    const std::string& func_name,
+    std::function<bool(const U&)> func,
+    const std::vector<U>& data,
+    std::function<void()> before,
+    std::function<void()> after)
 {
     for (int i = 0; i < data.size(); ++i) {
         auto test_data = data[i];
-        sf_test_base__<T>::test_data__.push_back(sf_test_func_t__ { before, after, func_name + " " + std::to_string(i), [test_data, func]() -> bool {
-                                                                       return func(test_data);
-                                                                   },
-            "" });
+        sf_get_test_data__()->push_back(sf_test_func_t__ {
+            before,
+            after,
+            func_name + " " + std::to_string(i),
+            [test_data, func]() -> bool {
+                return func(test_data);
+            },
+            "",
+            file,
+            line });
     }
 }
 
-template <typename T>
-void sf_test_base__<T>::set_env(const std::string& class_name, std::function<void()> setup, std::function<void()> teardown)
+inline void sf_test_set_env(const std::string& class_name,
+    std::function<void()> setup,
+    std::function<void()> teardown)
 {
-    setup_func_map__[class_name] = setup;
-    teardown_func_map__[class_name] = teardown;
+    (*sf_get_setup_func_map__())[class_name] = setup;
+    (*sf_get_teardown_func_map__())[class_name] = teardown;
 }
 
-template <typename T>
-void sf_test_base__<T>::set_global_env(std::function<void()> setup, std::function<void()> teardown)
+inline void sf_test_set_global_env(std::function<void()> setup, std::function<void()> teardown)
 {
-    global_setup__ = setup;
-    global_teardown__ = teardown;
+    *sf_get_global_setup__() = setup;
+    *sf_get_global_teardown__() = teardown;
 }
 
-template <typename T>
-int sf_test_base__<T>::run(int thread_count, bool flashing)
+inline int sf_test_run(int thread_count, bool flashing)
 {
     int ret = 0;
     auto start_time = std::chrono::system_clock::now();
-    if (global_setup__) {
-        global_setup__();
+    if (*sf_get_global_setup__()) {
+        *sf_get_global_setup__();
     }
     auto pool = sf_thread_pool::make_instance(thread_count);
     std::vector<std::future<bool>> result;
     std::mutex mu;
-    for (auto& p : test_data__) {
+    auto test_data = sf_get_test_data__();
+    for (auto& p : *test_data) {
         result.push_back(pool->add_task(
             [p, flashing, &mu, &ret]() -> bool {
                 std::function<void()> setup;
@@ -92,12 +146,12 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
 
                 if (p.class_name != "") {
                     try {
-                        setup = setup_func_map__.at(p.class_name);
+                        setup = sf_get_setup_func_map__()->at(p.class_name);
                     } catch (std::out_of_range& e) {
                         setup = nullptr;
                     }
                     try {
-                        teardown = teardown_func_map__.at(p.class_name);
+                        teardown = sf_get_teardown_func_map__()->at(p.class_name);
                     } catch (std::out_of_range& e) {
                         teardown = nullptr;
                     }
@@ -120,7 +174,7 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
                     std::lock_guard<std::mutex> lck(mu);
                     if (r) {
                         std::ostringstream so;
-                        so << "Thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " [" + p.function_name << "] Passed!";
+                        so << p.file << ":" << p.line << " Thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " [" + p.function_name << "] Passed!";
                         std::cout << sf_color_string(so.str(), { sf_color_fg_green }) << std::endl;
                         return true;
                     } else {
@@ -130,14 +184,14 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
                             failed_style = { sf_color_fg_red, sf_color_style_flashing };
                         }
                         std::ostringstream so;
-                        so << "Thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " [" << p.function_name << "] Failed!";
+                        so << p.file << ":" << p.line << " Thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " [" << p.function_name << "] Failed!";
                         std::cerr << sf_color_string(so.str(), failed_style) << std::endl;
                         return false;
                     }
                 }
             }));
     }
-    test_data__.clear();
+    sf_get_test_data__()->clear();
     int count_pass = 0;
     int count_failed = 0;
     for (auto& p : result) {
@@ -148,8 +202,8 @@ int sf_test_base__<T>::run(int thread_count, bool flashing)
         }
     }
 
-    if (global_teardown__) {
-        global_teardown__();
+    if (*sf_get_global_teardown__()) {
+        *sf_get_global_teardown__();
     }
 
     std::vector<sf_color> pass_style { sf_color_fg_green };

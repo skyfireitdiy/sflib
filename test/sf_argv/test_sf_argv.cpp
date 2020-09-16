@@ -109,43 +109,43 @@ bool test_subparser(const test_argv_param& p)
 
 int main()
 {
-    sf_test(test_parser_none_postion,
+    sf_test_add(test_parser_none_postion,
         { { { "-t", "hello" },
               R"({"--test":"hello"})"_json },
             { { "--test", "hello" },
                 R"({"--test":"hello"})"_json } });
 
-    sf_test(test_other_name,
+    sf_test_add(test_other_name,
         { { { "-t", "hello" },
               R"({"other":"hello"})"_json },
             { { "--test", "hello" },
                 R"({"other":"hello"})"_json } });
 
-    sf_test(test_param_type,
+    sf_test_add(test_param_type,
         { { { "-s", "string value", "-a", "elem1", "-a", "elem2", "-a", "elem3", "-b", "true", "-n", "26.4" },
             R"({"--string":"string value", "--array":["elem1","elem2","elem3"], "--boolean":true, "--number":26.4})"_json } });
 
-    sf_test(test_bool_value,
+    sf_test_add(test_bool_value,
         { { { "-b", "hello" }, R"({"--boolean":true})"_json },
             { { "-b", "0" }, R"({"--boolean":false})"_json },
             { { "-b", "false" }, R"({"--boolean":false})"_json },
             { { "-b", "true" }, R"({"--boolean":true})"_json },
             { { "-b", "1" }, R"({"--boolean":true})"_json } });
 
-    sf_test(test_array,
+    sf_test_add(test_array,
         {
             { {}, R"({"--array":[]})"_json },
             { { "-a", "data1" }, R"({"--array":["data1"]})"_json },
             { { "-a", "data1", "-a", "data2", "-a", "data3" }, R"({"--array":["data1", "data2", "data3"]})"_json },
         });
 
-    sf_test(test_not_required,
+    sf_test_add(test_not_required,
         {
             { {}, "{}"_json },
             { { "-s", "string value" }, R"({"--string": "string value"})"_json },
         });
 
-    sf_test(test_save_bool,
+    sf_test_add(test_save_bool,
         {
             { {}, R"({"--true":false, "--false":true})"_json },
             { { "-t" }, R"({"--true":true, "--false":true})"_json },
@@ -153,13 +153,13 @@ int main()
             { { "-t", "-f" }, R"({"--true":true, "--false":false})"_json },
         });
 
-    sf_test(test_default_value,
+    sf_test_add(test_default_value,
         {
             { {}, R"({"--string":"default value"})"_json },
             { { "-s", "my value" }, R"({"--string":"my value"})"_json },
         });
 
-    sf_test(test_subparser,
+    sf_test_add(test_subparser,
         { { { "sub1", "-s", "string", "-o", "one" }, R"({"sub1":{"--string":"string", "--one": "one"}})"_json },
             { { "sub2", "-t", "two", "-s", "string" }, R"({"sub2":{"--string":"string", "--two": "two"}})"_json } });
 

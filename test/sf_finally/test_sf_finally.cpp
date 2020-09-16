@@ -36,8 +36,8 @@ bool test_finally_order2()
 }
 
 int main(){
-    sf_test(test_finally_order);
-    sf_test(test_finally_order2);
+    sf_test_add(test_finally_order);
+    sf_test_add(test_finally_order2);
 
     sf_test_run();
 }

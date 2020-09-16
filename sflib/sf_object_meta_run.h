@@ -23,6 +23,6 @@ class sf_object_meta_run final {
      *
      * @param f 要运行的函数
      */
-    explicit sf_object_meta_run(std::function<void()> f);
+    explicit sf_object_meta_run(const std::function<void()> f);
 };
 }    // namespace skyfire

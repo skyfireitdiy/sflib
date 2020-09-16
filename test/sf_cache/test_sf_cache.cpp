@@ -63,11 +63,11 @@ bool mismatch_type_test()
 
 int main()
 {
-    sf_test(normal_test);
-    sf_test(count_limit_test);
-    sf_test(overwrite_test);
-    sf_test(update_timestamp_test);
-    sf_test(mismatch_type_test);
+    sf_test_add(normal_test);
+    sf_test_add(count_limit_test);
+    sf_test_add(overwrite_test);
+    sf_test_add(update_timestamp_test);
+    sf_test_add(mismatch_type_test);
 
     sf_test_run(4);
 }

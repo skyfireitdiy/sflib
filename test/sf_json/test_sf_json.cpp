@@ -5,7 +5,7 @@
 using namespace skyfire;
 using namespace std;
 
-bool test_construct()
+sf_test(test_construct)
 {
     sf_json js = 5;
     sf_test_num_eq(static_cast<int>(js), 5);
@@ -20,18 +20,19 @@ bool test_construct()
     return true;
 }
 
-bool test_insert()
+sf_test(test_insert)
 {
     sf_json js;
     js["name"] = "zhangsan";
     js["age"] = 30;
     js["man"] = false;
-    js["address"] = sf_json{};
+    js["address"] = sf_json {};
 
     return js["address"].is_null();
 }
 
-bool test_compare(){
+sf_test(test_compare)
+{
     sf_json js1;
     js1["name"] = "zhangsan";
     js1["age"] = 30;
@@ -43,20 +44,47 @@ bool test_compare(){
     sf_test_p_eq(js1, js2);
 
     // at 不会新增元素
-    if (js1.at("unknown") == sf_json{}){
+    sf_test_p_eq(js1.at("unknown"), sf_json {});
 
+    sf_test_p_eq(js1, js2);
+
+    // []会新增元素
+    sf_test_p_eq(js1["unknown"], sf_json {});
+
+    sf_test_p_neq(js1, js2);
+
+    return true;
+}
+
+sf_test(test_parse)
+{
+    auto js = R"(
+    {
+        "name":"王小二",
+        "age":25,
+        "birthday":"1990-01-01",
+        "school":"蓝翔",
+        "major":["理发","挖掘机"],
+        "has_girlfriend":false,
+        "car":null,
+        "house":null
     }
+    )"_json;
 
-    sf_test_p_eq(js1, js2);  
-
+    sf_test_str_eq(std::string(js.at("name")), "王小二"s);
+    sf_test_num_eq(int(js.at("age")), 25);
+    sf_test_str_eq(std::string(js.at("birthday")), "1990-01-01");
+    sf_test_str_eq(std::string(js.at("school")), "蓝翔");
+    sf_test_str_eq(std::string(js.at("major").at(0)), "理发");
+    sf_test_str_eq(std::string(js.at("major").at(1)), "挖掘机");
+    sf_test_assert(!js.at("has_girlfriend"));
+    sf_test_assert(js.at("car").is_null());
+    sf_test_assert(js.at("house").is_null());
+    
     return true;
 }
 
 int main()
 {
-    sf_test(test_construct);
-    sf_test(test_insert);
-    sf_test(test_compare);
-
     return sf_test_run();
 }
