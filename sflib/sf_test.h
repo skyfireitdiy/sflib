@@ -52,6 +52,7 @@ std::unordered_map<std::string, std::function<void()>>* sf_get_setup_func_map__(
 std::unordered_map<std::string, std::function<void()>>* sf_get_teardown_func_map__();
 std::function<void()>* sf_get_global_setup__();
 std::function<void()>* sf_get_global_teardown__();
+std::mutex* sf_get_test_output_mu__();
 
 void sf_test_base__(const std::string& file, int line, const std::string& func_name, std::function<bool()> func, std::function<void()> before = nullptr, std::function<void()> after = nullptr);
 template <typename U>
@@ -73,17 +74,29 @@ void sf_test_set_global_env(std::function<void()> setup, std::function<void()> t
 #define MAKE_TEST_VAR_NAME_WRAP(a, b) a##b
 #define MAKE_TEST_VAR_NAME(a, b) MAKE_TEST_VAR_NAME_WRAP(a, b)
 
-#define sf_test(name)                                                                       \
-    bool name();                                                                            \
-    skyfire::sf_object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(               \
-        []() { skyfire::sf_test_base__(__FILE__,                                            \
-                   __LINE__,                                                                \
-                   #name,                                                                   \
-                   std::function(name)); }); \
+#define sf_test(name, ...)                                                                                 \
+    bool name();                                                                                           \
+    skyfire::sf_object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                              \
+        []() { skyfire::sf_test_base__(__FILE__,                                                           \
+                   __LINE__,                                                                               \
+                   #name,                                                                                  \
+                   std::function(name),                                                                    \
+                   ##__VA_ARGS__); }); \
     bool name()
+
+#define sf_test_p(name, type, ...)                                                                         \
+    bool name(const type&);                                                                                \
+    skyfire::sf_object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                              \
+        []() { skyfire::sf_test_base__(__FILE__,                                                           \
+                   __LINE__,                                                                               \
+                   #name,                                                                                  \
+                   std::function(name),                                                                    \
+                   ##__VA_ARGS__); }); \
+    bool name(const type& sf_test_param)
 
 #define sf_test_assert(exp)                                                                                                  \
     if (!(exp)) {                                                                                                            \
+        std::lock_guard<std::mutex> lck(*sf_get_test_output_mu__());                                                         \
         std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : `" << #exp << "` return false!" << std::endl; \
         return false;                                                                                                        \
     }
@@ -93,6 +106,7 @@ void sf_test_set_global_env(std::function<void()> setup, std::function<void()> t
         auto __a__ = (a);                                                                                                     \
         auto __b__ = (b);                                                                                                     \
         if (__a__ != __b__) {                                                                                                 \
+            std::lock_guard<std::mutex> lck(*sf_get_test_output_mu__());                                                      \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " != " << __b__ << std::endl; \
             return false;                                                                                                     \
         }                                                                                                                     \
@@ -103,6 +117,7 @@ void sf_test_set_global_env(std::function<void()> setup, std::function<void()> t
         auto __a__ = (a);                                                                                                     \
         auto __b__ = (b);                                                                                                     \
         if (__a__ == __b__) {                                                                                                 \
+            std::lock_guard<std::mutex> lck(*sf_get_test_output_mu__());                                                      \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " == " << __b__ << std::endl; \
             return false;                                                                                                     \
         }                                                                                                                     \
@@ -111,6 +126,7 @@ void sf_test_set_global_env(std::function<void()> setup, std::function<void()> t
 #define sf_test_np_eq(a, b)                                                                                           \
     {                                                                                                                 \
         if ((a) != (b)) {                                                                                             \
+            std::lock_guard<std::mutex> lck(*sf_get_test_output_mu__());                                              \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` != `" #b "`" << std::endl; \
             return false;                                                                                             \
         }                                                                                                             \
@@ -119,6 +135,7 @@ void sf_test_set_global_env(std::function<void()> setup, std::function<void()> t
 #define sf_test_np_neq(a, b)                                                                                          \
     {                                                                                                                 \
         if ((a) != (b)) {                                                                                             \
+            std::lock_guard<std::mutex> lck(*sf_get_test_output_mu__());                                              \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` == `" #b "`" << std::endl; \
             return false;                                                                                             \
         }                                                                                                             \

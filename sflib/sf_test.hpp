@@ -9,6 +9,12 @@
 
 namespace skyfire {
 
+inline std::mutex* sf_get_test_output_mu__()
+{
+    static std::mutex mu;
+    return &mu;
+}
+
 inline std::vector<sf_test_func_t__>* sf_get_test_data__()
 {
     static std::vector<sf_test_func_t__> test_data__;
@@ -136,11 +142,10 @@ inline int sf_test_run(int thread_count, bool flashing)
     }
     auto pool = sf_thread_pool::make_instance(thread_count);
     std::vector<std::future<bool>> result;
-    std::mutex mu;
     auto test_data = sf_get_test_data__();
     for (auto& p : *test_data) {
         result.push_back(pool->add_task(
-            [p, flashing, &mu, &ret]() -> bool {
+            [p, flashing, &ret]() -> bool {
                 std::function<void()> setup;
                 std::function<void()> teardown;
 
@@ -171,7 +176,7 @@ inline int sf_test_run(int thread_count, bool flashing)
                     p.after();
                 }
                 {
-                    std::lock_guard<std::mutex> lck(mu);
+                    std::lock_guard<std::mutex> lck(*sf_get_test_output_mu__());
                     if (r) {
                         std::ostringstream so;
                         so << p.file << ":" << p.line << " Thread: " << std::this_thread::get_id() << " " << sf_make_time_str() << " [" + p.function_name << "] Passed!";

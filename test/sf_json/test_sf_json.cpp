@@ -80,11 +80,18 @@ sf_test(test_parse)
     sf_test_assert(!js.at("has_girlfriend"));
     sf_test_assert(js.at("car").is_null());
     sf_test_assert(js.at("house").is_null());
-    
+
+    return true;
+}
+
+sf_test_p(is_prime, int, { 2, 4, 7, 8 })
+{
+    sf_test_num_eq(sf_test_param % 2 , 0);
+
     return true;
 }
 
 int main()
 {
-    return sf_test_run();
+    return sf_test_run(4);
 }
