@@ -84,9 +84,15 @@ sf_test(test_parse)
     return true;
 }
 
-sf_test_p(is_prime, int, { 2, 4, 7, 8 })
+sf_test(test_convert)
 {
-    sf_test_num_eq(sf_test_param % 2 , 0);
+    sf_json js;
+    js.convert_to_object();
+    sf_test_np_eq(js.type(), sf_json_type::object);
+    js.convert_to_array();
+    sf_test_np_eq(js.type(), sf_json_type::array);
+    js.convert_to_null();
+    sf_test_assert(js.is_null());
 
     return true;
 }
