@@ -8,12 +8,16 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
+#include "sf_http_request.h"
+#include "sf_http_response.h"
+#include "sf_stdc++.h"
+
 namespace skyfire {
 /**
  *  @brief 路由
  */
 class sf_router {
-   public:
+public:
     virtual ~sf_router() = default;
     /**
      * 获取优先级
@@ -21,9 +25,9 @@ class sf_router {
      */
     virtual int priority() const;
 
-    virtual bool run_route(const sf_http_request &req, sf_http_response &res,
-                           const std::string &url, const std::string &method);
+    virtual bool run_route(const sf_http_request& req, sf_http_response& res,
+        const std::string& url, const std::string& method);
 };
 
-}    // namespace skyfire
+} // namespace skyfire
 #pragma clang diagnostic pop
