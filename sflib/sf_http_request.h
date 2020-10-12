@@ -44,6 +44,34 @@ public:
     explicit sf_http_request(byte_array raw, SOCKET sock);
 
     /**
+     * @brief 设置body
+     * 
+     * @param body 请求数据
+     */
+    void set_body(const byte_array& body);
+
+    /**
+     * @brief 设置请求行
+     * 
+     * @param request_line 请求行
+     */
+    void set_request_line(const sf_http_request_line& request_line);
+
+    /**
+     * @brief 设置header
+     * 
+     * @param header header
+     */
+    void set_header(const sf_http_header& header);
+
+    /**
+     * @brief 设置cookies
+     * 
+     * @param cookies cookies
+     */
+    void set_cookies(const std::unordered_map<std::string, std::string>& cookies);
+
+    /**
      * 构造函数
      * @param multipart_data 分块数据集合
      * @param sock 请求套接字
