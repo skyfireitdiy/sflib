@@ -8,7 +8,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_header.hpp"
+#include "sf_http_res_header.hpp"
 #include "sf_http_request.hpp"
 #include "sf_http_response.h"
 #include "sf_http_status.h"
@@ -54,7 +54,7 @@ inline void sf_http_response::set_status_desc(const std::string& desc)
     status_desc__ = desc;
 }
 
-inline void sf_http_response::set_header(const sf_http_header& header)
+inline void sf_http_response::set_header(const sf_http_res_header& header)
 {
     header__ = header;
 }
@@ -132,20 +132,20 @@ sf_http_response::multipart() const
     return multipart_info_vec__;
 }
 
-inline void sf_http_response::add_cookie(const sf_http_cookie_t& cookie_data)
+inline void sf_http_response::add_cookie(const sf_http_cookie_item_t& cookie_data)
 {
-    cookies__[cookie_data.key] = cookie_data;
+    header__.add_cookies(cookie_data);
 }
 
 inline void sf_http_response::remove_cookie(const std::string& key)
 {
-    cookies__.erase(key);
+    header__.remove_cookies(key);
 }
 
-inline std::unordered_map<std::string, sf_http_cookie_t>
+inline std::unordered_map<std::string, sf_http_cookie_item_t>
 sf_http_response::cookies() const
 {
-    return cookies__;
+    return header__.res_cookies();
 }
 
 inline void sf_http_response::redirect(const std::string& new_location,
@@ -164,23 +164,12 @@ inline void sf_http_response::add_header(const std::string& key,
 inline void sf_http_response::add_cookie(const std::string& key,
     const std::string& value)
 {
-    sf_http_cookie_t cookie;
-    cookie.key = key;
-    cookie.value = value;
-    add_cookie(cookie);
+    header__.add_cookies(key, value);
 }
 
 inline void sf_http_response::clear_cookie(bool clear_session)
 {
-    if (cookies__.count(sf_session_id_key) != 0) {
-        if (clear_session == false) {
-            auto id = cookies__[sf_session_id_key];
-            cookies__.clear();
-            cookies__[sf_session_id_key] = id;
-            return;
-        }
-    }
-    cookies__.clear();
+    header__.clear_cookies(clear_session);
 }
 
 inline void sf_http_response::set_text(const std::string& text)

@@ -31,9 +31,11 @@ private:
     byte_array body__;
     bool multipart_data__ = false;
     sf_multipart_data_context_t multipart_data_context__;
-    bool parse_request__();
     std::unordered_map<std::string, std::string> cookies__;
+    std::shared_ptr<std::istream> istream_ptr__ = nullptr;
     SOCKET sock__;
+
+    bool parse_request__();
 
 public:
     /**
@@ -49,6 +51,13 @@ public:
      * @param body 请求数据
      */
     void set_body(const byte_array& body);
+
+    /**
+     * @brief 设置body输入流
+     * 
+     * @param ptr 输入流指针
+     */
+    void set_body(std::shared_ptr<std::istream> ptr);
 
     /**
      * @brief 设置请求行
@@ -70,6 +79,13 @@ public:
      * @param cookies cookies
      */
     void set_cookies(const std::unordered_map<std::string, std::string>& cookies);
+
+    /**
+     * @brief 生成请求数据
+     * 
+     * @return byte_array 请求数据
+     */
+    byte_array gen_req_data() const;
 
     /**
      * 构造函数

@@ -260,6 +260,11 @@ inline void sf_http_request::set_body(const byte_array& body)
     body__ = body;
 }
 
+inline void sf_http_request::set_body(std::shared_ptr<std::istream> ptr)
+{
+    istream_ptr__ = ptr;
+}
+
 inline void sf_http_request::set_request_line(const sf_http_request_line& request_line)
 {
     request_line__ = request_line;
@@ -273,6 +278,12 @@ inline void sf_http_request::set_header(const sf_http_header& header)
 inline void sf_http_request::set_cookies(const std::unordered_map<std::string, std::string>& cookies)
 {
     cookies__ = cookies;
+}
+
+inline byte_array sf_http_request::gen_req_data() const
+{
+    // TODO 生成请求数据
+    return byte_array();
 }
 
 } // namespace skyfire

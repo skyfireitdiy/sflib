@@ -81,7 +81,7 @@ enum class cookie_life_type {
 /**
  *  @brief cookie
  */
-struct sf_http_cookie_t final {
+struct sf_http_cookie_item_t final {
     std::string key; // 键
     std::string value; // 值
     cookie_life_type life_type = cookie_life_type ::session; // 生存期类型

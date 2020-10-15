@@ -8,7 +8,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_header.h"
+#include "sf_http_res_header.h"
 #include "sf_http_request.h"
 #include "sf_http_utils.h"
 #include "sf_json.h"
@@ -73,10 +73,9 @@ private:
     int status__ = 200;
     std::string http_version__ = "HTTP/1.1";
     std::string status_desc__ = "OK";
-    sf_http_header header__;
+    sf_http_res_header header__;
     byte_array body__;
     response_type type__ = { response_type ::normal };
-    std::unordered_map<std::string, sf_http_cookie_t> cookies__;
     response_file_info_t file_info__;
     std::vector<multipart_info_t> multipart_info_vec__;
 
@@ -117,7 +116,7 @@ public:
      * 设置http响应头
      * @param header 响应头
      */
-    void set_header(const sf_http_header& header);
+    void set_header(const sf_http_res_header& header);
 
     /**
      * @brief 添加http头
@@ -160,7 +159,7 @@ public:
      * 添加cookie
      * @param cookie_data cookie信息
      */
-    void add_cookie(const sf_http_cookie_t& cookie_data);
+    void add_cookie(const sf_http_cookie_item_t& cookie_data);
     /**
      * @brief 添加cookie
      *
@@ -203,7 +202,7 @@ public:
      * 获取cookies
      * @return cookies
      */
-    std::unordered_map<std::string, sf_http_cookie_t> cookies() const;
+    std::unordered_map<std::string, sf_http_cookie_item_t> cookies() const;
 
     /**
      * 获取响应类型

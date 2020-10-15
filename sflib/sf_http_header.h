@@ -18,10 +18,11 @@ class sf_http_base_server;
  * @brief  http头
  */
 class sf_http_header {
-    sf_http_header_t header_data__;
-    std::vector<std::string> cookie_str_vec__;
 
-   public:
+protected:
+    sf_http_header_t header_data__;
+
+public:
     /**
      * 清空http头
      */
@@ -41,7 +42,7 @@ class sf_http_header {
      * @return 值
      */
     std::string header_value(std::string key,
-                             const std::string& default_value = "") const;
+        const std::string& default_value = "") const;
 
     /**
      * 删除指定的头
@@ -73,14 +74,6 @@ class sf_http_header {
      * @return 是否存在
      */
     bool has_key(const std::string& key) const;
-
-    /**
-     * 生成符合http标准的字符串格式的头文本，用于发送/查看，注意：cookie不包含在头列表中，但是生成字符串时，会将cookie编入
-     * @return 生成的头文本
-     */
-    std::string to_string() const;
-
-    friend sf_http_base_server;
 };
-}    // namespace skyfire
+} // namespace skyfire
 #pragma clang diagnostic pop

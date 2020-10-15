@@ -67,7 +67,7 @@ inline sf_static_router::sf_static_router(std::string path,
 
     callback__ = [=](const sf_http_request& req, sf_http_response& res,
                      const std::string& url, const std::string& abs_path) {
-        sf_http_header header;
+        sf_http_res_header header;
         byte_array body_data;
 
         header.set_header("Date", sf_make_http_time_str());

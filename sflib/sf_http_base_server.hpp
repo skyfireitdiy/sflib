@@ -37,7 +37,7 @@ inline void sf_http_base_server::http_handler__(
     res.set_status(200);
     res.set_http_version(http_request.request_line().http_version);
 
-    sf_http_cookie_t session_cookie;
+    sf_http_cookie_item_t session_cookie;
     session_cookie.key = sf_session_id_key;
     auto session_id = http_request.session_id();
     session_cookie.value = session_id;
@@ -57,24 +57,6 @@ inline void sf_http_base_server::http_handler__(
             http_request.header().header_value("Connection", "Close"),
             "Close")) {
         keep_alive = false;
-    }
-    auto cookies = res.cookies();
-    for (auto& p : cookies) {
-        std::string value_str = p.second.key + "="s + p.second.value + ";"s;
-        if (p.second.life_type == cookie_life_type::time_point) {
-            value_str += "Expires=" + sf_make_http_time_str(p.second.time_point) + ";"s;
-        }
-        if (p.second.path.empty()) {
-            p.second.path = "/";
-        }
-        value_str += "Path=" + p.second.path + ";";
-        if (p.second.secure) {
-            value_str += "Secure;";
-        }
-        if (p.second.http_only) {
-            value_str += "HttpOnly;";
-        }
-        res.header().cookie_str_vec__.push_back(value_str);
     }
 
     res.header().set_header("Server", "SkyFire HTTP Server");
@@ -300,7 +282,7 @@ inline void sf_http_base_server::multipart_response__(SOCKET sock,
             content_length += tmp_str.length() + (p.file_info.end - p.file_info.begin) + 2; // 添加\r\n
         } else if (p.type == sf_http_response::multipart_info_t::multipart_info_type::form) {
             auto tmp_str = "--" + boundary_str + "\r\n";
-            sf_http_header tmp_header;
+            sf_http_res_header tmp_header;
             tmp_header.set_header(p.form_info.header);
             tmp_str += tmp_header.to_string();
             header_vec.push_back(tmp_str);
