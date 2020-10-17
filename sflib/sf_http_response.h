@@ -70,9 +70,6 @@ public:
     };
 
 private:
-    int status__ = 200;
-    std::string http_version__ = "HTTP/1.1";
-    std::string status_desc__ = "OK";
     http_res_header header__;
     byte_array body__;
     response_type type__ = { response_type ::normal };
@@ -266,6 +263,13 @@ public:
      * @return std::string 状态描述 
      */
     std::string status_desc() const;
+
+    /**
+     * @brief 获取http版本字符串
+     * 
+     * @return std::string http版本字符串
+     */
+    std::string http_version() const;
 
     friend http_base_server;
 };

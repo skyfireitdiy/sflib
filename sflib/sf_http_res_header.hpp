@@ -43,7 +43,7 @@ inline std::unordered_map<std::string, http_cookie_item_t> http_res_header::res_
 
 inline std::string http_res_header::to_string() const
 {
-    std::string ret;
+    std::string ret = http_version__ + " " + std::to_string(status__) + " " + status_desc__ + "\r\n";
     for (auto& p : header_data__) {
         ret += p.first + ":" + p.second + "\r\n";
     }
@@ -69,6 +69,36 @@ inline std::string http_res_header::to_string() const
 
     ret += "\r\n";
     return ret;
+}
+
+
+
+inline void http_res_header::set_status(int status)
+{
+    status__ = status;
+}
+
+inline void http_res_header::set_http_version(
+    const std::string& http_version)
+{
+    http_version__ = http_version;
+}
+
+inline void http_res_header::set_status_desc(const std::string& desc)
+{
+    status_desc__ = desc;
+}
+
+inline int http_res_header::status() const {
+    return status__;
+}
+
+inline std::string http_res_header::status_desc() const {
+    return status_desc__;
+}
+
+inline std::string http_res_header::http_version() const {
+    return http_version__;
 }
 
 }

@@ -22,18 +22,22 @@ inline http_response::http_response(const http_request& request)
 }
 
 inline int http_response::status() const {
-    return status__;
+    return header__.status();
 }
 
 inline std::string http_response::status_desc() const {
-    return status_desc__;
+    return header__.status_desc();
+}
+
+inline std::string http_response::http_version() const {
+    return header__.http_version();
 }
 
 inline const http_request http_response::get_req() const { return req__; }
 
 inline void http_response::set_status(int status)
 {
-    status__ = status;
+    header__.set_status(status);
     if (http_status.count(status) != 0) {
         set_status_desc(http_status[status]);
         set_body(to_byte_array(http_status[status]));
@@ -46,12 +50,12 @@ inline void http_response::set_status(int status)
 inline void http_response::set_http_version(
     const std::string& http_version)
 {
-    http_version__ = http_version;
+    header__.set_http_version(http_version);
 }
 
 inline void http_response::set_status_desc(const std::string& desc)
 {
-    status_desc__ = desc;
+    header__.set_status_desc(desc);
 }
 
 inline void http_response::set_header(const http_res_header& header)
@@ -111,7 +115,6 @@ inline byte_array http_response::to_package() const
 inline byte_array http_response::to_header_package() const
 {
     std::string response_head;
-    response_head += http_version__ + " " + std::to_string(status__) + " " + status_desc__ + "\r\n";
     response_head += header__.to_string();
     return { response_head.begin(), response_head.end() };
 }
