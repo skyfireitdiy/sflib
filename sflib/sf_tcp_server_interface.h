@@ -19,7 +19,7 @@ namespace skyfire {
 /**
  *  @brief tcp服务器
  */
-class sf_tcp_server_interface : public sf_nocopy<sf_object> {
+class tcp_server_interface : public nocopy<object> {
     /**
      * 新连接到来信号
      */
@@ -27,7 +27,7 @@ class sf_tcp_server_interface : public sf_nocopy<sf_object> {
     /**
      * 数据包到来信号
      */
-    sf_singal(data_coming, SOCKET, const sf_pkg_header_t&,
+    sf_singal(data_coming, SOCKET, const pkg_header_t&,
         const byte_array&);
     /**
      * 原始数据到来信号
@@ -49,16 +49,16 @@ class sf_tcp_server_interface : public sf_nocopy<sf_object> {
     sf_singal(write_error, SOCKET);
 
 private:
-    std::vector<std::shared_ptr<sf_server_socket_filter>> filters__;
+    std::vector<std::shared_ptr<server_socket_filter>> filters__;
 
 protected:
     bool manage_clients__ { true };
 
     void after_raw_recv_filter__(SOCKET sock, byte_array& data);
-    void after_recv_filter__(SOCKET sock, sf_pkg_header_t& header,
+    void after_recv_filter__(SOCKET sock, pkg_header_t& header,
         byte_array& data);
     void before_raw_send_filter__(SOCKET sock, byte_array& data);
-    void before_send_filter__(SOCKET sock, sf_pkg_header_t& header,
+    void before_send_filter__(SOCKET sock, pkg_header_t& header,
         byte_array& data);
     void new_connection_filter__(SOCKET sock);
     void listen_sock_filter__(SOCKET sock);
@@ -68,7 +68,7 @@ public:
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     void add_server_socket_filter(
-        std::shared_ptr<sf_server_socket_filter>&& filter);
+        std::shared_ptr<server_socket_filter>&& filter);
 #pragma clang diagnostic pop
 
     /**
@@ -116,7 +116,7 @@ public:
      * @param addr server地址信息
      * @return 获取结果
      */
-    bool server_addr(sf_addr_info_t& addr);
+    bool server_addr(addr_info_t& addr);
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"

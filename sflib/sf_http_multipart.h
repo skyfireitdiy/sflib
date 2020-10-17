@@ -17,9 +17,9 @@ namespace skyfire {
 /**
  * @brief  http分块请求数据包
  */
-class sf_http_multipart final {
+class http_multipart final {
 private:
-    sf_http_header header__;
+    http_header header__;
     bool end__ = { false };
     bool finish__ = { false };
     std::string boundary_str__;
@@ -33,13 +33,13 @@ public:
      * @param boundary_str 分块边界字符串
      * @param tmp_path 临时文件目录（分块请求会保存至临时目录的文件）
      */
-    sf_http_multipart(const std::string& boundary_str,
+    http_multipart(const std::string& boundary_str,
         const std::string& tmp_path);
     /**
      * 获取分块请求的头部信息
      * @return 头部信息
      */
-    sf_http_header header() const;
+    http_header header() const;
     /**
      * 判断是否是结束包（最后一个分块请求结束）
      * @return 是否是结束包

@@ -9,11 +9,11 @@ using namespace std;
 bool test_finally_order(){
     int a = 10;
     {
-        sf_finally([&](){
+        finally([&](){
             a*=10;
         });
         {
-            sf_finally([&](){
+            finally([&](){
                 a+=10;
             });
         }
@@ -25,10 +25,10 @@ bool test_finally_order2()
 {
     int a = 10;
     {
-        sf_finally([&]() {
+        finally([&]() {
             a *= 10;
         });
-        sf_finally([&]() {
+        finally([&]() {
             a += 10;
         });
     }
@@ -39,5 +39,5 @@ int main(){
     sf_test_add(test_finally_order);
     sf_test_add(test_finally_order2);
 
-    sf_test_run();
+    test_run();
 }

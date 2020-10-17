@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_watch_time 时间监测类型
+ * watch_time 时间监测类型
  */
 #pragma once
 #pragma clang diagnostic push
@@ -17,10 +17,10 @@
 
 namespace skyfire {
 template <typename>
-class sf_check_point;
+class check_point;
 
 template <typename T = std::string>
-class sf_watch_time {
+class watch_time {
 public:
     void watch();
 
@@ -29,25 +29,25 @@ protected:
 
     std::unordered_map<T, std::unordered_map<std::thread::id, long long>>
         data__;
-    friend class sf_check_point<T>;
+    friend class check_point<T>;
 };
 
 template <typename T = std::string>
-class sf_check_point {
+class check_point {
 private:
     T point_name__;
     std::chrono::high_resolution_clock::time_point clock__;
-    sf_watch_time<T>& parent__;
+    watch_time<T>& parent__;
 
 public:
     /**
-     * @brief sf_check_point 设置检查点
+     * @brief check_point 设置检查点
      * @param name 检查点名称
      * @param parent 对象
      */
-    sf_check_point(const T& name, sf_watch_time<T>& parent);
+    check_point(const T& name, watch_time<T>& parent);
 
-    ~sf_check_point();
+    ~check_point();
 };
 } // namespace skyfire
 

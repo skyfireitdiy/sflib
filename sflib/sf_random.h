@@ -17,15 +17,15 @@ namespace skyfire {
 /**
  *  @brief 随机数类
  */
-class sf_random final : public sf_nocopy<> {
+class random final : public nocopy<> {
    public:
-    SF_SINGLE_TON(sf_random)
+    SF_SINGLE_TON(random)
 
    private:
     std::random_device rd__;
     std::shared_ptr<std::default_random_engine> e__;
 
-    sf_random();
+    random();
 
    public:
     /**

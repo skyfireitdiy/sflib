@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_thread_pool 线程池
+ * thread_pool 线程池
  */
 #pragma once
 #pragma clang diagnostic push
@@ -20,15 +20,15 @@ namespace skyfire {
 /**
  *  @brief  线程池
  */
-class sf_thread_pool : public sf_make_instance_t<sf_thread_pool> {
+class thread_pool : public make_instance_t<thread_pool> {
 public:
     /**
-     * @brief sf_thread_pool 构造函数
+     * @brief thread_pool 构造函数
      * @param thread_count 线程数量
      */
-    explicit sf_thread_pool(size_t thread_count = std::thread::hardware_concurrency());
+    explicit thread_pool(size_t thread_count = std::thread::hardware_concurrency());
 
-    ~sf_thread_pool();
+    ~thread_pool();
 
     /**
      * @brief add_task 添加任务
@@ -85,7 +85,7 @@ private:
     std::atomic<size_t> thread_count__ { 0 };
     std::deque<std::function<void()>> task_deque__;
 
-    static void thread_run__(sf_thread_pool* this__);
+    static void thread_run__(thread_pool* this__);
 
     std::mutex mu_task_deque__;
     std::vector<std::shared_ptr<std::thread>> thread_vec__;

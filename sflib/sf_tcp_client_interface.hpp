@@ -11,11 +11,11 @@
 #include "sf_tcp_client_interface.h"
 
 namespace skyfire {
-inline bool sf_tcp_client_interface::peer_addr(sf_addr_info_t &addr) {
+inline bool tcp_client_interface::peer_addr(addr_info_t &addr) {
     return skyfire::peer_addr(raw_socket(), addr);
 }
 
-inline bool sf_tcp_client_interface::local_addr(sf_addr_info_t &addr) {
+inline bool tcp_client_interface::local_addr(addr_info_t &addr) {
     return skyfire::local_addr(raw_socket(), addr);
 }
 }    // namespace skyfire

@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_empty_class 空类
+ * empty_class 空类
  */
 
 #pragma once
@@ -17,7 +17,7 @@ namespace skyfire {
  * @brief 空类型
  */
 // ReSharper disable once CppClassCanBeFinal
-class sf_empty_class {};
+class empty_class {};
 }    // namespace skyfire
 
 #pragma clang diagnostic pop

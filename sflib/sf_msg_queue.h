@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_msg_queue 消息队列
+ * msg_queue 消息队列
  */
 
 #pragma once
@@ -19,7 +19,7 @@ namespace skyfire {
  *  @brief 消息队列
  */
 template <typename T>
-class sf_msg_queue {
+class msg_queue {
 private:
     std::list<T> data__;
     std::mutex mu_data_op__;

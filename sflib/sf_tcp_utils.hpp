@@ -41,20 +41,20 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
 }
 #pragma clang diagnostic pop
 
-inline void make_header_checksum(sf_pkg_header_t& header)
+inline void make_header_checksum(pkg_header_t& header)
 {
     header.checksum = 0;
-    auto offset = SF_GET_OFFSET(sf_pkg_header_t, type);
+    auto offset = SF_GET_OFFSET(pkg_header_t, type);
     auto p_byte = reinterpret_cast<const unsigned char*>(&header);
     for (auto i = offset; i < sizeof(header); ++i) {
         header.checksum ^= p_byte[i];
     }
 }
 
-inline bool check_header_checksum(const sf_pkg_header_t& header)
+inline bool check_header_checksum(const pkg_header_t& header)
 {
     unsigned char checksum = 0;
-    auto offset = SF_GET_OFFSET(sf_pkg_header_t, type);
+    auto offset = SF_GET_OFFSET(pkg_header_t, type);
     auto p_byte = reinterpret_cast<const unsigned char*>(&header);
     for (auto i = offset; i < sizeof(header); ++i) {
         checksum ^= p_byte[i];
@@ -62,9 +62,9 @@ inline bool check_header_checksum(const sf_pkg_header_t& header)
     return checksum == header.checksum;
 }
 
-inline unsigned long long sf_ntoh64(unsigned long long input)
+inline unsigned long long ntoh64(unsigned long long input)
 {
-    if (sf_big_endian()) {
+    if (big_endian()) {
         return input;
     }
     unsigned long long val;
@@ -81,12 +81,12 @@ inline unsigned long long sf_ntoh64(unsigned long long input)
     return val;
 }
 
-inline unsigned long long sf_hton64(unsigned long long input)
+inline unsigned long long hton64(unsigned long long input)
 {
-    return (sf_ntoh64(input));
+    return (ntoh64(input));
 }
 
-inline bool sf_big_endian()
+inline bool big_endian()
 {
     char data[4] = { 0x12, 0x34, 0x56, 0x78 };
     return *reinterpret_cast<int*>(data) == 0x12345678;

@@ -28,7 +28,7 @@ namespace skyfire
 {
 
 
-    inline bool peer_addr(SOCKET sock, sf_addr_info_t &addr) {
+    inline bool peer_addr(SOCKET sock, addr_info_t &addr) {
 #ifdef _WIN32
         SOCKADDR_IN sock_addr;
         memset(&sock_addr,0, sizeof(sock_addr));
@@ -37,7 +37,7 @@ namespace skyfire
             return false;
         }
 		
-    	sf_safe_inet_ntoa(AF_INET, addr.ip, sock_addr.sin_addr);
+    	safe_inet_ntoa(AF_INET, addr.ip, sock_addr.sin_addr);
 
         addr.port = ntohs(sock_addr.sin_port);
         return true;
@@ -54,7 +54,7 @@ namespace skyfire
 #endif
     }
 
-    inline bool local_addr(SOCKET sock, sf_addr_info_t &addr) {
+    inline bool local_addr(SOCKET sock, addr_info_t &addr) {
 #ifdef _WIN32
         SOCKADDR_IN sock_addr;
         memset(&sock_addr,0, sizeof(sock_addr));
@@ -62,7 +62,7 @@ namespace skyfire
         if(getsockname(sock, reinterpret_cast<SOCKADDR*>(&sock_addr), &len) != 0){
             return false;
         }
-		sf_safe_inet_ntoa(AF_INET, addr.ip, sock_addr.sin_addr);
+		safe_inet_ntoa(AF_INET, addr.ip, sock_addr.sin_addr);
         addr.port = ntohs(sock_addr.sin_port);
         return true;
 #else
@@ -72,7 +72,7 @@ namespace skyfire
         if(getsockname(sock, reinterpret_cast<sockaddr*>(&sock_addr), &len) != 0){
             return false;
         }
-		sf_safe_inet_ntoa(AF_INET, addr.ip, sock_addr.sin_addr);
+		safe_inet_ntoa(AF_INET, addr.ip, sock_addr.sin_addr);
         addr.port = ntohs(sock_addr.sin_port);
         return true;
 #endif

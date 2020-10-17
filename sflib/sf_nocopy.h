@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_nocopy 禁止拷贝
+ * nocopy 禁止拷贝
  */
 
 #pragma once
@@ -18,13 +18,13 @@ namespace skyfire {
  * @brief 禁止拷贝工具类
  * @tparam _BaseClass 基类型
  */
-template <typename _BaseClass = sf_empty_class>
-class sf_nocopy : public _BaseClass {
+template <typename _BaseClass = empty_class>
+class nocopy : public _BaseClass {
 public:
-    sf_nocopy() {};
-    sf_nocopy(const sf_nocopy&) = delete;
-    sf_nocopy(sf_nocopy&&) = delete;
-    sf_nocopy& operator=(const sf_nocopy&) = delete;
-    sf_nocopy& operator=(sf_nocopy&&) = delete;
+    nocopy() {};
+    nocopy(const nocopy&) = delete;
+    nocopy(nocopy&&) = delete;
+    nocopy& operator=(const nocopy&) = delete;
+    nocopy& operator=(nocopy&&) = delete;
 };
 } // namespace skyfire

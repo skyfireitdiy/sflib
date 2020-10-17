@@ -12,20 +12,20 @@
 #include "sf_http_multipart.h"
 
 namespace skyfire {
-inline sf_http_multipart::sf_http_multipart(const std::string &boundary_str,
+inline http_multipart::http_multipart(const std::string &boundary_str,
                                             const std::string &tmp_path)
     : boundary_str__(boundary_str),
-      filename__(fs::path(tmp_path) / sf_random::instance()->uuid_str()) {}
+      filename__(fs::path(tmp_path) / random::instance()->uuid_str()) {}
 
-inline sf_http_header sf_http_multipart::header() const { return header__; }
+inline http_header http_multipart::header() const { return header__; }
 
-inline bool sf_http_multipart::is_end() const { return end__; }
+inline bool http_multipart::is_end() const { return end__; }
 
-inline bool sf_http_multipart::is_finished() const { return finish__; }
+inline bool http_multipart::is_finished() const { return finish__; }
 
-inline std::string sf_http_multipart::filename() const { return filename__; }
+inline std::string http_multipart::filename() const { return filename__; }
 
-inline bool sf_http_multipart::append_data(const byte_array &data,
+inline bool http_multipart::append_data(const byte_array &data,
                                            byte_array &ret) {
     const auto new_boundary_str = "----" + boundary_str__;
     if (first_block) {
@@ -37,12 +37,12 @@ inline bool sf_http_multipart::append_data(const byte_array &data,
         std::string request_line;
         std::vector<std::string> header_lines;
         byte_array body;
-        if (!sf_http_request::split_request(data, request_line, header_lines,
+        if (!http_request::split_request(data, request_line, header_lines,
                                             body)) {
             ret = data;
             return false;
         }
-        if (!sf_http_request::parse_header(header_lines, header__)) {
+        if (!http_request::parse_header(header_lines, header__)) {
             ret = data;
             return false;
         }

@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_msg_queue 消息队列
+ * msg_queue 消息队列
  */
 
 #pragma once
@@ -16,7 +16,7 @@
 namespace skyfire {
 
 template <typename T>
-void sf_msg_queue<T>::add_msg(T msg)
+void msg_queue<T>::add_msg(T msg)
 {
     std::lock_guard<std::mutex> lck(mu_data_op__);
     data__.emplace_back(msg);
@@ -24,21 +24,21 @@ void sf_msg_queue<T>::add_msg(T msg)
 }
 
 template <typename T>
-void sf_msg_queue<T>::remove_msg(std::function<bool(const T&)> op)
+void msg_queue<T>::remove_msg(std::function<bool(const T&)> op)
 {
     std::lock_guard<std::mutex> lck(mu_data_op__);
     data__.remove_if(op);
 }
 
 template <typename T>
-void sf_msg_queue<T>::clear()
+void msg_queue<T>::clear()
 {
     std::lock_guard<std::mutex> lck(mu_data_op__);
     data__.clear();
 }
 
 template <typename T>
-std::shared_ptr<T> sf_msg_queue<T>::take_msg()
+std::shared_ptr<T> msg_queue<T>::take_msg()
 {
     std::lock_guard<std::mutex> lck(mu_data_op__);
     if (data__.empty()) {
@@ -50,29 +50,29 @@ std::shared_ptr<T> sf_msg_queue<T>::take_msg()
 }
 
 template <typename T>
-bool sf_msg_queue<T>::empty() const { return data__.empty(); }
+bool msg_queue<T>::empty() const { return data__.empty(); }
 
 template <typename T>
-void sf_msg_queue<T>::wait_new_msg()
+void msg_queue<T>::wait_new_msg()
 {
     std::unique_lock<std::mutex> lck(mu_data_op__);
     wait_cond__.wait(lck);
 }
 
 template <typename T>
-std::list<T> sf_msg_queue<T>::take_all_msg()
+std::list<T> msg_queue<T>::take_all_msg()
 {
     std::lock_guard<std::mutex> lck(mu_data_op__);
     return std::move(data__);
 }
 
 template <typename T>
-void sf_msg_queue<T>::wait_msg()
+void msg_queue<T>::wait_msg()
 {
     std::unique_lock<std::mutex> lck(mu_data_op__);
     wait_cond__.wait(lck, [this]() -> bool { return !data__.empty(); });
 }
 
 template <typename T>
-void sf_msg_queue<T>::add_empty_msg() { wait_cond__.notify_all(); }
+void msg_queue<T>::add_empty_msg() { wait_cond__.notify_all(); }
 } // namespace skyfire

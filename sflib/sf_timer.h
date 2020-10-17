@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_timer 定时器
+ * timer 定时器
  */
 #pragma once
 #pragma clang diagnostic push
@@ -20,7 +20,7 @@ namespace skyfire {
 /**
  *  @brief 定时器
  */
-class sf_timer : public sf_nocopy<sf_object> {
+class timer : public nocopy<object> {
    public:
     /**
      * timeout 定时器触发信号

@@ -19,8 +19,8 @@ namespace skyfire {
  * @brief 内存缓存
  *
  */
-class sf_cache
-    : public sf_make_instance_t<sf_cache, sf_nocopy<sf_empty_class>> {
+class cache
+    : public make_instance_t<cache, nocopy<empty_class>> {
 private:
     struct cache_data_t {
         std::string key;
@@ -37,7 +37,7 @@ public:
      *
      * @param max_count 缓存条目数量
      */
-    explicit sf_cache(int max_count = default_cache_max_count);
+    explicit cache(int max_count = default_cache_max_count);
     /**
      * @brief 取得缓存数据
      *

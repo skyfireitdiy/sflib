@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_logger日志打印
+ * logger日志打印
  */
 
 #pragma once
@@ -41,7 +41,7 @@ constexpr int SF_FATAL_LEVEL = 4;
 /**
  *  @brief 日志信息
  */
-struct sf_logger_info_t {
+struct logger_info_t {
     int level; // 日志等级
     std::string time; // 时间
     int line; // 行号
@@ -51,7 +51,7 @@ struct sf_logger_info_t {
     std::string msg; // 消息
 };
 
-SF_JSONIFY(sf_logger_info_t, level, time, line, file, thread_id, func, msg);
+SF_JSONIFY(logger_info_t, level, time, line, file, thread_id, func, msg);
 
 /**
  * 各种level对应的字符串
@@ -67,15 +67,15 @@ inline std::unordered_map<int, std::string> logger_level_str__ {
 /**
  *  @brief 默认日志格式
  */
-constexpr char sf_default_log_format[]
+constexpr char default_log_format[]
     = "{level} {time} {thread} {file}:{line} {func} --> {msg}\n";
 
 /**
  * 日志类
  */
-class sf_logger {
+class logger {
 public:
-    SF_SINGLE_TON(sf_logger)
+    SF_SINGLE_TON(logger)
 
     /**
      * 添加指定等级的回调函数
@@ -84,7 +84,7 @@ public:
      * @return id号（可用于移除回调）
      */
     int add_level_func(int level,
-        std::function<void(const sf_logger_info_t&, bool)> func, bool color = true);
+        std::function<void(const logger_info_t&, bool)> func, bool color = true);
 
     /**
      * 添加指定等级日志输出流
@@ -94,7 +94,7 @@ public:
      * @return id号（可用于移除回调）
      */
     int add_level_stream(int level, std::ostream* os,
-        std::string format = sf_default_log_format, bool color = true);
+        std::string format = default_log_format, bool color = true);
 
     /**
      * 添加指定等级日志输出文件
@@ -104,7 +104,7 @@ public:
      * @return id号（可用于移除回调）
      */
     int add_level_file(int level, const std::string& filename,
-        std::string format = sf_default_log_format, bool color = true);
+        std::string format = default_log_format, bool color = true);
 
     /**
      * 根据id删除过滤器
@@ -125,14 +125,14 @@ public:
     static void empty_func__() {}
 
     static std::string format(std::string format_str,
-        const sf_logger_info_t& log_info, bool color);
+        const logger_info_t& log_info, bool color);
 
 private:
     struct log_attr {
-        std::function<void(const sf_logger_info_t&, bool)> callback;
+        std::function<void(const logger_info_t&, bool)> callback;
         bool colored = true;
     };
-    std::deque<sf_logger_info_t> log_deque__;
+    std::deque<logger_info_t> log_deque__;
     std::condition_variable cond__;
     std::mutex deque_mu__;
     std::unordered_map<
@@ -146,45 +146,45 @@ private:
 
     int make_random_logger_id__();
 
-    sf_logger();
+    logger();
 
-    ~sf_logger();
+    ~logger();
 
     template <typename T, typename... U>
-    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
+    void logout__(std::ostringstream& oss, logger_info_t& log_info,
         const T& tmp, const U&... tmp2);
 
 #ifdef QT_CORE_LIB
     template <typename... U>
-    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
+    void logout__(std::ostringstream& oss, logger_info_t& log_info,
         const QString& tmp, const U&... tmp2);
     // template<>
-    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
+    void logout__(std::ostringstream& oss, logger_info_t& log_info,
         const QString& tmp);
 #endif
     template <typename T>
-    void logout__(std::ostringstream& oss, sf_logger_info_t& log_info,
+    void logout__(std::ostringstream& oss, logger_info_t& log_info,
         const T& tmp);
 };
 
 #ifdef SF_DEBUG
-#define sf_debug(...)                                                      \
+#define debug(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_DEBUG_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
 #else
-#define sf_debug(...) skyfire::g_logger->empty_func__()
+#define debug(...) skyfire::g_logger->empty_func__()
 #endif
 
-#define sf_info(...)                                                      \
+#define info(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_INFO_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
-#define sf_warn(...)                                                      \
+#define warn(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_WARN_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
-#define sf_error(...)                                                      \
+#define error(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_ERROR_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
-#define sf_fatal(...)                                                      \
+#define fatal(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_FATAL_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
 

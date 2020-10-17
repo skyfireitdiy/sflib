@@ -12,15 +12,15 @@
 
 namespace skyfire {
 
-class sf_http_base_server;
+class http_base_server;
 
 /**
  * @brief  http头
  */
-class sf_http_header {
+class http_header {
 
 protected:
-    sf_http_header_t header_data__;
+    http_header_t header_data__;
 
 public:
     /**
@@ -58,15 +58,15 @@ public:
 
     /**
      * 获取头的原始类型
-     * @return sf_http_header_t类型的头数据
+     * @return http_header_t类型的头数据
      */
-    sf_http_header_t header() const;
+    http_header_t header() const;
 
     /**
      * 设置原始的头数据
-     * @param header sf_http_header_t类型的头数据
+     * @param header http_header_t类型的头数据
      */
-    void set_header(const sf_http_header_t& header);
+    void set_header(const http_header_t& header);
 
     /**
      * 判断是否有指定的http头

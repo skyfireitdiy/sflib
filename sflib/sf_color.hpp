@@ -3,7 +3,7 @@
 #include "sf_color.h"
 
 namespace skyfire {
-inline std::string sf_color_string(const std::string& str, const std::vector<sf_color>& cv)
+inline std::string color_string(const std::string& str, const std::vector<color>& cv)
 {
     if (cv.empty() || cv.size() > 3) {
         return str;

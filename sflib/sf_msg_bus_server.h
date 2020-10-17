@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_msg_bus_server 消息总线服务器
+ * msg_bus_server 消息总线服务器
  */
 #pragma once
 #pragma clang diagnostic push
@@ -23,8 +23,8 @@ namespace skyfire {
 /**
  *  @brief 消息总线服务端
  */
-class sf_msg_bus_server final
-    : public sf_make_instance_t<sf_msg_bus_server, sf_nocopy<sf_object>> {
+class msg_bus_server final
+    : public make_instance_t<msg_bus_server, nocopy<object>> {
     /**
      * @brief msg_come 消息到来信号
      */
@@ -32,13 +32,13 @@ class sf_msg_bus_server final
 
    public:
     /**
-     * @brief sf_msg_bus_server 构造函数
+     * @brief msg_bus_server 构造函数
      */
-    sf_msg_bus_server();
+    msg_bus_server();
     /**
      * 析构函数
      */
-    ~sf_msg_bus_server() override;
+    ~msg_bus_server() override;
 
     /**
      * @brief listen 监听消息总线
@@ -70,16 +70,16 @@ class sf_msg_bus_server final
      * @param addr 地址信息
      * @return 是否成功
      */
-    bool server_addr(sf_addr_info_t &addr) const;
+    bool server_addr(addr_info_t &addr) const;
 
    private:
-    std::shared_ptr<sf_tcp_server> p_server__ = sf_tcp_server::make_instance();
+    std::shared_ptr<tcp_server> p_server__ = tcp_server::make_instance();
 
     std::unordered_map<std::string, std::list<SOCKET>> msg_map__;
 
     void reg_msg__(SOCKET sock, const std::string &msg_name);
 
-    void on_reg_data__(SOCKET sock, const sf_pkg_header_t &header,
+    void on_reg_data__(SOCKET sock, const pkg_header_t &header,
                        const byte_array &data);
 
     void unreg_msg__(SOCKET sock, const std::string &msg);

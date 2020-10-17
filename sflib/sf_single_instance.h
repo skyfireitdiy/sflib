@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_single_instance单例支持
+ * single_instance单例支持
  */
 #pragma once
 #pragma clang diagnostic push
@@ -21,14 +21,14 @@ namespace skyfire {
  * @tparam ThisClass 要单例的类
  * @tparam BaseClass 父类
  */
-template <typename ThisClass, typename BaseClass = sf_empty_class>
-class sf_single_instance : public BaseClass {
+template <typename ThisClass, typename BaseClass = empty_class>
+class single_instance : public BaseClass {
 public:
     template <typename... Args>
     static std::shared_ptr<ThisClass> instance(Args&&... args);
 
 private:
-    sf_single_instance() = default;
+    single_instance() = default;
     
     friend ThisClass;
 };

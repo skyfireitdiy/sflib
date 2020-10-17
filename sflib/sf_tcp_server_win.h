@@ -17,7 +17,7 @@
 #include "sf_nocopy.h"
 
 namespace skyfire {
-struct sf_per_io_operation_data_t {
+struct per_io_operation_data_t {
     OVERLAPPED overlapped{};
     WSABUF wsa_buffer{};
     byte_array buffer;
@@ -25,20 +25,20 @@ struct sf_per_io_operation_data_t {
     bool is_send{};
 };
 
-struct sf_per_handle_data_t {
+struct per_handle_data_t {
     SOCKET socket;
     byte_array sock_data_buffer;
 };
 
-struct sf_iocp_thread_countext_t {
+struct iocp_thread_countext_t {
     std::shared_ptr<std::shared_mutex> mu_socks =
         std::make_shared<std::shared_mutex>();
     std::unordered_set<SOCKET> socks;
     HANDLE iocp_port{};
 };
 
-class sf_tcp_server
-    : public sf_make_instance_t<sf_tcp_server, sf_tcp_server_interface> {
+class tcp_server
+    : public make_instance_t<tcp_server, tcp_server_interface> {
    private:
     bool inited__ = false;
     bool exit_flag__ = false;
@@ -52,9 +52,9 @@ class sf_tcp_server
 
     std::vector<std::unordered_set<SOCKET>> sock_thread__;
 
-    static sf_per_io_operation_data_t* make_req__();
+    static per_io_operation_data_t* make_req__();
 
-    std::vector<sf_iocp_thread_countext_t> iocp_context__;
+    std::vector<iocp_thread_countext_t> iocp_context__;
 
     void server_work_thread__(int index);
 
@@ -62,21 +62,21 @@ class sf_tcp_server
 
     void accept_thread__();
 
-    void handle_sock_error__(sf_per_handle_data_t* p_handle_data,
-                             sf_per_io_operation_data_t* p_io_data, int index);
+    void handle_sock_error__(per_handle_data_t* p_handle_data,
+                             per_io_operation_data_t* p_io_data, int index);
     void write_handle__(DWORD bytes_transferred,
-                        sf_per_handle_data_t* p_handle_data,
-                        sf_per_io_operation_data_t* p_io_data, int index);
+                        per_handle_data_t* p_handle_data,
+                        per_io_operation_data_t* p_io_data, int index);
     void receive_handle__(DWORD bytes_transferred,
-                          sf_per_handle_data_t* p_handle_data,
-                          sf_per_io_operation_data_t* p_io_data, int index);
+                          per_handle_data_t* p_handle_data,
+                          per_io_operation_data_t* p_io_data, int index);
 
    public:
     SOCKET raw_socket() override;
 
-    explicit sf_tcp_server(bool raw = false, int thread_count = std::thread::hardware_concurrency() * 2 + 2);
+    explicit tcp_server(bool raw = false, int thread_count = std::thread::hardware_concurrency() * 2 + 2);
 
-    ~sf_tcp_server() override;
+    ~tcp_server() override;
 
     bool listen(const std::string& ip, unsigned short port) override;
 

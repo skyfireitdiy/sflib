@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_timer 定时器
+ * timer 定时器
  */
 #pragma once
 #pragma clang diagnostic push
@@ -16,7 +16,7 @@
 
 namespace skyfire {
 
-inline void sf_timer::start(int ms, bool once) {
+inline void timer::start(int ms, bool once) {
     if (running__) {
         return;
     }
@@ -45,9 +45,9 @@ inline void sf_timer::start(int ms, bool once) {
     new_thread.detach();
 }
 
-inline bool sf_timer::is_active() const { return running__; }
+inline bool timer::is_active() const { return running__; }
 
-inline void sf_timer::stop() { running__ = false; }
+inline void timer::stop() { running__ = false; }
 }    // namespace skyfire
 
 #pragma clang diagnostic pop

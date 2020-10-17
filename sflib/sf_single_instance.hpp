@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_single_instance单例支持
+ * single_instance单例支持
  */
 
 #pragma once
@@ -17,7 +17,7 @@ namespace skyfire {
 
 template <typename ThisClass, typename BaseClass>
 template <typename... Args>
-std::shared_ptr<ThisClass> sf_single_instance<ThisClass, BaseClass>::instance(
+std::shared_ptr<ThisClass> single_instance<ThisClass, BaseClass>::instance(
     Args&&... args)
 {
     static auto instance__ = std::shared_ptr<ThisClass>(

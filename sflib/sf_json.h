@@ -20,14 +20,14 @@ namespace skyfire {
 /**
  * @brief json库
  */
-class sf_json final {
+class json final {
 private:
-    std::shared_ptr<sf_json_value> value__;
+    std::shared_ptr<json_value> value__;
 
-    explicit sf_json(const std::shared_ptr<sf_json_value>& value);
+    explicit json(const std::shared_ptr<json_value>& value);
 
-    void value_copy__(const std::shared_ptr<sf_json_value>& src,
-        std::shared_ptr<sf_json_value>& dst) const;
+    void value_copy__(const std::shared_ptr<json_value>& src,
+        std::shared_ptr<json_value>& dst) const;
 
 public:
     /**
@@ -47,31 +47,31 @@ public:
     /**
      * 默认构造函数，null类型
      */
-    sf_json();
+    json();
 
     /**
      * 使用字符串构造一个json字符串对象
      * @param str 标准字符串
      */
-    explicit sf_json(const std::string& str);
+    explicit json(const std::string& str);
 
     /**
      * 使用c字符串构造一个json字符串对象
      * @param c_str c字符串
      */
-    explicit sf_json(const char* c_str);
+    explicit json(const char* c_str);
 
     /**
      * 使用json对象构造一个json对象
-     * @param json
+     * @param js
      */
-    sf_json(const sf_json& json);
+    json(const json& js);
 
     /**
      * 使用bool值构造一个json对象
      * @param boolean_value bool值
      */
-    explicit sf_json(bool boolean_value);
+    explicit json(bool boolean_value);
 
     /**
      * 转为object
@@ -92,7 +92,7 @@ public:
      * 获取类型
      * @return 类型
      */
-    sf_json_type type() const;
+    json_type type() const;
 
     /**
      * 转为字符串
@@ -114,49 +114,49 @@ public:
      * @param str json字符串
      * @return json对象
      */
-    static sf_json from_string(const std::string& str);
+    static json from_string(const std::string& str);
 
     /**
      * 获取对象值
      * @param key 键
      * @return 值
      */
-    sf_json at(const std::string& key) const;
+    json at(const std::string& key) const;
 
     /**
      * 获取对象值
      * @param key 键
      * @return 值
      */
-    sf_json operator[](const std::string& key) const;
+    json operator[](const std::string& key) const;
 
     /**
      * 获取对象值
      * @param c_key 键
      * @return 值
      */
-    sf_json at(const char* c_key) const;
+    json at(const char* c_key) const;
 
     /**
      * 获取对象值
      * @param c_key 键
      * @return 值
      */
-    sf_json operator[](const char* c_key) const;
+    json operator[](const char* c_key) const;
 
     /**
      * 获取数组值
      * @param key 索引
      * @return 值
      */
-    sf_json at(int key) const;
+    json at(int key) const;
 
     /**
      * 获取数组值
      * @param key 索引
      * @return 值
      */
-    sf_json operator[](int key) const;
+    json operator[](int key) const;
 
     /**
      * 转换为字符串
@@ -177,7 +177,7 @@ public:
      */
     template <typename T,
         typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
-    sf_json(T number);
+    json(T number);
 
     /**
      * 隐式转换（算术类型）
@@ -192,58 +192,58 @@ public:
      * 赋值（算术类型）
      * @tparam T 类型
      * @param value 值
-     * @return sf_json对象
+     * @return json对象
      */
     template <typename T,
         typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
-    sf_json& operator=(T value);
+    json& operator=(T value);
 
     /**
      * 赋值运算符
      * @param value 值
      * @return json对象
      */
-    sf_json& operator=(bool value);
+    json& operator=(bool value);
 
     /**
      * 赋值运算符
      * @param value 值
      * @return json对象
      */
-    sf_json& operator=(const std::string& value);
+    json& operator=(const std::string& value);
 
     /**
      * 赋值运算符
      * @param value 值
      * @return json对象
      */
-    sf_json& operator=(const char* value);
+    json& operator=(const char* value);
 
     /**
      * 赋值运算符
      * @param value 值
      * @return json对象
      */
-    sf_json& operator=(const sf_json& value);
+    json& operator=(const json& value);
 
     /**
      * 数组追加元素
      * @param value 元素值
      */
-    void append(const sf_json& value) const;
+    void append(const json& value) const;
 
     /**
      * 深拷贝，生成副本
      * @return 副本
      */
-    sf_json deep_copy() const;
+    json deep_copy() const;
 
     /**
      * 合并（object或者array）
      * @param other 另一个object或者array
      * @return 是否合并成功
      */
-    bool join(const sf_json& other) const;
+    bool join(const json& other) const;
 
     /**
      * 清空（不会改变type）
@@ -312,7 +312,7 @@ public:
      *
      * @param src 要拷贝的来源
      */
-    void copy(const sf_json& src);
+    void copy(const json& src);
 
     /**
      * @brief 比较运算符
@@ -320,7 +320,7 @@ public:
      * @param other 另一个实例
      * @return 两个实例是否相等
      */
-    bool operator==(const sf_json& other) const;
+    bool operator==(const json& other) const;
 
     /**
      * @brief 不相等运算符
@@ -328,7 +328,7 @@ public:
      * @param other 另一个实例
      * @return 两个实例是否不相等
      */
-    bool operator!=(const sf_json& other) const;
+    bool operator!=(const json& other) const;
 };
 
 /**
@@ -337,14 +337,14 @@ public:
  * @param json json对象
  * @return 流
  */
-std::ostream& operator<<(std::ostream& os, const sf_json& json);
+std::ostream& operator<<(std::ostream& os, const json& json);
 
 /**
  * json字面值操作符
  * @param str 字符串
  * @return 长度
  */
-sf_json operator""_json(const char* str, std::size_t);
+json operator""_json(const char* str, std::size_t);
 
 /**
  * 转为json
@@ -353,7 +353,7 @@ sf_json operator""_json(const char* str, std::size_t);
  * @return json对象
  */
 template <typename T>
-sf_json to_json(const T& t);
+json to_json(const T& t);
 
 /**
  * 转为json
@@ -362,7 +362,7 @@ sf_json to_json(const T& t);
  * @return json对象
  */
 template <typename T>
-sf_json to_json(std::shared_ptr<T> pt);
+json to_json(std::shared_ptr<T> pt);
 
 /**
  * 从json加载对象
@@ -372,7 +372,7 @@ sf_json to_json(std::shared_ptr<T> pt);
  */
 
 template <typename T>
-void from_json(const sf_json& js, T& value);
+void from_json(const json& js, T& value);
 
 /**
  * 从json加载对象
@@ -381,7 +381,7 @@ void from_json(const sf_json& js, T& value);
  * @param value 对象
  */
 template <typename T>
-void from_json(const sf_json& js, std::shared_ptr<T>& value);
+void from_json(const json& js, std::shared_ptr<T>& value);
 
 /**
  * 转换pair为json
@@ -391,7 +391,7 @@ void from_json(const sf_json& js, std::shared_ptr<T>& value);
  * @return json对象
  */
 template <typename K, typename V>
-sf_json to_json(const std::pair<K, V>& value);
+json to_json(const std::pair<K, V>& value);
 
 /**
  * 从json加载对象
@@ -401,7 +401,7 @@ sf_json to_json(const std::pair<K, V>& value);
  * @param value
  */
 template <typename K, typename V>
-void from_json(const sf_json& js, std::pair<K, V>& value);
+void from_json(const json& js, std::pair<K, V>& value);
 
 /**
  * 转换tuple对象为json
@@ -410,7 +410,7 @@ void from_json(const sf_json& js, std::pair<K, V>& value);
  * @return json对象
  */
 template <typename... ARGS>
-sf_json to_json(const std::tuple<ARGS...>& value);
+json to_json(const std::tuple<ARGS...>& value);
 
 /**
  * 从json加载tuple对象
@@ -419,34 +419,34 @@ sf_json to_json(const std::tuple<ARGS...>& value);
  * @param value 对象
  */
 template <typename... ARGS>
-void from_json(const sf_json& js, std::tuple<ARGS...>& value);
+void from_json(const json& js, std::tuple<ARGS...>& value);
 
 template <int N, typename... ARGS, typename... Ret>
 std::enable_if_t<N != sizeof...(ARGS), void> from_json_tuple_helper__(
-    const sf_json& js, std::tuple<ARGS...>& data, Ret... ret);
+    const json& js, std::tuple<ARGS...>& data, Ret... ret);
 
 template <int N, int, typename... ARGS, typename... Ret>
 std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
-    const sf_json& js, std::tuple<ARGS...>& data, Ret... ret);
+    const json& js, std::tuple<ARGS...>& data, Ret... ret);
 
 template <typename... ARGS>
-sf_json to_json_tuple_helper__(const ARGS&... value);
+json to_json_tuple_helper__(const ARGS&... value);
 
 #define SF_CONTAINER_JSON_EXTERN(container)                 \
     template <typename T>                                   \
-    sf_json to_json(const container<T>& value);             \
+    json to_json(const container<T>& value);             \
     template <typename T>                                   \
-    void from_json(const sf_json& js, container<T>& value); \
+    void from_json(const json& js, container<T>& value); \
     template <>                                             \
-    sf_json to_json(const container<char>& value);          \
+    json to_json(const container<char>& value);          \
     template <>                                             \
-    void from_json(const sf_json& js, container<char>& value);
+    void from_json(const json& js, container<char>& value);
 
 #define SF_ASSOCIATED_CONTAINER_JSON_EXTERN(container) \
     template <typename K, typename V>                  \
-    sf_json to_json(const container<K, V>& value);     \
+    json to_json(const container<K, V>& value);     \
     template <typename K, typename V>                  \
-    void from_json(const sf_json& js, container<K, V>& value);
+    void from_json(const json& js, container<K, V>& value);
 
 SF_CONTAINER_JSON_EXTERN(std::vector)
 SF_CONTAINER_JSON_EXTERN(std::list)
@@ -465,30 +465,30 @@ SF_ASSOCIATED_CONTAINER_JSON_EXTERN(std::unordered_multimap)
 #undef SF_ASSOCIATED_CONTAINER_JSON_EXTERN
 
 template <typename T>
-sf_json sf_to_json_helper__(const std::string& key, const T& value);
+json to_json_helper__(const std::string& key, const T& value);
 
 template <typename T, typename... ARGS>
-sf_json sf_to_json_helper__(const std::string& key, const T& value,
+json to_json_helper__(const std::string& key, const T& value,
     const ARGS&... args);
 
 template <typename T>
-void sf_from_json_helper__(const sf_json& js, const std::string& key, T& value);
+void from_json_helper__(const json& js, const std::string& key, T& value);
 
 template <typename T, typename... ARGS>
-void sf_from_json_helper__(const sf_json& js, const std::string& key, T& value,
+void from_json_helper__(const json& js, const std::string& key, T& value,
     ARGS&&... args);
 
 } // namespace skyfire
 
 #define SF_JSONIFY(ClassName, ...)                                    \
-    inline skyfire::sf_json to_json(const ClassName& obj)             \
+    inline skyfire::json to_json(const ClassName& obj)             \
     {                                                                 \
-        return skyfire::sf_to_json_helper__(                          \
+        return skyfire::to_json_helper__(                          \
             SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));           \
     }                                                                 \
-    inline void from_json(const skyfire::sf_json& js, ClassName& obj) \
+    inline void from_json(const skyfire::json& js, ClassName& obj) \
     {                                                                 \
-        skyfire::sf_from_json_helper__(                               \
+        skyfire::from_json_helper__(                               \
             js, SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));       \
     }
 

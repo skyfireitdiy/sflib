@@ -20,8 +20,8 @@
 #include "sf_utils.h"
 
 namespace skyfire {
-class sf_tcp_client
-    : public sf_make_instance_t<sf_tcp_client, sf_tcp_client_interface> {
+class tcp_client
+    : public make_instance_t<tcp_client, tcp_client_interface> {
 private:
     bool inited__ = false;
     bool raw__ = false;
@@ -30,16 +30,16 @@ private:
     void recv_thread__();
 
 public:
-    sf_tcp_client(bool raw = false); // NOLINT(google-explicit-constructor)
+    tcp_client(bool raw = false); // NOLINT(google-explicit-constructor)
 
-    sf_tcp_client(SOCKET sock,
+    tcp_client(SOCKET sock,
         bool raw = false); // NOLINT(google-explicit-constructor)
 
     SOCKET raw_socket() override;
 
-    bool bind(const std::string& ip, unsigned short port) override;
+    bool sf_bind(const std::string& ip, unsigned short port) override;
 
-    ~sf_tcp_client(); // NOLINT(modernize-use-override)
+    ~tcp_client(); // NOLINT(modernize-use-override)
 
     bool connect_to_server(const std::string& ip, unsigned short port) override;
 

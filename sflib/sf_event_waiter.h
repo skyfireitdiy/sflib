@@ -2,11 +2,11 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file __sf_event_waiter__.h
+* @file __event_waiter__.h
 */
 
 /*
- * __sf_event_waiter__ 事件等待
+ * __event_waiter__ 事件等待
  */
 
 #pragma once
@@ -20,13 +20,13 @@
 #include <mutex>
 
 /*
- * @brief sf_wait 等待事件
+ * @brief wait 等待事件
  * @param obj 对象
  * @param name 信号
  */
 #define sf_wait(obj, name)                                                            \
     {                                                                                 \
-        auto p_waiter = skyfire::sf_make_waiter((obj)->__##name##_signal_func_vec__); \
+        auto p_waiter = skyfire::make_waiter((obj)->__##name##_signal_func_vec__); \
         auto bind_id = sf_bind(obj, name, p_waiter->make_quit_func__(), true);        \
         p_waiter->wait__();                                                           \
         sf_unbind(obj, name, bind_id);                                                \
@@ -38,7 +38,7 @@ namespace skyfire {
  * @tparam ARGS 等待参数列表
  */
 template <typename... ARGS>
-class __sf_event_waiter__ : public sf_nocopy<> {
+class __event_waiter__ : public nocopy<> {
 private:
     std::mutex mu_cond__;
     std::condition_variable cond__;
@@ -67,7 +67,7 @@ public:
  * @return 等待器
  */
 template <typename... ARGS>
-std::shared_ptr<__sf_event_waiter__<ARGS...>> sf_make_waiter(
+std::shared_ptr<__event_waiter__<ARGS...>> make_waiter(
     const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>>&);
 
 } // namespace skyfire

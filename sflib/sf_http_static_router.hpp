@@ -28,20 +28,20 @@
 namespace skyfire {
 using namespace std::literals;
 
-inline bool sf_static_router::run_route(const sf_http_request& req,
-    sf_http_response& res,
+inline bool static_router::run_route(const http_request& req,
+    http_response& res,
     const std::string& raw_url,
     const std::string& method)
 {
     std::string url;
-    sf_http_param_t param;
+    http_param_t param;
     std::string frame;
-    sf_parse_url(raw_url, url, param, frame);
-    if (sf_string_start_with(url, "/")) {
+    parse_url(raw_url, url, param, frame);
+    if (string_start_with(url, "/")) {
         url = url.substr(1);
     }
     auto abs_path = fs::path(static_path__) / url;
-    sf_http_header header;
+    http_header header;
     byte_array body_data;
     if (!fs::exists(abs_path) || fs::is_directory(abs_path)) {
         return false;
@@ -50,7 +50,7 @@ inline bool sf_static_router::run_route(const sf_http_request& req,
     return true;
 }
 
-inline sf_static_router::sf_static_router(std::string path,
+inline static_router::static_router(std::string path,
     std::vector<std::string> methods,
     std::string charset, bool deflate,
     int priority)
@@ -65,12 +65,12 @@ inline sf_static_router::sf_static_router(std::string path,
         }
     }
 
-    callback__ = [=](const sf_http_request& req, sf_http_response& res,
+    callback__ = [=](const http_request& req, http_response& res,
                      const std::string& url, const std::string& abs_path) {
-        sf_http_res_header header;
+        http_res_header header;
         byte_array body_data;
 
-        header.set_header("Date", sf_make_http_time_str());
+        header.set_header("Date", make_http_time_str());
 
         auto _401_res = [&] {
             res.set_status(401);
@@ -93,18 +93,18 @@ inline sf_static_router::sf_static_router(std::string path,
             _404_res();
         } else {
             if (req.header().has_key("Range")) {
-                sf_debug("Range found");
+                debug("Range found");
                 auto range_header = req.header().header_value("Range", "");
-                auto range_content_list = sf_split_string(range_header, "=");
+                auto range_content_list = split_string(range_header, "=");
                 if (range_content_list.size() < 2) {
                     _401_res();
                 } else {
-                    auto range_list = sf_split_string(range_content_list[1], ",");
+                    auto range_list = split_string(range_content_list[1], ",");
                     for (auto& p : range_list) {
-                        p = sf_string_trim(p);
+                        p = string_trim(p);
                     }
                     if (range_list.size() > 1) {
-                        std::vector<sf_http_response::multipart_info_t>
+                        std::vector<http_response::multipart_info_t>
                             multipart_info_vec;
                         bool error_flag = false;
                         for (auto& range_str : range_list) {
@@ -130,10 +130,10 @@ inline sf_static_router::sf_static_router(std::string path,
                                 _416_res();
                                 break;
                             }
-                            sf_http_response::multipart_info_t tmp_part;
-                            tmp_part.type = sf_http_response::multipart_info_t::
+                            http_response::multipart_info_t tmp_part;
+                            tmp_part.type = http_response::multipart_info_t::
                                 multipart_info_type::file;
-                            tmp_part.file_info = sf_http_response::response_file_info_t {
+                            tmp_part.file_info = http_response::response_file_info_t {
                                 abs_path, start, end
                             };
                             multipart_info_vec.emplace_back(tmp_part);
@@ -165,30 +165,30 @@ inline sf_static_router::sf_static_router(std::string path,
                             _401_res();
                         } else {
                             res.set_header(header);
-                            res.set_file(sf_http_response::response_file_info_t {
+                            res.set_file(http_response::response_file_info_t {
                                 abs_path, start, end, file_size });
                             return;
                         }
                     }
                 }
             } else {
-                sf_debug("big file", abs_path);
+                debug("big file", abs_path);
                 res.set_header(header);
-                res.set_file(sf_http_response::response_file_info_t { abs_path, 0, -1, file_size });
+                res.set_file(http_response::response_file_info_t { abs_path, 0, -1, file_size });
                 return;
             }
         }
 
         auto accept = req.header().header_value("Accept-Encoding", "");
-        auto accept_list = sf_split_string(accept, ",");
+        auto accept_list = split_string(accept, ",");
         for (auto& p : accept_list)
-            p = sf_string_trim(p);
+            p = string_trim(p);
 
         if (deflate && std::find_if(accept_list.begin(), accept_list.end(), [=](const std::string& str) {
-                return sf_equal_nocase_string(
+                return equal_nocase_string(
                     str, "deflate");
             }) != accept_list.end()) {
-            body_data = sf_deflate_compress(body_data);
+            body_data = deflate_compress(body_data);
             header.set_header("Content-Encoding", "deflate");
         }
         res.set_header(header);
@@ -196,7 +196,7 @@ inline sf_static_router::sf_static_router(std::string path,
     };
 }
 
-inline int sf_static_router::priority() const { return priority__; }
+inline int static_router::priority() const { return priority__; }
 
 } // namespace skyfire
 

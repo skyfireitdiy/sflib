@@ -13,11 +13,11 @@
 
 namespace skyfire {
 
-inline unsigned char sf_to_hex(const unsigned char x) {
+inline unsigned char to_hex(const unsigned char x) {
     return static_cast<unsigned char>(x > 9 ? x + 55 : x + 48);
 }
 
-inline unsigned char sf_from_hex(unsigned char x) {
+inline unsigned char from_hex(unsigned char x) {
     unsigned char y = 0;
     if (x >= 'A' && x <= 'Z')
         y = static_cast<unsigned char>(x - 'A' + 10);
@@ -28,7 +28,7 @@ inline unsigned char sf_from_hex(unsigned char x) {
     return y;
 }
 
-inline std::string sf_url_encode(const std::string &str, bool encode_plus) {
+inline std::string url_encode(const std::string &str, bool encode_plus) {
     std::string strTemp{};
     size_t length = str.length();
     for (size_t i = 0; i < length; i++) {
@@ -40,21 +40,21 @@ inline std::string sf_url_encode(const std::string &str, bool encode_plus) {
             strTemp += "+";
         } else {
             strTemp += '%';
-            strTemp += sf_to_hex((unsigned char)str[i] >> 4);
-            strTemp += sf_to_hex(
+            strTemp += to_hex((unsigned char)str[i] >> 4);
+            strTemp += to_hex(
                 static_cast<const unsigned char>((unsigned char)str[i] % 16));
         }
     }
     return strTemp;
 }
 
-inline std::string sf_url_decode(const std::string &str, bool decode_plus) {
+inline std::string url_decode(const std::string &str, bool decode_plus) {
     std::string strTemp{};
     const auto length = str.length();
     for (size_t i = 0; i < length; i++) {
         if (str[i] == '%') {
-            const auto high = sf_from_hex(static_cast<unsigned char>(str[++i]));
-            const auto low = sf_from_hex(static_cast<unsigned char>(str[++i]));
+            const auto high = from_hex(static_cast<unsigned char>(str[++i]));
+            const auto low = from_hex(static_cast<unsigned char>(str[++i]));
             strTemp += static_cast<char>(
                 high * 16 +
                 low);    // NOLINT(bugprone-string-integer-assignment)
@@ -67,7 +67,7 @@ inline std::string sf_url_decode(const std::string &str, bool decode_plus) {
     return strTemp;
 }
 
-inline sf_http_param_t sf_parse_param(std::string param_str) {
+inline http_param_t parse_param(std::string param_str) {
     std::unordered_map<std::string, std::string> param;
     unsigned long url_pos;
     while ((url_pos = param_str.find('&')) != std::string::npos) {
@@ -77,51 +77,51 @@ inline sf_http_param_t sf_parse_param(std::string param_str) {
             std::string(param_str.begin() + url_pos + 1, param_str.end());
         if (tmp_param.empty()) continue;
         if ((url_pos = tmp_param.find('=')) == std::string::npos) continue;
-        auto key = sf_url_decode(
+        auto key = url_decode(
             std::string(tmp_param.begin(), tmp_param.begin() + url_pos));
-        const auto value = sf_url_decode(
+        const auto value = url_decode(
             std::string(tmp_param.begin() + url_pos + 1, tmp_param.end()));
         param[key] = value;
     }
     if (param_str.empty()) return param;
     if ((url_pos = param_str.find('=')) == std::string::npos) return param;
-    const auto key = sf_url_decode(
+    const auto key = url_decode(
         std::string(param_str.begin(), param_str.begin() + url_pos));
-    const auto value = sf_url_decode(
+    const auto value = url_decode(
         std::string(param_str.begin() + url_pos + 1, param_str.end()));
     param[key] = value;
     return param;
 }
 
-inline void sf_parse_url(const std::string &raw_url, std::string &url,
-                         sf_http_param_t &param, std::string &frame) {
+inline void parse_url(const std::string &raw_url, std::string &url,
+                         http_param_t &param, std::string &frame) {
     const auto frame_pos = raw_url.find('#');
     std::string raw_url_without_frame;
     if (frame_pos == std::string::npos) {
-        raw_url_without_frame = sf_url_decode(raw_url);
+        raw_url_without_frame = url_decode(raw_url);
         frame = "";
     } else {
-        raw_url_without_frame = sf_url_decode(
+        raw_url_without_frame = url_decode(
             std::string(raw_url.begin(), raw_url.begin() + frame_pos));
-        frame = sf_url_decode(
+        frame = url_decode(
             std::string(raw_url.begin() + frame_pos + 1, raw_url.end()));
     }
     const auto url_pos = raw_url_without_frame.find('?');
     if (url_pos == std::string::npos) {
-        url = sf_url_decode(raw_url_without_frame, false);
+        url = url_decode(raw_url_without_frame, false);
         return;
     }
-    url = sf_url_decode(std::string(raw_url_without_frame.begin(),
+    url = url_decode(std::string(raw_url_without_frame.begin(),
                                     raw_url_without_frame.begin() + url_pos),
                         false);
-    // NOTE param不用url decode，在sf_parse_param里面会decode
+    // NOTE param不用url decode，在parse_param里面会decode
     const auto param_str =
         std::string(raw_url_without_frame.begin() + url_pos + 1,
                     raw_url_without_frame.end());
-    param = sf_parse_param(param_str);
+    param = parse_param(param_str);
 }
 
-inline std::string sf_to_header_key_format(std::string key) {
+inline std::string to_header_key_format(std::string key) {
     auto flag = false;
     for (auto &k : key) {
         if (0 != isalnum(k)) {
@@ -134,7 +134,7 @@ inline std::string sf_to_header_key_format(std::string key) {
     return key;
 }
 
-inline std::string sf_make_http_time_str(
+inline std::string make_http_time_str(
     const std::chrono::system_clock::time_point &tp) {
     auto raw_time = std::chrono::system_clock::to_time_t(
         tp);    // NOLINT(cppcoreguidelines-pro-type-member-init)
@@ -169,7 +169,7 @@ inline byte_array read_file(const std::string &filename, size_t max_size) {
     return data;
 }
 
-inline std::string sf_base64_encode(const byte_array &data) {
+inline std::string base64_encode(const byte_array &data) {
     BIO *b64, *bio;
     BUF_MEM *bptr = nullptr;
     b64 = BIO_new(BIO_f_base64());
@@ -184,7 +184,7 @@ inline std::string sf_base64_encode(const byte_array &data) {
     return out_str;
 }
 
-inline byte_array sf_base64_decode(const std::string &data) {
+inline byte_array base64_decode(const std::string &data) {
     BIO *b64, *bio;
     int size = 0;
     b64 = BIO_new(BIO_f_base64());
@@ -199,7 +199,7 @@ inline byte_array sf_base64_decode(const std::string &data) {
     return out_str;
 }
 
-inline byte_array sf_sha1_encode(const byte_array &data) {
+inline byte_array sha1_encode(const byte_array &data) {
     SHA_CTX sha_ctx;
     // NOTE 20表示sha1的长度
     byte_array ret(20, '\0');
@@ -212,7 +212,7 @@ inline byte_array sf_sha1_encode(const byte_array &data) {
     return ret;
 }
 
-inline byte_array sf_deflate_compress(const byte_array &input_buffer) {
+inline byte_array deflate_compress(const byte_array &input_buffer) {
     auto max_len = compressBound(input_buffer.size());
     byte_array ret(max_len);
     uLong size = max_len;

@@ -14,14 +14,14 @@
 #include "sf_utils.hpp"
 #include "sf_logger.hpp"
 namespace skyfire {
-inline sf_cache::sf_cache(int max_count)
+inline cache::cache(int max_count)
     : max_count__(max_count)
 {
     data__.reserve(max_count__);
 }
 
 template <typename T>
-std::shared_ptr<T> sf_cache::data(const std::string& key)
+std::shared_ptr<T> cache::data(const std::string& key)
 {
     std::lock_guard<std::recursive_mutex> lck(mu_data__);
     for (auto& p : data__) {
@@ -38,7 +38,7 @@ std::shared_ptr<T> sf_cache::data(const std::string& key)
 }
 
 template <typename T>
-void sf_cache::set_data(const std::string& key, const T& d)
+void cache::set_data(const std::string& key, const T& d)
 {
     cache_data_t tmp { key, std::chrono::system_clock::now(), d };
     std::lock_guard<std::recursive_mutex> lck(mu_data__);

@@ -22,37 +22,37 @@
 #include "sf_utils.hpp"
 
 namespace skyfire {
-inline sf_http_part_router::sf_http_part_router(
+inline http_part_router::http_part_router(
     const std::string &prefix,
-    bool (*callback)(const sf_http_request &, sf_http_response &),
+    bool (*callback)(const http_request &, http_response &),
     const std::vector<std::string> &methods, const int priority)
-    : sf_http_part_router(prefix, std::function(callback), methods, priority) {}
+    : http_part_router(prefix, std::function(callback), methods, priority) {}
 
-inline sf_http_part_router::sf_http_part_router(
+inline http_part_router::http_part_router(
     std::string prefix,
-    std::function<bool(const sf_http_request &, sf_http_response &)> callback,
+    std::function<bool(const http_request &, http_response &)> callback,
     std::vector<std::string> methods, int priority)
     : priority__(priority),
       methods__(std::move(methods)),
       callback__(std::move(callback)) {
-    if (!sf_string_end_with(prefix, "/")) {
+    if (!string_end_with(prefix, "/")) {
         prefix__.push_back(prefix + "/");
     }
     prefix__.push_back(prefix);
 }
 
-inline bool sf_http_part_router::run_route(const sf_http_request &req,
-                                           sf_http_response &res,
+inline bool http_part_router::run_route(const http_request &req,
+                                           http_response &res,
                                            const std::string &url,
                                            const std::string &method) {
-    sf_debug("compare method");
+    debug("compare method");
     std::unique_lock<std::recursive_mutex> lck(methods_mu__);
     using namespace std::literals;
     if (methods__.cend() ==
         std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
         if (methods__.cend() ==
             std::find(methods__.cbegin(), methods__.cend(), method)) {
-            sf_debug("method compare error");
+            debug("method compare error");
             return false;
         }
     }
@@ -60,7 +60,7 @@ inline bool sf_http_part_router::run_route(const sf_http_request &req,
     bool match_flag = false;
     std::string matched_prefix;
     for (auto &p : prefix__) {
-        if (sf_string_start_with(url, p)) {
+        if (string_start_with(url, p)) {
             matched_prefix = p;
             match_flag = true;
             break;
@@ -104,19 +104,19 @@ inline bool sf_http_part_router::run_route(const sf_http_request &req,
     return true;
 }
 
-inline int sf_http_part_router::priority() const { return priority__; }
+inline int http_part_router::priority() const { return priority__; }
 
-inline bool sf_http_part_router::operator<(
-    const sf_http_part_router &router) const {
+inline bool http_part_router::operator<(
+    const http_part_router &router) const {
     return priority__ < router.priority__;
 }
 
-inline void sf_http_part_router::add_router(
-    std::shared_ptr<sf_http_part_router> router) {
+inline void http_part_router::add_router(
+    std::shared_ptr<http_part_router> router) {
     middle_router__.insert(router);
 }
 
-inline void sf_http_part_router::add_router(std::shared_ptr<sf_router> router) {
+inline void http_part_router::add_router(std::shared_ptr<router> router) {
     endpoint_router__.insert(router);
 }
 

@@ -21,16 +21,16 @@ namespace skyfire {
 /**
  * @brief  http请求
  */
-class sf_http_request final {
+class http_request final {
 private:
     const byte_array raw__;
     bool valid__ = false;
     bool error__ = false;
-    sf_http_request_line request_line__;
-    sf_http_header header__;
+    http_request_line request_line__;
+    http_header header__;
     byte_array body__;
     bool multipart_data__ = false;
-    sf_multipart_data_context_t multipart_data_context__;
+    multipart_data_context_t multipart_data_context__;
     std::unordered_map<std::string, std::string> cookies__;
     std::shared_ptr<std::istream> istream_ptr__ = nullptr;
     SOCKET sock__;
@@ -43,7 +43,7 @@ public:
      * @param raw 原始数据
      * @param sock 请求套接字
      */
-    explicit sf_http_request(byte_array raw, SOCKET sock);
+    explicit http_request(byte_array raw, SOCKET sock);
 
     /**
      * @brief 设置body
@@ -64,14 +64,14 @@ public:
      * 
      * @param request_line 请求行
      */
-    void set_request_line(const sf_http_request_line& request_line);
+    void set_request_line(const http_request_line& request_line);
 
     /**
      * @brief 设置header
      * 
      * @param header header
      */
-    void set_header(const sf_http_header& header);
+    void set_header(const http_header& header);
 
     /**
      * @brief 设置cookies
@@ -92,7 +92,7 @@ public:
      * @param multipart_data 分块数据集合
      * @param sock 请求套接字
      */
-    explicit sf_http_request(sf_multipart_data_context_t multipart_data,
+    explicit http_request(multipart_data_context_t multipart_data,
         SOCKET sock);
 
     /**
@@ -113,13 +113,13 @@ public:
      * 获取请求行
      * @return 请求行对象
      */
-    sf_http_request_line request_line() const;
+    http_request_line request_line() const;
 
     /**
      * 获取请求头
      * @return 请求头对象（不包括cookie）
      */
-    sf_http_header header() const;
+    http_header header() const;
 
     /**
      * @brief 获取http 头
@@ -147,7 +147,7 @@ public:
      * 获取分块请求的分块集合（在分块请求可用）
      * @return 分块集合
      */
-    sf_multipart_data_context_t multipart_data_context() const;
+    multipart_data_context_t multipart_data_context() const;
 
     /**
      * 获取cookies
@@ -177,23 +177,23 @@ public:
     /**
      * @brief 获取客户端地址信息
      *
-     * @return sf_addr_info_t 地址信息
+     * @return addr_info_t 地址信息
      */
-    sf_addr_info_t addr() const;
+    addr_info_t addr() const;
 
     /**
      * @brief 获取请求参数
      *
-     * @return sf_http_param_t 请求参数
+     * @return http_param_t 请求参数
      */
-    sf_http_param_t params() const;
+    http_param_t params() const;
 
     /**
      * @brief body 请求参数
      *
-     * @return sf_http_param_t 请求参数
+     * @return http_param_t 请求参数
      */
-    sf_http_param_t body_params() const;
+    http_param_t body_params() const;
     /**
      * @brief frame
      *
@@ -220,7 +220,7 @@ public:
      * @return 是否解析成功
      */
     static bool parse_request_line(const std::string& request_line,
-        sf_http_request_line& request_line_para);
+        http_request_line& request_line_para);
 
     /**
      * 解析请求头
@@ -229,7 +229,7 @@ public:
      * @return 是否解析成功
      */
     static bool parse_header(std::vector<std::string> header_lines,
-        sf_http_header& header);
+        http_header& header);
 
     /**
      * 解析cookies
@@ -237,7 +237,7 @@ public:
      * @param cookies cookie
      */
     static void parse_cookies(
-        const sf_http_header& header_data,
+        const http_header& header_data,
         std::unordered_map<std::string, std::string>& cookies);
 };
 } // namespace skyfire

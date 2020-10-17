@@ -15,7 +15,7 @@ namespace skyfire {
 /**
  * @brief  http服务器配置项
  */
-struct sf_http_server_config final {
+struct http_server_config final {
     std::string host = "0.0.0.0"; // 主机ip地址
     unsigned short port = 80; // http端口
     std::string tmp_file_path = "."; // 临时文件路径
@@ -27,6 +27,6 @@ struct sf_http_server_config final {
     int thread_count = std::thread::hardware_concurrency() * 16; // 线程数量
 };
 
-SF_JSONIFY(sf_http_server_config, host, port, tmp_file_path, session_timeout,
+SF_JSONIFY(http_server_config, host, port, tmp_file_path, session_timeout,
     max_cache_count, max_cache_file_size, debug, thread_count)
 } // namespace skyfire

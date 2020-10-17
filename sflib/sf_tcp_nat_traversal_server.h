@@ -19,14 +19,14 @@ namespace skyfire {
 /**
  * nat穿透服务器类
  */
-class sf_tcp_nat_traversal_server final
-    : public sf_make_instance_t<sf_tcp_nat_traversal_server,
-          sf_nocopy<sf_object>> {
+class tcp_nat_traversal_server final
+    : public make_instance_t<tcp_nat_traversal_server,
+          nocopy<object>> {
 private:
     // 保存客户端列表
     std::unordered_set<SOCKET> clients__;
     // Server
-    std::shared_ptr<sf_tcp_server> server__ { sf_tcp_server::make_instance() };
+    std::shared_ptr<tcp_server> server__ { tcp_server::make_instance() };
     // 当前已运行
     bool running__ = false;
 
@@ -39,19 +39,19 @@ private:
     void on_update_client_list__(SOCKET sock = -1);
 
     void on_nat_traversal_b_reply_addr(
-        sf_tcp_nat_traversal_context_t__& context, SOCKET sock) const;
+        tcp_nat_traversal_context_t__& context, SOCKET sock) const;
 
-    void on_msg_coming__(SOCKET sock, const sf_pkg_header_t& header,
+    void on_msg_coming__(SOCKET sock, const pkg_header_t& header,
         const byte_array& data);
 
     void on_client_require_connect_to_peer_client__(
-        sf_tcp_nat_traversal_context_t__& context) const;
+        tcp_nat_traversal_context_t__& context) const;
 
 public:
     /**
      * 构造函数
      */
-    sf_tcp_nat_traversal_server();
+    tcp_nat_traversal_server();
 
     /**
      * 监听端口

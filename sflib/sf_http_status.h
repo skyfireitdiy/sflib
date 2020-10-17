@@ -24,7 +24,7 @@ namespace skyfire {
 /**
  * @brief  HTTP状态码对应的描述信息
  */
-inline std::unordered_map<int, std::string> sf_http_status = {
+inline std::unordered_map<int, std::string> http_status = {
     {100, "Continue"},
     {101, "Switching Protocols"},
     {200, "OK"},

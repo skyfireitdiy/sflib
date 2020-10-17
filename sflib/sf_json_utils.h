@@ -15,7 +15,7 @@ namespace skyfire {
 /**
  * @brief json数据类型
  */
-enum class sf_json_type {
+enum class json_type {
     null = 0,
     boolean = 1,
     number = 2,
@@ -27,11 +27,11 @@ enum class sf_json_type {
 /**
  * json 值结构
  */
-struct sf_json_value final {
-    sf_json_type type;                                          // 类型
+struct json_value final {
+    json_type type;                                          // 类型
     std::string value;                                          // 值
-    std::vector<std::shared_ptr<sf_json_value>> array_value;    // 数组类型
-    std::unordered_map<std::string, std::shared_ptr<sf_json_value>>
+    std::vector<std::shared_ptr<json_value>> array_value;    // 数组类型
+    std::unordered_map<std::string, std::shared_ptr<json_value>>
         object_value;    // 对象类型
 };
 }    // namespace skyfire

@@ -12,27 +12,27 @@
 #include "sf_tcp_utils.hpp"
 
 namespace skyfire {
-inline SOCKET sf_tcp_client::raw_socket() { return sock__; }
+inline SOCKET tcp_client::raw_socket() { return sock__; }
 
-inline bool sf_tcp_client::bind(const std::string& ip, unsigned short port)
+inline bool tcp_client::sf_bind(const std::string& ip, unsigned short port)
 {
     sockaddr_in address;
     address.sin_family = AF_INET;
     // ReSharper disable once CppDeprecatedEntity
     address.sin_addr.S_un.S_addr = inet_addr(ip.c_str());
     address.sin_port = htons(port);
-    return SOCKET_ERROR != ::bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    return SOCKET_ERROR != ::sf_bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 }
 
-inline sf_tcp_client::sf_tcp_client(SOCKET sock, bool raw)
+inline tcp_client::tcp_client(SOCKET sock, bool raw)
 {
     sock__ = sock;
     inited__ = true;
     raw__ = raw;
-    std::thread(&sf_tcp_client::recv_thread__, this).detach();
+    std::thread(&tcp_client::recv_thread__, this).detach();
 }
 
-inline sf_tcp_client::sf_tcp_client(bool raw)
+inline tcp_client::tcp_client(bool raw)
 {
     WSADATA wsa_data {};
     if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
@@ -56,13 +56,13 @@ inline sf_tcp_client::sf_tcp_client(bool raw)
     raw__ = raw;
 }
 
-inline sf_tcp_client::~sf_tcp_client()
+inline tcp_client::~tcp_client()
 {
     close();
     WSACleanup();
 }
 
-inline bool sf_tcp_client::connect_to_server(const std::string& ip,
+inline bool tcp_client::connect_to_server(const std::string& ip,
     unsigned short port)
 {
     if (!inited__)
@@ -77,17 +77,17 @@ inline bool sf_tcp_client::connect_to_server(const std::string& ip,
         != 0) {
         return false;
     }
-    std::thread(&sf_tcp_client::recv_thread__, this).detach();
+    std::thread(&tcp_client::recv_thread__, this).detach();
     return true;
 }
 
-void sf_tcp_client::recv_thread__()
+void tcp_client::recv_thread__()
 {
-    byte_array recv_buffer(sf_default_buffer_size);
+    byte_array recv_buffer(default_buffer_size);
     byte_array data;
-    sf_pkg_header_t header;
+    pkg_header_t header;
     while (true) {
-        const auto len = ::recv(sock__, recv_buffer.data(), sf_default_buffer_size, 0);
+        const auto len = ::recv(sock__, recv_buffer.data(), default_buffer_size, 0);
         if (len <= 0) {
             closed();
             break;
@@ -99,7 +99,7 @@ void sf_tcp_client::recv_thread__()
             data.insert(data.end(), recv_buffer.begin(),
                 recv_buffer.begin() + len);
             size_t read_pos = 0;
-            while (data.size() - read_pos >= sizeof(sf_pkg_header_t)) {
+            while (data.size() - read_pos >= sizeof(pkg_header_t)) {
                 memmove_s(&header, sizeof(header), data.data() + read_pos,
                     sizeof(header));
                 if (!check_header_checksum(header)) {
@@ -125,11 +125,11 @@ void sf_tcp_client::recv_thread__()
     }
 }
 
-inline bool sf_tcp_client::send(int type, const byte_array& data)
+inline bool tcp_client::send(int type, const byte_array& data)
 {
     if (!inited__)
         return false;
-    sf_pkg_header_t header;
+    pkg_header_t header;
     header.type = htonl(type);
     header.length = htonl(data.size());
     make_header_checksum(header);
@@ -139,14 +139,14 @@ inline bool sf_tcp_client::send(int type, const byte_array& data)
     return ::send(sock__, data.data(), data.size(), 0) == data.size();
 }
 
-inline bool sf_tcp_client::send(const byte_array& data)
+inline bool tcp_client::send(const byte_array& data)
 {
     if (!inited__)
         return false;
     return ::send(sock__, data.data(), data.size(), 0) == data.size();
 }
 
-inline void sf_tcp_client::close()
+inline void tcp_client::close()
 {
     if (!inited__)
         return;

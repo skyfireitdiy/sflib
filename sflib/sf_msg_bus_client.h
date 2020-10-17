@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_msg_bus_client 消息总线客户端
+ * msg_bus_client 消息总线客户端
  */
 #pragma once
 #pragma clang diagnostic push
@@ -20,8 +20,8 @@ namespace skyfire {
 /**
  *  @brief 消息总线客户端
  */
-class sf_msg_bus_client
-    : public sf_make_instance_t<sf_msg_bus_client, sf_nocopy<sf_object>> {
+class msg_bus_client
+    : public make_instance_t<msg_bus_client, nocopy<object>> {
     /**
      * @brief msg_come 消息到来信号
      */
@@ -29,14 +29,14 @@ class sf_msg_bus_client
 
 public:
     /**
-     * @brief sf_msg_bus_client 构造函数
+     * @brief msg_bus_client 构造函数
      */
-    sf_msg_bus_client();
+    msg_bus_client();
 
     /**
      * 析构函数
      */
-    ~sf_msg_bus_client() override;
+    ~msg_bus_client() override;
 
     /**
      * @brief reg_msg_to_bus 向消息总线注册消息
@@ -86,19 +86,19 @@ public:
      * @param addr 地址
      * @return 是否获取成功
      */
-    bool local_addr(sf_addr_info_t& addr) const;
+    bool local_addr(addr_info_t& addr) const;
 
     /**
      * 获取远端地址
      * @param addr 地址信息
      * @return 是否获取成功
      */
-    bool peer_addr(sf_addr_info_t& addr) const;
+    bool peer_addr(addr_info_t& addr) const;
 
 private:
-    std::shared_ptr<sf_tcp_client> p_client__ = sf_tcp_client::make_instance();
+    std::shared_ptr<tcp_client> p_client__ = tcp_client::make_instance();
 
-    void on_reg_data__(const sf_pkg_header_t& header, const byte_array& data);
+    void on_reg_data__(const pkg_header_t& header, const byte_array& data);
 };
 
 } // namespace skyfire

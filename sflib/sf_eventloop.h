@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_eventloop 事件循环
+ * eventloop 事件循环
  */
 
 #pragma once
@@ -20,16 +20,16 @@ namespace skyfire {
 /**
  *  @brief 消息循环
  */
-class sf_eventloop final : sf_nocopy<> {
+class eventloop final : nocopy<> {
 private:
-    sf_object_msg_queue* __p_msg_queue__ = sf_object_msg_queue::instance();
+    object_msg_queue* __p_msg_queue__ = object_msg_queue::instance();
     std::atomic<int> running__ { 0 };
 
 public:
     /**
-     * @brief sf_eventloop 构造一个事件循环对象
+     * @brief eventloop 构造一个事件循环对象
      */
-    sf_eventloop() = default;
+    eventloop() = default;
 
     /**
      * @brief exec 执行事件循环

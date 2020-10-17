@@ -21,23 +21,23 @@ namespace skyfire {
  * @brief  HTTP服务器框架，丰富基础框架的接口
  */
 
-class sf_http_server final
-    : public sf_make_instance_t<sf_http_server, sf_http_base_server>,
-      public std::enable_shared_from_this<sf_http_server> {
+class http_server final
+    : public make_instance_t<http_server, http_base_server>,
+      public std::enable_shared_from_this<http_server> {
    private:
-    std::multiset<std::shared_ptr<sf_router>,
-                  sf_router_shared_ptr_compare__<sf_router>>
+    std::multiset<std::shared_ptr<router>,
+                  router_shared_ptr_compare__<router>>
         http_routers__;
 
-    std::multiset<std::shared_ptr<sf_websocket_router>,
-                  sf_router_shared_ptr_compare__<sf_websocket_router>>
+    std::multiset<std::shared_ptr<websocket_router>,
+                  router_shared_ptr_compare__<websocket_router>>
         websocket_routers__;
 
-    void default_request_callback__(const sf_http_request &req,
-                                    sf_http_response &res);
+    void default_request_callback__(const http_request &req,
+                                    http_response &res);
 
-    void default_websocket_request_callback__(const sf_http_request &req,
-                                              sf_http_response &res) const;
+    void default_websocket_request_callback__(const http_request &req,
+                                              http_response &res) const;
 
     void default_websocket_binary_data_callback__(SOCKET sock,
                                                   const std::string &url,
@@ -53,21 +53,21 @@ class sf_http_server final
                                             const std::string &url);
 
    public:
-    explicit sf_http_server(
-        const sf_http_server_config &config = sf_http_server_config{});
+    explicit http_server(
+        const http_server_config &config = http_server_config{});
 
     /**
      * 添加http路由
      * @param router http路由
      */
-    void add_router(const std::shared_ptr<sf_router> &router);
+    void add_router(const std::shared_ptr<router> &router);
 
     /**
      * 添加websocket路由
      * @param router websocket路由
      */
-    void add_router(const std::shared_ptr<sf_websocket_router> &router);
+    void add_router(const std::shared_ptr<websocket_router> &router);
 
-    friend sf_websocket_router;
+    friend websocket_router;
 };
 }    // namespace skyfire

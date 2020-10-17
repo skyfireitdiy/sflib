@@ -30,7 +30,7 @@ namespace skyfire {
 /**
  * @brief  websocket客户端小包头
  */
-struct sf_websocket_client_data_1_header_t {
+struct websocket_client_data_1_header_t {
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -46,7 +46,7 @@ struct sf_websocket_client_data_1_header_t {
 /**
  * @brief  websocket客户端中包头
  */
-struct sf_websocket_client_data_2_header_t {
+struct websocket_client_data_2_header_t {
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -63,7 +63,7 @@ struct sf_websocket_client_data_2_header_t {
 /**
  *  @brief websocket客户端大包头
  */
-struct sf_websocket_client_data_3_header_t {
+struct websocket_client_data_3_header_t {
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -80,7 +80,7 @@ struct sf_websocket_client_data_3_header_t {
 /**
  * @brief  websocket服务器小包头
  */
-struct sf_websocket_server_data_1_header_t {
+struct websocket_server_data_1_header_t {
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -94,7 +94,7 @@ struct sf_websocket_server_data_1_header_t {
 /**
  * @brief  websocket服务器中包头
  */
-struct sf_websocket_server_data_2_header_t {
+struct websocket_server_data_2_header_t {
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -109,7 +109,7 @@ struct sf_websocket_server_data_2_header_t {
 /**
  *  @brief websocket服务器大包头
  */
-struct sf_websocket_server_data_3_header_t {
+struct websocket_server_data_3_header_t {
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -123,7 +123,7 @@ struct sf_websocket_server_data_3_header_t {
 
 #pragma pack()
 
-class sf_http_server;
+class http_server;
 
 /**
  *  @brief websocket数据类型
@@ -138,7 +138,7 @@ enum class websocket_data_type {
 /**
  *  @brief websocket参数
  */
-struct sf_websocket_param_t {
+struct websocket_param_t {
     SOCKET sock; // socket
     std::string url; // url
     std::unordered_map<std::string, std::string> param; // param
@@ -147,7 +147,7 @@ struct sf_websocket_param_t {
     std::string text_msg; // 文本（当type为websocket_data_type::Text时有效）
     byte_array
         binary_data; // 二进制（当type为websocket_data_type::BinaryData时有效）
-    std::shared_ptr<sf_http_server> p_server; // server指针
+    std::shared_ptr<http_server> p_server; // server指针
 };
 
 /**
@@ -178,7 +178,7 @@ byte_array make_server_websocket_data_pkg(const T& data);
  * @return 是否是fin
  */
 template <typename T>
-bool sf_is_fin(const T& header);
+bool is_fin(const T& header);
 
 /**
  * 判断数据包是否有mask
@@ -187,30 +187,30 @@ bool sf_is_fin(const T& header);
  * @return 是否有mask
  */
 template <typename T>
-bool sf_with_mask(const T& header);
+bool with_mask(const T& header);
 
 /**
  * 获取包长度
  * @param header 小包头
  * @return 包长度
  */
-unsigned long long sf_get_size(
-    const sf_websocket_client_data_1_header_t& header);
+unsigned long long get_size(
+    const websocket_client_data_1_header_t& header);
 
 /**
  * 解码数据包
  * @param data 数据
  * @param mask_key 掩码
  */
-void sf_decode_websocket_pkg(byte_array& data, const unsigned char* mask_key);
+void decode_websocket_pkg(byte_array& data, const unsigned char* mask_key);
 
 /**
  * 获取包长度
  * @param header 中包头
  * @return 包长度
  */
-unsigned long long sf_get_size(
-    const sf_websocket_client_data_2_header_t& header);
+unsigned long long get_size(
+    const websocket_client_data_2_header_t& header);
 
 /**
  * 获取操作类型
@@ -219,15 +219,15 @@ unsigned long long sf_get_size(
  * @return 操作类型
  */
 template <typename T>
-inline int sf_get_op_code(const T& header);
+inline int get_op_code(const T& header);
 
 /**
  * 获取包长度
  * @param header 大包头
  * @return 包长度
  */
-inline unsigned long long sf_get_size(
-    const sf_websocket_client_data_3_header_t& header);
+inline unsigned long long get_size(
+    const websocket_client_data_3_header_t& header);
 } // namespace skyfire
 
 #pragma clang diagnostic pop

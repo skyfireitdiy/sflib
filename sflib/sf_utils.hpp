@@ -17,7 +17,7 @@
 #include "sf_utils.h"
 
 namespace skyfire {
-inline std::string sf_string_trim(const std::string& str)
+inline std::string string_trim(const std::string& str)
 {
     if (str.length() == 0)
         return "";
@@ -38,14 +38,14 @@ inline std::string sf_string_trim(const std::string& str)
     return { str.begin() + begin, str.begin() + end };
 }
 
-inline std::string sf_to_lower_string(std::string str)
+inline std::string to_lower_string(std::string str)
 {
     for (auto& p : str)
         p = static_cast<char>(tolower(p));
     return str;
 }
 
-inline std::string sf_get_path_ext(const std::string& path)
+inline std::string get_path_ext(const std::string& path)
 {
     auto pos = path.rfind('.');
     if (pos == -1)
@@ -53,13 +53,13 @@ inline std::string sf_get_path_ext(const std::string& path)
     return std::string(path.begin() + pos + 1, path.end());
 }
 
-inline bool sf_equal_nocase_string(const std::string& str1,
+inline bool equal_nocase_string(const std::string& str1,
     const std::string& str2)
 {
-    return sf_to_lower_string(str1) == sf_to_lower_string(str2);
+    return to_lower_string(str1) == to_lower_string(str2);
 }
 
-inline std::vector<std::string> sf_split_string(std::string str,
+inline std::vector<std::string> split_string(std::string str,
     const std::string& split_str)
 {
     std::vector<std::string> ret;
@@ -72,7 +72,7 @@ inline std::vector<std::string> sf_split_string(std::string str,
     return ret;
 }
 
-inline bool sf_write_file(const std::string& file_name, const byte_array& data,
+inline bool write_file(const std::string& file_name, const byte_array& data,
     bool append)
 {
     std::ofstream fo(
@@ -84,7 +84,7 @@ inline bool sf_write_file(const std::string& file_name, const byte_array& data,
     return true;
 }
 
-inline bool sf_read_file(const std::string& file_name, byte_array& data)
+inline bool read_file(const std::string& file_name, byte_array& data)
 {
     std::ifstream fi(file_name, std::ios::in | std::ios::binary);
     if (!fi)
@@ -98,7 +98,7 @@ inline bool sf_read_file(const std::string& file_name, byte_array& data)
     return true;
 }
 
-inline void sf_string_replace(std::string& str, const std::string& from,
+inline void string_replace(std::string& str, const std::string& from,
     const std::string& to)
 {
     if (str.empty())
@@ -110,18 +110,18 @@ inline void sf_string_replace(std::string& str, const std::string& from,
     }
 }
 
-inline std::string sf_long_double_to_string(const long double& num)
+inline std::string long_double_to_string(const long double& num)
 {
     auto buffer = std::to_string(num);
     if (buffer.length() > 7) {
-        if (std::string(buffer.end() - 7, buffer.end()) == ".000000") {
+        if (std::string(buffer.end() - 7, buffer.end()) == ".sf_0") {
             buffer = { buffer.begin(), buffer.end() - 7 };
         }
     }
     return buffer;
 }
 
-inline long double sf_string_to_long_double(const std::string& str)
+inline long double string_to_long_double(const std::string& str)
 {
     long double tmp_num;
 #ifdef MSC_VER
@@ -149,13 +149,13 @@ inline std::string tm2string(std::time_t tt, const std::string& fmt)
     return os.str();
 }
 
-inline std::string sf_make_time_str(
+inline std::string make_time_str(
     const std::chrono::system_clock::time_point& tp, const std::string& fmt)
 {
     return tm2string(std::chrono::system_clock::to_time_t(tp), fmt);
 }
 
-inline std::string sf_make_time_str(const std::filesystem::file_time_type& tp, const std::string& fmt)
+inline std::string make_time_str(const std::filesystem::file_time_type& tp, const std::string& fmt)
 {
     return tm2string(std::time_t(std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count()), fmt);
 }
@@ -163,20 +163,20 @@ inline std::string sf_make_time_str(const std::filesystem::file_time_type& tp, c
 #pragma clang diagnostic pop
 
 template <typename T>
-std::string sf_char_container_to_hex_string(const T& data)
+std::string char_container_to_hex_string(const T& data)
 {
     std::string str;
     str.reserve(data.size() * 2 + 1);
     char tmp[4];
     for (auto& p : data) {
-        sf_safe_sprintf(tmp, 4, "%02x", p);
+        safe_sprintf(tmp, 4, "%02x", p);
         str += tmp;
     }
     return str;
 }
 
 template <typename T>
-void sf_hex_string_to_char_container(const std::string& str, T& data)
+void hex_string_to_char_container(const std::string& str, T& data)
 {
     data.clear();
     if (str.size() % 2 != 0) {
@@ -195,26 +195,26 @@ void sf_hex_string_to_char_container(const std::string& str, T& data)
     data = T(tmp_ret_data.begin(), tmp_ret_data.end());
 }
 
-inline bool sf_string_start_with(const std::string& str,
+inline bool string_start_with(const std::string& str,
     const std::string& prefix)
 {
     return str.find(prefix) == 0;
 }
 
-inline bool sf_string_end_with(const std::string& str,
+inline bool string_end_with(const std::string& str,
     const std::string& suffix)
 {
     return str.find_last_of(suffix) == str.length() - suffix.size();
 }
 
-inline std::string sf_safe_path(std::string danger_path)
+inline std::string safe_path(std::string danger_path)
 {
-    sf_string_replace(danger_path,
+    string_replace(danger_path,
         std::string(1, fs::path::preferred_separator), "");
     return danger_path;
 }
 
-inline std::string sf_convert_ns_to_readable(long long time)
+inline std::string convert_ns_to_readable(long long time)
 {
     std::ostringstream so;
     auto old = so.flags();

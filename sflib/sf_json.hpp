@@ -24,9 +24,9 @@
 #include "sf_error.h"
 
 namespace skyfire {
-inline sf_json sf_json::from_string(const std::string& json_str)
+inline json json::from_string(const std::string& json_str)
 {
-    sf_lex lex;
+    lex lex;
     lex.set_rules(
         { { "string",
               R"("([^\\"]|(\\["\\bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")" },
@@ -42,125 +42,125 @@ inline sf_json sf_json::from_string(const std::string& json_str)
             { "false", R"(false)" },
             { "null", R"(null)" } });
 
-    std::vector<sf_lex_result_t> lex_result;
+    std::vector<lex_result_t> lex_result;
     if (!lex.parse(json_str, lex_result)) {
-        return sf_json();
+        return json();
     }
     lex_result.erase(
         std::remove_if(lex_result.begin(), lex_result.end(),
-            [](const sf_lex_result_t& r) { return r.id == "ws"; }),
+            [](const lex_result_t& r) { return r.id == "ws"; }),
         lex_result.end());
-    sf_yacc yacc;
+    yacc yacc;
     yacc.set_rules(
         { { "value",
               { { { "object" },
-                    [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                    [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                         -> std::any { return data[0]->user_data; } },
                   { { "array" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                           -> std::any { return data[0]->user_data; } },
                   { { "string" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                           -> std::any {
-                          return sf_json(sf_json::json_string_to_string(data[0]->text));
+                          return json(json::json_string_to_string(data[0]->text));
                       } },
                   { { "number" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                           -> std::any {
-                          return sf_json(sf_string_to_long_double(data[0]->text));
+                          return json(string_to_long_double(data[0]->text));
                       } },
                   { { "true" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
-                          -> std::any { return sf_json(true); } },
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                          -> std::any { return json(true); } },
                   { { "false" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
-                          -> std::any { return sf_json(false); } },
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                          -> std::any { return json(false); } },
                   { { "null" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
-                          -> std::any { return sf_json(); } } } },
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                          -> std::any { return json(); } } } },
             { "object",
                 { { { "{", "}" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                           -> std::any {
-                          sf_json json;
+                          json json;
                           json.convert_to_object();
                           return json;
                       } },
                     { { "{", "members", "}" },
-                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                             -> std::any { return data[1]->user_data; } } } },
             { "members",
                 { { { "member" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                           -> std::any { return data[0]->user_data; } },
                     { { "members", ",", "member" },
-                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                             -> std::any {
-                            sf_json json;
-                            json.convert_to_object();
-                            const auto js1 = std::any_cast<sf_json>(data[0]->user_data);
-                            const auto js2 = std::any_cast<sf_json>(data[2]->user_data);
+                            json js;
+                            js.convert_to_object();
+                            const auto js1 = std::any_cast<json>(data[0]->user_data);
+                            const auto js2 = std::any_cast<json>(data[2]->user_data);
                             // ReSharper disable once CppExpressionWithoutSideEffects
-                            json.join(js1);
+                            js.join(js1);
                             // ReSharper disable once CppExpressionWithoutSideEffects
-                            json.join(js2);
-                            return json;
+                            js.join(js2);
+                            return js;
                         } } } },
             { "member",
                 { { { "string", ":", "value" },
-                    [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                    [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                         -> std::any {
-                        sf_json json;
-                        json.convert_to_object();
-                        const auto json1 = std::any_cast<sf_json>(data[2]->user_data);
-                        json[sf_json::json_string_to_string(data[0]->text)] = json1;
-                        return json;
+                        json js;
+                        js.convert_to_object();
+                        const auto json1 = std::any_cast<json>(data[2]->user_data);
+                        js[json::json_string_to_string(data[0]->text)] = json1;
+                        return js;
                     } } } },
             { "array",
                 { { { "[", "]" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                           -> std::any {
-                          sf_json json;
+                          json json;
                           json.convert_to_array();
                           return json;
                       } },
                     { { "[", "values", "]" },
-                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                             -> std::any { return data[1]->user_data; } } } },
             { "values",
                 { { { "value" },
-                      [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                           -> std::any {
-                          sf_json json;
-                          json.convert_to_array();
-                          json.append(std::any_cast<sf_json>(data[0]->user_data));
-                          return json;
+                          json js;
+                          js.convert_to_array();
+                          js.append(std::any_cast<json>(data[0]->user_data));
+                          return js;
                       } },
                     { { "values", ",", "value" },
-                        [](const std::vector<std::shared_ptr<sf_yacc_result_t>>& data)
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
                             -> std::any {
-                            sf_json json;
-                            json.convert_to_array();
-                            const auto json1 = std::any_cast<sf_json>(data[0]->user_data);
-                            const auto json2 = std::any_cast<sf_json>(data[2]->user_data);
+                            json js;
+                            js.convert_to_array();
+                            const auto json1 = std::any_cast<json>(data[0]->user_data);
+                            const auto json2 = std::any_cast<json>(data[2]->user_data);
                             // ReSharper disable once CppExpressionWithoutSideEffects
-                            json.join(json1);
-                            json.append(json2);
-                            return json;
+                            js.join(json1);
+                            js.append(json2);
+                            return js;
                         } } } } });
 
     yacc.add_terminate_ids({ "value" });
-    std::vector<std::shared_ptr<sf_yacc_result_t>> yacc_result;
+    std::vector<std::shared_ptr<yacc_result_t>> yacc_result;
     if (!yacc.parse(lex_result, yacc_result)) {
-        return sf_json();
+        return json();
     }
-    return std::any_cast<sf_json>(yacc_result[0]->user_data);
+    return std::any_cast<json>(yacc_result[0]->user_data);
 }
 
-inline std::unordered_set<std::string> sf_json::keys() const
+inline std::unordered_set<std::string> json::keys() const
 {
     std::unordered_set<std::string> ret;
-    if (value__->type != sf_json_type::object) {
+    if (value__->type != json_type::object) {
         return ret;
     }
     for (auto& p : value__->object_value) {
@@ -169,160 +169,160 @@ inline std::unordered_set<std::string> sf_json::keys() const
     return ret;
 }
 
-inline sf_json::sf_json()
-    : value__(std::make_shared<sf_json_value>())
+inline json::json()
+    : value__(std::make_shared<json_value>())
 {
-    value__->type = sf_json_type::null;
+    value__->type = json_type::null;
 }
 
-inline sf_json::sf_json(const std::string& str)
-    : sf_json()
+inline json::json(const std::string& str)
+    : json()
 {
-    value__->type = sf_json_type::string;
+    value__->type = json_type::string;
     value__->value = str;
 }
 
-inline sf_json::sf_json(const char* c_str)
-    : sf_json(std::string(c_str))
+inline json::json(const char* c_str)
+    : json(std::string(c_str))
 {
 }
 
-inline sf_json::sf_json(const sf_json& json)
-    : sf_json()
+inline json::json(const json& js)
+    : json()
 {
-    value__ = json.value__;
+    value__ = js.value__;
 }
 
-inline sf_json::sf_json(bool boolean_value)
-    : sf_json()
+inline json::json(bool boolean_value)
+    : json()
 {
-    value__->type = sf_json_type::boolean;
+    value__->type = json_type::boolean;
     value__->value = boolean_value ? "true" : "false";
 }
 
-inline sf_json::sf_json(const std::shared_ptr<sf_json_value>& value)
+inline json::json(const std::shared_ptr<json_value>& value)
 {
     value__ = value;
 }
 
-inline void sf_json::convert_to_object() const
+inline void json::convert_to_object() const
 {
-    if (value__->type == sf_json_type::object) {
+    if (value__->type == json_type::object) {
         return;
     }
-    value__->type = sf_json_type::object;
+    value__->type = json_type::object;
     clear();
 }
 
-inline void sf_json::convert_to_array() const
+inline void json::convert_to_array() const
 {
-    if (value__->type == sf_json_type::array) {
+    if (value__->type == json_type::array) {
         return;
     }
-    value__->type = sf_json_type::array;
+    value__->type = json_type::array;
     clear();
 }
 
-inline sf_json_type sf_json::type() const { return value__->type; }
+inline json_type json::type() const { return value__->type; }
 
-inline sf_json sf_json::at(const std::string& key) const
+inline json json::at(const std::string& key) const
 {
-    if (value__->type != sf_json_type::object) {
-        return sf_json();
+    if (value__->type != json_type::object) {
+        return json();
     }
     if (value__->object_value.count(key) == 0) {
-        return sf_json();
+        return json();
     }
-    return sf_json(value__->object_value[key]);
+    return json(value__->object_value[key]);
 }
 
-inline sf_json sf_json::operator[](const std::string& key) const
+inline json json::operator[](const std::string& key) const
 {
-    if (value__->type != sf_json_type::object) {
+    if (value__->type != json_type::object) {
         convert_to_object();
     }
     if (value__->object_value.count(key) == 0) {
-        value__->object_value[key] = sf_json().value__;
+        value__->object_value[key] = json().value__;
     }
-    return sf_json(value__->object_value[key]);
+    return json(value__->object_value[key]);
 }
 
-inline sf_json sf_json::at(int key) const
+inline json json::at(int key) const
 {
-    if (value__->type != sf_json_type::array) {
-        return sf_json();
+    if (value__->type != json_type::array) {
+        return json();
     }
     if (value__->array_value.size() <= key) {
-        return sf_json();
+        return json();
     }
-    return sf_json(value__->array_value[key]);
+    return json(value__->array_value[key]);
 }
 
-inline sf_json::operator std::string() const
+inline json::operator std::string() const
 {
     switch (value__->type) {
-    case sf_json_type::array:
-    case sf_json_type::object:
-    case sf_json_type::null:
+    case json_type::array:
+    case json_type::object:
+    case json_type::null:
         return "";
-    case sf_json_type::boolean:
-    case sf_json_type::number:
-    case sf_json_type::string:
+    case json_type::boolean:
+    case json_type::number:
+    case json_type::string:
         return value__->value;
     default:
         return "";
     }
 }
 
-inline std::string sf_json::json_string_to_string(std::string json_str)
+inline std::string json::json_string_to_string(std::string json_str)
 {
     json_str.erase(json_str.begin());
     json_str.pop_back();
-    sf_string_replace(json_str, "\\\"", "\"");
-    // sf_string_replace(json_str, "\\/", "/");
-    sf_string_replace(json_str, "\\b", "\b");
-    sf_string_replace(json_str, "\\f", "\f");
-    sf_string_replace(json_str, "\\n", "\n");
-    sf_string_replace(json_str, "\\r", "\r");
-    sf_string_replace(json_str, "\\t", "\t");
+    string_replace(json_str, "\\\"", "\"");
+    // string_replace(json_str, "\\/", "/");
+    string_replace(json_str, "\\b", "\b");
+    string_replace(json_str, "\\f", "\f");
+    string_replace(json_str, "\\n", "\n");
+    string_replace(json_str, "\\r", "\r");
+    string_replace(json_str, "\\t", "\t");
 
     // todo 未处理unicode
 
-    sf_string_replace(json_str, "\\\\", "\\");
+    string_replace(json_str, "\\\\", "\\");
 
     return json_str;
 }
 
-inline std::string sf_json::string_to_json_string(std::string str)
+inline std::string json::string_to_json_string(std::string str)
 {
-    sf_string_replace(str, "\\", "\\\\");
-    sf_string_replace(str, "\"", "\\\"");
-    // sf_string_replace(str, "/", "\\/");
-    sf_string_replace(str, "\b", "\\b");
-    sf_string_replace(str, "\f", "\\f");
-    sf_string_replace(str, "\n", "\\n");
-    sf_string_replace(str, "\r", "\\r");
-    sf_string_replace(str, "\t", "\\t");
+    string_replace(str, "\\", "\\\\");
+    string_replace(str, "\"", "\\\"");
+    // string_replace(str, "/", "\\/");
+    string_replace(str, "\b", "\\b");
+    string_replace(str, "\f", "\\f");
+    string_replace(str, "\n", "\\n");
+    string_replace(str, "\r", "\\r");
+    string_replace(str, "\t", "\\t");
     // todo 未处理unicode
     str.insert(str.begin(), '\"');
     str += "\"";
     return str;
 }
 
-inline sf_json::operator bool() const
+inline json::operator bool() const
 {
     switch (value__->type) {
-    case sf_json_type::array:
+    case json_type::array:
         return !value__->array_value.empty();
-    case sf_json_type::object:
+    case json_type::object:
         return !value__->object_value.empty();
-    case sf_json_type::null:
+    case json_type::null:
         return false;
-    case sf_json_type::boolean:
+    case json_type::boolean:
         return value__->value == "true";
-    case sf_json_type::number:
-        return sf_string_to_long_double(value__->value) != 0;
-    case sf_json_type::string:
+    case json_type::number:
+        return string_to_long_double(value__->value) != 0;
+    case json_type::string:
         return !value__->value.empty();
     default:
         return false;
@@ -330,47 +330,47 @@ inline sf_json::operator bool() const
 }
 
 template <typename T, typename>
-sf_json& sf_json::operator=(T value)
+json& json::operator=(T value)
 {
-    if (value__->type != sf_json_type::number) {
-        value__->type = sf_json_type::number;
+    if (value__->type != json_type::number) {
+        value__->type = json_type::number;
         clear();
     }
     value__->value = std::to_string(value);
     return *this;
 }
 
-inline sf_json& sf_json::operator=(const std::string& value)
+inline json& json::operator=(const std::string& value)
 {
-    if (value__->type != sf_json_type::string) {
-        value__->type = sf_json_type::string;
+    if (value__->type != json_type::string) {
+        value__->type = json_type::string;
         clear();
     }
     value__->value = value;
     return *this;
 }
 
-inline void sf_json::append(const sf_json& value) const
+inline void json::append(const json& value) const
 {
     convert_to_array();
     value__->array_value.push_back(value.value__);
 }
 
-inline sf_json sf_json::deep_copy() const
+inline json json::deep_copy() const
 {
-    sf_json tmp_json;
+    json tmp_json;
     value_copy__(value__, tmp_json.value__);
     return tmp_json;
 }
 
-inline bool sf_json::join(const sf_json& other) const
+inline bool json::join(const json& other) const
 {
-    if (value__->type == sf_json_type::array && other.value__->type == sf_json_type::array) {
+    if (value__->type == json_type::array && other.value__->type == json_type::array) {
         value__->array_value.insert(value__->array_value.end(),
             other.value__->array_value.begin(),
             other.value__->array_value.end());
         return true;
-    } else if (value__->type == sf_json_type::object && other.value__->type == sf_json_type::object) {
+    } else if (value__->type == json_type::object && other.value__->type == json_type::object) {
         for (auto& p : other.value__->object_value) {
             value__->object_value[p.first] = p.second;
         }
@@ -379,27 +379,27 @@ inline bool sf_json::join(const sf_json& other) const
     return false;
 }
 
-inline void sf_json::clear() const
+inline void json::clear() const
 {
     value__->value.clear();
     value__->array_value.clear();
     value__->object_value.clear();
 }
 
-inline void sf_json::resize(const int size) const
+inline void json::resize(const int size) const
 {
     convert_to_array();
     value__->array_value.resize((unsigned long)size);
 }
 
-inline void sf_json::remove(const int pos) const
+inline void json::remove(const int pos) const
 {
     if (value__->array_value.size() > pos) {
         value__->array_value.erase(value__->array_value.begin() + pos);
     }
 }
 
-inline void sf_json::remove(const int pos, int len) const
+inline void json::remove(const int pos, int len) const
 {
     if (value__->array_value.size() > pos) {
         if (len > value__->array_value.size() - pos) {
@@ -410,93 +410,93 @@ inline void sf_json::remove(const int pos, int len) const
     }
 }
 
-inline void sf_json::remove(const std::string& key) const
+inline void json::remove(const std::string& key) const
 {
     value__->object_value.erase(key);
 }
 
-inline std::string sf_json::to_string() const
+inline std::string json::to_string() const
 {
     std::string ret;
     switch (value__->type) {
-    case sf_json_type::object: {
+    case json_type::object: {
         ret += "{";
         for (auto& p : value__->object_value) {
-            ret += string_to_json_string(p.first) + ":" + sf_json(p.second).to_string() + ",";
+            ret += string_to_json_string(p.first) + ":" + json(p.second).to_string() + ",";
         }
         if (ret.back() == ',')
             ret.pop_back();
         ret += "}";
     } break;
-    case sf_json_type::array: {
+    case json_type::array: {
         ret += "[";
         for (auto& p : value__->array_value) {
-            ret += sf_json(p).to_string() + ",";
+            ret += json(p).to_string() + ",";
         }
         if (ret.back() == ',')
             ret.pop_back();
         ret += "]";
     } break;
-    case sf_json_type::string:
+    case json_type::string:
         ret += string_to_json_string(value__->value);
         break;
-    case sf_json_type::number: {
+    case json_type::number: {
         ret += value__->value;
         break;
     }
-    case sf_json_type::boolean:
+    case json_type::boolean:
         ret += value__->value.empty() ? "false" : value__->value;
         break;
-    case sf_json_type::null:
+    case json_type::null:
         ret += "null";
         break;
     }
     return ret;
 }
 
-inline std::string sf_json::to_string(int indent, int current_indent) const
+inline std::string json::to_string(int indent, int current_indent) const
 {
     std::string indent_string(current_indent, ' ');
     std::string ret;
     switch (value__->type) {
-    case sf_json_type::object: {
+    case json_type::object: {
         ret += "{\n";
         for (auto& p : value__->object_value) {
-            ret += indent_string + std::string(indent, ' ') + string_to_json_string(p.first) + ":" + sf_json(p.second).to_string(indent, current_indent + indent) + ",\n";
+            ret += indent_string + std::string(indent, ' ') + string_to_json_string(p.first) + ":" + json(p.second).to_string(indent, current_indent + indent) + ",\n";
         }
         if (!value__->object_value.empty()) {
             ret.erase(ret.end() - 2);
         }
         ret += indent_string + "}";
     } break;
-    case sf_json_type::array: {
+    case json_type::array: {
         ret += "[\n";
         for (auto& p : value__->array_value) {
-            ret += indent_string + std::string(indent, ' ') + sf_json(p).to_string(indent, current_indent + indent) + ",\n";
+            ret += indent_string + std::string(indent, ' ') + json(p).to_string(indent, current_indent + indent) + ",\n";
         }
         if (!value__->object_value.empty()) {
             ret.erase(ret.end() - 2);
         }
         ret += indent_string + "]";
     } break;
-    case sf_json_type::string:
+    case json_type::string:
         ret += string_to_json_string(value__->value);
         break;
-    case sf_json_type::number: {
+    case json_type::number: {
         ret += value__->value;
         break;
     }
-    case sf_json_type::boolean:
+    case json_type::boolean:
         ret += (value__->value.empty() ? "false" : value__->value);
         break;
-    case sf_json_type::null:
+    case json_type::null:
         ret += "null";
         break;
     }
     return ret;
 }
 
-inline sf_json& sf_json::operator=(const sf_json& value)
+inline json& json::operator=(const json& value)
 {
     if (&value != this) {
         value__->type = value.value__->type;
@@ -507,131 +507,131 @@ inline sf_json& sf_json::operator=(const sf_json& value)
     return *this;
 }
 
-inline void sf_json::copy(const sf_json& src)
+inline void json::copy(const json& src)
 {
     if (this != &src) {
         value__ = src.value__;
     }
 }
 
-inline void sf_json::value_copy__(const std::shared_ptr<sf_json_value>& src,
-    std::shared_ptr<sf_json_value>& dst) const
+inline void json::value_copy__(const std::shared_ptr<json_value>& src,
+    std::shared_ptr<json_value>& dst) const
 {
     dst->type = src->type;
     dst->value = src->value;
     if (!src->array_value.empty()) {
         for (auto i = 0; i < src->array_value.size(); ++i) {
-            dst->array_value.push_back(std::make_shared<sf_json_value>());
+            dst->array_value.push_back(std::make_shared<json_value>());
             value_copy__(src->array_value[i], dst->array_value[i]);
         }
     }
     if (!src->object_value.empty()) {
         for (auto& p : src->object_value) {
-            dst->object_value[p.first] = std::make_shared<sf_json_value>();
+            dst->object_value[p.first] = std::make_shared<json_value>();
             value_copy__(p.second, dst->object_value[p.first]);
         }
     }
 }
 
-inline sf_json sf_json::at(const char* c_key) const
+inline json json::at(const char* c_key) const
 {
     return at(std::string(c_key));
 }
 
-inline sf_json sf_json::operator[](const char* c_key) const
+inline json json::operator[](const char* c_key) const
 {
     return operator[](std::string(c_key));
 }
 
-inline sf_json sf_json::operator[](const int key) const
+inline json json::operator[](const int key) const
 {
-    if (value__->type != sf_json_type::array) {
+    if (value__->type != json_type::array) {
         convert_to_array();
     }
     if (value__->array_value.size() <= key) {
         resize(key + 1);
     }
-    return sf_json(value__->array_value[key]);
+    return json(value__->array_value[key]);
 }
 
-inline sf_json& sf_json::operator=(const bool value)
+inline json& json::operator=(const bool value)
 {
-    if (value__->type != sf_json_type::boolean) {
-        value__->type = sf_json_type::boolean;
+    if (value__->type != json_type::boolean) {
+        value__->type = json_type::boolean;
         clear();
     }
     value__->value = value ? "true" : "false";
     return *this;
 }
 
-inline bool sf_json::is_null() const
+inline bool json::is_null() const
 {
-    return value__->type == sf_json_type::null;
+    return value__->type == json_type::null;
 }
 
-inline sf_json& sf_json::operator=(const char* value)
+inline json& json::operator=(const char* value)
 {
     return operator=(std::string(value));
 }
 
-inline void sf_json::convert_to_null() const
+inline void json::convert_to_null() const
 {
     clear();
-    value__->type = sf_json_type ::null;
+    value__->type = json_type ::null;
 }
 
-inline size_t sf_json::size() const
+inline size_t json::size() const
 {
-    return value__->type == sf_json_type ::array ? value__->array_value.size()
+    return value__->type == json_type ::array ? value__->array_value.size()
                                                  : 0;
 }
 
-inline bool sf_json::has(const std::string& key) const
+inline bool json::has(const std::string& key) const
 {
-    return value__->type == sf_json_type ::object
+    return value__->type == json_type ::object
         ? value__->object_value.count(key) != 0
         : false;
 }
 
-inline bool sf_json::has(const char* c_key) const
+inline bool json::has(const char* c_key) const
 {
     return has(std::string(c_key));
 }
 
-inline sf_json operator""_json(const char* str, std::size_t)
+inline json operator""_json(const char* str, std::size_t)
 {
-    return sf_json::from_string(str);
+    return json::from_string(str);
 }
 
-inline std::ostream& operator<<(std::ostream& os, const sf_json& json)
+inline std::ostream& operator<<(std::ostream& os, const json& json)
 {
     return os << json.to_string();
 }
 
 template <typename T>
-sf_json to_json(const T& t)
+json to_json(const T& t)
 {
-    return sf_json(t);
+    return json(t);
 }
 
 template <typename T>
-sf_json to_json(std::shared_ptr<T> pt)
+json to_json(std::shared_ptr<T> pt)
 {
-    return sf_json(*pt);
+    return json(*pt);
 }
 
-inline bool sf_json::operator!=(const sf_json& other) const {
+inline bool json::operator!=(const json& other) const {
     return !(*this == other);
 }
 
-inline bool sf_json::operator==(const sf_json& other) const {
+inline bool json::operator==(const json& other) const {
     if(value__->type != other.value__->type){
         return false;
     }
     switch (value__->type) {
-        case sf_json_type::null:
+        case json_type::null:
         return true;
-        case sf_json_type::array:
+        case json_type::array:
         {
             auto sz = size();
             auto osz = other.size();
@@ -645,15 +645,15 @@ inline bool sf_json::operator==(const sf_json& other) const {
             }
             return true;
         }
-        case sf_json_type::boolean:
+        case json_type::boolean:
         {
             return bool(*this) == bool(other);
         }
-        case sf_json_type::number:
+        case json_type::number:
         {
             return static_cast<long double>(*this) == static_cast<long double>(other);
         }
-        case sf_json_type::object:
+        case json_type::object:
         {
             auto this_keys = keys();
             auto other_keys = other.keys();
@@ -667,84 +667,84 @@ inline bool sf_json::operator==(const sf_json& other) const {
             }
             return true;
         }
-        case sf_json_type::string:
+        case json_type::string:
         {
             return static_cast<std::string>(*this) == static_cast<std::string>(other);
         }
         default:
-        throw sf_exception(sf_parse_unsupport_type_err, "unsupport type:"+std::to_string(static_cast<int>(value__->type)));
+        throw exception(parse_unsupport_type_err, "unsupport type:"+std::to_string(static_cast<int>(value__->type)));
     }
 }
 
 template <typename T, typename>
-sf_json::operator T() const
+json::operator T() const
 {
     switch (value__->type) {
-    case sf_json_type::array:
-    case sf_json_type::object:
-    case sf_json_type::null:
-    case sf_json_type::string:
+    case json_type::array:
+    case json_type::object:
+    case json_type::null:
+    case json_type::string:
         return 0;
-    case sf_json_type::boolean:
+    case json_type::boolean:
         return value__->value == "true";
-    case sf_json_type::number:
-        return static_cast<T>(sf_string_to_long_double(value__->value));
+    case json_type::number:
+        return static_cast<T>(string_to_long_double(value__->value));
     default:
         return 0;
     }
 }
 
 template <typename T, typename>
-sf_json::sf_json(T number)
-    : sf_json()
+json::json(T number)
+    : json()
 {
-    value__->type = sf_json_type::number;
-    value__->value = sf_long_double_to_string(number);
+    value__->type = json_type::number;
+    value__->value = long_double_to_string(number);
 }
 
 template <typename T>
-sf_json sf_to_json_helper__(const std::string& key, const T& value)
+json to_json_helper__(const std::string& key, const T& value)
 {
-    sf_json js;
+    json js;
     js.convert_to_object();
     js[key] = to_json(value);
     return js;
 }
 
 template <typename T, typename... ARGS>
-sf_json sf_to_json_helper__(const std::string& key, const T& value,
+json to_json_helper__(const std::string& key, const T& value,
     const ARGS&... args)
 {
-    sf_json js;
+    json js;
     js.convert_to_object();
     js[key] = to_json(value);
-    js.join(sf_to_json_helper__(args...));
+    js.join(to_json_helper__(args...));
     return js;
 }
 
 template <typename T>
-void sf_from_json_helper__(const sf_json& js, const std::string& key,
+void from_json_helper__(const json& js, const std::string& key,
     T& value)
 {
     from_json(js.at(key), value);
 }
 
 template <typename T, typename... ARGS>
-void sf_from_json_helper__(const sf_json& js, const std::string& key, T& value,
+void from_json_helper__(const json& js, const std::string& key, T& value,
     ARGS&&... args)
 {
     from_json(js.at(key), value);
-    sf_from_json_helper__(js, std::forward<ARGS>(args)...);
+    from_json_helper__(js, std::forward<ARGS>(args)...);
 }
 
 template <typename... ARGS>
-void from_json(const sf_json& js, std::tuple<ARGS...>& value)
+void from_json(const json& js, std::tuple<ARGS...>& value)
 {
     from_json_tuple_helper__<0>(js, value);
 }
 
 template <typename T>
-void from_json(const sf_json& js, T& value)
+void from_json(const json& js, T& value)
 {
     if (js.is_null()) {
         return;
@@ -753,7 +753,7 @@ void from_json(const sf_json& js, T& value)
 }
 
 template <typename T>
-void from_json(const sf_json& js, std::shared_ptr<T>& value)
+void from_json(const json& js, std::shared_ptr<T>& value)
 {
     if (js.is_null()){
         return;
@@ -762,9 +762,9 @@ void from_json(const sf_json& js, std::shared_ptr<T>& value)
 }
 
 template <typename K, typename V>
-sf_json to_json(const std::pair<K, V>& value)
+json to_json(const std::pair<K, V>& value)
 {
-    sf_json js;
+    json js;
     js.convert_to_object();
     js["key"] = to_json(value.first);
     js["value"] = to_json(value.second);
@@ -772,7 +772,7 @@ sf_json to_json(const std::pair<K, V>& value)
 }
 
 template <typename K, typename V>
-void from_json(const sf_json& js, std::pair<K, V>& value)
+void from_json(const json& js, std::pair<K, V>& value)
 {
     K k;
     V v;
@@ -782,15 +782,15 @@ void from_json(const sf_json& js, std::pair<K, V>& value)
 }
 
 template <typename... ARGS>
-sf_json to_json(const std::tuple<ARGS...>& value)
+json to_json(const std::tuple<ARGS...>& value)
 {
-    return sf_invoke(to_json_tuple_helper__<ARGS...>, value);
+    return invoke(to_json_tuple_helper__<ARGS...>, value);
 }
 
 template <typename... ARGS>
-sf_json to_json_tuple_helper__(const ARGS&... value)
+json to_json_tuple_helper__(const ARGS&... value)
 {
-    sf_json js;
+    json js;
     js.convert_to_array();
     (js.append(to_json(value)), ...);
     return js;
@@ -798,7 +798,7 @@ sf_json to_json_tuple_helper__(const ARGS&... value)
 
 template <int N, typename... ARGS, typename... Ret>
 std::enable_if_t<N != sizeof...(ARGS), void> from_json_tuple_helper__(
-    const sf_json& js, std::tuple<ARGS...>& data, Ret... ret)
+    const json& js, std::tuple<ARGS...>& data, Ret... ret)
 {
     std::remove_reference_t<decltype(std::get<N>(data))> t_data;
     from_json(js.at(N), t_data);
@@ -807,16 +807,16 @@ std::enable_if_t<N != sizeof...(ARGS), void> from_json_tuple_helper__(
 
 template <int N, typename... ARGS, typename... Ret>
 std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
-    const sf_json& js, std::tuple<ARGS...>& data, Ret... ret)
+    const json& js, std::tuple<ARGS...>& data, Ret... ret)
 {
     data = { ret... };
 }
 
 #define SF_CONTAINER_JSON_IMPL(container)                            \
     template <typename T>                                            \
-    inline sf_json to_json(const container<T>& value)                \
+    inline json to_json(const container<T>& value)                \
     {                                                                \
-        sf_json js;                                                  \
+        json js;                                                  \
         js.convert_to_array();                                       \
         for (auto& p : value) {                                      \
             js.append(to_json(p));                                   \
@@ -824,12 +824,12 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
         return js;                                                   \
     }                                                                \
     template <>                                                      \
-    inline sf_json to_json(const container<char>& value)             \
+    inline json to_json(const container<char>& value)             \
     {                                                                \
-        return sf_json(sf_char_container_to_hex_string(value));      \
+        return json(char_container_to_hex_string(value));      \
     }                                                                \
     template <typename T>                                            \
-    inline void from_json(const sf_json& js, container<T>& value)    \
+    inline void from_json(const json& js, container<T>& value)    \
     {                                                                \
         std::vector<T> data;                                         \
         int sz = js.size();                                          \
@@ -840,21 +840,21 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
         value = container<T> { data.begin(), data.end() };           \
     }                                                                \
     template <>                                                      \
-    inline void from_json(const sf_json& js, container<char>& value) \
+    inline void from_json(const json& js, container<char>& value) \
     {                                                                \
         std::string tmp;                                             \
         from_json(js, tmp);                                          \
-        sf_hex_string_to_char_container(tmp, value);                 \
+        hex_string_to_char_container(tmp, value);                 \
     }
 
 #define SF_ASSOCIATED_CONTAINER_JSON_IMPL(container)             \
     template <typename K, typename V>                            \
-    sf_json to_json(const container<K, V>& value)                \
+    json to_json(const container<K, V>& value)                \
     {                                                            \
-        sf_json js;                                              \
+        json js;                                              \
         js.convert_to_array();                                   \
         for (auto& p : value) {                                  \
-            sf_json tmp_js;                                      \
+            json tmp_js;                                      \
             tmp_js.convert_to_object();                          \
             tmp_js["key"] = to_json(p.first);                    \
             tmp_js["value"] = to_json(p.second);                 \
@@ -863,7 +863,7 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
         return js;                                               \
     }                                                            \
     template <typename K, typename V>                            \
-    void from_json(const sf_json& js, container<K, V>& value)    \
+    void from_json(const json& js, container<K, V>& value)    \
     {                                                            \
         std::vector<std::pair<K, V>> data;                       \
         int sz = js.size();                                      \

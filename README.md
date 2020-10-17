@@ -8,51 +8,51 @@
 
 `sflib`是一个集合本人在工作学习过程中常用的工具合集，主要包括以下组件：
 
-* 根对象`sf_object`
+* 根对象`object`
 
-  `提供基于观察者模式的事件循环机制，附加包括sf_eventloop（事件循环）、sf_timer（定时器）、sf_event_waiter（事件等待）。`
+  `提供基于观察者模式的事件循环机制，附加包括eventloop（事件循环）、timer（定时器）、event_waiter（事件等待）。`
   
-* RAII管理类`sf_finally`
+* RAII管理类`finally`
 
     `在作用域结束执行某些特定操作。`
     
-* 日志类`sf_logger`
+* 日志类`logger`
 
     `提供线程安全的基础日志输出类，日志分级，多目的地输出。`
     
-* tcp异步网络库`sf_tcp_server`、`sf_tcp_client`
+* tcp异步网络库`tcp_server`、`tcp_client`
 
     `提供一个异步网络通信框架，在Windows下的实现为IOCP，linux下的实现为epoll。`
     
-* 线程池简单实现`sf_thread_pool`
+* 线程池简单实现`thread_pool`
 
     `提供接口易用的线程池实现。`
     
-* RPC（远程过程调用）框架`sf_rpc_server`、`sf_rpc_client`
+* RPC（远程过程调用）框架`rpc_server`、`rpc_client`
 
     `提供简单的rpc框架，支持同步调用和异步调用。`
     
-* 基于网络的消息总线（订阅模式）框架`sf_msg_bus`
+* 基于网络的消息总线（订阅模式）框架`msg_bus`
 
     `提供一个基于tcp的跨主机消息总线模型。`
     
-* 内网NAT网络穿透框架`sf_tcp_nat_traversal_server`、`sf_tcp_nat_traversal_client`（因缺乏测试条件，目前未作详细测试）
+* 内网NAT网络穿透框架`tcp_nat_traversal_server`、`tcp_nat_traversal_client`（因缺乏测试条件，目前未作详细测试）
 
     `提供用于内网NAT穿透的通信框架。`
     
-* HTTP服务器框架`sf_http_server`，包含基础框架`sf_http_base_server`
+* HTTP服务器框架`http_server`，包含基础框架`http_base_server`
 
     `提供HTTP/1.1服务器端实现，包括WebSocket服务器实现。`
 
-* 词法分析器`sf_lex`，语法分析器`sf_yacc`。
+* 词法分析器`lex`，语法分析器`yacc`。
 
     `提供词法分析与语法分析，作为基础的编译器前端。`
 
-* `json`库`sf_json`。
+* `json`库`json`。
 
     `提供对json数据的解析，生成，合并等操作，接口友好。`
 
-* 对象工厂`sf_object_factory`
+* 对象工厂`object_factory`
 
     `提供工厂模式的简单实现。`
 

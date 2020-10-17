@@ -3,9 +3,9 @@
 #include "sf_http_header.h"
 
 namespace skyfire {
-class sf_http_res_header : public sf_http_header {
+class http_res_header : public http_header {
 private:
-    std::unordered_map<std::string, sf_http_cookie_item_t> res_cookies__;
+    std::unordered_map<std::string, http_cookie_item_t> res_cookies__;
 
 public:
     /**
@@ -13,7 +13,7 @@ public:
      * 
      * @param cookies 响应cookie
      */
-    void add_cookies(const sf_http_cookie_item_t& cookies);
+    void add_cookies(const http_cookie_item_t& cookies);
 
     /**
      * @brief 添加响应cookie
@@ -40,9 +40,9 @@ public:
     /**
      * @brief 获取响应cookie
      * 
-     * @return std::unordered_map<std::string, sf_http_cookie_item_t> 响应cookie
+     * @return std::unordered_map<std::string, http_cookie_item_t> 响应cookie
      */
-    std::unordered_map<std::string, sf_http_cookie_item_t> res_cookies() const;
+    std::unordered_map<std::string, http_cookie_item_t> res_cookies() const;
         
     /**
      * 生成符合http标准的字符串格式的头文本，用于发送/查看，注意：cookie不包含在头列表中，但是生成字符串时，会将cookie编入

@@ -17,7 +17,7 @@
 #include "sf_nocopy.h"
 
 namespace skyfire {
-class sf_object_factory final : public sf_nocopy<> {
+class object_factory final : public nocopy<> {
    public:
     /**
      * @brief 加载配置
@@ -42,7 +42,7 @@ class sf_object_factory final : public sf_nocopy<> {
      * @return true 设置成功
      * @return false 设置失败
      */
-    bool set_config(const sf_json& config_obj);
+    bool set_config(const json& config_obj);
 
     /**
      * @brief 获取对象
@@ -57,11 +57,11 @@ class sf_object_factory final : public sf_nocopy<> {
     std::shared_ptr<T> object(const std::string& obj_id, ARGS&&... args);
 
    private:
-    std::unordered_map<std::string, sf_object_factory_config_item_t>
+    std::unordered_map<std::string, object_factory_config_item_t>
         object_data__;
 
-    bool load_data__(const sf_json& config_obj);
-    sf_json object_data(const std::string& obj_name);
+    bool load_data__(const json& config_obj);
+    json object_data(const std::string& obj_name);
 };
 }    // namespace skyfire
 #pragma clang diagnostic pop

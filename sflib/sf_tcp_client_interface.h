@@ -18,11 +18,11 @@ namespace skyfire {
 /**
  *  @brief tcp客户端接口
  */
-class sf_tcp_client_interface : public sf_nocopy<sf_object> {
+class tcp_client_interface : public nocopy<object> {
     /**
      * 数据到来信号
      */
-    sf_singal(data_coming, const sf_pkg_header_t &, const byte_array &)
+    sf_singal(data_coming, const pkg_header_t &, const byte_array &)
     /**
      * 原始数据到来信号
      */
@@ -56,7 +56,7 @@ class sf_tcp_client_interface : public sf_nocopy<sf_object> {
      * @param port 端口号
      * @return 绑定是否成功
      */
-    virtual bool bind(const std::string &ip, unsigned short port) = 0;
+    virtual bool sf_bind(const std::string &ip, unsigned short port) = 0;
 
     /**
      * 连接服务器
@@ -92,14 +92,14 @@ class sf_tcp_client_interface : public sf_nocopy<sf_object> {
      * @param addr 远端ip地址
      * @return 是否成功
      */
-    bool peer_addr(sf_addr_info_t &addr);
+    bool peer_addr(addr_info_t &addr);
 
     /**
      * 获取本地ip地址
      * @param addr 本地ip地址
      * @return 是否成功
      */
-    bool local_addr(sf_addr_info_t &addr);
+    bool local_addr(addr_info_t &addr);
 };
 
 }    // namespace skyfire

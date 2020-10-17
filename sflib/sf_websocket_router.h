@@ -20,12 +20,12 @@ namespace skyfire {
 /**
  *  @brief Websocket路由
  */
-class sf_websocket_router
-    : public sf_make_instance_t<sf_websocket_router, sf_router> {
+class websocket_router
+    : public make_instance_t<websocket_router, router> {
 private:
     const int priority__;
     std::string url__;
-    std::function<void(const sf_websocket_param_t&)> callback__;
+    std::function<void(const websocket_param_t&)> callback__;
 
 public:
     /**
@@ -34,9 +34,9 @@ public:
      * @param callback websocket 回调函数，接收websocket_param_t参数
      * @param priority 优先级
      */
-    explicit sf_websocket_router(
+    explicit websocket_router(
         const std::string& url,
-        std::function<void(const sf_websocket_param_t&)> callback,
+        std::function<void(const websocket_param_t&)> callback,
         int priority = 0);
 
     /**
@@ -45,8 +45,8 @@ public:
      * @param callback websocket 回调函数，接收websocket_param_t参数
      * @param priority 优先级
      */
-    explicit sf_websocket_router(const std::string& url,
-        void (*callback)(const sf_websocket_param_t&),
+    explicit websocket_router(const std::string& url,
+        void (*callback)(const websocket_param_t&),
         int priority = 0);
 
     /**
@@ -54,7 +54,7 @@ public:
      * @param context websocket参数
      * @return 是否匹配上
      */
-    bool run_route(const sf_websocket_param_t& context) const;
+    bool run_route(const websocket_param_t& context) const;
 };
 
 } // namespace skyfire

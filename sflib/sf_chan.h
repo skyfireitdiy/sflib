@@ -28,7 +28,7 @@ namespace skyfire {
  * @tparam T 管道类型
  */
 template <typename T>
-class sf_chan : public sf_make_instance_t<sf_chan<T>, sf_nocopy<>> {
+class chan : public make_instance_t<chan<T>, nocopy<>> {
 private:
     std::queue<T> data__;
     int max_size__;
@@ -47,7 +47,7 @@ public:
      * 构造一个缓冲区大小为buffer_size的管道
      * @param buffer_size 缓冲区大小
      */
-    explicit sf_chan(int buffer_size = 0);
+    explicit chan(int buffer_size = 0);
 
     /**
      * 关闭管道
@@ -59,17 +59,17 @@ public:
      * @param d 读取的数据
      * @param ch 管道
      */
-    friend sf_err operator>>(sf_chan<T>& ch, T& d)
+    friend err operator>>(chan<T>& ch, T& d)
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
         if (ch.closed__) {
-            return sf_err { sf_exception(sf_chan_close, "channel already closed") };
+            return err { exception(chan_close, "channel already closed") };
         }
         if (ch.max_size__ != 0) {
             if (ch.data__.empty()) {
                 ch.cond__.wait(lck, [&ch]() { return ch.data__.size() > 0 || ch.closed__; });
                 if (ch.closed__) {
-                    throw sf_exception(sf_chan_close, "channel already closed");
+                    throw exception(chan_close, "channel already closed");
                 }
             }
             d = ch.data__.front();
@@ -81,7 +81,7 @@ public:
             ch.has_value__ = false;
             ch.cond_pop_finish__.notify_one();
         }
-        return sf_err {};
+        return err {};
     }
 
     /**
@@ -89,17 +89,17 @@ public:
      * @param ch 管道
      * @param d 写入的数据
      */
-    friend sf_err operator>>(T d, sf_chan<T>& ch)
+    friend err operator>>(T d, chan<T>& ch)
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
         if (ch.closed__) {
-            return sf_err(sf_exception(sf_chan_close, "channel already closed"));
+            return err(exception(chan_close, "channel already closed"));
         }
         if (ch.max_size__ != 0) {
             if (ch.data__.size() == ch.max_size__) {
                 ch.cond__.wait(lck, [&ch]() { return ch.data__.size() < ch.max_size__ || ch.closed__; });
                 if (ch.closed__) {
-                    throw sf_exception(sf_chan_close, "channel already closed");
+                    throw exception(chan_close, "channel already closed");
                 }
             }
             ch.data__.push(d);
@@ -108,7 +108,7 @@ public:
             if (ch.has_value__) {
                 ch.cond_push_prepare__.wait(lck, [&ch] { return !ch.has_value__; });
                 if (ch.closed__) {
-                    throw sf_exception(sf_chan_close, "channel already closed");
+                    throw exception(chan_close, "channel already closed");
                 }
             }
             ch.buf__ = d;
@@ -117,15 +117,15 @@ public:
             ch.cond_pop_finish__.wait(lck, [&ch] { return !ch.has_value__; });
             ch.cond_push_prepare__.notify_one();
         }
-        return sf_err {};
+        return err {};
     }
 
-    friend sf_err operator>>(T d, const std::shared_ptr<sf_chan<T>> ch)
+    friend err operator>>(T d, const std::shared_ptr<chan<T>> ch)
     {
         return d >> *ch;
     }
 
-    friend sf_err operator>>(const std::shared_ptr<sf_chan<T>> ch, T& d)
+    friend err operator>>(const std::shared_ptr<chan<T>> ch, T& d)
     {
         return *ch >> d;
     }

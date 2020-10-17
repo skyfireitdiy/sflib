@@ -3,7 +3,7 @@
 #include <sf_stdc++>
 #include <sf_test>
 
-class test_object: public skyfire::sf_object{
+class test_object: public skyfire::object{
     sf_singal(s1);
     sf_singal(s2, int, float, double);
 };
@@ -35,5 +35,5 @@ int main()
     sf_test_add(none_param_event_waiter_test);
     sf_test_add(many_param_event_waiter_test);
 
-    skyfire::sf_test_run();
+    skyfire::test_run();
 }

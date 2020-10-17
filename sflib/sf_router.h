@@ -16,16 +16,16 @@ namespace skyfire {
 /**
  *  @brief 路由
  */
-class sf_router {
+class router {
 public:
-    virtual ~sf_router() = default;
+    virtual ~router() = default;
     /**
      * 获取优先级
      * @return 优先级
      */
     virtual int priority() const;
 
-    virtual bool run_route(const sf_http_request& req, sf_http_response& res,
+    virtual bool run_route(const http_request& req, http_response& res,
         const std::string& url, const std::string& method);
 };
 

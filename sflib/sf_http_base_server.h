@@ -28,18 +28,18 @@ namespace skyfire {
 /**
  *  @brief  HTTP服务器基础框架
  */
-class sf_http_base_server {
+class http_base_server {
 private:
-    const sf_http_server_config config__;
+    const http_server_config config__;
 
-    std::shared_ptr<sf_tcp_server> server__;
+    std::shared_ptr<tcp_server> server__;
 
-    sf_eventloop event_loop__;
+    eventloop event_loop__;
 
-    std::function<void(const sf_http_request&, sf_http_response&)>
+    std::function<void(const http_request&, http_response&)>
         request_callback__;
 
-    std::function<void(const sf_http_request&, sf_http_response&)>
+    std::function<void(const http_request&, http_response&)>
         websocket_request_callback__;
     std::function<void(SOCKET, const std::string& url, const byte_array& data)>
         websocket_binary_data_callback__;
@@ -50,20 +50,20 @@ private:
     std::function<void(SOCKET, const std::string& url)>
         websocket_close_callback__;
 
-    std::unordered_map<SOCKET, sf_request_context_t> request_context__;
+    std::unordered_map<SOCKET, request_context_t> request_context__;
     std::recursive_mutex mu_request_context__;
-    std::unordered_map<SOCKET, sf_websocket_context_t> websocket_context__;
+    std::unordered_map<SOCKET, websocket_context_t> websocket_context__;
     std::recursive_mutex mu_websocket_context__;
-    std::unordered_map<SOCKET, sf_multipart_data_context_t>
+    std::unordered_map<SOCKET, multipart_data_context_t>
         multipart_data_context__;
     std::recursive_mutex mu_multipart_data_context__;
 
-    std::shared_ptr<sf_cache> file_cache__;
-    std::vector<std::shared_ptr<sf_http_middleware>> middleware__;
+    std::shared_ptr<cache> file_cache__;
+    std::vector<std::shared_ptr<http_middleware>> middleware__;
 
     struct session_data_t {
         int timeout;
-        sf_json data;
+        json data;
     };
 
     struct file_cache_data_t {
@@ -80,7 +80,7 @@ private:
     mutable std::recursive_mutex mu_session__;
     std::unordered_map<std::string, std::shared_ptr<session_data_t>>
         session_data__;
-    sf_timer session_timer__;
+    timer session_timer__;
 
     void flush_session__();
 
@@ -98,35 +98,35 @@ private:
     void on_socket_closed__(SOCKET sock);
 
     byte_array append_multipart_data__(
-        sf_multipart_data_context_t& multipart_data,
+        multipart_data_context_t& multipart_data,
         const byte_array& data) const;
 
-    void file_response__(SOCKET sock, sf_http_response& res) const;
+    void file_response__(SOCKET sock, http_response& res) const;
 
-    void normal_response__(SOCKET sock, sf_http_response& res) const;
+    void normal_response__(SOCKET sock, http_response& res) const;
 
-    void multipart_response__(SOCKET sock, sf_http_response& res);
+    void multipart_response__(SOCKET sock, http_response& res);
 
     static bool check_analysis_multipart_file__(
-        std::vector<sf_http_response::multipart_info_t>& multipart_data);
+        std::vector<http_response::multipart_info_t>& multipart_data);
 
     void close_request__(SOCKET sock);
 
-    void http_handler__(SOCKET sock, const sf_http_request& http_request);
+    void http_handler__(SOCKET sock, const http_request& http_request);
 
     void build_boundary_context_data(SOCKET sock,
-        const sf_http_request& request);
+        const http_request& request);
 
     void build_websocket_context_data__(SOCKET sock,
-        const sf_http_request& request);
+        const http_request& request);
 
     void send_response_file_part__(
-        SOCKET sock, const sf_http_response::response_file_info_t& file,
+        SOCKET sock, const http_response::response_file_info_t& file,
         std::ifstream& fi) const;
 
-    void set_file_etag__(sf_http_response &res, const file_etag_t& etag) const;
+    void set_file_etag__(http_response &res, const file_etag_t& etag) const;
 
-    file_etag_t make_etag__(const sf_http_response::response_file_info_t& file) const;
+    file_etag_t make_etag__(const http_response::response_file_info_t& file) const;
 
         public :
         /**
@@ -134,7 +134,7 @@ private:
      * @param session_key session key
      * @return session的json对象（注意是浅拷贝）
      */
-        sf_json
+        json
         session(const std::string& session_key);
     /**
      * @brief 保持session活动（赋予session生命值）
@@ -158,24 +158,24 @@ private:
      * 构造函数
      * @param config http配置
      */
-    explicit sf_http_base_server(const sf_http_server_config& config);
+    explicit http_base_server(const http_server_config& config);
 
     /**
      * 设置请求回调函数
      * @param request_callback 请求回调函数，函数接收参数为const
-     * sf_http_request&类型参数req和sf_http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端
+     * http_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端
      */
     void set_request_callback(
-        std::function<void(const sf_http_request&, sf_http_response&)>
+        std::function<void(const http_request&, http_response&)>
             request_callback);
 
     /**
      * 设置websocket回调函数
      * @param websocket_request_callback websocket回调函数，函数接收参数为const
-     * sf_http_request&类型参数req和sf_http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端（websocket握手在此函数中实现）
+     * http_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端（websocket握手在此函数中实现）
      */
     void set_websocket_request_callback(
-        std::function<void(const sf_http_request&, sf_http_response&)>
+        std::function<void(const http_request&, http_response&)>
             websocket_request_callback);
 
     /**
@@ -255,7 +255,7 @@ private:
      * 
      * @param m middleware
      */
-    void add_middleware(std::shared_ptr<sf_http_middleware> m);
+    void add_middleware(std::shared_ptr<http_middleware> m);
 };
 } // namespace skyfire
 #pragma clang diagnostic pop

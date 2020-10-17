@@ -23,20 +23,20 @@ namespace skyfire {
 /**
  * @brief  http分层路由
  */
-class sf_http_part_router final
-    : public sf_make_instance_t<sf_http_part_router, sf_router> {
+class http_part_router final
+    : public make_instance_t<http_part_router, router> {
 private:
     const int priority__ = 10;
     const std::vector<std::string> methods__;
     std::recursive_mutex methods_mu__;
     std::vector<std::string> prefix__;
-    std::function<bool(const sf_http_request&, sf_http_response&)> callback__;
+    std::function<bool(const http_request&, http_response&)> callback__;
 
-    std::multiset<std::shared_ptr<sf_router>,
-        sf_router_shared_ptr_compare__<sf_router>>
+    std::multiset<std::shared_ptr<router>,
+        router_shared_ptr_compare__<router>>
         endpoint_router__;
-    std::multiset<std::shared_ptr<sf_router>,
-        sf_router_shared_ptr_compare__<sf_router>>
+    std::multiset<std::shared_ptr<router>,
+        router_shared_ptr_compare__<router>>
         middle_router__;
 
 public:
@@ -48,9 +48,9 @@ public:
      * @param methods 请求方法
      * @param priority 优先级
      */
-    sf_http_part_router(
+    http_part_router(
         std::string prefix,
-        std::function<bool(const sf_http_request&, sf_http_response&)>
+        std::function<bool(const http_request&, http_response&)>
             callback,
         std::vector<std::string> methods = { { "*" } },
         int priority = default_http_part_priority);
@@ -62,9 +62,9 @@ public:
      * @param methods 请求方法
      * @param priority 优先级
      */
-    sf_http_part_router(const std::string& prefix,
-        bool (*callback)(const sf_http_request&,
-            sf_http_response&),
+    http_part_router(const std::string& prefix,
+        bool (*callback)(const http_request&,
+            http_response&),
         const std::vector<std::string>& methods = { { "*" } },
         int priority = default_http_part_priority);
 
@@ -73,14 +73,14 @@ public:
      *
      * @param router 路由
      */
-    void add_router(std::shared_ptr<sf_router> router);
+    void add_router(std::shared_ptr<router> router);
 
     /**
      * @brief 添加一个分层路由
      *
      * @param router 路由
      */
-    void add_router(std::shared_ptr<sf_http_part_router> router);
+    void add_router(std::shared_ptr<http_part_router> router);
 
     /**
      * @brief 执行路由
@@ -92,7 +92,7 @@ public:
      * @return true 通行
      * @return false 拦截
      */
-    bool run_route(const sf_http_request& req, sf_http_response& res,
+    bool run_route(const http_request& req, http_response& res,
         const std::string& url, const std::string& method) override;
 
     /**
@@ -102,7 +102,7 @@ public:
      * @return true 此路由比较小（优先级高）
      * @return false 此路由比较大（优先级低）
      */
-    bool operator<(const sf_http_part_router& router) const;
+    bool operator<(const http_part_router& router) const;
 
     [[nodiscard]] int priority() const override;
 };

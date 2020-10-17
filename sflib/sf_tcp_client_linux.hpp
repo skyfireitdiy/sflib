@@ -16,7 +16,7 @@
 #include "sf_nocopy.h"
 
 namespace skyfire {
-inline sf_tcp_client::sf_tcp_client(bool raw)
+inline tcp_client::tcp_client(bool raw)
 {
     sock__ = socket(AF_INET, SOCK_STREAM, 0);
     if (sock__ == -1) {
@@ -32,28 +32,28 @@ inline sf_tcp_client::sf_tcp_client(bool raw)
     raw__ = raw;
 }
 
-inline sf_tcp_client::sf_tcp_client(SOCKET sock, bool raw)
+inline tcp_client::tcp_client(SOCKET sock, bool raw)
 {
     sock__ = sock;
     inited__ = true;
     raw__ = raw;
-    std::thread(&sf_tcp_client::recv_thread__, this).detach();
+    std::thread(&tcp_client::recv_thread__, this).detach();
 }
 
-inline SOCKET sf_tcp_client::raw_socket() { return sock__; }
+inline SOCKET tcp_client::raw_socket() { return sock__; }
 
-inline bool sf_tcp_client::bind(const std::string& ip, unsigned short port)
+inline bool tcp_client::sf_bind(const std::string& ip, unsigned short port)
 {
     sockaddr_in address {};
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = inet_addr(ip.c_str());
     address.sin_port = htons(port);
-    return -1 != ::bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    return -1 != ::sf_bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 }
 
-inline sf_tcp_client::~sf_tcp_client() { close(); }
+inline tcp_client::~tcp_client() { close(); }
 
-inline bool sf_tcp_client::connect_to_server(const std::string& ip,
+inline bool tcp_client::connect_to_server(const std::string& ip,
     unsigned short port)
 {
     if (!inited__)
@@ -67,15 +67,15 @@ inline bool sf_tcp_client::connect_to_server(const std::string& ip,
         != 0) {
         return false;
     }
-    std::thread(&sf_tcp_client::recv_thread__, this).detach();
+    std::thread(&tcp_client::recv_thread__, this).detach();
     return true;
 }
 
-inline bool sf_tcp_client::send(int type, const byte_array& data)
+inline bool tcp_client::send(int type, const byte_array& data)
 {
     if (!inited__)
         return false;
-    sf_pkg_header_t header {};
+    pkg_header_t header {};
     header.type = htonl(type);
     header.length = htonl(data.size());
     make_header_checksum(header);
@@ -85,14 +85,14 @@ inline bool sf_tcp_client::send(int type, const byte_array& data)
     return write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
 
-inline bool sf_tcp_client::send(const byte_array& data)
+inline bool tcp_client::send(const byte_array& data)
 {
     if (!inited__)
         return false;
     return write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
 
-inline void sf_tcp_client::close()
+inline void tcp_client::close()
 {
     if (!inited__)
         return;
@@ -101,13 +101,13 @@ inline void sf_tcp_client::close()
     sock__ = -1;
 }
 
-void sf_tcp_client::recv_thread__()
+void tcp_client::recv_thread__()
 {
-    byte_array recv_buffer(sf_default_buffer_size);
+    byte_array recv_buffer(default_buffer_size);
     byte_array data;
-    sf_pkg_header_t header {};
+    pkg_header_t header {};
     while (true) {
-        auto len = read(sock__, recv_buffer.data(), sf_default_buffer_size);
+        auto len = read(sock__, recv_buffer.data(), default_buffer_size);
         if (len <= 0) {
             closed();
             break;
@@ -119,7 +119,7 @@ void sf_tcp_client::recv_thread__()
             data.insert(data.end(), recv_buffer.begin(),
                 recv_buffer.begin() + len);
             size_t read_pos = 0;
-            while (data.size() - read_pos >= sizeof(sf_pkg_header_t)) {
+            while (data.size() - read_pos >= sizeof(pkg_header_t)) {
                 std::memmove(&header, data.data() + read_pos, sizeof(header));
                 if (!check_header_checksum(header)) {
                     close();

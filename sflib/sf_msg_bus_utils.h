@@ -23,11 +23,11 @@ constexpr int msg_bus_unreg_multi = 4;
 /**
  *   @brief  消息总线数据
  */
-struct sf_msg_bus_t final {
+struct msg_bus_t final {
     std::string type;
     byte_array data;
 };
 
-SF_JSONIFY(sf_msg_bus_t, type, data)
+SF_JSONIFY(msg_bus_t, type, data)
 
 } // namespace skyfire

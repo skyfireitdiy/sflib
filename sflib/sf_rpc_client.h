@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_rpc_client rpc客户端
+ * rpc_client rpc客户端
  */
 #pragma once
 #pragma clang diagnostic push
@@ -24,8 +24,8 @@ namespace skyfire {
 /**
  *  @brief rpc数据
  */
-struct sf_rpc_context_t {
-    sf_pkg_header_t header;
+struct rpc_context_t {
+    pkg_header_t header;
     byte_array data;
     std::mutex back_mu;
     std::condition_variable back_cond;
@@ -34,12 +34,12 @@ struct sf_rpc_context_t {
     std::function<void(const byte_array&)> async_callback;
 };
 
-class sf_rpc_ret_t {
+class rpc_ret_t {
     bool valid__;
-    sf_json data__;
+    json data__;
 
 public:
-    sf_rpc_ret_t(bool valid, const sf_json& data)
+    rpc_ret_t(bool valid, const json& data)
         : valid__(valid)
         , data__(data)
     {
@@ -65,25 +65,25 @@ public:
 /**
  *  @brief rpc客户端类
  */
-class sf_rpc_client
-    : public sf_make_instance_t<sf_rpc_client, sf_nocopy<sf_object>> {
+class rpc_client
+    : public make_instance_t<rpc_client, nocopy<object>> {
 private:
-    std::shared_ptr<sf_tcp_client> tcp_client__ = sf_tcp_client::make_instance();
+    std::shared_ptr<tcp_client> tcp_client__ = tcp_client::make_instance();
     // TODO 此处使用unordered_map会崩溃，在计算hash的时候会发生除0错误，why？
-    std::map<int, std::shared_ptr<sf_rpc_context_t>> rpc_data__;
+    std::map<int, std::shared_ptr<rpc_context_t>> rpc_data__;
 
     int current_call_id__ = 0;
     unsigned int rpc_timeout__ = 30000;
 
     int make_call_id__();
 
-    void back_callback__(const sf_pkg_header_t& header_t,
+    void back_callback__(const pkg_header_t& header_t,
         const byte_array& data_t);
 
     void on_closed__();
 
 public:
-    sf_rpc_client();
+    rpc_client();
 
     /**
      * @brief set_rpc_timeout 设置RPC超时
@@ -111,7 +111,7 @@ public:
      * @return 返回值
      */
     template <typename... __SF_RPC_ARGS__>
-    sf_rpc_ret_t call(const std::string& func_id, __SF_RPC_ARGS__... args);
+    rpc_ret_t call(const std::string& func_id, __SF_RPC_ARGS__... args);
 
     /**
      * @brief async_call 异步调用（无返回）
@@ -133,16 +133,16 @@ public:
     void call(const std::string& func_id,
         std::function<void(_Ret)> rpc_callback, __SF_RPC_ARGS__... args);
 
-    friend std::shared_ptr<sf_tcp_client>;
+    friend std::shared_ptr<tcp_client>;
 };
 
 #define RPC_OBJECT(name) \
     struct name          \
-        : public skyfire::sf_make_instance_t<name, skyfire::sf_rpc_client>
+        : public skyfire::make_instance_t<name, skyfire::rpc_client>
 
 #define RPC_INTERFACE(name)                                                \
     template <typename... __SF_RPC_ARGS__>                                 \
-    skyfire::sf_rpc_ret_t name(__SF_RPC_ARGS__&&... args)                  \
+    skyfire::rpc_ret_t name(__SF_RPC_ARGS__&&... args)                  \
     {                                                                      \
         return call(#name, std::forward<__SF_RPC_ARGS__>(args)...);        \
     }                                                                      \

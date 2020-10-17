@@ -19,31 +19,31 @@
 #include "sf_logger.hpp"
 
 namespace skyfire {
-bool sf_object_factory::load_config(const std::string &config_str) {
-    auto config_obj = sf_json::from_string(config_str);
+bool object_factory::load_config(const std::string &config_str) {
+    auto config_obj = json::from_string(config_str);
     if (config_obj.is_null()) {
         return false;
     }
     return load_data__(config_obj);
 }
 
-bool sf_object_factory::load_config_file(const std::string &config_file) {
+bool object_factory::load_config_file(const std::string &config_file) {
     byte_array data;
-    if (sf_read_file(config_file, data) == false) {
+    if (read_file(config_file, data) == false) {
         return false;
     }
     return load_config(skyfire::to_string(data));
 }
 
-bool sf_object_factory::set_config(const sf_json &config_obj) {
+bool object_factory::set_config(const json &config_obj) {
     return load_data__(config_obj);
 }
 
-bool sf_object_factory::load_data__(const sf_json &config_obj) {
+bool object_factory::load_data__(const json &config_obj) {
     object_data__.clear();
     auto size = config_obj.size();
     for (int i = 0; i < size; ++i) {
-        sf_object_factory_config_item_t item;
+        object_factory_config_item_t item;
         auto tmp_obj = config_obj.at(i);
         item.id = static_cast<std::string>(tmp_obj["id"]);
         item.data = tmp_obj["data"];
@@ -57,9 +57,9 @@ bool sf_object_factory::load_data__(const sf_json &config_obj) {
     return true;
 }
 
-sf_json sf_object_factory::object_data(const std::string &obj_name) {
+json object_factory::object_data(const std::string &obj_name) {
     if (object_data__.count(obj_name) == 0) {
-        return sf_json();
+        return json();
     }
     auto obj = object_data__[obj_name].data.deep_copy();
     if (obj.has("__base__")) {
@@ -73,7 +73,7 @@ sf_json sf_object_factory::object_data(const std::string &obj_name) {
 }
 
 template <typename T, typename... ARGS>
-std::shared_ptr<T> sf_object_factory::object(const std::string &obj_id,
+std::shared_ptr<T> object_factory::object(const std::string &obj_id,
                                              ARGS &&... args) {
     if (object_data__.count(obj_id) == 0) {
         return nullptr;

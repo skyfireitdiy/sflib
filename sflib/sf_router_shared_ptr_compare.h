@@ -13,7 +13,7 @@ namespace skyfire {
  * @tparam RouterType
  */
 template <typename RouterType>
-struct sf_router_shared_ptr_compare__ final {
+struct router_shared_ptr_compare__ final {
     /**
      * 路由比较
      * @param router1 路由1智能指针

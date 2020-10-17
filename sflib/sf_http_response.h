@@ -15,12 +15,12 @@
 #include "sf_stdc++.h"
 
 namespace skyfire {
-class sf_http_base_server;
+class http_base_server;
 
 /**
  * @brief  HTTP响应
  */
-class sf_http_response final {
+class http_response final {
 public:
     /**
      * @brief  响应类型
@@ -57,7 +57,7 @@ public:
          *  @brief 表单信息，当type为multipart_info_type::form时有效
          */
         struct form_info_t final {
-            sf_http_header_t header; // 响应头
+            http_header_t header; // 响应头
             byte_array body; // 响应体
         };
 
@@ -73,13 +73,13 @@ private:
     int status__ = 200;
     std::string http_version__ = "HTTP/1.1";
     std::string status_desc__ = "OK";
-    sf_http_res_header header__;
+    http_res_header header__;
     byte_array body__;
     response_type type__ = { response_type ::normal };
     response_file_info_t file_info__;
     std::vector<multipart_info_t> multipart_info_vec__;
 
-    const sf_http_request req__;
+    const http_request req__;
 
 public:
     /**
@@ -87,14 +87,14 @@ public:
      * 
      * @param req 关联的req
      */
-    sf_http_response(const sf_http_request& req);
+    http_response(const http_request& req);
 
     /**
      * @brief 获取请求对象
      * 
-     * @return const sf_http_request 请求对象
+     * @return const http_request 请求对象
      */
-    const sf_http_request get_req() const;
+    const http_request get_req() const;
 
     /**
      * 设置http状态码
@@ -116,7 +116,7 @@ public:
      * 设置http响应头
      * @param header 响应头
      */
-    void set_header(const sf_http_res_header& header);
+    void set_header(const http_res_header& header);
 
     /**
      * @brief 添加http头
@@ -136,7 +136,7 @@ public:
      * 设置json响应（会设置content-type）
      * @param json json数据
      */
-    void set_json(const sf_json& json);
+    void set_json(const json& json);
 
     /**
      * 设置响应文件（会设置类型为file）
@@ -159,7 +159,7 @@ public:
      * 添加cookie
      * @param cookie_data cookie信息
      */
-    void add_cookie(const sf_http_cookie_item_t& cookie_data);
+    void add_cookie(const http_cookie_item_t& cookie_data);
     /**
      * @brief 添加cookie
      *
@@ -202,7 +202,7 @@ public:
      * 获取cookies
      * @return cookies
      */
-    std::unordered_map<std::string, sf_http_cookie_item_t> cookies() const;
+    std::unordered_map<std::string, http_cookie_item_t> cookies() const;
 
     /**
      * 获取响应类型
@@ -232,7 +232,7 @@ public:
      * 获取响应头
      * @return 响应头
      */
-    sf_http_header& header();
+    http_header& header();
 
     /**
      * 转换头部为供发送的字节数组
@@ -267,7 +267,7 @@ public:
      */
     std::string status_desc() const;
 
-    friend sf_http_base_server;
+    friend http_base_server;
 };
 } // namespace skyfire
 #pragma clang diagnostic pop

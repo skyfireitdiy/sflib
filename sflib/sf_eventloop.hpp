@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_eventloop 事件循环
+ * eventloop 事件循环
  */
 
 #pragma once
@@ -14,17 +14,17 @@
 #include "sf_eventloop.h"
 
 namespace skyfire {
-inline void sf_eventloop::quit()
+inline void eventloop::quit()
 {
     running__ = false;
     wake();
 }
 
-inline void sf_eventloop::wake() const { __p_msg_queue__->add_empty_msg(); }
+inline void eventloop::wake() const { __p_msg_queue__->add_empty_msg(); }
 
-inline void sf_eventloop::clear() const { __p_msg_queue__->clear(); }
+inline void eventloop::clear() const { __p_msg_queue__->clear(); }
 
-inline void sf_eventloop::exec()
+inline void eventloop::exec()
 {
     running__ = true;
     while (true) {

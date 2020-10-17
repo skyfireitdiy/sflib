@@ -10,7 +10,7 @@ using namespace std;
 
 bool test_chan_order()
 {
-    auto ch = sf_chan<int>::make_instance();
+    auto ch = chan<int>::make_instance();
     std::vector<int> data;
     std::vector<int> result { 1, 2, 3, 4, 5 };
     auto th1 = std::thread([&ch] {
@@ -33,7 +33,7 @@ bool test_chan_order()
 
 bool test_chan_order_with_buffer()
 {
-    auto ch = sf_chan<int>::make_instance(5);
+    auto ch = chan<int>::make_instance(5);
     std::vector<int> data;
     std::vector<int> result { 1, 2, 3, 4, 5 };
     auto th1 = std::thread([&ch] {
@@ -56,7 +56,7 @@ bool test_chan_order_with_buffer()
 
 bool test_write_to_closed_chan()
 {
-    auto ch = sf_chan<int>::make_instance(5);
+    auto ch = chan<int>::make_instance(5);
     auto ret = true;
     thread th1([ch]() {
         ch->close();
@@ -74,7 +74,7 @@ bool test_write_to_closed_chan()
 
 bool test_read_from_closed_chan()
 {
-    auto ch = sf_chan<int>::make_instance(5);
+    auto ch = chan<int>::make_instance(5);
     auto ret = true;
     thread th1([ch, &ret]() {
         this_thread::sleep_for(chrono::seconds(3));
@@ -98,5 +98,5 @@ int main()
     sf_test_add(test_write_to_closed_chan);
     sf_test_add(test_read_from_closed_chan);
 
-    sf_test_run(4);
+    test_run(4);
 }

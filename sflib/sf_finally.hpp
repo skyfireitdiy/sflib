@@ -14,11 +14,11 @@
 #include "sf_finally.h"
 
 namespace skyfire {
-inline __sf_finally__::__sf_finally__(std::function<void()> func)
+inline __finally__::__finally__(std::function<void()> func)
     : func__(std::move(func))
 {
 }
 
-inline __sf_finally__::~__sf_finally__() { func__(); }
+inline __finally__::~__finally__() { func__(); }
 
 }    // namespace skyfire

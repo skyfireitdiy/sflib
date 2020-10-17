@@ -16,13 +16,13 @@
 #include "sf_lex.h"
 
 namespace skyfire {
-inline bool sf_lex::parse(std::string content,
-                          std::vector<sf_lex_result_t> &result) {
+inline bool lex::parse(std::string content,
+                          std::vector<lex_result_t> &result) {
     result.clear();
     auto old_len = content.length();
     while (!content.empty()) {
         auto flag = false;
-        sf_lex_result_t tmp_result{};
+        lex_result_t tmp_result{};
         std::smatch result_sm;
         for (auto &p : rules__) {
             std::regex token_regex(p.regex_str);
@@ -55,13 +55,13 @@ inline bool sf_lex::parse(std::string content,
     return true;
 }
 
-inline void sf_lex::set_rules(const std::vector<sf_lex_rule_t> &rule) {
+inline void lex::set_rules(const std::vector<lex_rule_t> &rule) {
     rules__ = rule;
 }
 
-inline std::vector<sf_lex_rule_t> sf_lex::rules() const { return rules__; }
+inline std::vector<lex_rule_t> lex::rules() const { return rules__; }
 
-inline std::unordered_set<std::string> sf_lex::real_term() const {
+inline std::unordered_set<std::string> lex::real_term() const {
     std::unordered_set<std::string> ret;
     for (auto &p : rules__) {
         ret.insert(p.id);

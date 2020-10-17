@@ -2,24 +2,24 @@
 
 ## 概览
 
-sf_http_server 是 sflib 中的http框架，底层基于 sf_tcp_server，其框架结构如下：
+http_server 是 sflib 中的http框架，底层基于 tcp_server，其框架结构如下：
 
 ![http_framework](img/http_framework.png)
 
-从浏览器（客户端）发起的连接由 sf_tcp_server 处理， sf_tcp_server 将接收到的数据转发给 sf_http_base_server， sf_http_base_server会解析http请求，封装为sf_http_request 调用回调函数进行处理，而这些回调函数是由 sf_http_server 使用router机制提供。sf_http_server 可以设置多种router：
+从浏览器（客户端）发起的连接由 tcp_server 处理， tcp_server 将接收到的数据转发给 http_base_server， http_base_server会解析http请求，封装为http_request 调用回调函数进行处理，而这些回调函数是由 http_server 使用router机制提供。http_server 可以设置多种router：
 
-* sf_http_router 服务请求路由。通常一些查询类的请求可以通过此router处理。
-* sf_static_router 静态资源路由。该路由处理静态资源请求。
-* sf_websocket_router websockte路由。该路由用于相应websocket请求。
-* sf_part_router 分层路由。该路由可以拦截或者分发请求到下一层路由，分层路由使得每个服务可以模块化组织。
+* http_router 服务请求路由。通常一些查询类的请求可以通过此router处理。
+* static_router 静态资源路由。该路由处理静态资源请求。
+* websocket_router websockte路由。该路由用于相应websocket请求。
+* part_router 分层路由。该路由可以拦截或者分发请求到下一层路由，分层路由使得每个服务可以模块化组织。
 
-在相应的路由处理完请求后，会有一个响应（sf_http_response）被构建，该响应返回到sf_http_base_server, 经sf_http_base_server调用sf_tcp_server返回浏览器（客户端）。
+在相应的路由处理完请求后，会有一个响应（http_response）被构建，该响应返回到http_base_server, 经http_base_server调用tcp_server返回浏览器（客户端）。
 
 ## 入门
 
 现在我们从头搭建一个http服务器。（Linux环境下）
 
-sf_http_server依赖zlib和openssl，编译器版本要求gcc 9.1及以上。
+http_server依赖zlib和openssl，编译器版本要求gcc 9.1及以上。
 
 编写服务器代码：
 
@@ -33,13 +33,13 @@ using namespace std;
 using namespace skyfire;
 
 int main(){
-    sf_http_server_config conf;
+    http_server_config conf;
     conf.host = "0.0.0.0";
     conf.port = 8080;
 
-    auto server = sf_http_server::make_instance(conf);
-    server->add_router(sf_http_router::make_instance("/"s, 
-        function([](const sf_http_request& req, sf_http_response &res){
+    auto server = http_server::make_instance(conf);
+    server->add_router(http_router::make_instance("/"s, 
+        function([](const http_request& req, http_response &res){
             res.set_text("hello world");
         })
     ));
@@ -64,7 +64,7 @@ g++ main.cpp -I ../sflib/ -lpthread -lcrypto -lssl -lstdc++fs -lz -std=c++2a -o 
 打印出server配置并停顿说明运行成功，http服务已启动：
 
 ```text
-[INFO ][2019-09-28 00:35:30][139725116159872][../sflib/sf_http_base_server.hpp (614) sf_http_base_server] --> [server config:][{"tmp_file_path":".","max_cache_file_size":1048576,"debu
+[INFO ][2019-09-28 00:35:30][139725116159872][../sflib/http_base_server.hpp (614) http_base_server] --> [server config:][{"tmp_file_path":".","max_cache_file_size":1048576,"debu
 g":false,"host":"0.0.0.0","port":8080,"session_timeout":1800,"max_cache_count":1024}]
 ```
 另起一个终端使用curl测试，或者直接使用浏览器访问[http://localhost:8080](http://localhost:8080)
@@ -109,9 +109,9 @@ curl -v http://localhost:8080
 hello world
 ```
 
-## 使用 sf_http_part_router 进行拦截与分发
+## 使用 http_part_router 进行拦截与分发
 
-sf_http_part_router 用于对路由进行分层，同时有拦截的功能。
+http_part_router 用于对路由进行分层，同时有拦截的功能。
 
 ```cpp
 // main.cpp
@@ -125,16 +125,16 @@ using namespace skyfire;
 
 int main()
 {
-    sf_http_server_config conf;
+    http_server_config conf;
     conf.host = "0.0.0.0";
     conf.port = 8080;
 
-    auto server = sf_http_server::make_instance(conf);
+    auto server = http_server::make_instance(conf);
 
     int n = 0;
 
-    auto info_router = sf_http_part_router::make_instance("/info"s,
-        function([&n](const sf_http_request& req, sf_http_response& res) {
+    auto info_router = http_part_router::make_instance("/info"s,
+        function([&n](const http_request& req, http_response& res) {
             if (n++ < 3) {
                 return true;
             } else {
@@ -145,8 +145,8 @@ int main()
 
     server->add_router(info_router);
 
-    info_router->add_router(sf_http_router::make_instance("/"s,
-        function([&n](const sf_http_request& req, sf_http_response& res) {
+    info_router->add_router(http_router::make_instance("/"s,
+        function([&n](const http_request& req, http_response& res) {
             res.set_text("you got message: " + to_string(n));
         })));
 
@@ -154,9 +154,9 @@ int main()
 }
 ```
 
-上述代码使用了 sf_http_part_router 对 /info 的访问进行了次数限制。注意 sf_http_part_router::make_instance 的第二个参数是一个返回bool值的可调用对象，如果返回 true，则该请求会向下层路由做匹配，否则会在本层直接返回。
+上述代码使用了 http_part_router 对 /info 的访问进行了次数限制。注意 http_part_router::make_instance 的第二个参数是一个返回bool值的可调用对象，如果返回 true，则该请求会向下层路由做匹配，否则会在本层直接返回。
 
-sf_http_part_router 和 sf_http_server 一样有 add_router 接口，且参数保持一致，所以可以将路由组织为树状结构。
+http_part_router 和 http_server 一样有 add_router 接口，且参数保持一致，所以可以将路由组织为树状结构。
 
 ## 静态路由
 
@@ -174,13 +174,13 @@ using namespace skyfire;
 
 int main()
 {
-    sf_http_server_config conf;
+    http_server_config conf;
     conf.host = "0.0.0.0";
     conf.port = 8080;
 
-    auto server = sf_http_server::make_instance(conf);
+    auto server = http_server::make_instance(conf);
 
-    server->add_router(sf_static_router::make_instance("./"s));
+    server->add_router(static_router::make_instance("./"s));
 
     server->start();
 }
@@ -226,13 +226,13 @@ using namespace skyfire;
 
 int main()
 {
-    sf_http_server_config conf;
+    http_server_config conf;
     conf.host = "0.0.0.0";
     conf.port = 8080;
 
-    auto server = sf_http_server::make_instance(conf);
+    auto server = http_server::make_instance(conf);
 
-    server->add_router(sf_static_router::make_instance("./"s));
+    server->add_router(static_router::make_instance("./"s));
 
     server->start();
 }
@@ -243,7 +243,7 @@ int main()
 
 ## websocket
 
-sf_http_server 支持 websocket 协议，如下：
+http_server 支持 websocket 协议，如下：
 
 ```cpp
 // main.cpp
@@ -256,13 +256,13 @@ using namespace skyfire;
 
 int main()
 {
-    sf_http_server_config conf;
+    http_server_config conf;
     conf.host = "0.0.0.0";
     conf.port = 8080;
 
-    auto server = sf_http_server::make_instance(conf);
+    auto server = http_server::make_instance(conf);
 
-    server->add_router(sf_websocket_router::make_instance("/ws"s, function([](const sf_websocket_param_t& p) {
+    server->add_router(websocket_router::make_instance("/ws"s, function([](const websocket_param_t& p) {
         if (p.type == websocket_data_type::TextData) {
             p.p_server->send_websocket_data(p.sock, "hello:" + p.text_msg);
         }
@@ -301,14 +301,14 @@ using namespace skyfire;
 
 int main()
 {
-    sf_http_server_config conf;
+    http_server_config conf;
     conf.host = "0.0.0.0";
     conf.port = 8080;
 
-    auto server = sf_http_server::make_instance(conf);
+    auto server = http_server::make_instance(conf);
 
-    server->add_router(sf_http_router::make_instance("/test_session"s,
-        function([&server](const sf_http_request& req, sf_http_response& res) {
+    server->add_router(http_router::make_instance("/test_session"s,
+        function([&server](const http_request& req, http_response& res) {
             auto ss = server->session(req.session_id());
             if (!ss.has("my_session")) {
                 res.set_text("no session");

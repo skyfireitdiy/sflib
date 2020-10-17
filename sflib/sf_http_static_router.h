@@ -18,18 +18,18 @@
 namespace skyfire {
 using namespace std::literals;
 
-class sf_static_router
-    : public sf_make_instance_t<sf_static_router, sf_router> {
+class static_router
+    : public make_instance_t<static_router, router> {
 private:
     int priority__ = default_http_static_priority;
     std::string static_path__;
     std::vector<std::string> methods__;
-    std::function<void(const sf_http_request&, sf_http_response&,
+    std::function<void(const http_request&, http_response&,
         const std::string&, const std::string&)>
         callback__;
 
 public:
-    bool run_route(const sf_http_request& req, sf_http_response& res,
+    bool run_route(const http_request& req, http_response& res,
         const std::string& url, const std::string& method) override;
 
     [[nodiscard]] int priority() const override;
@@ -43,7 +43,7 @@ public:
      * @param deflate 是否启用压缩
      * @param priority 优先级
      */
-    explicit sf_static_router(std::string path,
+    explicit static_router(std::string path,
         std::vector<std::string> methods = { { "GET"s } },
         std::string charset = "utf-8",
         bool deflate = true,

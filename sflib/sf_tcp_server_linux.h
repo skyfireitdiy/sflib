@@ -44,8 +44,8 @@ struct epoll_context_t {
     std::unordered_map<SOCKET, sock_data_context_t> sock_context__ {};
 };
 
-class sf_tcp_server
-    : public sf_make_instance_t<sf_tcp_server, sf_tcp_server_interface> {
+class tcp_server
+    : public make_instance_t<tcp_server, tcp_server_interface> {
 private:
     int listen_fd__ = -1;
     bool raw__ = false;
@@ -74,9 +74,9 @@ private:
 public:
     SOCKET raw_socket() override;
 
-    explicit sf_tcp_server(bool raw = false, int thread_count = std::thread::hardware_concurrency() * 2 + 2);
+    explicit tcp_server(bool raw = false, int thread_count = std::thread::hardware_concurrency() * 2 + 2);
 
-    ~sf_tcp_server() override;
+    ~tcp_server() override;
 
     bool listen(const std::string& ip, unsigned short port) override;
 

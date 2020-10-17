@@ -12,14 +12,14 @@
 
 namespace skyfire {
 template <typename T>
-sf_chan<T>::sf_chan(int buffer_size)
+chan<T>::chan(int buffer_size)
 {
     // 此处可以为负数，为负数表示不限制大小
     max_size__ = buffer_size;
 }
 
 template <typename T>
-void sf_chan<T>::close()
+void chan<T>::close()
 {
     std::unique_lock<std::mutex> lck(mu__);
     closed__ = true;

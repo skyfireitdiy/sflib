@@ -6,7 +6,7 @@
 */
 
 /*
- * sf_watch_time 时间监测类型
+ * watch_time 时间监测类型
  */
 #pragma once
 #pragma clang diagnostic push
@@ -17,7 +17,7 @@
 
 namespace skyfire {
 template <typename T>
-sf_check_point<T>::~sf_check_point()
+check_point<T>::~check_point()
 {
     parent__.data__[point_name__][std::this_thread::id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::high_resolution_clock::now() - clock__)
@@ -25,7 +25,7 @@ sf_check_point<T>::~sf_check_point()
 }
 
 template <typename T>
-sf_check_point<T>::sf_check_point(const T& name, sf_watch_time<T>& parent)
+check_point<T>::check_point(const T& name, watch_time<T>& parent)
     : point_name__(name)
     , clock__(std::chrono::high_resolution_clock::now())
     , parent__(parent)
@@ -33,13 +33,13 @@ sf_check_point<T>::sf_check_point(const T& name, sf_watch_time<T>& parent)
 }
 
 template <typename T>
-void sf_watch_time<T>::watch()
+void watch_time<T>::watch()
 {
     std::cout << to_string() << std::flush;
 }
 
 template <typename T>
-std::string sf_watch_time<T>::to_string()
+std::string watch_time<T>::to_string()
 {
     std::ostringstream so;
     auto old = so.flags();
@@ -62,7 +62,7 @@ std::string sf_watch_time<T>::to_string()
         for (auto& q : p.second) {
             so << std::setw(30) << p.first << std::setw(6) << "|"
                << std::setw(12) << q.first << std::setw(6) << "|"
-               << sf_convert_ns_to_readable(q.second) << std::endl;
+               << convert_ns_to_readable(q.second) << std::endl;
         }
     }
     so << "--------------------------------------------------------------------"

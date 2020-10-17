@@ -5,43 +5,43 @@
 
 namespace skyfire {
 
-inline void sf_http_res_header::add_cookies(const sf_http_cookie_item_t& cookies)
+inline void http_res_header::add_cookies(const http_cookie_item_t& cookies)
 {
     res_cookies__[cookies.key] = cookies;
 }
 
-inline void sf_http_res_header::add_cookies(const std::string& key, const std::string& value)
+inline void http_res_header::add_cookies(const std::string& key, const std::string& value)
 {
-    sf_http_cookie_item_t cookie;
+    http_cookie_item_t cookie;
     cookie.key = key;
     cookie.value = value;
     add_cookies(cookie);
 }
 
-inline void sf_http_res_header::clear_cookies(bool clear_session)
+inline void http_res_header::clear_cookies(bool clear_session)
 {
-    if (res_cookies__.count(sf_session_id_key) != 0) {
+    if (res_cookies__.count(session_id_key) != 0) {
         if (clear_session == false) {
-            auto id = res_cookies__[sf_session_id_key];
+            auto id = res_cookies__[session_id_key];
             res_cookies__.clear();
-            res_cookies__[sf_session_id_key] = id;
+            res_cookies__[session_id_key] = id;
             return;
         }
     }
     res_cookies__.clear();
 }
 
-inline void sf_http_res_header::remove_cookies(const std::string& key)
+inline void http_res_header::remove_cookies(const std::string& key)
 {
     res_cookies__.erase(key);
 }
 
-inline std::unordered_map<std::string, sf_http_cookie_item_t> sf_http_res_header::res_cookies() const
+inline std::unordered_map<std::string, http_cookie_item_t> http_res_header::res_cookies() const
 {
     return res_cookies__;
 }
 
-inline std::string sf_http_res_header::to_string() const
+inline std::string http_res_header::to_string() const
 {
     std::string ret;
     for (auto& p : header_data__) {
@@ -51,7 +51,7 @@ inline std::string sf_http_res_header::to_string() const
     for (auto& p : res_cookies__) {
         std::string value_str = p.second.key + "="s + p.second.value + ";"s;
         if (p.second.life_type == cookie_life_type::time_point) {
-            value_str += "Expires=" + sf_make_http_time_str(p.second.time_point) + ";"s;
+            value_str += "Expires=" + make_http_time_str(p.second.time_point) + ";"s;
         }
         std::string cookie_path = "/";
         if (!p.second.path.empty()) {

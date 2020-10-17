@@ -31,7 +31,7 @@ namespace skyfire {
 /**
  *  @brief 包头
  */
-struct sf_pkg_header_t {
+struct pkg_header_t {
     unsigned char checksum; // 校验和
     int type; // 包类型
     int length; // 包长度
@@ -68,28 +68,28 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
  * 计算header的校验和
  * @param header 包头
  */
-inline void make_header_checksum(sf_pkg_header_t& header);
+inline void make_header_checksum(pkg_header_t& header);
 
 /**
  * 校验header的校验和
  * @param header 包头
  * @return 是否通过校验
  */
-inline bool check_header_checksum(const sf_pkg_header_t& header);
+inline bool check_header_checksum(const pkg_header_t& header);
 
 /**
  * 64位整型网络字节序转主机字节序
  * @param input 整型数字（网络字节序）
  * @return 整型数字（主机字节序）
  */
-inline unsigned long long sf_ntoh64(unsigned long long input);
+inline unsigned long long ntoh64(unsigned long long input);
 
 /**
  * 64位整型主机字节序转网络字节序
  * @param input 整型数字（主机字节序）
  * @return 整型数字（网络字节序）
  */
-inline unsigned long long sf_hton64(unsigned long long input);
+inline unsigned long long hton64(unsigned long long input);
 
 /**
  * @brief 是否是大端序
@@ -97,6 +97,6 @@ inline unsigned long long sf_hton64(unsigned long long input);
  * @return true 大端序
  * @return false 非大端序
  */
-inline bool sf_big_endian();
+inline bool big_endian();
 
 } // namespace skyfire
