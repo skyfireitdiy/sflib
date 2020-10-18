@@ -4,13 +4,13 @@
 #include "sf_single_instance.h"
 #include "sf_stdc++.h"
 
-#define assert(exp, msg)                                                     \
+#define sf_assert(exp, msg)                                                     \
     if (!(exp)) {                                                               \
         std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " :" \
                   << " Assert Failure: " << msg << std::endl;                   \
     }
 
-#define should_throw(exp, expection, msg)                                                                             \
+#define sf_should_throw(exp, expection, msg)                                                                             \
     {                                                                                                                    \
         try {                                                                                                            \
             {                                                                                                            \
@@ -25,7 +25,7 @@
         }                                                                                                                \
     }
 
-#define should_no_throw(exp, msg)                                                \
+#define sf_should_no_throw(exp, msg)                                                \
     {                                                                               \
         try {                                                                       \
             exp;                                                                    \
@@ -74,68 +74,68 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
 #define MAKE_TEST_VAR_NAME_WRAP(a, b) a##b
 #define MAKE_TEST_VAR_NAME(a, b) MAKE_TEST_VAR_NAME_WRAP(a, b)
 
-#define sf_test(name, ...)                                                                                 \
-    bool name();                                                                                           \
+#define sf_test(name, ...)                                                                              \
+    bool name();                                                                                        \
     skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                              \
         []() { skyfire::test_base__(__FILE__,                                                           \
-                   __LINE__,                                                                               \
-                   #name,                                                                                  \
-                   std::function(name),                                                                    \
+                   __LINE__,                                                                            \
+                   #name,                                                                               \
+                   std::function(name),                                                                 \
                    ##__VA_ARGS__); }); \
     bool name()
 
 #define test_p(name, type, ...)                                                                         \
-    bool name(const type&);                                                                                \
+    bool name(const type&);                                                                             \
     skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                              \
         []() { skyfire::test_base__(__FILE__,                                                           \
-                   __LINE__,                                                                               \
-                   #name,                                                                                  \
-                   std::function(name),                                                                    \
+                   __LINE__,                                                                            \
+                   #name,                                                                               \
+                   std::function(name),                                                                 \
                    ##__VA_ARGS__); }); \
     bool name(const type& test_param)
 
-#define test_assert(exp)                                                                                                  \
+#define test_assert(exp)                                                                                                     \
     if (!(exp)) {                                                                                                            \
-        std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                         \
+        std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                            \
         std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : `" << #exp << "` return false!" << std::endl; \
         return false;                                                                                                        \
     }
 
-#define test_p_eq(a, b)                                                                                                    \
+#define test_p_eq(a, b)                                                                                                       \
     {                                                                                                                         \
         auto __a__ = (a);                                                                                                     \
         auto __b__ = (b);                                                                                                     \
         if (__a__ != __b__) {                                                                                                 \
-            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                      \
+            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                         \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " != " << __b__ << std::endl; \
             return false;                                                                                                     \
         }                                                                                                                     \
     }
 
-#define test_p_neq(a, b)                                                                                                   \
+#define test_p_neq(a, b)                                                                                                      \
     {                                                                                                                         \
         auto __a__ = (a);                                                                                                     \
         auto __b__ = (b);                                                                                                     \
         if (__a__ == __b__) {                                                                                                 \
-            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                      \
+            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                         \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " == " << __b__ << std::endl; \
             return false;                                                                                                     \
         }                                                                                                                     \
     }
 
-#define test_np_eq(a, b)                                                                                           \
+#define test_np_eq(a, b)                                                                                              \
     {                                                                                                                 \
         if ((a) != (b)) {                                                                                             \
-            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                              \
+            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                 \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` != `" #b "`" << std::endl; \
             return false;                                                                                             \
         }                                                                                                             \
     }
 
-#define test_np_neq(a, b)                                                                                          \
+#define test_np_neq(a, b)                                                                                             \
     {                                                                                                                 \
         if ((a) != (b)) {                                                                                             \
-            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                              \
+            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                 \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` == `" #b "`" << std::endl; \
             return false;                                                                                             \
         }                                                                                                             \

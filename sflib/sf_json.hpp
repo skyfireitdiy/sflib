@@ -13,15 +13,15 @@
 #pragma ide diagnostic ignored "cert-err34-c"
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_lex.hpp"
-#include "sf_yacc.hpp"
 #include "sf_define.h"
+#include "sf_error.h"
 #include "sf_json.h"
+#include "sf_lex.hpp"
 #include "sf_logger.hpp"
 #include "sf_meta.hpp"
 #include "sf_msvc_safe.h"
 #include "sf_utils.hpp"
-#include "sf_error.h"
+#include "sf_yacc.hpp"
 
 namespace skyfire {
 inline json json::from_string(const std::string& json_str)
@@ -583,7 +583,7 @@ inline void json::convert_to_null() const
 inline size_t json::size() const
 {
     return value__->type == json_type ::array ? value__->array_value.size()
-                                                 : 0;
+                                              : 0;
 }
 
 inline bool json::has(const std::string& key) const
@@ -620,59 +620,56 @@ json to_json(std::shared_ptr<T> pt)
     return json(*pt);
 }
 
-inline bool json::operator!=(const json& other) const {
+inline bool json::operator!=(const json& other) const
+{
     return !(*this == other);
 }
 
-inline bool json::operator==(const json& other) const {
-    if(value__->type != other.value__->type){
+inline bool json::operator==(const json& other) const
+{
+    if (value__->type != other.value__->type) {
         return false;
     }
     switch (value__->type) {
-        case json_type::null:
+    case json_type::null:
         return true;
-        case json_type::array:
-        {
-            auto sz = size();
-            auto osz = other.size();
-            if (sz != osz ){
+    case json_type::array: {
+        auto sz = size();
+        auto osz = other.size();
+        if (sz != osz) {
+            return false;
+        }
+        for (int i = 0; i < sz; ++i) {
+            if ((*this)[i] != other[i]) {
                 return false;
             }
-            for(int i=0;i<sz;++i){
-                if((*this)[i] != other[i]){
-                    return false;
-                }
-            }
-            return true;
         }
-        case json_type::boolean:
-        {
-            return bool(*this) == bool(other);
+        return true;
+    }
+    case json_type::boolean: {
+        return bool(*this) == bool(other);
+    }
+    case json_type::number: {
+        return static_cast<long double>(*this) == static_cast<long double>(other);
+    }
+    case json_type::object: {
+        auto this_keys = keys();
+        auto other_keys = other.keys();
+        if (this_keys != other_keys) {
+            return false;
         }
-        case json_type::number:
-        {
-            return static_cast<long double>(*this) == static_cast<long double>(other);
-        }
-        case json_type::object:
-        {
-            auto this_keys = keys();
-            auto other_keys = other.keys();
-            if (this_keys != other_keys){
+        for (auto p : this_keys) {
+            if ((*this)[p] != other[p]) {
                 return false;
             }
-            for(auto p:this_keys){
-                if((*this)[p] != other[p]){
-                    return false;
-                }
-            }
-            return true;
         }
-        case json_type::string:
-        {
-            return static_cast<std::string>(*this) == static_cast<std::string>(other);
-        }
-        default:
-        throw exception(parse_unsupport_type_err, "unsupport type:"+std::to_string(static_cast<int>(value__->type)));
+        return true;
+    }
+    case json_type::string: {
+        return static_cast<std::string>(*this) == static_cast<std::string>(other);
+    }
+    default:
+        throw exception(parse_unsupport_type_err, "unsupport type:" + std::to_string(static_cast<int>(value__->type)));
     }
 }
 
@@ -755,7 +752,7 @@ void from_json(const json& js, T& value)
 template <typename T>
 void from_json(const json& js, std::shared_ptr<T>& value)
 {
-    if (js.is_null()){
+    if (js.is_null()) {
         return;
     }
     value = std::make_shared<T>(static_cast<T>(js));
@@ -812,49 +809,49 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
     data = { ret... };
 }
 
-#define SF_CONTAINER_JSON_IMPL(container)                            \
-    template <typename T>                                            \
+#define SF_CONTAINER_JSON_IMPL(container)                         \
+    template <typename T>                                         \
     inline json to_json(const container<T>& value)                \
-    {                                                                \
+    {                                                             \
         json js;                                                  \
-        js.convert_to_array();                                       \
-        for (auto& p : value) {                                      \
-            js.append(to_json(p));                                   \
-        }                                                            \
-        return js;                                                   \
-    }                                                                \
-    template <>                                                      \
+        js.convert_to_array();                                    \
+        for (auto& p : value) {                                   \
+            js.append(to_json(p));                                \
+        }                                                         \
+        return js;                                                \
+    }                                                             \
+    template <>                                                   \
     inline json to_json(const container<char>& value)             \
-    {                                                                \
-        return json(char_container_to_hex_string(value));      \
-    }                                                                \
-    template <typename T>                                            \
+    {                                                             \
+        return json(char_container_to_hex_string(value));         \
+    }                                                             \
+    template <typename T>                                         \
     inline void from_json(const json& js, container<T>& value)    \
-    {                                                                \
-        std::vector<T> data;                                         \
-        int sz = js.size();                                          \
-        data.resize(sz);                                             \
-        for (int i = 0; i < sz; ++i) {                               \
-            from_json<T>(js.at(i), data[i]);                         \
-        }                                                            \
-        value = container<T> { data.begin(), data.end() };           \
-    }                                                                \
-    template <>                                                      \
+    {                                                             \
+        std::vector<T> data;                                      \
+        int sz = js.size();                                       \
+        data.resize(sz);                                          \
+        for (int i = 0; i < sz; ++i) {                            \
+            from_json<T>(js.at(i), data[i]);                      \
+        }                                                         \
+        value = container<T> { data.begin(), data.end() };        \
+    }                                                             \
+    template <>                                                   \
     inline void from_json(const json& js, container<char>& value) \
-    {                                                                \
-        std::string tmp;                                             \
-        from_json(js, tmp);                                          \
+    {                                                             \
+        std::string tmp;                                          \
+        from_json(js, tmp);                                       \
         hex_string_to_char_container(tmp, value);                 \
     }
 
 #define SF_ASSOCIATED_CONTAINER_JSON_IMPL(container)             \
     template <typename K, typename V>                            \
-    json to_json(const container<K, V>& value)                \
+    json to_json(const container<K, V>& value)                   \
     {                                                            \
-        json js;                                              \
+        json js;                                                 \
         js.convert_to_array();                                   \
         for (auto& p : value) {                                  \
-            json tmp_js;                                      \
+            json tmp_js;                                         \
             tmp_js.convert_to_object();                          \
             tmp_js["key"] = to_json(p.first);                    \
             tmp_js["value"] = to_json(p.second);                 \
@@ -863,7 +860,7 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
         return js;                                               \
     }                                                            \
     template <typename K, typename V>                            \
-    void from_json(const json& js, container<K, V>& value)    \
+    void from_json(const json& js, container<K, V>& value)       \
     {                                                            \
         std::vector<std::pair<K, V>> data;                       \
         int sz = js.size();                                      \
