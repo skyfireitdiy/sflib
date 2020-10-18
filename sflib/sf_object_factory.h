@@ -17,6 +17,11 @@
 #include "sf_nocopy.h"
 
 namespace skyfire {
+
+/**
+ * @brief 对象工厂
+ * 
+ */
 class object_factory final : public nocopy<> {
    public:
     /**

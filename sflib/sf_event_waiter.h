@@ -2,11 +2,11 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file __event_waiter__.h
+* @file event_waiter.h
 */
 
 /*
- * __event_waiter__ 事件等待
+ * event_waiter 事件等待
  */
 
 #pragma once
@@ -34,7 +34,7 @@
 
 namespace skyfire {
 /**
- * 对待对象
+ * 等待对象
  * @tparam ARGS 等待参数列表
  */
 template <typename... ARGS>

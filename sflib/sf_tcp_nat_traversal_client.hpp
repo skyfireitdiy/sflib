@@ -200,14 +200,14 @@ inline std::string tcp_nat_traversal_client::connect_to_peer(
         // 获取到本机要连接外网的ip端口，保存至连接上下文
         if (!local_addr(tmp_p2p_conn_context.point_a_client_1->raw_socket(),
                         addr)) {
-            error("get local ip port error");
+            sf_error("get local ip port error");
             return "";
         }
 
         tmp_p2p_conn_context.point_a_server = tcp_server::make_instance();
         // 复用刚才断开的连接1端口号
         if (!tmp_p2p_conn_context.point_a_server->listen(addr.ip, addr.port)) {
-            error("listen local ip port error", addr.ip, addr.port);
+            sf_error("listen local ip port error", addr.ip, addr.port);
             return "";
         }
 

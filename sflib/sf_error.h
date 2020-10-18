@@ -46,6 +46,11 @@ enum error_code {
     index_out_of_range = 0x0001000c,
 };
 
+/**
+ * @brief 异常
+ * 
+ */
+
 class exception : public std::exception {
 private:
     int ec__;
@@ -69,6 +74,10 @@ public:
     }
 };
 
+/**
+ * @brief 错误
+ * 
+ */
 class err {
 private:
     exception exp__;

@@ -4,6 +4,11 @@
 
 namespace skyfire {
 template <typename... Type>
+
+/**
+ * @brief 多值类型
+ * 
+ */
 class multi_value {
 private:
     std::tuple<std::decay_t<Type>...> data__;

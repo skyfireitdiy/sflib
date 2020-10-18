@@ -32,6 +32,12 @@ protected:
     friend class check_point<T>;
 };
 
+/**
+ * @brief 检查点
+ * 
+ * @tparam std::string 检查点标识类型
+ */
+
 template <typename T = std::string>
 class check_point {
 private:

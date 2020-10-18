@@ -678,7 +678,7 @@ inline http_base_server::http_base_server(
     , file_cache__(cache::make_instance(config.max_cache_count))
     , server__(std::make_shared<tcp_server>(true, config.thread_count))
 {
-    info("server config:", to_json(config));
+    sf_info("server config:", to_json(config));
 
     sf_bind(
         server__, raw_data_coming,

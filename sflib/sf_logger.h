@@ -175,16 +175,16 @@ private:
 #define debug(...) skyfire::g_logger->empty_func__()
 #endif
 
-#define info(...)                                                      \
+#define sf_info(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_INFO_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
-#define warn(...)                                                      \
+#define sf_warn(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_WARN_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
-#define error(...)                                                      \
+#define sf_error(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_ERROR_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
-#define fatal(...)                                                      \
+#define sf_fatal(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_FATAL_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
 

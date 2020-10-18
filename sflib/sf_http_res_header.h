@@ -3,6 +3,12 @@
 #include "sf_http_header.h"
 
 namespace skyfire {
+
+/**
+ * @brief http响应头
+ * 
+ */
+
 class http_res_header : public http_header {
 private:
     int status__ = 200;

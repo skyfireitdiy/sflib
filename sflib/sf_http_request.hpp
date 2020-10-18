@@ -88,13 +88,13 @@ inline bool http_request::parse_request__()
                 multipart_data__ = true;
                 auto boundary_str_list = split_string(tmp_str, "=");
                 if (boundary_str_list.size() != 2) {
-                    error("boundary str size error");
+                    sf_error("boundary str size error");
                     error__ = true;
                     return false;
                 }
                 multipart_data_context__.request_line = request_line__;
                 if (boundary_str_list[1].size() <= 2) {
-                    error("boundary is too short");
+                    sf_error("boundary is too short");
                     error__ = true;
                     return false;
                 }
