@@ -114,7 +114,7 @@ inline std::string long_double_to_string(const long double& num)
 {
     auto buffer = std::to_string(num);
     if (buffer.length() > 7) {
-        if (std::string(buffer.end() - 7, buffer.end()) == ".sf_0") {
+        if (std::string(buffer.end() - 7, buffer.end()) == ".000000") {
             buffer = { buffer.begin(), buffer.end() - 7 };
         }
     }
