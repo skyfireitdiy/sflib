@@ -68,8 +68,8 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
 }
 
 #define sf_test_add(a, ...) skyfire::test_base__(__FILE__, __LINE__, std::string(#a), std::function(a), ##__VA_ARGS__)
-#define test_env(...) skyfire::test_base__::set_env(__VA_ARGS__)
-#define test_global_env(...) skyfire::test_base__::set_global_env(__VA_ARGS__)
+#define sf_test_env(...) skyfire::test_base__::set_env(__VA_ARGS__)
+#define sf_test_global_env(...) skyfire::test_base__::set_global_env(__VA_ARGS__)
 
 #define MAKE_TEST_VAR_NAME_WRAP(a, b) a##b
 #define MAKE_TEST_VAR_NAME(a, b) MAKE_TEST_VAR_NAME_WRAP(a, b)
