@@ -13,15 +13,17 @@ struct test_argv_param {
 bool test_parser_none_postion(const test_argv_param& p)
 {
     auto parser = argparser::make_parser();
-    parser->add_argument("-t", "--test", json_type::string);
+    parser->add_argument("--test", { argv::short_name("-t") });
     auto result = parser->parse_argv(p.args, false);
-    return json(result) == p.result;
+
+    test_p_eq(json(result), p.result);
+    return true;
 }
 
 bool test_other_name(const test_argv_param& p)
 {
     auto parser = argparser::make_parser();
-    parser->add_argument("-t", "--test", json_type::string, true, {}, "other");
+    parser->add_argument("--test", { argv::short_name("-t"), argv::required(), argv::json_name("other") });
     auto result = parser->parse_argv(p.args, false);
     return json(result) == p.result;
 }
@@ -29,10 +31,10 @@ bool test_other_name(const test_argv_param& p)
 bool test_param_type(const test_argv_param& p)
 {
     auto parser = argparser::make_parser();
-    parser->add_argument("-s", "--string", json_type::string);
-    parser->add_argument("-n", "--number", json_type::number);
-    parser->add_argument("-a", "--array", json_type::array);
-    parser->add_argument("-b", "--boolean", json_type::boolean);
+    parser->add_argument("--string", {argv::short_name("-s"), argv::type(json_type::string)});
+    parser->add_argument("--number", {argv::short_name("-n"), argv::type(json_type::number)});
+    parser->add_argument("--array", {argv::short_name("-a"), argv::type(json_type::array)});
+    parser->add_argument("--boolean", {argv::short_name("-b"), argv::type(json_type::boolean)});
 
     auto result = parser->parse_argv(p.args, false);
     return json(result) == p.result;

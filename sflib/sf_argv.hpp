@@ -33,7 +33,18 @@ inline void argparser::add_sub_parser(
     sub_parsers_[name] = sub_parser;
 }
 
-inline bool argparser::add_argument(skyfire::argv_opt_t opt)
+inline bool argparser::add_argument(const std::string& long_name,
+    std::initializer_list<argv_opt_option_func_type> options)
+{
+    argv_opt_t opt;
+    opt.long_name = long_name;
+    for (auto& f : options) {
+        f(opt);
+    }
+    return add_argument(opt);
+}
+
+inline bool argparser::add_argument(argv_opt_t opt)
 {
     if (opt.json_name.empty()) {
         opt.json_name = opt.long_name;
