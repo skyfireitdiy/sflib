@@ -148,7 +148,7 @@ inline void http_response::remove_cookie(const std::string& key)
 inline std::unordered_map<std::string, http_cookie_item_t>
 http_response::cookies() const
 {
-    return header__.res_cookies();
+    return header__.cookies();
 }
 
 inline void http_response::redirect(const std::string& new_location,

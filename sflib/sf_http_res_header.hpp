@@ -36,7 +36,7 @@ inline void http_res_header::remove_cookies(const std::string& key)
     res_cookies__.erase(key);
 }
 
-inline std::unordered_map<std::string, http_cookie_item_t> http_res_header::res_cookies() const
+inline std::unordered_map<std::string, http_cookie_item_t> http_res_header::cookies() const
 {
     return res_cookies__;
 }

@@ -51,7 +51,7 @@ public:
      * 
      * @return std::unordered_map<std::string, http_cookie_item_t> 响应cookie
      */
-    std::unordered_map<std::string, http_cookie_item_t> res_cookies() const;
+    std::unordered_map<std::string, http_cookie_item_t> cookies() const;
 
     /**
      * 生成符合http标准的字符串格式的头文本，用于发送/查看，注意：cookie不包含在头列表中，但是生成字符串时，会将cookie编入
