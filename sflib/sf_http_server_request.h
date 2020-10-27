@@ -9,12 +9,13 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_tcp_server.h"
 #include "sf_http_header.h"
 #include "sf_http_request_line.h"
+#include "sf_http_server_req_header.h"
 #include "sf_http_utils.h"
-#include "sf_type.h"
 #include "sf_logger.h"
+#include "sf_tcp_server.h"
+#include "sf_type.h"
 #include "sf_utils.h"
 
 namespace skyfire {
@@ -27,10 +28,10 @@ private:
     bool valid__ = false;
     bool error__ = false;
     http_request_line request_line__;
-    http_header header__;
+    http_server_req_header header__;
     byte_array body__;
     bool multipart_data__ = false;
-    multipart_data_context_t multipart_data_context__;
+    http_server_req_multipart_data_context_t multipart_data_context__;
     std::unordered_map<std::string, std::string> cookies__;
     std::shared_ptr<std::istream> istream_ptr__ = nullptr;
     SOCKET sock__;
@@ -71,7 +72,7 @@ public:
      * 
      * @param header header
      */
-    void set_header(const http_header& header);
+    void set_header(const http_server_req_header& header);
 
     /**
      * @brief 设置cookies
@@ -92,7 +93,7 @@ public:
      * @param multipart_data 分块数据集合
      * @param sock 请求套接字
      */
-    explicit http_server_request(multipart_data_context_t multipart_data,
+    explicit http_server_request(http_server_req_multipart_data_context_t multipart_data,
         SOCKET sock);
 
     /**
@@ -119,7 +120,7 @@ public:
      * 获取请求头
      * @return 请求头对象（不包括cookie）
      */
-    http_header header() const;
+    http_server_req_header header() const;
 
     /**
      * @brief 获取http 头
@@ -147,7 +148,7 @@ public:
      * 获取分块请求的分块集合（在分块请求可用）
      * @return 分块集合
      */
-    multipart_data_context_t multipart_data_context() const;
+    http_server_req_multipart_data_context_t multipart_data_context() const;
 
     /**
      * 获取cookies

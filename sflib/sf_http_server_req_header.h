@@ -9,7 +9,7 @@ namespace skyfire {
  * @brief http 请求header
  * 
  */
-class http_req_header : public http_header {
+class http_server_req_header : public http_header {
 
 private:
     std::unordered_map<std::string, std::string> cookies__;

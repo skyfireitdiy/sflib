@@ -11,9 +11,9 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_server_request.hpp"
-#include "sf_http_server_response.hpp"
 #include "sf_http_router.h"
+#include "sf_http_server_request.h"
+#include "sf_http_server_response.h"
 #include "sf_router.hpp"
 #include "sf_router_shared_ptr_compare.h"
 #include "sf_stdc++.h"

@@ -9,9 +9,10 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_cache.h"
 #include "sf_eventloop.h"
+#include "sf_http_middleware.h"
+#include "sf_http_server_config.h"
 #include "sf_http_server_request.h"
 #include "sf_http_server_response.h"
-#include "sf_http_server_config.h"
 #include "sf_http_utils.h"
 #include "sf_json.h"
 #include "sf_tcp_server.h"
@@ -21,7 +22,6 @@
 #include <mutex>
 #include <utility>
 #include <vector>
-#include "sf_http_middleware.h"
 
 namespace skyfire {
 
@@ -54,7 +54,7 @@ private:
     std::recursive_mutex mu_request_context__;
     std::unordered_map<SOCKET, websocket_context_t> websocket_context__;
     std::recursive_mutex mu_websocket_context__;
-    std::unordered_map<SOCKET, multipart_data_context_t>
+    std::unordered_map<SOCKET, http_server_req_multipart_data_context_t>
         multipart_data_context__;
     std::recursive_mutex mu_multipart_data_context__;
 
@@ -75,7 +75,6 @@ private:
         std::string etag;
         std::string last_modify;
     };
-
 
     mutable std::recursive_mutex mu_session__;
     std::unordered_map<std::string, std::shared_ptr<session_data_t>>
@@ -98,7 +97,7 @@ private:
     void on_socket_closed__(SOCKET sock);
 
     byte_array append_multipart_data__(
-        multipart_data_context_t& multipart_data,
+        http_server_req_multipart_data_context_t& multipart_data,
         const byte_array& data) const;
 
     void file_response__(SOCKET sock, http_server_response& res) const;
@@ -108,7 +107,7 @@ private:
     void multipart_response__(SOCKET sock, http_server_response& res);
 
     static bool check_analysis_multipart_file__(
-        std::vector<http_server_response::multipart_info_t>& multipart_data);
+        std::vector<http_server_res_multipart_info_t>& multipart_data);
 
     void close_request__(SOCKET sock);
 
@@ -121,21 +120,21 @@ private:
         const http_server_request& request);
 
     void send_response_file_part__(
-        SOCKET sock, const http_server_response::response_file_info_t& file,
+        SOCKET sock, const http_server_response_file_info_t& file,
         std::ifstream& fi) const;
 
-    void set_file_etag__(http_server_response &res, const file_etag_t& etag) const;
+    void set_file_etag__(http_server_response& res, const file_etag_t& etag) const;
 
-    file_etag_t make_etag__(const http_server_response::response_file_info_t& file) const;
+    file_etag_t make_etag__(const http_server_response_file_info_t& file) const;
 
-        public :
-        /**
+public:
+    /**
      * 获取session
      * @param session_key session key
      * @return session的json对象（注意是浅拷贝）
      */
-        json
-        session(const std::string& session_key);
+    json
+    session(const std::string& session_key);
     /**
      * @brief 保持session活动（赋予session生命值）
      *

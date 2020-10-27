@@ -8,7 +8,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_multipart.hpp"
+#include "sf_http_server_req_multipart.hpp"
 #include "sf_http_utils.h"
 
 namespace skyfire {

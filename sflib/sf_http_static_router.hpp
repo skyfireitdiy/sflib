@@ -14,12 +14,8 @@
 
 #pragma once
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err34-c"
-#pragma ide diagnostic ignored "bugprone-lambda-function-name"
-
+#include "sf_http_server_req_header.hpp"
 #include "sf_http_static_router.h"
-
 #include "sf_msvc_safe.h"
 #include "sf_stdc++.h"
 #include "sf_utils.hpp"
@@ -41,7 +37,7 @@ inline bool static_router::run_route(const http_server_request& req,
         url = url.substr(1);
     }
     auto abs_path = fs::path(static_path__) / url;
-    http_header header;
+    http_server_req_header header;
     byte_array body_data;
     if (!fs::exists(abs_path) || fs::is_directory(abs_path)) {
         return false;
@@ -67,7 +63,7 @@ inline static_router::static_router(std::string path,
 
     callback__ = [=](const http_server_request& req, http_server_response& res,
                      const std::string& url, const std::string& abs_path) {
-        http_res_header header;
+        http_server_res_header header;
         byte_array body_data;
 
         header.set_header("Date", make_http_time_str());
@@ -104,7 +100,7 @@ inline static_router::static_router(std::string path,
                         p = string_trim(p);
                     }
                     if (range_list.size() > 1) {
-                        std::vector<http_server_response::multipart_info_t>
+                        std::vector<http_server_res_multipart_info_t>
                             multipart_info_vec;
                         bool error_flag = false;
                         for (auto& range_str : range_list) {
@@ -113,7 +109,7 @@ inline static_router::static_router(std::string path,
 #elif defined(LONG_LONG_MAX)
                             long long start = LONG_LONG_MAX;
 #else
-                            #error long long max not define!
+#error long long max not define!
 #endif
                             long long end = -1;
 #ifdef _MSC_VER
@@ -130,10 +126,10 @@ inline static_router::static_router(std::string path,
                                 _416_res();
                                 break;
                             }
-                            http_server_response::multipart_info_t tmp_part;
-                            tmp_part.type = http_server_response::multipart_info_t::
+                            http_server_res_multipart_info_t tmp_part;
+                            tmp_part.type = http_server_res_multipart_info_t::
                                 multipart_info_type::file;
-                            tmp_part.file_info = http_server_response::response_file_info_t {
+                            tmp_part.file_info = http_server_response_file_info_t {
                                 abs_path, start, end
                             };
                             multipart_info_vec.emplace_back(tmp_part);
@@ -149,8 +145,8 @@ inline static_router::static_router(std::string path,
 #elif defined(LONG_LONG_MAX)
                         auto start = LONG_LONG_MAX;
 #else
-                        #error long long max not define!
-#endif 
+#error long long max not define!
+#endif
                         long long end = -1;
 #ifdef _MSC_VER
                         if (sscanf_s(range_list[0].c_str(), "%lld-%lld", &start,
@@ -165,7 +161,7 @@ inline static_router::static_router(std::string path,
                             _401_res();
                         } else {
                             res.set_header(header);
-                            res.set_file(http_server_response::response_file_info_t {
+                            res.set_file(http_server_response_file_info_t {
                                 abs_path, start, end, file_size });
                             return;
                         }
@@ -174,7 +170,7 @@ inline static_router::static_router(std::string path,
             } else {
                 debug("big file", abs_path);
                 res.set_header(header);
-                res.set_file(http_server_response::response_file_info_t { abs_path, 0, -1, file_size });
+                res.set_file(http_server_response_file_info_t { abs_path, 0, -1, file_size });
                 return;
             }
         }
@@ -199,5 +195,3 @@ inline static_router::static_router(std::string path,
 inline int static_router::priority() const { return priority__; }
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

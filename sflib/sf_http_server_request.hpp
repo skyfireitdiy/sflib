@@ -9,13 +9,13 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_server_request.h"
+#include "sf_http_server_req_header.hpp"
 #include "sf_http_request_line.h"
-#include "sf_utils.hpp"
-// ReSharper disable once CppUnusedIncludeDirective
+#include "sf_http_server_request.h"
 #include "sf_http_utils.hpp"
 #include "sf_logger.hpp"
 #include "sf_random.hpp"
+#include "sf_utils.hpp"
 
 namespace skyfire {
 
@@ -42,7 +42,7 @@ inline bool http_server_request::split_request(
 
 inline byte_array http_server_request::body() const { return body__; }
 
-inline http_header http_server_request::header() const { return header__; }
+inline http_server_req_header http_server_request::header() const { return header__; }
 
 inline http_request_line http_server_request::request_line() const
 {
@@ -148,14 +148,14 @@ inline bool http_server_request::is_multipart_data() const
     return multipart_data__;
 }
 
-inline multipart_data_context_t http_server_request::multipart_data_context()
+inline http_server_req_multipart_data_context_t http_server_request::multipart_data_context()
     const
 {
     return multipart_data_context__;
 }
 
 inline http_server_request::http_server_request(
-    multipart_data_context_t multipart_data, SOCKET sock)
+    http_server_req_multipart_data_context_t multipart_data, SOCKET sock)
 {
     valid__ = true;
     request_line__ = multipart_data.request_line;
@@ -270,7 +270,7 @@ inline void http_server_request::set_request_line(const http_request_line& reque
     request_line__ = request_line;
 }
 
-inline void http_server_request::set_header(const http_header& header)
+inline void http_server_request::set_header(const http_server_req_header& header)
 {
     header__ = header;
 }

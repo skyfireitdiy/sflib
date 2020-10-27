@@ -5,14 +5,12 @@
 * @file sf_http_utils.h
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_stdc++.h"
-#include "sf_type.h"
 #include "sf_http_request_line.h"
-#include "sf_tcp_utils.h"
 #include "sf_json.hpp"
+#include "sf_stdc++.h"
+#include "sf_tcp_utils.h"
+#include "sf_type.h"
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
@@ -23,7 +21,7 @@
 namespace skyfire {
 constexpr char session_id_key[] = "_SESSION_ID";
 
-class http_multipart;
+class http_server_req_multipart;
 
 /**
  * @brief  http头原始类型
@@ -62,12 +60,12 @@ SF_JSONIFY(websocket_context_t, url, sock, buffer, data_buffer)
 /**
  *  @brief 分块请求上下文
  */
-struct multipart_data_context_t final {
+struct http_server_req_multipart_data_context_t final {
     SOCKET sock; // socket
     std::string boundary_str; // 分解字符串
     http_header_t header; // 头
     http_request_line request_line; // 请求行
-    std::vector<http_multipart> multipart; // 分块信息
+    std::vector<http_server_req_multipart> multipart; // 分块信息
 };
 
 /**
@@ -90,6 +88,57 @@ struct http_cookie_item_t final {
     bool secure = false; // 安全性
     bool http_only = true; // http only
 };
+
+/**
+ * @brief  响应类型
+ */
+enum class http_server_response_type {
+    normal, // 普通类型
+    file, // 文件类型
+    multipart // multipart类型
+};
+
+/**
+ * @brief
+ * 响应文件信息（当响应类型为file或者响应类型为multipart，子类型为file时，使用改数据结构声明文件）
+ */
+struct http_server_response_file_info_t final {
+    std::string filename;
+    long long begin;
+    long long end;
+    long unsigned int file_size;
+};
+
+/**
+ * @brief  multipart类型信息
+ */
+struct http_server_res_multipart_info_t final {
+    /**
+     *  @brief multipart子类型
+     */
+    enum class multipart_info_type {
+        form, // 表单
+        file // 文件
+    };
+    /**
+     *  @brief 表单信息，当type为multipart_info_type::form时有效
+     */
+    struct form_info_t final {
+        http_header_t header; // 响应头
+        byte_array body; // 响应体
+    };
+
+    multipart_info_type
+        type; // multipart子类型，当响应类型为multipart时有效
+    form_info_t
+        form_info; // 表单信息，当type为multipart_info_type::form时有效
+    http_server_response_file_info_t
+        file_info; // 响应文件信息，当type为multipart_info_type::file时有效
+};
+
+using http_client_req_multipart_info_t = http_server_res_multipart_info_t;
+
+//////////////////////////////////////////////////////////////////////////////
 
 /**
  * 数字转为16进制字符，如10 转为a
@@ -197,5 +246,3 @@ inline byte_array sha1_encode(const byte_array& data);
  */
 inline byte_array deflate_compress(const byte_array& input_buffer);
 } // namespace skyfire
-
-#pragma clang diagnostic pop

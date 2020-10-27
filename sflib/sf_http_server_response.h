@@ -8,7 +8,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_res_header.h"
+#include "sf_http_server_res_header.h"
 #include "sf_http_server_request.h"
 #include "sf_http_utils.h"
 #include "sf_json.h"
@@ -21,60 +21,13 @@ class http_server_base;
  * @brief  HTTP响应
  */
 class http_server_response final {
-public:
-    /**
-     * @brief  响应类型
-     */
-    enum class response_type {
-        normal, // 普通类型
-        file, // 文件类型
-        multipart // multipart类型
-    };
-
-    /**
-     * @brief
-     * 响应文件信息（当响应类型为file或者响应类型为multipart，子类型为file时，使用改数据结构声明文件）
-     */
-    struct response_file_info_t final {
-        std::string filename;
-        long long begin;
-        long long end;
-        long unsigned int file_size;
-    };
-
-    /**
-     * @brief  multipart类型信息
-     */
-    struct multipart_info_t final {
-        /**
-         *  @brief multipart子类型
-         */
-        enum class multipart_info_type {
-            form, // 表单
-            file // 文件
-        };
-        /**
-         *  @brief 表单信息，当type为multipart_info_type::form时有效
-         */
-        struct form_info_t final {
-            http_header_t header; // 响应头
-            byte_array body; // 响应体
-        };
-
-        multipart_info_type
-            type; // multipart子类型，当响应类型为multipart时有效
-        form_info_t
-            form_info; // 表单信息，当type为multipart_info_type::form时有效
-        response_file_info_t
-            file_info; // 响应文件信息，当type为multipart_info_type::file时有效
-    };
 
 private:
-    http_res_header header__;
+    http_server_res_header header__;
     byte_array body__;
-    response_type type__ = { response_type ::normal };
-    response_file_info_t file_info__;
-    std::vector<multipart_info_t> multipart_info_vec__;
+    http_server_response_type type__ = { http_server_response_type ::normal };
+    http_server_response_file_info_t file_info__;
+    std::vector<http_server_res_multipart_info_t> multipart_info_vec__;
 
     const http_server_request req__;
 
@@ -113,7 +66,7 @@ public:
      * 设置http响应头
      * @param header 响应头
      */
-    void set_header(const http_res_header& header);
+    void set_header(const http_server_res_header& header);
 
     /**
      * @brief 添加http头
@@ -139,7 +92,7 @@ public:
      * 设置响应文件（会设置类型为file）
      * @param file_info 文件信息
      */
-    void set_file(const response_file_info_t& file_info);
+    void set_file(const http_server_response_file_info_t& file_info);
 
     /**
      * 设置响应文件（默认为整个文件）
@@ -151,7 +104,7 @@ public:
      * 设置分块响应（会设置类型为multipart）
      * @param multipart_info_vec 分块信息
      */
-    void set_multipart(const std::vector<multipart_info_t>& multipart_info_vec);
+    void set_multipart(const std::vector<http_server_res_multipart_info_t>& multipart_info_vec);
     /**
      * 添加cookie
      * @param cookie_data cookie信息
@@ -205,19 +158,19 @@ public:
      * 获取响应类型
      * @return 响应类型
      */
-    response_type type() const;
+    http_server_response_type type() const;
 
     /**
      * 获取响应文件
      * @return 响应文件信息
      */
-    response_file_info_t file() const;
+    http_server_response_file_info_t file() const;
 
     /**
      * 获取分块响应信息
      * @return 分块响应信息
      */
-    std::vector<multipart_info_t> multipart() const;
+    std::vector<http_server_res_multipart_info_t> multipart() const;
 
     /**
      * 获取响应长度

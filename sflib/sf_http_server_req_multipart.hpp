@@ -2,31 +2,34 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file sf_http_multipart.hpp
+* @file sf_http_server_req_multipart.hpp
 */
 
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_multipart.h"
+#include "sf_http_server_req_multipart.h"
 
 namespace skyfire {
-inline http_multipart::http_multipart(const std::string &boundary_str,
-                                            const std::string &tmp_path)
-    : boundary_str__(boundary_str),
-      filename__(fs::path(tmp_path) / random::instance()->uuid_str()) {}
+inline http_server_req_multipart::http_server_req_multipart(const std::string& boundary_str,
+    const std::string& tmp_path)
+    : boundary_str__(boundary_str)
+    , filename__(fs::path(tmp_path) / random::instance()->uuid_str())
+{
+}
 
-inline http_header http_multipart::header() const { return header__; }
+inline http_server_req_header http_server_req_multipart::header() const { return header__; }
 
-inline bool http_multipart::is_end() const { return end__; }
+inline bool http_server_req_multipart::is_end() const { return end__; }
 
-inline bool http_multipart::is_finished() const { return finish__; }
+inline bool http_server_req_multipart::is_finished() const { return finish__; }
 
-inline std::string http_multipart::filename() const { return filename__; }
+inline std::string http_server_req_multipart::filename() const { return filename__; }
 
-inline bool http_multipart::append_data(const byte_array &data,
-                                           byte_array &ret) {
+inline bool http_server_req_multipart::append_data(const byte_array& data,
+    byte_array& ret)
+{
     const auto new_boundary_str = "----" + boundary_str__;
     if (first_block) {
         auto tmp_data = to_string(data);
@@ -38,7 +41,7 @@ inline bool http_multipart::append_data(const byte_array &data,
         std::vector<std::string> header_lines;
         byte_array body;
         if (!http_server_request::split_request(data, request_line, header_lines,
-                                            body)) {
+                body)) {
             ret = data;
             return false;
         }
@@ -49,7 +52,7 @@ inline bool http_multipart::append_data(const byte_array &data,
         first_block = false;
         fp__ = std::shared_ptr<std::ofstream>(
             new std::ofstream(filename__, std::ios::binary | std::ios::out),
-            [](std::ofstream *p) {
+            [](std::ofstream* p) {
                 if (p->good()) {
                     p->close();
                 }
@@ -63,7 +66,7 @@ inline bool http_multipart::append_data(const byte_array &data,
             ret = byte_array();
             return true;
         } else {
-            fp__->write(body.data(), finish_pos - 2);    // 有一个\r\n
+            fp__->write(body.data(), finish_pos - 2); // 有一个\r\n
             finish__ = true;
             fp__->close();
             if (finish_pos == body_str.find(new_boundary_str + "--")) {
@@ -71,7 +74,7 @@ inline bool http_multipart::append_data(const byte_array &data,
                 ret = byte_array();
                 return true;
             } else {
-                ret = {body.begin() + finish_pos, body.end()};
+                ret = { body.begin() + finish_pos, body.end() };
                 return true;
             }
         }
@@ -84,7 +87,7 @@ inline bool http_multipart::append_data(const byte_array &data,
             ret = byte_array();
             return true;
         } else {
-            fp__->write(body.data(), finish_pos - 2);    // 有一个\r\n
+            fp__->write(body.data(), finish_pos - 2); // 有一个\r\n
             finish__ = true;
             fp__->close();
             if (finish_pos == body_str.find(new_boundary_str + "--")) {
@@ -92,11 +95,11 @@ inline bool http_multipart::append_data(const byte_array &data,
                 ret = byte_array();
                 return true;
             } else {
-                ret = {body.begin() + finish_pos, body.end()};
+                ret = { body.begin() + finish_pos, body.end() };
                 return true;
             }
         }
     }
 }
-}    // namespace skyfire
+} // namespace skyfire
 #pragma clang diagnostic pop

@@ -9,7 +9,7 @@ namespace skyfire {
  * 
  */
 
-class http_res_header : public http_header {
+class http_server_res_header : public http_header {
 private:
     int status__ = 200;
     std::string http_version__ = "HTTP/1.1";
@@ -57,7 +57,7 @@ public:
      * 生成符合http标准的字符串格式的头文本，用于发送/查看，注意：cookie不包含在头列表中，但是生成字符串时，会将cookie编入
      * @return 生成的头文本
      */
-    std::string to_string() const;
+    std::string to_string() const override;
 
     /**
      * 设置http状态码
