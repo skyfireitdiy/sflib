@@ -28,7 +28,7 @@
 namespace skyfire {
 using namespace std::literals;
 
-inline bool static_router::run_route(const http_request& req,
+inline bool static_router::run_route(const http_server_request& req,
     http_response& res,
     const std::string& raw_url,
     const std::string& method)
@@ -65,7 +65,7 @@ inline static_router::static_router(std::string path,
         }
     }
 
-    callback__ = [=](const http_request& req, http_response& res,
+    callback__ = [=](const http_server_request& req, http_response& res,
                      const std::string& url, const std::string& abs_path) {
         http_res_header header;
         byte_array body_data;

@@ -27,7 +27,7 @@
 namespace skyfire {
 template <typename FuncType, int N, typename... Args>
 typename std::enable_if<sizeof...(Args) == N, void>::type
-http_router::callback_call_helper__(const http_request &req,
+http_router::callback_call_helper__(const http_server_request &req,
                                        http_response &res, FuncType func,
                                        const std::smatch &sm, Args... args) {
     debug("call callback_call_helper__");
@@ -36,7 +36,7 @@ http_router::callback_call_helper__(const http_request &req,
 
 template <typename FuncType, int N, typename... Args>
 typename std::enable_if<sizeof...(Args) != N, void>::type
-http_router::callback_call_helper__(const http_request &req,
+http_router::callback_call_helper__(const http_server_request &req,
                                        http_response &res, FuncType func,
                                        const std::smatch &sm, Args... args) {
     debug("call callback_call_helper__");
@@ -46,7 +46,7 @@ http_router::callback_call_helper__(const http_request &req,
 
 template <typename... StringType>
 http_router::http_router(const std::string &pattern,
-                               void (*callback)(const http_request &,
+                               void (*callback)(const http_server_request &,
                                                 http_response &,
                                                 StringType...),
                                const std::vector<std::string> &methods,
@@ -56,12 +56,12 @@ http_router::http_router(const std::string &pattern,
 template <typename... StringType>
 http_router::http_router(
     const std::string &pattern,
-    std::function<void(const http_request &, http_response &,
+    std::function<void(const http_server_request &, http_response &,
                        StringType...)>
         callback,
     std::vector<std::string> methods, int priority)
     : priority__(priority), methods__(std::move(methods)) {
-    route_callback__ = [=](const http_request &req, http_response &res,
+    route_callback__ = [=](const http_server_request &req, http_response &res,
                            const std::string &url) {
         debug("call route");
         std::regex re(pattern);
@@ -77,7 +77,7 @@ http_router::http_router(
     };
 }
 
-inline bool http_router::run_route(const http_request &req,
+inline bool http_router::run_route(const http_server_request &req,
                                       http_response &res,
                                       const std::string &url,
                                       const std::string &method) {

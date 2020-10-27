@@ -30,31 +30,31 @@ using namespace std::string_literals;
 namespace skyfire {
 
 inline void http_base_server::http_handler__(
-    const SOCKET sock, const http_request& http_request)
+    const SOCKET sock, const http_server_request& http_server_request)
 {
     bool keep_alive = true;
-    http_response res(http_request);
+    http_response res(http_server_request);
     res.set_status(200);
-    res.set_http_version(http_request.request_line().http_version);
+    res.set_http_version(http_server_request.request_line().http_version);
 
     http_cookie_item_t session_cookie;
     session_cookie.key = session_id_key;
-    auto session_id = http_request.session_id();
+    auto session_id = http_server_request.session_id();
     session_cookie.value = session_id;
     keep_session_alive(session_id);
     res.add_cookie(session_cookie);
 
-    request_callback__(http_request, res);
+    request_callback__(http_server_request, res);
 
     // 运行中间件
     for(auto &m:middleware__){
-        if(!m->before(http_request, res)){
+        if(!m->before(http_server_request, res)){
             return;
         }
     }
 
     if (equal_nocase_string(
-            http_request.header().header_value("Connection", "Close"),
+            http_server_request.header().header_value("Connection", "Close"),
             "Close")) {
         keep_alive = false;
     }
@@ -64,7 +64,7 @@ inline void http_base_server::http_handler__(
 
     // 运行中间件，以相反的顺序执行
     for(auto m = middleware__.rbegin(); m != middleware__.rend(); ++m){
-        if(!(*m)->after(http_request, res)){
+        if(!(*m)->after(http_server_request, res)){
             return;
         }
     }
@@ -125,7 +125,7 @@ inline void http_base_server::raw_data_coming__(SOCKET sock,
 
             if (multipart_data_context__[sock].multipart.back().is_end()) {
                 debug("boundary data finished");
-                http_handler__(sock, http_request(multipart_data_context__[sock], sock));
+                http_handler__(sock, http_server_request(multipart_data_context__[sock], sock));
                 multipart_data_context__.erase(sock);
             }
             request_context__[sock].buffer.clear();
@@ -134,7 +134,7 @@ inline void http_base_server::raw_data_coming__(SOCKET sock,
     }
 
     std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
-    http_request request(request_context__[sock].buffer, sock);
+    http_server_request request(request_context__[sock].buffer, sock);
     if (request.is_valid()) {
         request_context__[sock].new_req = true;
         request_context__[sock].buffer.clear();
@@ -180,7 +180,7 @@ inline void http_base_server::raw_data_coming__(SOCKET sock,
 }
 
 inline void http_base_server::build_websocket_context_data__(
-    SOCKET sock, const http_request& request)
+    SOCKET sock, const http_server_request& request)
 {
     // NOTE 删除记录，防止超时检测线程关闭连接
     std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
@@ -210,7 +210,7 @@ inline void http_base_server::build_websocket_context_data__(
 }
 
 inline void http_base_server::build_boundary_context_data(
-    SOCKET sock, const http_request& request)
+    SOCKET sock, const http_server_request& request)
 {
     debug("is boundary data");
     // 初始化boundary数据
@@ -220,7 +220,7 @@ inline void http_base_server::build_boundary_context_data(
     lck.unlock();
     if (!multipart_data.multipart.empty() && multipart_data.multipart.back().is_end()) {
         debug("boundary data success one time");
-        http_handler__(sock, http_request(multipart_data, sock));
+        http_handler__(sock, http_server_request(multipart_data, sock));
     } else {
         debug("boundary data prepare");
         std::lock_guard<std::recursive_mutex> lck2(mu_multipart_data_context__);
@@ -700,14 +700,14 @@ inline http_base_server::http_base_server(
 }
 
 inline void http_base_server::set_request_callback(
-    std::function<void(const http_request&, http_response&)>
+    std::function<void(const http_server_request&, http_response&)>
         request_callback)
 {
     request_callback__ = std::move(request_callback);
 }
 
 inline void http_base_server::set_websocket_request_callback(
-    std::function<void(const http_request&, http_response&)>
+    std::function<void(const http_server_request&, http_response&)>
         websocket_request_callback)
 {
     websocket_request_callback__ = std::move(websocket_request_callback);

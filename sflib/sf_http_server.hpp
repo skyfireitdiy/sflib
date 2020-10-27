@@ -23,7 +23,7 @@
 
 namespace skyfire {
 inline void http_server::default_request_callback__(
-    const http_request &req, http_response &res) {
+    const http_server_request &req, http_response &res) {
     const auto req_line = req.request_line();
     std::string url;
     http_header_t param;
@@ -47,7 +47,7 @@ inline http_server::http_server(const http_server_config &config)
       make_instance_t<http_server, http_base_server>(config) {
     // NOTE 普通http回调函数
     set_request_callback(
-        [this](const http_request &req, http_response &res) {
+        [this](const http_server_request &req, http_response &res) {
             debug("http callback");
             default_request_callback__(req, res);
         });
@@ -55,7 +55,7 @@ inline http_server::http_server(const http_server_config &config)
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     set_websocket_request_callback(
-        [this](const http_request &req, http_response &res) {
+        [this](const http_server_request &req, http_response &res) {
             default_websocket_request_callback__(req, res);
         });
     set_websocket_binary_data_callback(
@@ -134,7 +134,7 @@ inline void http_server::default_websocket_binary_data_callback__(
 }
 
 inline void http_server::default_websocket_request_callback__(
-    const http_request &req, http_response &res) const {
+    const http_server_request &req, http_response &res) const {
     auto headers = req.header();
     auto header_key = headers.key_list();
     // 基于sha加密方式的握手协议

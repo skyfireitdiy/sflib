@@ -8,7 +8,7 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_request.h"
+#include "sf_http_server_request.h"
 #include "sf_http_response.h"
 #include "sf_stdc++.h"
 
@@ -25,7 +25,7 @@ public:
      */
     virtual int priority() const;
 
-    virtual bool run_route(const http_request& req, http_response& res,
+    virtual bool run_route(const http_server_request& req, http_response& res,
         const std::string& url, const std::string& method);
 };
 

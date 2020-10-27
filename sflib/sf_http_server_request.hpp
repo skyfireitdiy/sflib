@@ -2,14 +2,14 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file sf_http_request.hpp
+* @file sf_http_server_request.hpp
 */
 
 #pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_request.h"
+#include "sf_http_server_request.h"
 #include "sf_http_request_line.h"
 #include "sf_utils.hpp"
 // ReSharper disable once CppUnusedIncludeDirective
@@ -19,7 +19,7 @@
 
 namespace skyfire {
 
-inline bool http_request::split_request(
+inline bool http_server_request::split_request(
     const byte_array& raw, std::string& request_line,
     std::vector<std::string>& header_lines, byte_array& body)
 {
@@ -40,25 +40,25 @@ inline bool http_request::split_request(
     return true;
 }
 
-inline byte_array http_request::body() const { return body__; }
+inline byte_array http_server_request::body() const { return body__; }
 
-inline http_header http_request::header() const { return header__; }
+inline http_header http_server_request::header() const { return header__; }
 
-inline http_request_line http_request::request_line() const
+inline http_request_line http_server_request::request_line() const
 {
     return request_line__;
 }
 
-inline bool http_request::is_valid() const { return valid__; }
+inline bool http_server_request::is_valid() const { return valid__; }
 
-inline http_request::http_request(byte_array raw, SOCKET sock)
+inline http_server_request::http_server_request(byte_array raw, SOCKET sock)
     : raw__(std::move(raw))
     , sock__(sock)
 {
     valid__ = parse_request__();
 }
 
-inline bool http_request::parse_request__()
+inline bool http_server_request::parse_request__()
 {
     std::string request_line;
     std::vector<std::string> header_lines;
@@ -117,7 +117,7 @@ inline bool http_request::parse_request__()
     return true;
 }
 
-inline bool http_request::parse_header(
+inline bool http_server_request::parse_header(
     const std::vector<std::string> header_lines, http_header& header)
 {
     for (auto& line : header_lines) {
@@ -132,7 +132,7 @@ inline bool http_request::parse_header(
     return true;
 }
 
-inline bool http_request::parse_request_line(
+inline bool http_server_request::parse_request_line(
     const std::string& request_line, http_request_line& request_line_para)
 {
     std::istringstream si(request_line);
@@ -143,18 +143,18 @@ inline bool http_request::parse_request_line(
     return !!(si >> request_line_para.http_version);
 }
 
-inline bool http_request::is_multipart_data() const
+inline bool http_server_request::is_multipart_data() const
 {
     return multipart_data__;
 }
 
-inline multipart_data_context_t http_request::multipart_data_context()
+inline multipart_data_context_t http_server_request::multipart_data_context()
     const
 {
     return multipart_data_context__;
 }
 
-inline http_request::http_request(
+inline http_server_request::http_server_request(
     multipart_data_context_t multipart_data, SOCKET sock)
 {
     valid__ = true;
@@ -166,7 +166,7 @@ inline http_request::http_request(
     parse_cookies(header__, cookies__);
 }
 
-inline void http_request::parse_cookies(
+inline void http_server_request::parse_cookies(
     const http_header& header_data,
     std::unordered_map<std::string, std::string>& cookies)
 {
@@ -191,13 +191,13 @@ inline void http_request::parse_cookies(
     }
 }
 
-inline std::unordered_map<std::string, std::string> http_request::cookies()
+inline std::unordered_map<std::string, std::string> http_server_request::cookies()
     const
 {
     return cookies__;
 }
 
-inline std::string http_request::session_id() const
+inline std::string http_server_request::session_id() const
 {
     auto ck = cookies();
     if (cookies__.count(session_id_key) == 0) {
@@ -206,11 +206,11 @@ inline std::string http_request::session_id() const
     return ck[session_id_key];
 }
 
-inline bool http_request::is_error() const { return error__; }
+inline bool http_server_request::is_error() const { return error__; }
 
-inline std::string http_request::url() const { return request_line__.url; }
+inline std::string http_server_request::url() const { return request_line__.url; }
 
-inline std::string http_request::base_url() const
+inline std::string http_server_request::base_url() const
 {
     std::string ret;
     http_param_t params;
@@ -219,14 +219,14 @@ inline std::string http_request::base_url() const
     return ret;
 }
 
-inline addr_info_t http_request::addr() const
+inline addr_info_t http_server_request::addr() const
 {
     addr_info_t ret;
     peer_addr(sock__, ret);
     return ret;
 }
 
-inline http_param_t http_request::params() const
+inline http_param_t http_server_request::params() const
 {
     std::string url;
     http_param_t params;
@@ -235,12 +235,12 @@ inline http_param_t http_request::params() const
     return params;
 }
 
-inline http_param_t http_request::body_params() const
+inline http_param_t http_server_request::body_params() const
 {
     return parse_param(to_string(body__));
 }
 
-inline std::string http_request::frame() const
+inline std::string http_server_request::frame() const
 {
     std::string url;
     http_param_t params;
@@ -249,38 +249,38 @@ inline std::string http_request::frame() const
     return frame;
 }
 
-inline std::string http_request::header(
+inline std::string http_server_request::header(
     const std::string& key, const std::string& default_value) const
 {
     return header__.header_value(key, default_value);
 }
 
-inline void http_request::set_body(const byte_array& body)
+inline void http_server_request::set_body(const byte_array& body)
 {
     body__ = body;
 }
 
-inline void http_request::set_body(std::shared_ptr<std::istream> ptr)
+inline void http_server_request::set_body(std::shared_ptr<std::istream> ptr)
 {
     istream_ptr__ = ptr;
 }
 
-inline void http_request::set_request_line(const http_request_line& request_line)
+inline void http_server_request::set_request_line(const http_request_line& request_line)
 {
     request_line__ = request_line;
 }
 
-inline void http_request::set_header(const http_header& header)
+inline void http_server_request::set_header(const http_header& header)
 {
     header__ = header;
 }
 
-inline void http_request::set_cookies(const std::unordered_map<std::string, std::string>& cookies)
+inline void http_server_request::set_cookies(const std::unordered_map<std::string, std::string>& cookies)
 {
     cookies__ = cookies;
 }
 
-inline byte_array http_request::gen_req_data() const
+inline byte_array http_server_request::gen_req_data() const
 {
     // TODO 生成请求数据
     return byte_array();

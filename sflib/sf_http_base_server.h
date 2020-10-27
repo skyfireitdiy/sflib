@@ -9,7 +9,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_cache.h"
 #include "sf_eventloop.h"
-#include "sf_http_request.h"
+#include "sf_http_server_request.h"
 #include "sf_http_response.h"
 #include "sf_http_server_config.h"
 #include "sf_http_utils.h"
@@ -36,10 +36,10 @@ private:
 
     eventloop event_loop__;
 
-    std::function<void(const http_request&, http_response&)>
+    std::function<void(const http_server_request&, http_response&)>
         request_callback__;
 
-    std::function<void(const http_request&, http_response&)>
+    std::function<void(const http_server_request&, http_response&)>
         websocket_request_callback__;
     std::function<void(SOCKET, const std::string& url, const byte_array& data)>
         websocket_binary_data_callback__;
@@ -112,13 +112,13 @@ private:
 
     void close_request__(SOCKET sock);
 
-    void http_handler__(SOCKET sock, const http_request& http_request);
+    void http_handler__(SOCKET sock, const http_server_request& http_server_request);
 
     void build_boundary_context_data(SOCKET sock,
-        const http_request& request);
+        const http_server_request& request);
 
     void build_websocket_context_data__(SOCKET sock,
-        const http_request& request);
+        const http_server_request& request);
 
     void send_response_file_part__(
         SOCKET sock, const http_response::response_file_info_t& file,
@@ -163,19 +163,19 @@ private:
     /**
      * 设置请求回调函数
      * @param request_callback 请求回调函数，函数接收参数为const
-     * http_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端
+     * http_server_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端
      */
     void set_request_callback(
-        std::function<void(const http_request&, http_response&)>
+        std::function<void(const http_server_request&, http_response&)>
             request_callback);
 
     /**
      * 设置websocket回调函数
      * @param websocket_request_callback websocket回调函数，函数接收参数为const
-     * http_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端（websocket握手在此函数中实现）
+     * http_server_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端（websocket握手在此函数中实现）
      */
     void set_websocket_request_callback(
-        std::function<void(const http_request&, http_response&)>
+        std::function<void(const http_server_request&, http_response&)>
             websocket_request_callback);
 
     /**

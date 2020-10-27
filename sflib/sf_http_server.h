@@ -33,10 +33,10 @@ class http_server final
                   router_shared_ptr_compare__<websocket_router>>
         websocket_routers__;
 
-    void default_request_callback__(const http_request &req,
+    void default_request_callback__(const http_server_request &req,
                                     http_response &res);
 
-    void default_websocket_request_callback__(const http_request &req,
+    void default_websocket_request_callback__(const http_server_request &req,
                                               http_response &res) const;
 
     void default_websocket_binary_data_callback__(SOCKET sock,

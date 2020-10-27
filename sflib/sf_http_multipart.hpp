@@ -37,12 +37,12 @@ inline bool http_multipart::append_data(const byte_array &data,
         std::string request_line;
         std::vector<std::string> header_lines;
         byte_array body;
-        if (!http_request::split_request(data, request_line, header_lines,
+        if (!http_server_request::split_request(data, request_line, header_lines,
                                             body)) {
             ret = data;
             return false;
         }
-        if (!http_request::parse_header(header_lines, header__)) {
+        if (!http_server_request::parse_header(header_lines, header__)) {
             ret = data;
             return false;
         }

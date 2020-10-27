@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file sf_http_request.h
+* @file sf_http_server_request.h
 */
 
 #pragma once
@@ -21,7 +21,7 @@ namespace skyfire {
 /**
  * @brief  http请求
  */
-class http_request final {
+class http_server_request final {
 private:
     const byte_array raw__;
     bool valid__ = false;
@@ -43,7 +43,7 @@ public:
      * @param raw 原始数据
      * @param sock 请求套接字
      */
-    explicit http_request(byte_array raw, SOCKET sock);
+    explicit http_server_request(byte_array raw, SOCKET sock);
 
     /**
      * @brief 设置body
@@ -92,7 +92,7 @@ public:
      * @param multipart_data 分块数据集合
      * @param sock 请求套接字
      */
-    explicit http_request(multipart_data_context_t multipart_data,
+    explicit http_server_request(multipart_data_context_t multipart_data,
         SOCKET sock);
 
     /**

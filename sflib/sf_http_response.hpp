@@ -9,14 +9,14 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_res_header.hpp"
-#include "sf_http_request.hpp"
+#include "sf_http_server_request.hpp"
 #include "sf_http_response.h"
 #include "sf_http_status.h"
 #include "sf_json.hpp"
 
 namespace skyfire {
 
-inline http_response::http_response(const http_request& request)
+inline http_response::http_response(const http_server_request& request)
     : req__(request)
 {
 }
@@ -33,7 +33,7 @@ inline std::string http_response::http_version() const {
     return header__.http_version();
 }
 
-inline const http_request http_response::get_req() const { return req__; }
+inline const http_server_request http_response::get_req() const { return req__; }
 
 inline void http_response::set_status(int status)
 {

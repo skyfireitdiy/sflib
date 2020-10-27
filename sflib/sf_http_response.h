@@ -9,7 +9,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_res_header.h"
-#include "sf_http_request.h"
+#include "sf_http_server_request.h"
 #include "sf_http_utils.h"
 #include "sf_json.h"
 #include "sf_stdc++.h"
@@ -76,7 +76,7 @@ private:
     response_file_info_t file_info__;
     std::vector<multipart_info_t> multipart_info_vec__;
 
-    const http_request req__;
+    const http_server_request req__;
 
 public:
     /**
@@ -84,14 +84,14 @@ public:
      * 
      * @param req 关联的req
      */
-    http_response(const http_request& req);
+    http_response(const http_server_request& req);
 
     /**
      * @brief 获取请求对象
      * 
-     * @return const http_request 请求对象
+     * @return const http_server_request 请求对象
      */
-    const http_request get_req() const;
+    const http_server_request get_req() const;
 
     /**
      * 设置http状态码
