@@ -10,7 +10,7 @@
 
 #include "sf_stdc++.h"
 #include "sf_http_server_request.hpp"
-#include "sf_http_response.hpp"
+#include "sf_http_server_response.hpp"
 #include "sf_router.hpp"
 #include "sf_utils.h"
 
@@ -21,7 +21,7 @@ namespace skyfire {
 class http_router final
     : public make_instance_t<http_router, router> {
    private:
-    std::function<bool(const http_server_request &, http_response &,
+    std::function<bool(const http_server_request &, http_server_response &,
                        const std::string &)>
         route_callback__;
     const int priority__{};
@@ -30,12 +30,12 @@ class http_router final
 
     template <typename FuncType, int N, typename... Args>
     static typename std::enable_if<sizeof...(Args) == N, void>::type
-    callback_call_helper__(const http_server_request &req, http_response &res,
+    callback_call_helper__(const http_server_request &req, http_server_response &res,
                            FuncType func, const std::smatch &sm, Args... args);
 
     template <typename FuncType, int N, typename... Args>
     static typename std::enable_if<sizeof...(Args) != N, void>::type
-    callback_call_helper__(const http_server_request &req, http_response &res,
+    callback_call_helper__(const http_server_request &req, http_server_response &res,
                            FuncType func, const std::smatch &sm, Args... args);
     ;
 
@@ -52,7 +52,7 @@ class http_router final
      */
     template <typename... StringType>
     http_router(const std::string &pattern,
-                   void (*callback)(const http_server_request &, http_response &,
+                   void (*callback)(const http_server_request &, http_server_response &,
                                     StringType...),
                    const std::vector<std::string> &methods = {{"*"}},
                    int priority = default_http_endpoint_priority);
@@ -70,7 +70,7 @@ class http_router final
     template <typename... StringType>
     http_router(const std::string &pattern,
                    std::function<void(const http_server_request &,
-                                      http_response &, StringType...)>
+                                      http_server_response &, StringType...)>
                        callback,
                    std::vector<std::string> methods = {{"*"}},
                    int priority = default_http_endpoint_priority);
@@ -83,7 +83,7 @@ class http_router final
      * @param method 请求方式
      * @return 是否已处理
      */
-    bool run_route(const http_server_request &req, http_response &res,
+    bool run_route(const http_server_request &req, http_server_response &res,
                    const std::string &url, const std::string &method);
 
     /**

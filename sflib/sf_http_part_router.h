@@ -12,7 +12,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_request.hpp"
-#include "sf_http_response.hpp"
+#include "sf_http_server_response.hpp"
 #include "sf_http_router.h"
 #include "sf_router.hpp"
 #include "sf_router_shared_ptr_compare.h"
@@ -30,7 +30,7 @@ private:
     const std::vector<std::string> methods__;
     std::recursive_mutex methods_mu__;
     std::vector<std::string> prefix__;
-    std::function<bool(const http_server_request&, http_response&)> callback__;
+    std::function<bool(const http_server_request&, http_server_response&)> callback__;
 
     std::multiset<std::shared_ptr<router>,
         router_shared_ptr_compare__<router>>
@@ -50,7 +50,7 @@ public:
      */
     http_part_router(
         std::string prefix,
-        std::function<bool(const http_server_request&, http_response&)>
+        std::function<bool(const http_server_request&, http_server_response&)>
             callback,
         std::vector<std::string> methods = { { "*" } },
         int priority = default_http_part_priority);
@@ -64,7 +64,7 @@ public:
      */
     http_part_router(const std::string& prefix,
         bool (*callback)(const http_server_request&,
-            http_response&),
+            http_server_response&),
         const std::vector<std::string>& methods = { { "*" } },
         int priority = default_http_part_priority);
 
@@ -92,7 +92,7 @@ public:
      * @return true 通行
      * @return false 拦截
      */
-    bool run_route(const http_server_request& req, http_response& res,
+    bool run_route(const http_server_request& req, http_server_response& res,
         const std::string& url, const std::string& method) override;
 
     /**

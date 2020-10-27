@@ -29,7 +29,7 @@ namespace skyfire {
 using namespace std::literals;
 
 inline bool static_router::run_route(const http_server_request& req,
-    http_response& res,
+    http_server_response& res,
     const std::string& raw_url,
     const std::string& method)
 {
@@ -65,7 +65,7 @@ inline static_router::static_router(std::string path,
         }
     }
 
-    callback__ = [=](const http_server_request& req, http_response& res,
+    callback__ = [=](const http_server_request& req, http_server_response& res,
                      const std::string& url, const std::string& abs_path) {
         http_res_header header;
         byte_array body_data;
@@ -104,7 +104,7 @@ inline static_router::static_router(std::string path,
                         p = string_trim(p);
                     }
                     if (range_list.size() > 1) {
-                        std::vector<http_response::multipart_info_t>
+                        std::vector<http_server_response::multipart_info_t>
                             multipart_info_vec;
                         bool error_flag = false;
                         for (auto& range_str : range_list) {
@@ -130,10 +130,10 @@ inline static_router::static_router(std::string path,
                                 _416_res();
                                 break;
                             }
-                            http_response::multipart_info_t tmp_part;
-                            tmp_part.type = http_response::multipart_info_t::
+                            http_server_response::multipart_info_t tmp_part;
+                            tmp_part.type = http_server_response::multipart_info_t::
                                 multipart_info_type::file;
-                            tmp_part.file_info = http_response::response_file_info_t {
+                            tmp_part.file_info = http_server_response::response_file_info_t {
                                 abs_path, start, end
                             };
                             multipart_info_vec.emplace_back(tmp_part);
@@ -165,7 +165,7 @@ inline static_router::static_router(std::string path,
                             _401_res();
                         } else {
                             res.set_header(header);
-                            res.set_file(http_response::response_file_info_t {
+                            res.set_file(http_server_response::response_file_info_t {
                                 abs_path, start, end, file_size });
                             return;
                         }
@@ -174,7 +174,7 @@ inline static_router::static_router(std::string path,
             } else {
                 debug("big file", abs_path);
                 res.set_header(header);
-                res.set_file(http_response::response_file_info_t { abs_path, 0, -1, file_size });
+                res.set_file(http_server_response::response_file_info_t { abs_path, 0, -1, file_size });
                 return;
             }
         }

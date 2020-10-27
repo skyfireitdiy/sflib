@@ -9,7 +9,7 @@
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_request.h"
-#include "sf_http_response.h"
+#include "sf_http_server_response.h"
 #include "sf_stdc++.h"
 
 namespace skyfire {
@@ -25,7 +25,7 @@ public:
      */
     virtual int priority() const;
 
-    virtual bool run_route(const http_server_request& req, http_response& res,
+    virtual bool run_route(const http_server_request& req, http_server_response& res,
         const std::string& url, const std::string& method);
 };
 

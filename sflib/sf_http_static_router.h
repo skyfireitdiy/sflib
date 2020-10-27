@@ -24,12 +24,12 @@ private:
     int priority__ = default_http_static_priority;
     std::string static_path__;
     std::vector<std::string> methods__;
-    std::function<void(const http_server_request&, http_response&,
+    std::function<void(const http_server_request&, http_server_response&,
         const std::string&, const std::string&)>
         callback__;
 
 public:
-    bool run_route(const http_server_request& req, http_response& res,
+    bool run_route(const http_server_request& req, http_server_response& res,
         const std::string& url, const std::string& method) override;
 
     [[nodiscard]] int priority() const override;

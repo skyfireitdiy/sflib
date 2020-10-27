@@ -12,7 +12,7 @@
 
 namespace skyfire {
 
-class http_base_server;
+class http_server_base;
 
 /**
  * @brief  http头

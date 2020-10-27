@@ -24,13 +24,13 @@
 namespace skyfire {
 inline http_part_router::http_part_router(
     const std::string &prefix,
-    bool (*callback)(const http_server_request &, http_response &),
+    bool (*callback)(const http_server_request &, http_server_response &),
     const std::vector<std::string> &methods, const int priority)
     : http_part_router(prefix, std::function(callback), methods, priority) {}
 
 inline http_part_router::http_part_router(
     std::string prefix,
-    std::function<bool(const http_server_request &, http_response &)> callback,
+    std::function<bool(const http_server_request &, http_server_response &)> callback,
     std::vector<std::string> methods, int priority)
     : priority__(priority),
       methods__(std::move(methods)),
@@ -42,7 +42,7 @@ inline http_part_router::http_part_router(
 }
 
 inline bool http_part_router::run_route(const http_server_request &req,
-                                           http_response &res,
+                                           http_server_response &res,
                                            const std::string &url,
                                            const std::string &method) {
     debug("compare method");

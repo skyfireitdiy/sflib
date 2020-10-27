@@ -8,7 +8,7 @@
 #pragma once
 
 #include "sf_stdc++.h"
-#include "sf_http_base_server.hpp"
+#include "sf_http_server_base.hpp"
 #include "sf_http_part_router.h"
 #include "sf_http_router.hpp"
 #include "sf_http_static_router.hpp"
@@ -22,7 +22,7 @@ namespace skyfire {
  */
 
 class http_server final
-    : public make_instance_t<http_server, http_base_server>,
+    : public make_instance_t<http_server, http_server_base>,
       public std::enable_shared_from_this<http_server> {
    private:
     std::multiset<std::shared_ptr<router>,
@@ -34,10 +34,10 @@ class http_server final
         websocket_routers__;
 
     void default_request_callback__(const http_server_request &req,
-                                    http_response &res);
+                                    http_server_response &res);
 
     void default_websocket_request_callback__(const http_server_request &req,
-                                              http_response &res) const;
+                                              http_server_response &res) const;
 
     void default_websocket_binary_data_callback__(SOCKET sock,
                                                   const std::string &url,

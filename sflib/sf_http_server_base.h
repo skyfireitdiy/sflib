@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file sf_http_base_server.h
+* @file sf_http_server_base.h
 */
 #pragma once
 #pragma clang diagnostic push
@@ -10,7 +10,7 @@
 #include "sf_cache.h"
 #include "sf_eventloop.h"
 #include "sf_http_server_request.h"
-#include "sf_http_response.h"
+#include "sf_http_server_response.h"
 #include "sf_http_server_config.h"
 #include "sf_http_utils.h"
 #include "sf_json.h"
@@ -28,7 +28,7 @@ namespace skyfire {
 /**
  *  @brief  HTTP服务器基础框架
  */
-class http_base_server {
+class http_server_base {
 private:
     const http_server_config config__;
 
@@ -36,10 +36,10 @@ private:
 
     eventloop event_loop__;
 
-    std::function<void(const http_server_request&, http_response&)>
+    std::function<void(const http_server_request&, http_server_response&)>
         request_callback__;
 
-    std::function<void(const http_server_request&, http_response&)>
+    std::function<void(const http_server_request&, http_server_response&)>
         websocket_request_callback__;
     std::function<void(SOCKET, const std::string& url, const byte_array& data)>
         websocket_binary_data_callback__;
@@ -101,14 +101,14 @@ private:
         multipart_data_context_t& multipart_data,
         const byte_array& data) const;
 
-    void file_response__(SOCKET sock, http_response& res) const;
+    void file_response__(SOCKET sock, http_server_response& res) const;
 
-    void normal_response__(SOCKET sock, http_response& res) const;
+    void normal_response__(SOCKET sock, http_server_response& res) const;
 
-    void multipart_response__(SOCKET sock, http_response& res);
+    void multipart_response__(SOCKET sock, http_server_response& res);
 
     static bool check_analysis_multipart_file__(
-        std::vector<http_response::multipart_info_t>& multipart_data);
+        std::vector<http_server_response::multipart_info_t>& multipart_data);
 
     void close_request__(SOCKET sock);
 
@@ -121,12 +121,12 @@ private:
         const http_server_request& request);
 
     void send_response_file_part__(
-        SOCKET sock, const http_response::response_file_info_t& file,
+        SOCKET sock, const http_server_response::response_file_info_t& file,
         std::ifstream& fi) const;
 
-    void set_file_etag__(http_response &res, const file_etag_t& etag) const;
+    void set_file_etag__(http_server_response &res, const file_etag_t& etag) const;
 
-    file_etag_t make_etag__(const http_response::response_file_info_t& file) const;
+    file_etag_t make_etag__(const http_server_response::response_file_info_t& file) const;
 
         public :
         /**
@@ -158,7 +158,7 @@ private:
      * 构造函数
      * @param config http配置
      */
-    explicit http_base_server(const http_server_config& config);
+    explicit http_server_base(const http_server_config& config);
 
     /**
      * 设置请求回调函数
@@ -166,7 +166,7 @@ private:
      * http_server_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端
      */
     void set_request_callback(
-        std::function<void(const http_server_request&, http_response&)>
+        std::function<void(const http_server_request&, http_server_response&)>
             request_callback);
 
     /**
@@ -175,7 +175,7 @@ private:
      * http_server_request&类型参数req和http_response&参数res，处理者根据req来设置res的状态，框架会解析res的状态来返回至客户端（websocket握手在此函数中实现）
      */
     void set_websocket_request_callback(
-        std::function<void(const http_server_request&, http_response&)>
+        std::function<void(const http_server_request&, http_server_response&)>
             websocket_request_callback);
 
     /**

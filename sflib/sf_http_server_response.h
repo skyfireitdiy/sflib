@@ -2,7 +2,7 @@
 /**
 * @version 1.0.0
 * @author skyfire
-* @file sf_http_response.h
+* @file sf_http_server_response.h
 */
 #pragma once
 #pragma clang diagnostic push
@@ -15,12 +15,12 @@
 #include "sf_stdc++.h"
 
 namespace skyfire {
-class http_base_server;
+class http_server_base;
 
 /**
  * @brief  HTTP响应
  */
-class http_response final {
+class http_server_response final {
 public:
     /**
      * @brief  响应类型
@@ -84,7 +84,7 @@ public:
      * 
      * @param req 关联的req
      */
-    http_response(const http_server_request& req);
+    http_server_response(const http_server_request& req);
 
     /**
      * @brief 获取请求对象
@@ -271,7 +271,7 @@ public:
      */
     std::string http_version() const;
 
-    friend http_base_server;
+    friend http_server_base;
 };
 } // namespace skyfire
 #pragma clang diagnostic pop
