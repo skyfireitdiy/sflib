@@ -74,9 +74,6 @@ public:
      * @return 是否存在
      */
     bool has_key(const std::string& key) const;
-
-
-    virtual std::string to_string() const = 0;
 };
 } // namespace skyfire
 #pragma clang diagnostic pop

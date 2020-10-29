@@ -2,27 +2,20 @@
 
 #include "sf_http_header.h"
 #include "sf_http_request_line.h"
-#include "sf_stdc++.h"
+
 namespace skyfire {
-
-/**
- * @brief http 请求header
- * 
- */
-class http_server_req_header : public http_header {
-
+class http_client_req_header : public http_header {
 private:
-    std::unordered_map<std::string, std::string> cookies__;
+    std::unordered_map<std::string, std::string> cookie__;
     http_request_line request_line__;
 
 public:
     /**
-     * @brief 获取cookies
+     * @brief 转为字符串
      * 
-     * @return std::unordered_map<std::string, std::string> cookies
+     * @return std::string 转换结果
      */
-    std::unordered_map<std::string, std::string> cookies() const;
-
+    std::string to_string() const;
 
     /**
      * @brief 增加cookies

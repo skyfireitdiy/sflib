@@ -14,6 +14,9 @@ using http_request_result = multi_value<err, http_client_response>;
 namespace skyfire {
 class http_client_request : public nocopy<make_instance_t<http_client_request>> {
 private:
+    byte_array body__;
+    
+
 public:
     std::shared_ptr<http_client_request> set_body(const byte_array& data);
     std::shared_ptr<http_client_request> add_header(const std::string& key, const std::string& value);

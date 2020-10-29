@@ -57,7 +57,7 @@ public:
      * 生成符合http标准的字符串格式的头文本，用于发送/查看，注意：cookie不包含在头列表中，但是生成字符串时，会将cookie编入
      * @return 生成的头文本
      */
-    std::string to_string() const override;
+    std::string to_string() const;
 
     /**
      * 设置http状态码
