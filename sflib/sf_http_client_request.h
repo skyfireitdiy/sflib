@@ -31,7 +31,7 @@ public:
     std::shared_ptr<http_client_request> set_method(const std::string& method);
     std::shared_ptr<http_client_request> set_file(const std::string& filename);
     std::shared_ptr<http_client_request> set_stream(std::shared_ptr<std::istream> stream);
-    std::shared_ptr<http_client_request> add_multipart(const http_client_req_multipart_info_t& multip);
+    std::shared_ptr<http_client_request> add_multipart(const http_multipart_info_t& multip);
 
     std::shared_ptr<http_request_result> do(std::shared_ptr<http_client> client);
 };
