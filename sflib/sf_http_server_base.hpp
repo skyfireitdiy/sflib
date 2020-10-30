@@ -70,11 +70,11 @@ inline void http_server_base::http_handler__(
     }
 
     // http响应的实现
-    if (res.type() == http_server_response_type::file) {
+    if (res.type() == http_data_type::file) {
         file_response__(sock, res);
-    } else if (res.type() == http_server_response_type::multipart) {
+    } else if (res.type() == http_data_type::multipart) {
         multipart_response__(sock, res);
-    } else if (res.type() == http_server_response_type::normal) {
+    } else if (res.type() == http_data_type::normal) {
         normal_response__(sock, res);
     }
     if (!keep_alive) {
@@ -267,7 +267,7 @@ inline void http_server_base::multipart_response__(SOCKET sock,
     std::vector<std::string> header_vec;
     std::string end_str = "--" + boundary_str + "--";
     for (auto& p : multipart) {
-        if (p.type == http_server_res_multipart_info_t::multipart_info_type::file) {
+        if (p.type == http_multipart_info_t::multipart_info_type::file) {
             auto tmp_str = "--" + boundary_str + "\r\n";
             auto suffix = to_lower_string(get_path_ext(p.file_info.filename));
             if (http_content_type.count(suffix) != 0) {
@@ -280,7 +280,7 @@ inline void http_server_base::multipart_response__(SOCKET sock,
             tmp_str += "Content-Range: bytes " + std::to_string(p.file_info.begin) + "-" + std::to_string(p.file_info.end) + "/" + std::to_string(file_size) + "\r\n\r\n";
             header_vec.push_back(tmp_str);
             content_length += tmp_str.length() + (p.file_info.end - p.file_info.begin) + 2; // 添加\r\n
-        } else if (p.type == http_server_res_multipart_info_t::multipart_info_type::form) {
+        } else if (p.type == http_multipart_info_t::multipart_info_type::form) {
             auto tmp_str = "--" + boundary_str + "\r\n";
             http_server_res_header tmp_header;
             tmp_header.set_header(p.form_info.header);
@@ -308,7 +308,7 @@ inline void http_server_base::multipart_response__(SOCKET sock,
             debug("send res error");
             return;
         }
-        if (multipart[i].type == http_server_res_multipart_info_t::multipart_info_type::file) {
+        if (multipart[i].type == http_multipart_info_t::multipart_info_type::file) {
             std::ifstream fi(multipart[i].file_info.filename,
                 std::ios::in | std::ios::binary);
             if (!fi) {
@@ -321,7 +321,7 @@ inline void http_server_base::multipart_response__(SOCKET sock,
                 debug("send res error");
                 return;
             }
-        } else if (multipart[i].type == http_server_res_multipart_info_t::multipart_info_type::form) {
+        } else if (multipart[i].type == http_multipart_info_t::multipart_info_type::form) {
             if (!server__->send(sock, to_byte_array(header_vec[i]))) {
                 debug("send res error");
                 return;
@@ -343,10 +343,10 @@ inline void http_server_base::multipart_response__(SOCKET sock,
 }
 
 inline bool http_server_base::check_analysis_multipart_file__(
-    std::vector<http_server_res_multipart_info_t>& multipart_data)
+    std::vector<http_multipart_info_t>& multipart_data)
 {
     for (auto& p : multipart_data) {
-        if (p.type == http_server_res_multipart_info_t::multipart_info_type::file) {
+        if (p.type == http_multipart_info_t::multipart_info_type::file) {
             const auto file_size = fs::file_size(p.file_info.filename);
             if (file_size == -1)
                 return false;
@@ -362,7 +362,7 @@ inline bool http_server_base::check_analysis_multipart_file__(
     return true;
 }
 
-inline http_server_base::file_etag_t http_server_base::make_etag__(const http_server_response_file_info_t& file) const
+inline http_server_base::file_etag_t http_server_base::make_etag__(const http_file_info_t& file) const
 {
     std::error_code err;
     auto modify_time = fs::last_write_time(file.filename, err);
@@ -502,7 +502,7 @@ inline void http_server_base::file_response__(SOCKET sock,
 }
 
 inline void http_server_base::send_response_file_part__(
-    SOCKET sock, const http_server_response_file_info_t& file,
+    SOCKET sock, const http_file_info_t& file,
     std::ifstream& fi) const
 {
     fi.seekg(file.begin, std::ios_base::beg);

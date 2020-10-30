@@ -92,17 +92,18 @@ struct http_cookie_item_t final {
 /**
  * @brief  响应类型
  */
-enum class http_server_response_type {
+enum class http_data_type {
     normal, // 普通类型
     file, // 文件类型
-    multipart // multipart类型
+    multipart, // multipart类型
+    stream
 };
 
 /**
  * @brief
  * 响应文件信息（当响应类型为file或者响应类型为multipart，子类型为file时，使用改数据结构声明文件）
  */
-struct http_server_response_file_info_t final {
+struct http_file_info_t final {
     std::string filename;
     long long begin;
     long long end;
@@ -112,7 +113,7 @@ struct http_server_response_file_info_t final {
 /**
  * @brief  multipart类型信息
  */
-struct http_server_res_multipart_info_t final {
+struct http_multipart_info_t final {
     /**
      *  @brief multipart子类型
      */
@@ -132,11 +133,12 @@ struct http_server_res_multipart_info_t final {
         type; // multipart子类型，当响应类型为multipart时有效
     form_info_t
         form_info; // 表单信息，当type为multipart_info_type::form时有效
-    http_server_response_file_info_t
+    http_file_info_t
         file_info; // 响应文件信息，当type为multipart_info_type::file时有效
 };
 
-using http_client_req_multipart_info_t = http_server_res_multipart_info_t;
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 

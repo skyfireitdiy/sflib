@@ -25,9 +25,9 @@ class http_server_response final {
 private:
     http_server_res_header header__;
     byte_array body__;
-    http_server_response_type type__ = { http_server_response_type ::normal };
-    http_server_response_file_info_t file_info__;
-    std::vector<http_server_res_multipart_info_t> multipart_info_vec__;
+    http_data_type type__ = { http_data_type ::normal };
+    http_file_info_t file_info__;
+    std::vector<http_multipart_info_t> multipart_info_vec__;
 
     const http_server_request req__;
 
@@ -92,7 +92,7 @@ public:
      * 设置响应文件（会设置类型为file）
      * @param file_info 文件信息
      */
-    void set_file(const http_server_response_file_info_t& file_info);
+    void set_file(const http_file_info_t& file_info);
 
     /**
      * 设置响应文件（默认为整个文件）
@@ -104,7 +104,7 @@ public:
      * 设置分块响应（会设置类型为multipart）
      * @param multipart_info_vec 分块信息
      */
-    void set_multipart(const std::vector<http_server_res_multipart_info_t>& multipart_info_vec);
+    void set_multipart(const std::vector<http_multipart_info_t>& multipart_info_vec);
     /**
      * 添加cookie
      * @param cookie_data cookie信息
@@ -158,19 +158,19 @@ public:
      * 获取响应类型
      * @return 响应类型
      */
-    http_server_response_type type() const;
+    http_data_type type() const;
 
     /**
      * 获取响应文件
      * @return 响应文件信息
      */
-    http_server_response_file_info_t file() const;
+    http_file_info_t file() const;
 
     /**
      * 获取分块响应信息
      * @return 分块响应信息
      */
-    std::vector<http_server_res_multipart_info_t> multipart() const;
+    std::vector<http_multipart_info_t> multipart() const;
 
     /**
      * 获取响应长度

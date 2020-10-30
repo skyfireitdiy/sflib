@@ -31,5 +31,7 @@ public:
      * @param request_line 请求行
      */
     void set_request_line(const http_request_line& request_line);
+
+    http_request_line& get_request_line() const;
 };
 }

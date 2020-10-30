@@ -5,8 +5,6 @@
 * @file sf_http_server_base.h
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_cache.h"
 #include "sf_eventloop.h"
 #include "sf_http_middleware.h"
@@ -107,7 +105,7 @@ private:
     void multipart_response__(SOCKET sock, http_server_response& res);
 
     static bool check_analysis_multipart_file__(
-        std::vector<http_server_res_multipart_info_t>& multipart_data);
+        std::vector<http_multipart_info_t>& multipart_data);
 
     void close_request__(SOCKET sock);
 
@@ -120,12 +118,12 @@ private:
         const http_server_request& request);
 
     void send_response_file_part__(
-        SOCKET sock, const http_server_response_file_info_t& file,
+        SOCKET sock, const http_file_info_t& file,
         std::ifstream& fi) const;
 
     void set_file_etag__(http_server_response& res, const file_etag_t& etag) const;
 
-    file_etag_t make_etag__(const http_server_response_file_info_t& file) const;
+    file_etag_t make_etag__(const http_file_info_t& file) const;
 
 public:
     /**
@@ -257,4 +255,3 @@ public:
     void add_middleware(std::shared_ptr<http_middleware> m);
 };
 } // namespace skyfire
-#pragma clang diagnostic pop

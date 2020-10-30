@@ -32,4 +32,9 @@ inline void http_client_req_header::set_request_line(const http_request_line& re
     request_line__ = request_line;
 }
 
+inline http_header_line& http_client_req_header::get_request_line() const
+{
+    return request_line__;
+}
+
 }

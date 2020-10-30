@@ -65,34 +65,34 @@ inline void http_server_response::set_header(const http_server_res_header& heade
 
 inline void http_server_response::set_body(const byte_array& body)
 {
-    type__ = http_server_response_type ::normal;
+    type__ = http_data_type ::normal;
     body__ = body;
 }
 
 inline void http_server_response::set_json(const json& json)
 {
-    type__ = http_server_response_type ::normal;
+    type__ = http_data_type ::normal;
     body__ = to_byte_array(json.to_string());
     header__.set_header("Content-Type", "application/json");
 }
 
 inline void http_server_response::set_file(
-    const http_server_response_file_info_t& file_info)
+    const http_file_info_t& file_info)
 {
-    type__ = http_server_response_type ::file;
+    type__ = http_data_type ::file;
     file_info__ = file_info;
 }
 
 inline void http_server_response::set_file(const std::string& filename)
 {
-    type__ = http_server_response_type ::file;
-    file_info__ = http_server_response_file_info_t { filename, 0, -1 };
+    type__ = http_data_type ::file;
+    file_info__ = http_file_info_t { filename, 0, -1 };
 }
 
 inline void http_server_response::set_multipart(
-    const std::vector<http_server_res_multipart_info_t>& multipart_info_vec)
+    const std::vector<http_multipart_info_t>& multipart_info_vec)
 {
-    type__ = http_server_response_type ::multipart;
+    type__ = http_data_type ::multipart;
     multipart_info_vec__ = multipart_info_vec;
 }
 
@@ -105,7 +105,7 @@ inline http_header& http_server_response::header() { return header__; }
 
 inline byte_array http_server_response::to_package() const
 {
-    if (type__ != http_server_response_type::normal)
+    if (type__ != http_data_type::normal)
         return byte_array();
     auto pkg = to_header_package();
     pkg.insert(pkg.end(), body__.begin(), body__.end());
@@ -119,17 +119,17 @@ inline byte_array http_server_response::to_header_package() const
     return { response_head.begin(), response_head.end() };
 }
 
-inline http_server_response_type http_server_response::type() const
+inline http_data_type http_server_response::type() const
 {
     return type__;
 }
 
-inline http_server_response_file_info_t http_server_response::file() const
+inline http_file_info_t http_server_response::file() const
 {
     return file_info__;
 }
 
-inline std::vector<http_server_res_multipart_info_t>
+inline std::vector<http_multipart_info_t>
 http_server_response::multipart() const
 {
     return multipart_info_vec__;
