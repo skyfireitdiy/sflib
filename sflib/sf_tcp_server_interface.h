@@ -111,7 +111,7 @@ public:
 
     /**
      * 发送数据
-     * @param sock scoket
+     * @param sock socket
      * @param data 数据
      * @return 是否发送成功
      */

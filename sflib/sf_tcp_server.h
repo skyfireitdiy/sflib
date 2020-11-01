@@ -7,8 +7,4 @@
 
 #pragma once
 
-#ifdef _WIN32
-#include "sf_tcp_server_win.hpp"
-#else
 #include "sf_tcp_server_linux.hpp"
-#endif
