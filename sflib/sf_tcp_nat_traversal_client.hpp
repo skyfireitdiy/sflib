@@ -101,7 +101,7 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
 
     // 监听端口，等待连接
     connect_context_map__[context.connect_id].point_b_server =
-        tcp_server::make_instance(context.raw);
+        tcp_server::make_instance(tcp::raw(context.raw));
     if (!connect_context_map__[context.connect_id].point_b_server->listen(
             server_addr.ip, auto_port)) {
         context.error_code = err_disconnect;

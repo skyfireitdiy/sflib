@@ -7,13 +7,13 @@
 
 #pragma once
 
+#include "sf_json.hpp"
+#include "sf_logger.hpp"
+#include "sf_nocopy.h"
 #include "sf_object.hpp"
 #include "sf_tcp_server_interface.h"
 #include "sf_tcp_utils.hpp"
 #include "sf_type.hpp"
-#include "sf_json.hpp"
-#include "sf_logger.hpp"
-#include "sf_nocopy.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -55,9 +55,9 @@ struct epoll_context_t {
 class tcp_server
     : public make_instance_t<tcp_server, tcp_server_interface> {
 private:
-    int listen_fd__ = -1;
-    bool raw__ = false;
-    int thread_count__ = std::thread::hardware_concurrency() * 2 + 2;
+    tcp_server_opt_t config__;
+
+    SOCKET listen_fd__;
 
     std::vector<std::thread> thread_vec__;
 
@@ -87,13 +87,7 @@ public:
      */
     SOCKET raw_socket() override;
 
-    /**
-     * @brief 构造一个tcp服务器
-     * 
-     * @param raw 是否是原始包
-     * @param thread_count 线程数量
-     */
-    explicit tcp_server(bool raw = false, int thread_count = std::thread::hardware_concurrency() * 2 + 2);
+    tcp_server(const std::initializer_list<tcp_server_config>& config);
 
     ~tcp_server() override;
 
@@ -140,6 +134,8 @@ public:
      * @return false 发送失败
      */
     bool send(SOCKET sock, const byte_array& data) override;
+
+    err recv(SOCKET sock, byte_array& data) override;
 };
 
 } // namespace skyfire

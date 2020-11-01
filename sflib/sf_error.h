@@ -27,23 +27,26 @@ enum error_code {
     // NAT穿透错误
     err_nat_traversal_err = 0x00000006,
 
-    // channel 关闭
-    chan_close = 0x00010007,
+    err_finished = 0x00000007,
 
     // 解析错误
-    parse_err = 0x00010008,
+    err_parse = 0x00000008,
 
     // 不支持的类型
-    parse_unsupport_type_err = 0x00010009,
+    err_unsupport_type = 0x00000009,
 
     // 缺少必要参数
-    no_enough_argv_err = 0x0001000a,
+    err_not_enough = 0x0000000a,
 
     // 列数量不匹配
-    col_count_mismatch = 0x0001000b,
+    err_col_count_mismatch = 0x0000000b,
 
     // 索引越界
-    index_out_of_range = 0x0001000c,
+    err_index_out_of_range = 0x0000000c,
+
+    // channel 关闭
+    err_chan_close = 0x0000000e,
+
 };
 
 /**

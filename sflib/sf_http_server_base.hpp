@@ -5,8 +5,6 @@
 * @file sf_http_server_base.hpp
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_http_server_base.h"
 
 #include "sf_cache.hpp"
@@ -47,8 +45,8 @@ inline void http_server_base::http_handler__(
     request_callback__(http_server_request, res);
 
     // 运行中间件
-    for(auto &m:middleware__){
-        if(!m->before(http_server_request, res)){
+    for (auto& m : middleware__) {
+        if (!m->before(http_server_request, res)) {
             return;
         }
     }
@@ -63,8 +61,8 @@ inline void http_server_base::http_handler__(
     res.header().set_header("Connection", keep_alive ? "Keep-Alive" : "Close");
 
     // 运行中间件，以相反的顺序执行
-    for(auto m = middleware__.rbegin(); m != middleware__.rend(); ++m){
-        if(!(*m)->after(http_server_request, res)){
+    for (auto m = middleware__.rbegin(); m != middleware__.rend(); ++m) {
+        if (!(*m)->after(http_server_request, res)) {
             return;
         }
     }
@@ -82,7 +80,8 @@ inline void http_server_base::http_handler__(
     }
 }
 
-inline void http_server_base::add_middleware(std::shared_ptr<http_middleware> m){
+inline void http_server_base::add_middleware(std::shared_ptr<http_middleware> m)
+{
     middleware__.push_back(m);
 }
 
@@ -676,7 +675,7 @@ inline http_server_base::http_server_base(
     const http_server_config& config)
     : config__(config)
     , file_cache__(cache::make_instance(config.max_cache_count))
-    , server__(std::make_shared<tcp_server>(true, config.thread_count))
+    , server__(tcp_server::make_instance(std::initializer_list{ tcp::raw(true), tcp::thread_count(config.thread_count) }))
 {
     sf_info("server config:", to_json(config));
 

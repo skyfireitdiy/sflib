@@ -63,13 +63,13 @@ public:
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
         if (ch.closed__) {
-            return err { exception(chan_close, "channel already closed") };
+            return err { exception(err_chan_close, "channel already closed") };
         }
         if (ch.max_size__ != 0) {
             if (ch.data__.empty()) {
                 ch.cond__.wait(lck, [&ch]() { return ch.data__.size() > 0 || ch.closed__; });
                 if (ch.closed__) {
-                    throw exception(chan_close, "channel already closed");
+                    throw exception(err_chan_close, "channel already closed");
                 }
             }
             d = ch.data__.front();
@@ -93,13 +93,13 @@ public:
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
         if (ch.closed__) {
-            return err(exception(chan_close, "channel already closed"));
+            return err(exception(err_chan_close, "channel already closed"));
         }
         if (ch.max_size__ != 0) {
             if (ch.data__.size() == ch.max_size__) {
                 ch.cond__.wait(lck, [&ch]() { return ch.data__.size() < ch.max_size__ || ch.closed__; });
                 if (ch.closed__) {
-                    throw exception(chan_close, "channel already closed");
+                    throw exception(err_chan_close, "channel already closed");
                 }
             }
             ch.data__.push(d);
@@ -108,7 +108,7 @@ public:
             if (ch.has_value__) {
                 ch.cond_push_prepare__.wait(lck, [&ch] { return !ch.has_value__; });
                 if (ch.closed__) {
-                    throw exception(chan_close, "channel already closed");
+                    throw exception(err_chan_close, "channel already closed");
                 }
             }
             ch.buf__ = d;

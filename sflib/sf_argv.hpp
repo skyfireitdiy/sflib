@@ -138,7 +138,7 @@ inline argv_result_t argparser::parse_argv__(
             }
             if (pos >= position_arg_.size()) {
                 return {
-                    err { { parse_err,
+                    err { { err_parse,
                         "too many postion argv" } },
                     json()
 
@@ -170,7 +170,7 @@ inline argv_result_t argparser::parse_argv__(
                 break;
             default:
                 return argv_result_t {
-                    err { { parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {}
+                    err { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {}
                 };
             }
         } else {
@@ -222,7 +222,7 @@ inline argv_result_t argparser::parse_argv__(
                 last_opt = nullptr;
                 break;
             default:
-                return argv_result_t { err { { parse_unsupport_type_err, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {} };
+                return argv_result_t { err { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {} };
             }
         }
     }
@@ -230,7 +230,7 @@ inline argv_result_t argparser::parse_argv__(
         if (p.required) {
             if (!ret.has(p.json_name)) {
                 return {
-                    err { { no_enough_argv_err,
+                    err { { err_not_enough,
                         p.short_name + "/" + p.long_name + " is required" } },
                     json()
                 };
@@ -241,7 +241,7 @@ inline argv_result_t argparser::parse_argv__(
         if (p.required) {
             if (!ret.has(p.json_name)) {
                 return {
-                    err { { no_enough_argv_err,
+                    err { { err_not_enough,
                         p.short_name + "/" + p.long_name + " is required" } },
                     json()
                 };

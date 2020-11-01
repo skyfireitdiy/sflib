@@ -7,13 +7,14 @@
 
 #pragma once
 
+#include "sf_error.h"
 #include "sf_net_utils.h"
-#include "sf_server_socket_filter.h"
+#include "sf_nocopy.h"
 #include "sf_object.h"
+#include "sf_server_socket_filter.h"
 #include "sf_stdc++.h"
 #include "sf_tcp_utils.h"
 #include "sf_type.h"
-#include "sf_nocopy.h"
 
 namespace skyfire {
 /**
@@ -48,12 +49,20 @@ class tcp_server_interface : public nocopy<object> {
      */
     sf_singal(write_error, SOCKET);
 
+    /*
+     * 可读信号
+     */
+    sf_singal(ready_read, SOCKET);
+
+    /*
+     * 可写信号
+     */
+    sf_singal(ready_write, SOCKET);
+
 private:
     std::vector<std::shared_ptr<server_socket_filter>> filters__;
 
 protected:
-    bool manage_clients__ { true };
-
     void after_raw_recv_filter__(SOCKET sock, byte_array& data);
     void after_recv_filter__(SOCKET sock, pkg_header_t& header,
         byte_array& data);
@@ -65,11 +74,8 @@ protected:
     void disconnect_sock_filter__(SOCKET sock);
 
 public:
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
     void add_server_socket_filter(
         std::shared_ptr<server_socket_filter>&& filter);
-#pragma clang diagnostic pop
 
     /**
      * 获取原始socket
@@ -118,13 +124,14 @@ public:
      */
     bool server_addr(addr_info_t& addr);
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+
     /**
-     * 设置是否管理客户端连接
-     * @param flag 是否管理
+     * @brief 读取套接字信息
+     * 
+     * @param sock 套接字
+     * @param data 数据
+     * @return err 错误信息
      */
-    void set_manage_clients(bool flag);
-#pragma clang diagnostic pop
+    virtual err recv(SOCKET sock, byte_array& data) = 0;
 };
 } // namespace skyfire

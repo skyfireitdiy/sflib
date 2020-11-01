@@ -669,7 +669,7 @@ inline bool json::operator==(const json& other) const
         return static_cast<std::string>(*this) == static_cast<std::string>(other);
     }
     default:
-        throw exception(parse_unsupport_type_err, "unsupport type:" + std::to_string(static_cast<int>(value__->type)));
+        throw exception(err_unsupport_type, "unsupport type:" + std::to_string(static_cast<int>(value__->type)));
     }
 }
 

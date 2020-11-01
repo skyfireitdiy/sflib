@@ -13,7 +13,7 @@ table_result_t table::add_row(const std::vector<std::string>& data)
 {
     if (data.size() != col_num__) {
         return table_result_t {
-            col_count_mismatch,
+            err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(data.size()))
         };
     }
@@ -29,7 +29,7 @@ table_result_t table::add_rows(const std::vector<std::vector<std::string>>& data
     for (auto& p : data) {
         if (p.size() != col_num__) {
             return table_result_t {
-                col_count_mismatch,
+                err_col_count_mismatch,
                 "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(p.size()))
             };
         }
@@ -45,13 +45,13 @@ table_result_t table::insert_row(size_t n, const std::vector<std::string>& data)
 {
     if (data.size() != col_num__) {
         return table_result_t {
-            col_count_mismatch,
+            err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(data.size()))
         };
     }
     if (n > body__.size()) {
         return table_result_t {
-            index_out_of_range,
+            err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size()) + " give:" + std::to_string(n)
         };
     }
@@ -67,14 +67,14 @@ table_result_t table::insert_rows(size_t n, const std::vector<std::vector<std::s
     for (auto& p : data) {
         if (p.size() != col_num__) {
             return table_result_t {
-                col_count_mismatch,
+                err_col_count_mismatch,
                 "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(p.size()))
             };
         }
     }
     if (n > body__.size()) {
         return table_result_t {
-            index_out_of_range,
+            err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size()) + " give:" + std::to_string(n)
         };
     }
@@ -89,13 +89,13 @@ table_result_t table::delete_rows(size_t n, size_t len)
 {
     if (n >= body__.size()) {
         return table_result_t {
-            index_out_of_range,
+            err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size() - 1) + " give:" + std::to_string(n)
         };
     }
     if (body__.size() - n < len) {
         return table_result_t {
-            index_out_of_range,
+            err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size() - n) + " give:" + std::to_string(n + len)
         };
     }
@@ -110,7 +110,7 @@ table_result_t table::set_header(const std::vector<std::string>& header)
 {
     if (header.size() != col_num__) {
         return table_result_t {
-            col_count_mismatch,
+            err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(header.size()))
         };
     }
@@ -125,7 +125,7 @@ table_result_t table::set_config(size_t c, const table_column_config_t& config)
 {
     if (c >= col_num__) {
         return table_result_t {
-            index_out_of_range,
+            err_index_out_of_range,
             "index out of range,max:" + std::to_string(col_num__ - 1) + " give:" + std::to_string(c)
         };
     }
@@ -140,7 +140,7 @@ table_result_t table::set_config(const std::vector<table_column_config_t>& confi
 {
     if (config.size() != col_num__) {
         return table_result_t {
-            col_count_mismatch,
+            err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(config.size()))
         };
     }
@@ -166,7 +166,7 @@ inline std::string full_string(const std::string& str, table_align align, int sp
     case table_align::align_right:
         return string::repeat(" ", space_count) + str;
     default:
-        throw exception(parse_unsupport_type_err, "unsupport type:" + std::to_string(static_cast<int>(align)));
+        throw exception(err_unsupport_type, "unsupport type:" + std::to_string(static_cast<int>(align)));
         break;
     }
 }

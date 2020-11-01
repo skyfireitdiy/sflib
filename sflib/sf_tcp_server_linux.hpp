@@ -13,11 +13,12 @@
 #include "sf_tcp_server_linux.h"
 
 namespace skyfire {
-inline tcp_server::tcp_server(bool raw, int thread_count):raw__(raw), thread_count__(thread_count) { 
-    if(thread_count__ < 1){
-        thread_count__ = 1;
+inline tcp_server::tcp_server(const std::initializer_list<tcp_server_config>& config)
+{
+    for (auto& f : config) {
+        f(config__);
     }
- }
+}
 
 inline SOCKET tcp_server::raw_socket() { return listen_fd__; }
 
@@ -158,8 +159,8 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
     thread_vec__.emplace_back(
         std::thread(&tcp_server::work_thread__, this, true, listen_fd__));
 
-    if (manage_clients__) {
-        for (int i = 1; i < thread_count__; ++i) {
+    if (config__.manage_clients) {
+        for (int i = 1; i < config__.thread_count; ++i) {
             thread_vec__.emplace_back(std::thread(&tcp_server::work_thread__,
                 this, true, listen_fd__));
         }
@@ -265,11 +266,10 @@ inline bool tcp_server::handle_accept__()
     int conn_fd = 0;
     sockaddr_in client_addr {};
     socklen_t len = sizeof(client_addr);
-    while ((conn_fd = accept(listen_fd__, (struct sockaddr*)&client_addr,
-                &len))
+    while ((conn_fd = accept(listen_fd__, (struct sockaddr*)&client_addr, &len))
         > 0) {
         new_connection_filter__(conn_fd);
-        if (manage_clients__) {
+        if (config__.manage_clients) {
             if (fcntl(conn_fd, F_SETFL,
                     fcntl(conn_fd, F_GETFD, 0) | O_NONBLOCK)
                 == -1) {
@@ -300,40 +300,60 @@ inline bool tcp_server::handle_accept__()
     }
 }
 
+inline err tcp_server::recv(SOCKET sock, byte_array& data)
+{
+    auto& epoll_data = epoll_data__();
+    auto& sock_context__ = epoll_data.sock_context__;
+    debug("start read", sock);
+    auto count_read = static_cast<int>(::recv(sock, data.data(), default_buffer_size, MSG_NOSIGNAL));
+    debug("read", count_read);
+    if (count_read <= 0) {
+        debug("errno", errno);
+        // EWOULDBLOCK == EAGAIN
+        if ((errno == EAGAIN || errno == EINTR /* || errno == EWOULDBLOCK */) && count_read < 0) {
+            return err { exception(err_finished, "read finished") };
+        } else {
+            disconnect_sock_filter__(sock);
+            {
+                std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
+                epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_DEL,
+                    sock, &sock_context__[sock].ev);
+                sock_context__.erase(sock);
+            }
+            closed(sock);
+            close(sock);
+            return err { exception(err_disconnect, "connection closed") };
+        }
+    }
+    data.resize(static_cast<unsigned long>(count_read));
+    return err {};
+}
+
 inline void tcp_server::handle_read__(const epoll_event& ev)
 {
+    if (!config__.manage_read) {
+        ready_read(ev.data.fd);
+        return;
+    }
     byte_array recv_buf(default_buffer_size);
     pkg_header_t header {};
     auto& epoll_data = epoll_data__();
     auto& sock_context__ = epoll_data.sock_context__;
     while (true) {
-        debug("start read", ev.data.fd);
-        auto count_read = static_cast<int>(
-            recv(ev.data.fd, recv_buf.data(), default_buffer_size, MSG_NOSIGNAL));
-        debug("read", count_read);
-        if (count_read <= 0) {
-            debug("errno", errno);
-            // EWOULDBLOCK == EAGAIN
-            if ((errno == EAGAIN || errno == EINTR /* || errno == EWOULDBLOCK */) && count_read < 0) {
-                debug("read finished", errno);
-                break;
-            } else {
-                disconnect_sock_filter__(ev.data.fd);
-                {
-                    std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
-                    epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_DEL,
-                        ev.data.fd, &sock_context__[ev.data.fd].ev);
-                    sock_context__.erase(ev.data.fd);
-                }
-                closed(ev.data.fd);
-                close(ev.data.fd);
-                debug("read error / connection closed");
-                break;
-            }
+
+        auto e = recv(ev.data.fd, recv_buf);
+        if (e.exp().code() == err_finished) {
+            debug("read finished", errno);
+            break;
         }
-        recv_buf.resize(static_cast<unsigned long>(count_read));
+        if (e.exp().code() == err_disconnect) {
+            debug("read error / connection closed");
+            break;
+        }
+
         after_raw_recv_filter__(ev.data.fd, recv_buf);
-        if (raw__) {
+
+        if (config__.raw) {
             debug("raw data", recv_buf.size());
             raw_data_coming(ev.data.fd, recv_buf);
             debug("after resolve");
