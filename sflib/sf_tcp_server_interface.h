@@ -124,14 +124,14 @@ public:
      */
     bool server_addr(addr_info_t& addr);
 
-
     /**
      * @brief 读取套接字信息
      * 
      * @param sock 套接字
      * @param data 数据
+     * @param length 长度
      * @return err 错误信息
      */
-    virtual err recv(SOCKET sock, byte_array& data) = 0;
+    virtual err recv(SOCKET sock, byte_array& data, int length = default_buffer_size) = 0;
 };
 } // namespace skyfire

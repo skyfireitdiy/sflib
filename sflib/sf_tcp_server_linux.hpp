@@ -300,7 +300,7 @@ inline bool tcp_server::handle_accept__()
     }
 }
 
-inline err tcp_server::recv(SOCKET sock, byte_array& data)
+inline err tcp_server::recv(SOCKET sock, byte_array& data, int length)
 {
     auto& epoll_data = epoll_data__();
     auto& sock_context__ = epoll_data.sock_context__;
