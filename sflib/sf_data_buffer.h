@@ -1,14 +1,17 @@
 #pragma once
 
 #include "sf_error.h"
+#include "sf_multi_value.h"
 #include "sf_stdc++.h"
 #include "sf_type.h"
 
 namespace skyfire {
 
+using byte_array_result = multi_value<err, byte_array>;
+
 class reader {
 public:
-    virtual err read(int max_size, byte_array& data) = 0;
+    virtual byte_array_result read(int max_size) = 0;
     virtual bool can_read() const = 0;
 };
 
@@ -28,7 +31,7 @@ private:
 public:
     void set_data(const byte_array& data);
     void clear();
-    err read(int max_size, byte_array& data) override;
+    byte_array_result read(int max_size) override;
     err write(const byte_array& data) override;
     bool can_read() const override;
     bool can_write() const override;

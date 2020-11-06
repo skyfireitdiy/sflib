@@ -9,21 +9,14 @@ template <typename... Type>
  * @brief 多值类型
  * 
  */
-class multi_value {
+class multi_value : public std::tuple<Type...> {
 private:
-    std::tuple<std::decay_t<Type>...> data__;
-
 public:
-    multi_value() = default;
-
-    multi_value(std::decay_t<Type>... value)
-        : data__(value...)
-    {
-    }
-
+    using std::tuple<Type...>::tuple;
     template <typename T>
-    operator T() const {
-        return std::get<std::decay_t<T>>(data__);
+    operator T() const
+    {
+        return std::get<std::decay_t<T>>(*this);
     }
 };
 

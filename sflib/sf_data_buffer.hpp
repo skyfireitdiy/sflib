@@ -1,8 +1,10 @@
 #pragma once
 
 #include "sf_data_buffer.h"
+#include "sf_type.hpp"
 
 namespace skyfire {
+
 void data_buffer::set_data(const byte_array& data)
 {
     std::lock_guard<std::mutex> lock(mutex__);
@@ -15,38 +17,38 @@ void data_buffer::clear()
     data__.clear();
 }
 
-err data_buffer::read(int max_size, byte_array& data)
+byte_array_result data_buffer::read(int max_size)
 {
     std::lock_guard<std::mutex> lock(mutex__);
 
     if (data__.empty() && (reader__ == nullptr || !reader__->can_read())) {
-        return err { { err_finished, "read finished" } };
+        return { err { { err_finished, "read finished" } }, byte_array{} };
     }
 
-    data.resize(max_size);
+    byte_array data(max_size);
 
     if (max_size <= data__.size()) {
         memcpy(data.data(), data__.data(), max_size);
         memcpy(data__.data(), data__.data() + max_size, data__.size() - max_size);
         data__.resize(data__.size() - max_size);
-        return err {};
+        return { err {}, data };
     }
 
     data = data__;
     data__.clear();
 
     if (reader__ == nullptr || !reader__->can_read()) {
-        return err {};
+        return { err {}, data };
     }
 
     byte_array tmp_data;
-    auto e = reader__->read(max_size - data.size(), tmp_data);
-    if (!e) {
+    auto e = reader__->read(max_size - data.size());
+    if (!std::get<0>(e)) {
         return e;
     }
 
-    data += tmp_data;
-    return err {};
+    data += e;
+    return { err {}, data };
 }
 
 err data_buffer::write(const byte_array& data)
