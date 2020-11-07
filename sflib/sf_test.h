@@ -96,7 +96,7 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
 
 #define test_assert(exp)                                                                                                     \
     if (!(exp)) {                                                                                                            \
-        std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                            \
+        std::lock_guard<std::mutex> lck(*skyfire::get_test_output_mu__());                                                            \
         std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : `" << #exp << "` return false!" << std::endl; \
         return false;                                                                                                        \
     }
@@ -106,7 +106,7 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
         auto __a__ = (a);                                                                                                     \
         auto __b__ = (b);                                                                                                     \
         if (__a__ != __b__) {                                                                                                 \
-            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                         \
+            std::lock_guard<std::mutex> lck(*skyfire::get_test_output_mu__());                                                         \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " != " << __b__ << std::endl; \
             return false;                                                                                                     \
         }                                                                                                                     \
@@ -117,7 +117,7 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
         auto __a__ = (a);                                                                                                     \
         auto __b__ = (b);                                                                                                     \
         if (__a__ == __b__) {                                                                                                 \
-            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                         \
+            std::lock_guard<std::mutex> lck(*skyfire::get_test_output_mu__());                                                         \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " == " << __b__ << std::endl; \
             return false;                                                                                                     \
         }                                                                                                                     \
@@ -126,7 +126,7 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
 #define test_np_eq(a, b)                                                                                              \
     {                                                                                                                 \
         if ((a) != (b)) {                                                                                             \
-            std::lock_guard<std::mutex> lck(*get_test_output_mu__());                                                 \
+            std::lock_guard<std::mutex> lck(*skyfire::get_test_output_mu__());                                                 \
             std::cerr << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` != `" #b "`" << std::endl; \
             return false;                                                                                             \
         }                                                                                                             \
