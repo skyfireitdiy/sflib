@@ -89,7 +89,7 @@ inline static_router::static_router(std::string path,
             _404_res();
         } else {
             if (req.header().has_key("Range")) {
-                debug("Range found");
+                sf_debug("Range found");
                 auto range_header = req.header().header_value("Range", "");
                 auto range_content_list = split_string(range_header, "=");
                 if (range_content_list.size() < 2) {
@@ -168,7 +168,7 @@ inline static_router::static_router(std::string path,
                     }
                 }
             } else {
-                debug("big file", abs_path);
+                sf_debug("big file", abs_path);
                 res.set_header(header);
                 res.set_file(http_file_info_t { abs_path, 0, -1, file_size });
                 return;

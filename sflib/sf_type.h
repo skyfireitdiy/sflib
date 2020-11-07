@@ -20,7 +20,7 @@
 #endif
 
 #define SF_GET_OFFSET(obj, member) \
-    (reinterpret_cast<size_t>(&(reinterpret_cast<obj *>(0)->member)))
+    (reinterpret_cast<size_t>(&(reinterpret_cast<obj*>(0)->member)))
 
 #include <cstring>
 #include <iostream>
@@ -36,7 +36,7 @@ using byte_array = std::vector<char>;
  * @param data 字节数组
  * @return 字符串
  */
-inline std::string to_string(const byte_array &data);
+inline std::string to_string(const byte_array& data);
 
 /**
  * 合并字节数组
@@ -44,7 +44,7 @@ inline std::string to_string(const byte_array &data);
  * @param b2 字节数组2
  * @return 字节数组合并
  */
-inline byte_array operator+(byte_array b1, const byte_array &b2);
+inline byte_array operator+(byte_array b1, const byte_array& b2);
 
 /**
  * 追加字节数组
@@ -52,7 +52,7 @@ inline byte_array operator+(byte_array b1, const byte_array &b2);
  * @param b2 字节数组2
  * @return 新的字节数组
  */
-inline byte_array &operator+=(byte_array &b1, const byte_array &b2);
+inline byte_array& operator+=(byte_array& b1, const byte_array& b2);
 
 /**
  * pod类型转换为字节数组
@@ -61,14 +61,21 @@ inline byte_array &operator+=(byte_array &b1, const byte_array &b2);
  * @return 字节数组
  */
 template <typename T>
-inline byte_array to_byte_array(const T &t);
+inline byte_array to_byte_array(const T& t);
+
+/**
+ * 字符串转换为字节数组
+ * @param s 字符串
+ * @return 字节数组
+ */
+inline byte_array to_byte_array(const char* s);
 
 /**
  * 字符串转换为字节数组
  * @param str 字符串
  * @return 字节数组
  */
-inline byte_array to_byte_array(const std::string &str);
+inline byte_array to_byte_array(const std::string& str);
 
 /**
  * 保存字节数组到文件
@@ -77,6 +84,6 @@ inline byte_array to_byte_array(const std::string &str);
  * @param app 是否是追加
  * @return 是否dump成功
  */
-inline bool dump_byte_array(const byte_array &data, const std::string &filename,
-                            bool app = false);
-}    // namespace skyfire
+inline bool dump_byte_array(const byte_array& data, const std::string& filename,
+    bool app = false);
+} // namespace skyfire

@@ -46,12 +46,12 @@ inline bool http_part_router::run_route(const http_server_request& req,
     const std::string& url,
     const std::string& method)
 {
-    debug("compare method");
+    sf_debug("compare method");
     std::unique_lock<std::recursive_mutex> lck(methods_mu__);
     using namespace std::literals;
     if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
         if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method)) {
-            debug("method compare error");
+            sf_debug("method compare error");
             return false;
         }
     }

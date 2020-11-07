@@ -63,15 +63,15 @@ inline bool http_server_request::parse_request__()
     std::string request_line;
     std::vector<std::string> header_lines;
     if (!split_request(raw__, request_line, header_lines, body__)) {
-        debug("split request error");
+        sf_debug("split request error");
         return false;
     }
     if (!parse_request_line(request_line, request_line__)) {
-        debug("parse request line error");
+        sf_debug("parse request line error");
         return false;
     }
     if (!parse_header(header_lines, header__)) {
-        debug("parse header error");
+        sf_debug("parse header error");
         return false;
     }
 
@@ -102,7 +102,7 @@ inline bool http_server_request::parse_request__()
                     boundary_str_list[1].begin() + 2,
                     boundary_str_list[1].end()
                 };
-                debug("boundary_str", multipart_data_context__.boundary_str);
+                sf_debug("boundary_str", multipart_data_context__.boundary_str);
                 multipart_data_context__.header = header__.header();
                 return true;
             }
@@ -110,7 +110,7 @@ inline bool http_server_request::parse_request__()
     }
     char* pos;
     if (std::strtoll(content_len.c_str(), &pos, 10) != body__.size()) {
-        debug("body size error", content_len.c_str(), body__.size());
+        sf_debug("body size error", content_len.c_str(), body__.size());
         return false;
     }
 

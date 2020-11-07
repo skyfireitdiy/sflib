@@ -30,7 +30,7 @@ typename std::enable_if<sizeof...(Args) == N, void>::type
 http_router::callback_call_helper__(const http_server_request &req,
                                        http_server_response &res, FuncType func,
                                        const std::smatch &sm, Args... args) {
-    debug("call callback_call_helper__");
+    sf_debug("call callback_call_helper__");
     func(req, res, args...);
 }
 
@@ -39,7 +39,7 @@ typename std::enable_if<sizeof...(Args) != N, void>::type
 http_router::callback_call_helper__(const http_server_request &req,
                                        http_server_response &res, FuncType func,
                                        const std::smatch &sm, Args... args) {
-    debug("call callback_call_helper__");
+    sf_debug("call callback_call_helper__");
     callback_call_helper__<FuncType, N, Args..., std::string>(
         req, res, func, sm, args..., sm[sizeof...(args)].str());
 }
@@ -63,16 +63,16 @@ http_router::http_router(
     : priority__(priority), methods__(std::move(methods)) {
     route_callback__ = [=](const http_server_request &req, http_server_response &res,
                            const std::string &url) {
-        debug("call route");
+        sf_debug("call route");
         std::regex re(pattern);
         std::smatch sm;
         if (!std::regex_match(url, sm, re)) {
-            debug("match error", pattern, url);
+            sf_debug("match error", pattern, url);
             return false;
         }
         callback_call_helper__<decltype(callback), sizeof...(StringType)>(
             req, res, callback, sm);
-        debug("return true");
+        sf_debug("return true");
         return true;
     };
 }
@@ -82,14 +82,14 @@ inline bool http_router::run_route(const http_server_request &req,
                                       const std::string &url,
                                       const std::string &method) {
     {
-        debug("compare method");
+        sf_debug("compare method");
         std::unique_lock<std::recursive_mutex> lck(methods_mu__);
         using namespace std::literals;
         if (methods__.cend() ==
             std::find(methods__.cbegin(), methods__.cend(), "*"s)) {
             if (methods__.cend() ==
                 std::find(methods__.cbegin(), methods__.cend(), method)) {
-                debug("method compare error");
+                sf_debug("method compare error");
                 return false;
             }
         }

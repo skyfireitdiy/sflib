@@ -249,7 +249,8 @@ inline int test_run(int thread_count, bool flashing)
     table.add_row({ std::to_string(thread_count),
         string_trim(convert_ns_to_readable(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_time).count())), std::to_string(count_pass), std::to_string(count_failed) });
 
-    std::cout << table.to_string() << std::endl;
+    std::cout << std::endl
+              << table.to_string() << std::endl;
     return ret;
 }
 }

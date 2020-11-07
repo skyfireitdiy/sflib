@@ -10,10 +10,6 @@
  */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic ignored "cert-err58-cpp"
 
 #include "sf_stdc++.h"
 
@@ -21,10 +17,10 @@
 #include <QString>
 #endif
 
+#include "sf_json.h"
 #include "sf_random.hpp"
 #include "sf_single_instance.hpp"
 #include "sf_utils.hpp"
-#include "sf_json.h"
 
 namespace skyfire {
 
@@ -168,11 +164,11 @@ private:
 };
 
 #ifdef SF_DEBUG
-#define debug(...)                                                      \
+#define sf_debug(...)                                                         \
     skyfire::g_logger->logout(skyfire::SF_DEBUG_LEVEL, __FILE__, __LINE__, \
         __FUNCTION__, __VA_ARGS__)
 #else
-#define debug(...) skyfire::g_logger->empty_func__()
+#define sf_debug(...) skyfire::g_logger->empty_func__()
 #endif
 
 #define sf_info(...)                                                      \
@@ -189,5 +185,3 @@ private:
         __FUNCTION__, __VA_ARGS__)
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

@@ -9,14 +9,11 @@
  * logger日志打印
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic ignored "cert-err58-cpp"
 
 #include "sf_color.hpp"
+#include "sf_json.hpp"
 #include "sf_logger.h"
 #include "sf_thread_pool.hpp"
-#include "sf_json.hpp"
 
 namespace skyfire {
 
@@ -292,5 +289,3 @@ inline std::string logger::format(std::string format_str,
 }
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

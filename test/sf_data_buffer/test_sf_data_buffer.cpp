@@ -1,5 +1,6 @@
 #include "sf_data_buffer"
 #include "sf_error"
+#include "sf_logger"
 #include "sf_test"
 
 sf_test(test_read_write)
@@ -28,6 +29,25 @@ sf_test(test_read_twice)
     t = buffer.read(10);
     test_num_eq(skyfire::to_string(t).length(), 6);
     test_str_eq(skyfire::to_string(t), " world");
+    return true;
+}
+
+sf_test(test_pipe)
+{
+    auto reader = skyfire::data_buffer::make_instance();
+    auto writer = skyfire::data_buffer::make_instance();
+    auto pipe = skyfire::data_buffer::make_instance();
+
+    pipe->set_reader(writer);
+    reader->set_reader(pipe);
+
+    writer->write(skyfire::to_byte_array("hello world"));
+    auto t = reader->read(1024);
+
+    using namespace std::string_literals;
+
+    test_str_eq(std::get<1>(t).data(), "hello world"s);
+
     return true;
 }
 

@@ -40,6 +40,11 @@ inline byte_array to_byte_array(const T& t)
     return ret;
 }
 
+inline byte_array to_byte_array(const char* s)
+{
+    return to_byte_array(std::string(s));
+}
+
 inline byte_array to_byte_array(const std::string& str)
 {
     byte_array ret(str.length());

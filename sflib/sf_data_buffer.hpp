@@ -22,7 +22,7 @@ byte_array_result data_buffer::read(int max_size)
     std::lock_guard<std::mutex> lock(mutex__);
 
     if (data__.empty() && (reader__ == nullptr || !reader__->can_read())) {
-        return { err { { err_finished, "read finished" } }, byte_array{} };
+        return { err { { err_finished, "read finished" } }, byte_array {} };
     }
 
     byte_array data(max_size);
@@ -55,17 +55,10 @@ err data_buffer::write(const byte_array& data)
 {
     std::lock_guard<std::mutex> lock(mutex__);
 
-    if (writer__ == nullptr || !writer__->can_write()) {
-        data__ += data;
-        return err {};
-    }
+    data__ += data;
 
-    if (!data__.empty()) {
-        auto e = writer__->write(data__);
-        if (!e) {
-            return e;
-        }
-        data__.clear();
+    if (writer__ == nullptr || !writer__->can_write()) {
+        return err {};
     }
 
     auto e = writer__->write(data);

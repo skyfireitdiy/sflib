@@ -31,7 +31,7 @@ byte_array make_server_websocket_data_pkg(const T &data) {
 
         std::bitset<8> b1(header.fin_rsv_oc);
         std::bitset<8> b2(header.mask_len);
-        debug(b1.to_string(), b2.to_string());
+        sf_debug(b1.to_string(), b2.to_string());
 
     } else if (data.size() >= 126 && data.size() <= 0xffffffffffffffffUL) {
         websocket_server_data_2_header_t header{};

@@ -4,6 +4,8 @@ add_includedirs("../")
 set_languages("c++20")
 add_links("pthread")
 
+add_cxxflags("-g")
+
 target("sf_argv")
     set_kind("binary")
     add_files("sf_argv/*.cpp")
