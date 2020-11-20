@@ -2,7 +2,8 @@
 #include "sf_http_header.hpp"
 #include "sf_http_server_req_header.h"
 
-namespace skyfire {
+namespace skyfire
+{
 inline std::unordered_map<std::string, std::string> http_server_req_header::cookies() const
 {
     return cookies__;

@@ -9,7 +9,8 @@
 
 #include "sf_tcp_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 template <typename T>
 typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value, byte_array>::type make_pkg(
@@ -25,7 +26,7 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
 }
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 template <typename T>
 typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value, T>::type take_pkg(
     const byte_array& data)
@@ -44,9 +45,10 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
 inline void make_header_checksum(pkg_header_t& header)
 {
     header.checksum = 0;
-    auto offset = SF_GET_OFFSET(pkg_header_t, type);
-    auto p_byte = reinterpret_cast<const unsigned char*>(&header);
-    for (auto i = offset; i < sizeof(header); ++i) {
+    auto offset     = SF_GET_OFFSET(pkg_header_t, type);
+    auto p_byte     = reinterpret_cast<const unsigned char*>(&header);
+    for (auto i = offset; i < sizeof(header); ++i)
+    {
         header.checksum ^= p_byte[i];
     }
 }
@@ -54,9 +56,10 @@ inline void make_header_checksum(pkg_header_t& header)
 inline bool check_header_checksum(const pkg_header_t& header)
 {
     unsigned char checksum = 0;
-    auto offset = SF_GET_OFFSET(pkg_header_t, type);
-    auto p_byte = reinterpret_cast<const unsigned char*>(&header);
-    for (auto i = offset; i < sizeof(header); ++i) {
+    auto          offset   = SF_GET_OFFSET(pkg_header_t, type);
+    auto          p_byte   = reinterpret_cast<const unsigned char*>(&header);
+    for (auto i = offset; i < sizeof(header); ++i)
+    {
         checksum ^= p_byte[i];
     }
     return checksum == header.checksum;
@@ -64,11 +67,12 @@ inline bool check_header_checksum(const pkg_header_t& header)
 
 inline unsigned long long ntoh64(unsigned long long input)
 {
-    if (big_endian()) {
+    if (big_endian())
+    {
         return input;
     }
     unsigned long long val;
-    auto* data = reinterpret_cast<unsigned char*>(&val);
+    auto*              data = reinterpret_cast<unsigned char*>(&val);
 
     data[0] = static_cast<unsigned char>(input >> 56);
     data[1] = static_cast<unsigned char>(input >> 48);

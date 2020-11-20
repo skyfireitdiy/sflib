@@ -12,19 +12,21 @@
 #pragma once
 #include <functional>
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  *  @brief 清理过程对象
  */
-class __finally__ final {
-   public:
+class __finally__ final
+{
+public:
     /**
      * @brief finally 构造一个清理过程对象
      * @param func 作用域结束后会调用的函数
      */
     explicit __finally__(std::function<void()> func);
     __finally__(const __finally__&) = delete;
-    __finally__(__finally__&&) = delete;
+    __finally__(__finally__&&)      = delete;
     __finally__& operator=(__finally__&&) = delete;
     __finally__& operator=(const __finally__&) = delete;
     ~__finally__();
@@ -33,7 +35,7 @@ private:
     std::function<void()> func__;
 };
 
-}    // namespace skyfire
+} // namespace skyfire
 
 #define __SF_VAR_NAME_WP__(prefix, line) prefix##line
 #define __SF_VAR_NAME__(prefix, line) __SF_VAR_NAME_WP__(prefix, line)

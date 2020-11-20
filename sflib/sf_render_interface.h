@@ -11,13 +11,15 @@
 
 #include "sf_json.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * @brief 渲染引擎接口
  *
  */
-class render_interface {
-   public:
+class render_interface
+{
+public:
     /**
      * @brief 渲染接口
      *
@@ -27,4 +29,4 @@ class render_interface {
      */
     virtual std::string render(const std::string& str, const json& data) = 0;
 };
-}    // namespace skyfire
+} // namespace skyfire

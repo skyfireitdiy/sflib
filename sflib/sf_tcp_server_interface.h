@@ -16,11 +16,13 @@
 #include "sf_tcp_utils.h"
 #include "sf_type.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  *  @brief tcp服务器
  */
-class tcp_server_interface : public nocopy<object> {
+class tcp_server_interface : public nocopy<object>
+{
     /**
      * 新连接到来信号
      */
@@ -29,7 +31,7 @@ class tcp_server_interface : public nocopy<object> {
      * 数据包到来信号
      */
     sf_singal(data_coming, SOCKET, const pkg_header_t&,
-        const byte_array&);
+              const byte_array&);
     /**
      * 原始数据到来信号
      */
@@ -65,10 +67,10 @@ private:
 protected:
     void after_raw_recv_filter__(SOCKET sock, byte_array& data);
     void after_recv_filter__(SOCKET sock, pkg_header_t& header,
-        byte_array& data);
+                             byte_array& data);
     void before_raw_send_filter__(SOCKET sock, byte_array& data);
     void before_send_filter__(SOCKET sock, pkg_header_t& header,
-        byte_array& data);
+                              byte_array& data);
     void new_connection_filter__(SOCKET sock);
     void listen_sock_filter__(SOCKET sock);
     void disconnect_sock_filter__(SOCKET sock);

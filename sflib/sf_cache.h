@@ -10,26 +10,29 @@
 #pragma once
 
 #include "sf_define.h"
-#include "sf_stdc++.h"
 #include "sf_nocopy.h"
+#include "sf_stdc++.h"
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * @brief 内存缓存
  *
  */
 class cache
-    : public make_instance_t<cache, nocopy<empty_class>> {
+    : public make_instance_t<cache, nocopy<empty_class>>
+{
 private:
-    struct cache_data_t {
-        std::string key;
+    struct cache_data_t
+    {
+        std::string                           key;
         std::chrono::system_clock::time_point timestamp_access;
-        std::any data;
+        std::any                              data;
     };
     std::vector<cache_data_t> data__;
-    size_t max_count__;
-    std::recursive_mutex mu_data__;
+    size_t                    max_count__;
+    std::recursive_mutex      mu_data__;
 
 public:
     /**

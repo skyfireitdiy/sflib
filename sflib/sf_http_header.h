@@ -6,18 +6,20 @@
 */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 class http_server_base;
 
 /**
  * @brief  http头
  */
-class http_header {
+class http_header
+{
 
 protected:
     http_header_t header_data__;
@@ -41,8 +43,8 @@ public:
      * @param default_value 默认值（如果没有找到指定的http头，则会返回该值）
      * @return 值
      */
-    std::string header_value(std::string key,
-        const std::string& default_value = "") const;
+    std::string header_value(std::string        key,
+                             const std::string& default_value = "") const;
 
     /**
      * 删除指定的头

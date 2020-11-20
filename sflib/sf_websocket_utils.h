@@ -6,15 +6,15 @@
 */
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic ignored "OCUnusedStructInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedStructInspection"
 #pragma once
 
 #include <memory>
 
+#include "sf_json.hpp"
 #include "sf_tcp_utils.hpp"
 #include "sf_type.hpp"
-#include "sf_json.hpp"
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -23,14 +23,16 @@
 #include <arpa/inet.h>
 #endif
 
-namespace skyfire {
+namespace skyfire
+{
 
 #pragma pack(1)
 
 /**
  * @brief  websocket客户端小包头
  */
-struct websocket_client_data_1_header_t {
+struct websocket_client_data_1_header_t
+{
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -46,7 +48,8 @@ struct websocket_client_data_1_header_t {
 /**
  * @brief  websocket客户端中包头
  */
-struct websocket_client_data_2_header_t {
+struct websocket_client_data_2_header_t
+{
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -63,7 +66,8 @@ struct websocket_client_data_2_header_t {
 /**
  *  @brief websocket客户端大包头
  */
-struct websocket_client_data_3_header_t {
+struct websocket_client_data_3_header_t
+{
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -80,7 +84,8 @@ struct websocket_client_data_3_header_t {
 /**
  * @brief  websocket服务器小包头
  */
-struct websocket_server_data_1_header_t {
+struct websocket_server_data_1_header_t
+{
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -94,7 +99,8 @@ struct websocket_server_data_1_header_t {
 /**
  * @brief  websocket服务器中包头
  */
-struct websocket_server_data_2_header_t {
+struct websocket_server_data_2_header_t
+{
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -109,7 +115,8 @@ struct websocket_server_data_2_header_t {
 /**
  *  @brief websocket服务器大包头
  */
-struct websocket_server_data_3_header_t {
+struct websocket_server_data_3_header_t
+{
     // 0 bit: FIN标志
     // 1-3 bit: 3位保留
     // 4-7 bit: 操作码
@@ -128,8 +135,9 @@ class http_server;
 /**
  *  @brief websocket数据类型
  */
-enum class websocket_data_type {
-    TextData, // 文本数据
+enum class websocket_data_type
+{
+    TextData,   // 文本数据
     BinaryData, // 二进制数据
     Open,
     Close,
@@ -138,28 +146,30 @@ enum class websocket_data_type {
 /**
  *  @brief websocket参数
  */
-struct websocket_param_t {
-    SOCKET sock; // socket
-    std::string url; // url
-    std::unordered_map<std::string, std::string> param; // param
-    std::string frame; // frame
-    websocket_data_type type; // 数据类型
-    std::string text_msg; // 文本（当type为websocket_data_type::Text时有效）
+struct websocket_param_t
+{
+    SOCKET                                       sock;     // socket
+    std::string                                  url;      // url
+    std::unordered_map<std::string, std::string> param;    // param
+    std::string                                  frame;    // frame
+    websocket_data_type                          type;     // 数据类型
+    std::string                                  text_msg; // 文本（当type为websocket_data_type::Text时有效）
     byte_array
-        binary_data; // 二进制（当type为websocket_data_type::BinaryData时有效）
+        binary_data;                       // 二进制（当type为websocket_data_type::BinaryData时有效）
     std::shared_ptr<http_server> p_server; // server指针
 };
 
 /**
  *  @brief Websocket包类型
  */
-enum websocket_pkg_type : uint8_t {
-    WEBSOCKET_OP_MIDDLE_PKG = 0x0,
-    WEBSOCKET_OP_TEXT_PKG = 0x1,
-    WEBSOCKET_OP_BINARY_PKG = 0x2,
+enum websocket_pkg_type : uint8_t
+{
+    WEBSOCKET_OP_MIDDLE_PKG     = 0x0,
+    WEBSOCKET_OP_TEXT_PKG       = 0x1,
+    WEBSOCKET_OP_BINARY_PKG     = 0x2,
     WEBSOCKET_OP_DISCONNECT_PKG = 0x08,
-    WEBSOCKET_OP_PING_PKG = 0x09,
-    WEBSOCKET_OP_PONG_PKG = 0x0A
+    WEBSOCKET_OP_PING_PKG       = 0x09,
+    WEBSOCKET_OP_PONG_PKG       = 0x0A
 };
 
 /**

@@ -19,13 +19,15 @@
 #include "sf_tcp_client_interface.h"
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 class tcp_client
-    : public make_instance_t<tcp_client, tcp_client_interface> {
+    : public make_instance_t<tcp_client, tcp_client_interface>
+{
 private:
     bool inited__ = false;
-    bool raw__ = false;
-    int sock__ = -1;
+    bool raw__    = false;
+    int  sock__   = -1;
 
     void recv_thread__();
 
@@ -33,7 +35,7 @@ public:
     tcp_client(bool raw = false); // NOLINT(google-explicit-constructor)
 
     tcp_client(SOCKET sock,
-        bool raw = false); // NOLINT(google-explicit-constructor)
+               bool   raw = false); // NOLINT(google-explicit-constructor)
 
     SOCKET raw_socket() override;
 

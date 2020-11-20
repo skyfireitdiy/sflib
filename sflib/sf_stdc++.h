@@ -38,7 +38,6 @@
 #include <cwchar>
 #include <cwctype>
 
-
 // C++
 #include <algorithm>
 #include <bitset>
@@ -73,7 +72,7 @@
 #include <valarray>
 #include <vector>
 
- // C++11
+// C++11
 #include <array>
 #include <atomic>
 #include <chrono>
@@ -90,8 +89,8 @@
 #include <system_error>
 #include <thread>
 #include <tuple>
-#include <typeindex>
 #include <type_traits>
+#include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -99,10 +98,9 @@
 #include <shared_mutex>
 
 // C++17
+#include <any>
 #include <charconv>
 #include <filesystem>
 #include <optional>
-#include <any>
-
 
 namespace fs = std::filesystem;

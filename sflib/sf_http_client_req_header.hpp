@@ -2,19 +2,23 @@
 
 #include "sf_http_client_req_header.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 inline std::string http_client_req_header::to_string() const
 {
     std::string ret = request_line__.method + " " + request_line__.url + " " + request_line__.http_version + "\r\n";
 
-    for (auto& h : header_data__) {
+    for (auto& h : header_data__)
+    {
         ret += h.first + ":" + h.second + "\r\n";
     }
 
-    if (!cookies__.empty()) {
+    if (!cookies__.empty())
+    {
         ret = "Cookie:";
-        for (auto& c : cookies__) {
+        for (auto& c : cookies__)
+        {
             ret += c.first + "=" + c.second + ";";
         }
         ret += "\r\n";

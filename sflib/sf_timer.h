@@ -10,24 +10,26 @@
  */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
-#include <atomic>
-#include "sf_object.hpp"
 #include "sf_nocopy.h"
+#include "sf_object.hpp"
+#include <atomic>
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  *  @brief 定时器
  */
-class timer : public nocopy<object> {
-   public:
+class timer : public nocopy<object>
+{
+public:
     /**
      * timeout 定时器触发信号
      */
     sf_singal(timeout);
 
-   public:
+public:
     /**
      * @brief start 启动定时器
      * @param ms 毫秒
@@ -46,11 +48,11 @@ class timer : public nocopy<object> {
      */
     bool is_active() const;
 
-   private:
-    std::atomic<bool> running__{false};
-    std::thread::id current_timer_thread__;
+private:
+    std::atomic<bool> running__ { false };
+    std::thread::id   current_timer_thread__;
 };
 
-}    // namespace skyfire
+} // namespace skyfire
 
 #pragma clang diagnostic pop

@@ -15,7 +15,8 @@
 #include "sf_logger.h"
 #include "sf_thread_pool.hpp"
 
-namespace skyfire {
+namespace skyfire
+{
 
 inline std::unordered_map<int, std::vector<color>> log_color_map = {
     { SF_DEBUG_LEVEL, { color_fg_cyan } },
@@ -30,45 +31,49 @@ logger::add_level_func(
     int level, const std::function<void(const logger_info_t&, bool)> func, bool colored)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-    if (logger_func_set__.count(level) == 0) {
+    if (logger_func_set__.count(level) == 0)
+    {
         logger_func_set__[level] = std::unordered_map<
             int, log_attr>();
     }
-    const auto key = make_random_logger_id__();
+    const auto key                = make_random_logger_id__();
     logger_func_set__[level][key] = { func, colored };
     return key;
 }
 
-inline int logger::add_level_stream(const int level,
-    std::ostream* os,
-    std::string format_str, bool colored)
+inline int logger::add_level_stream(const int     level,
+                                    std::ostream* os,
+                                    std::string format_str, bool colored)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-    if (logger_func_set__.count(level) == 0) {
+    if (logger_func_set__.count(level) == 0)
+    {
         logger_func_set__[level] = std::unordered_map<
             int, log_attr>();
     }
-    const auto key = make_random_logger_id__();
+    const auto key                = make_random_logger_id__();
     logger_func_set__[level][key] = { [=](const logger_info_t& log_info, bool colored) {
                                          *os << format(format_str, log_info, colored) << std::flush;
                                      },
-        colored };
+                                      colored };
     return key;
 }
 
-inline int logger::add_level_file(const int level,
-    const std::string& filename,
-    std::string format_str, bool colored)
+inline int logger::add_level_file(const int          level,
+                                  const std::string& filename,
+                                  std::string format_str, bool colored)
 {
     const auto ofs = std::make_shared<std::ofstream>(filename, std::ios::app);
-    if (*ofs) {
+    if (*ofs)
+    {
         std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-        if (logger_func_set__.count(level) == 0) {
+        if (logger_func_set__.count(level) == 0)
+        {
             logger_func_set__[level] = std::unordered_map<
                 int, log_attr>();
         }
 
-        const auto key = make_random_logger_id__();
+        const auto key                = make_random_logger_id__();
         logger_func_set__[level][key] = {
             [=](const logger_info_t& log_info, bool colored) {
                 *ofs << format(format_str, log_info, colored) << std::flush;
@@ -76,8 +81,9 @@ inline int logger::add_level_file(const int level,
             colored
         };
         return key;
-
-    } else {
+    }
+    else
+    {
         return -1;
     }
 }
@@ -85,7 +91,8 @@ inline int logger::add_level_file(const int level,
 inline void logger::remove_filter(const int key)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-    for (auto& p : logger_func_set__) {
+    for (auto& p : logger_func_set__)
+    {
         p.second.erase(key);
     }
 }
@@ -93,8 +100,10 @@ inline void logger::remove_filter(const int key)
 inline bool logger::check_key_can_use__(const int key)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-    for (const auto& p : logger_func_set__) {
-        for (const auto& q : p.second) {
+    for (const auto& p : logger_func_set__)
+    {
+        for (const auto& q : p.second)
+        {
             if (q.first == key)
                 return false;
         }
@@ -108,7 +117,8 @@ inline int logger::make_random_logger_id__()
         return random::instance()->rand_int(0, INT_MAX);
     };
     auto tmp_key = make_rand();
-    while (!check_key_can_use__(tmp_key)) {
+    while (!check_key_can_use__(tmp_key))
+    {
         tmp_key = make_rand();
     }
     return tmp_key;
@@ -116,17 +126,17 @@ inline int logger::make_random_logger_id__()
 
 template <typename T>
 inline void logger::logout(int level, const std::string& file,
-    int line, const std::string& func, const T& dt)
+                           int line, const std::string& func, const T& dt)
 {
     std::ostringstream so;
     so << std::this_thread::get_id();
     logger_info_t log_info;
-    log_info.level = level;
-    log_info.file = file;
-    log_info.line = line;
+    log_info.level     = level;
+    log_info.file      = file;
+    log_info.line      = line;
     log_info.thread_id = so.str();
-    log_info.time = make_time_str();
-    log_info.func = func;
+    log_info.time      = make_time_str();
+    log_info.func      = func;
     std::ostringstream oss;
     logout__(oss, log_info, dt);
 }
@@ -136,26 +146,32 @@ inline logger::logger()
     add_level_stream(SF_DEBUG_LEVEL, &std::cout);
 #ifdef SF_ASYNC_LOG
     log_thread__ = std::make_shared(std::thread, [this]() {
-        while (true) {
+        while (true)
+        {
             std::deque<logger_info_t> tmp_info;
             {
                 std::unique_lock<std::mutex> lck(deque_mu__);
                 cond_pop__.wait(lck,
-                    [&] { return !log_deque__.empty() || !run__; });
+                                [&] { return !log_deque__.empty() || !run__; });
                 tmp_info = std::move(log_deque__);
                 log_deque__.clear();
             }
-            for (auto& log : tmp_info) {
+            for (auto& log : tmp_info)
+            {
                 std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-                for (auto& level_func : logger_func_set__) {
-                    if (log.level >= level_func.first) {
-                        for (auto& func : level_func.second) {
+                for (auto& level_func : logger_func_set__)
+                {
+                    if (log.level >= level_func.first)
+                    {
+                        for (auto& func : level_func.second)
+                        {
                             func.second.callback(log, func.second.colored);
                         }
                     }
                 }
             }
-            if (!run__) {
+            if (!run__)
+            {
                 run__ = true;
                 break;
             }
@@ -167,7 +183,8 @@ inline logger::logger()
 
 inline logger::~logger()
 {
-    if (log_thread__) {
+    if (log_thread__)
+    {
         stop_logger();
         log_thread__->join();
     }
@@ -175,8 +192,8 @@ inline logger::~logger()
 
 template <typename T, typename... U>
 inline void logger::logout__(std::ostringstream& oss,
-    logger_info_t& log_info, const T& tmp,
-    const U&... tmp2)
+                             logger_info_t& log_info, const T& tmp,
+                             const U&... tmp2)
 {
     oss << "[" << tmp << "]";
     logout__(oss, log_info, tmp2...);
@@ -184,7 +201,7 @@ inline void logger::logout__(std::ostringstream& oss,
 
 template <typename T>
 inline void logger::logout__(std::ostringstream& oss,
-    logger_info_t& log_info, const T& tmp)
+                             logger_info_t& log_info, const T& tmp)
 {
     oss << "[" << tmp << "]";
     log_info.msg = oss.str();
@@ -196,9 +213,12 @@ inline void logger::logout__(std::ostringstream& oss,
     cond_pop__.notify_one();
 #else
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-    for (auto& level_func : logger_func_set__) {
-        if (log_info.level >= level_func.first) {
-            for (auto& func : level_func.second) {
+    for (auto& level_func : logger_func_set__)
+    {
+        if (log_info.level >= level_func.first)
+        {
+            for (auto& func : level_func.second)
+            {
                 func.second.callback(log_info, func.second.colored);
             }
         }
@@ -208,18 +228,18 @@ inline void logger::logout__(std::ostringstream& oss,
 
 template <typename... T>
 inline void logger::logout(const int level, const std::string& file,
-    const int line, const std::string& func,
-    const T&... dt)
+                           const int line, const std::string& func,
+                           const T&... dt)
 {
     std::ostringstream so;
     so << std::this_thread::get_id();
     logger_info_t log_info;
-    log_info.level = level;
-    log_info.file = file;
-    log_info.line = line;
+    log_info.level     = level;
+    log_info.file      = file;
+    log_info.line      = line;
     log_info.thread_id = so.str();
-    log_info.time = make_time_str();
-    log_info.func = func;
+    log_info.time      = make_time_str();
+    log_info.func      = func;
     std::ostringstream oss;
     logout__(oss, log_info, dt...);
 }
@@ -234,8 +254,8 @@ inline auto g_logger = logger::instance();
 
 #ifdef QT_CORE_LIB
 inline void logger::logout__(std::ostringstream& oss,
-    logger_info_t& log_info,
-    const QString& tmp)
+                             logger_info_t&      log_info,
+                             const QString&      tmp)
 {
     oss << "[" << tmp.toStdString() << "]";
     log_info.msg = oss.str();
@@ -247,9 +267,12 @@ inline void logger::logout__(std::ostringstream& oss,
     cond_pop__.notify_one();
 #else
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
-    for (auto& level_func : logger_func_set__) {
-        if (log_info.level >= level_func.first) {
-            for (auto& func : level_func.second) {
+    for (auto& level_func : logger_func_set__)
+    {
+        if (log_info.level >= level_func.first)
+        {
+            for (auto& func : level_func.second)
+            {
                 func.second(log_info);
             }
         }
@@ -259,7 +282,7 @@ inline void logger::logout__(std::ostringstream& oss,
 
 template <typename... U>
 void logger::logout__(std::ostringstream& oss, logger_info_t& log_info,
-    const QString& tmp, const U&... tmp2)
+                      const QString& tmp, const U&... tmp2)
 {
     oss << "[" << tmp.toStdString() << "]";
     logout__(oss, log_info, tmp2...);
@@ -267,13 +290,14 @@ void logger::logout__(std::ostringstream& oss, logger_info_t& log_info,
 
 #endif
 
-inline std::string logger::format(std::string format_str,
-    const logger_info_t& log_info, bool colored)
+inline std::string logger::format(std::string          format_str,
+                                  const logger_info_t& log_info, bool colored)
 {
     const auto replace = [](std::string& str, const std::string& from,
-                             const std::string& to) {
+                            const std::string& to) {
         size_t start_pos = 0;
-        while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+        {
             str.replace(start_pos, from.length(), to);
             start_pos += to.length();
         }

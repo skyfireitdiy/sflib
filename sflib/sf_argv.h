@@ -15,53 +15,58 @@
 #include "sf_option.h"
 #include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  * @brief 参数解析时的动作
  *
  */
-enum class argv_action {
-    store, //保存值
-    store_true, //保存为true
+enum class argv_action
+{
+    store,       //保存值
+    store_true,  //保存为true
     store_false, // 保存为false
-    count // 保存数量
+    count        // 保存数量
 };
 
 /**
  * @brief 参数选项
  *
  */
-struct argv_opt_t {
-    std::string short_name {}; // 短名称，如:-i
-    std::string long_name {}; // 长名称，如:--id
-    std::string json_name {}; // 保存在json中的键名称，如：id
-    json_type type = json_type::string; // 参数类型（参见json_type）
-    bool required = false; // 是否必须
+struct argv_opt_t
+{
+    std::string short_name {};                 // 短名称，如:-i
+    std::string long_name {};                  // 长名称，如:--id
+    std::string json_name {};                  // 保存在json中的键名称，如：id
+    json_type   type     = json_type::string;  // 参数类型（参见json_type）
+    bool        required = false;              // 是否必须
     argv_action action { argv_action::store }; // 动作
-    json default_value {}; // 默认值
+    json        default_value {};              // 默认值
 };
 
 using argv_result_t = multi_value<err, json>;
 
-using argv_opt_option = option<argv_opt_t>;
+using argv_opt_option           = option<argv_opt_t>;
 using argv_opt_option_func_type = argv_opt_option::OptionFuncType;
 
-namespace argv {
-    namespace {
-        auto short_name = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const std::string& name) {
+namespace argv
+{
+    namespace
+    {
+        auto short_name    = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const std::string& name) {
             opt.short_name = name;
         }));
-        auto json_name = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const std::string& name) {
+        auto json_name     = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const std::string& name) {
             opt.json_name = name;
         }));
-        auto type = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const json_type tp) {
+        auto type          = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const json_type tp) {
             opt.type = tp;
         }));
-        auto required = argv_opt_option::make_option(std::function([](argv_opt_t& opt) {
+        auto required      = argv_opt_option::make_option(std::function([](argv_opt_t& opt) {
             opt.required = true;
         }));
-        auto action = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const argv_action& ac) {
+        auto action        = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const argv_action& ac) {
             opt.action = ac;
         }));
         auto default_value = argv_opt_option::make_option(std::function([](argv_opt_t& opt, const json& v) {
@@ -74,13 +79,14 @@ namespace argv {
  * @brief 参数解析类
  *
  */
-class argparser : public std::enable_shared_from_this<argparser> {
+class argparser : public std::enable_shared_from_this<argparser>
+{
 private:
     std::unordered_map<std::string, std::shared_ptr<argparser>> sub_parsers_;
-    std::vector<argv_opt_t> position_arg_;
-    std::vector<argv_opt_t> none_position_arg__;
-    std::pair<std::string, std::string> prefix_ { "-", "--" };
-    std::string help_;
+    std::vector<argv_opt_t>                                     position_arg_;
+    std::vector<argv_opt_t>                                     none_position_arg__;
+    std::pair<std::string, std::string>                         prefix_ { "-", "--" };
+    std::string                                                 help_;
 
     argv_result_t parse_argv__(const std::vector<std::string>& argv);
 
@@ -119,10 +125,10 @@ public:
      * @return false 添加失败
      */
     bool add_argument(std::string short_name, std::string long_name,
-        json_type type = json_type::string,
-        bool required = false, json default_value = json(),
-        std::string json_name = "",
-        argv_action action = argv_action::store);
+                      json_type type = json_type::string,
+                      bool required = false, json default_value = json(),
+                      std::string json_name = "",
+                      argv_action action    = argv_action::store);
 
     /**
      * @brief 增加参数
@@ -140,8 +146,8 @@ public:
      * @param name 解析器名称（会被用于键名称）
      * @param sub_parser 子解析器
      */
-    void add_sub_parser(const std::string& name,
-        std::shared_ptr<argparser> sub_parser);
+    void add_sub_parser(const std::string&         name,
+                        std::shared_ptr<argparser> sub_parser);
 
     /**
      * @brief 解析参数

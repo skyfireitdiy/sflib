@@ -9,17 +9,21 @@
 #include "sf_nocopy.h"
 #include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 class http_client_request : public nocopy<make_instance_t<http_client_request, std::enable_shared_from_this<http_client_request>>>
 {
 private:
-    byte_array body__;
-    http_client_req_header header__;
+    byte_array                    body__;
+    http_client_req_header        header__;
     std::shared_ptr<std::istream> stream__;
 
-    http_data_type type__ = { http_data_type ::normal };
-    http_file_info_t file_info__;
+    std::string server_host__;
+    short       server_port__ = 80;
+
+    http_data_type                     type__ = { http_data_type ::normal };
+    http_file_info_t                   file_info__;
     std::vector<http_multipart_info_t> multipart_info_vec__;
 
 public:
@@ -31,6 +35,5 @@ public:
     std::shared_ptr<http_client_request> set_file(const std::string& filename);
     std::shared_ptr<http_client_request> set_stream(std::shared_ptr<std::istream> stream);
     std::shared_ptr<http_client_request> add_multipart(const http_multipart_info_t& multip);
-
 };
 }

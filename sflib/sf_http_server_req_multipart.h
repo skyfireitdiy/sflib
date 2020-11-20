@@ -7,25 +7,27 @@
 
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_req_header.h"
 #include "sf_type.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  * @brief  http分块请求数据包
  */
-class http_server_req_multipart final {
+class http_server_req_multipart final
+{
 private:
-    http_server_req_header header__;
-    bool end__ = { false };
-    bool finish__ = { false };
-    std::string boundary_str__;
+    http_server_req_header         header__;
+    bool                           end__    = { false };
+    bool                           finish__ = { false };
+    std::string                    boundary_str__;
     std::shared_ptr<std::ofstream> fp__;
-    bool first_block = true;
-    std::string filename__;
+    bool                           first_block = true;
+    std::string                    filename__;
 
 public:
     /**
@@ -34,7 +36,7 @@ public:
      * @param tmp_path 临时文件目录（分块请求会保存至临时目录的文件）
      */
     http_server_req_multipart(const std::string& boundary_str,
-        const std::string& tmp_path);
+                              const std::string& tmp_path);
     /**
      * 获取分块请求的头部信息
      * @return 头部信息

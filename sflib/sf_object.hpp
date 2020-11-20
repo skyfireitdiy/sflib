@@ -16,17 +16,20 @@
 #include "sf_object.h"
 #include "sf_random.hpp"
 
-namespace skyfire {
+namespace skyfire
+{
 
 template <typename _VectorType, typename _FuncType>
 int object::__bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
-    _FuncType func, bool single_thread)
+                            _FuncType func, bool single_thread)
 {
     std::lock_guard<std::recursive_mutex> lck(mu);
-    int bind_id = random::instance()->rand_int(0, INT_MAX);
+    int                                   bind_id = random::instance()->rand_int(0, INT_MAX);
     while (std::find_if(vec.begin(), vec.end(), [=](auto p) {
-        return std::get<2>(p) == bind_id;
-    }) != vec.end()) {
+               return std::get<2>(p) == bind_id;
+           })
+           != vec.end())
+    {
         bind_id = random::instance()->rand_int(0, INT_MAX);
     }
     vec.push_back(std::make_tuple(std::function(func), single_thread, bind_id));
@@ -42,12 +45,12 @@ inline object::~object()
 
 template <typename _VectorType>
 void object::__unbind_helper__(std::recursive_mutex& mu,
-    _VectorType& vec, int bind_id)
+                               _VectorType& vec, int bind_id)
 {
     std::lock_guard<std::recursive_mutex> lck(mu);
     vec.erase(std::remove_if(vec.begin(), vec.end(),
-                  [=](auto p) { return std::get<2>(p) == bind_id; }),
-        vec.end());
+                             [=](auto p) { return std::get<2>(p) == bind_id; }),
+              vec.end());
 }
 
 } // namespace skyfire

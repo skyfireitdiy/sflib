@@ -10,32 +10,41 @@
  */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_timer.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
-inline void timer::start(int ms, bool once) {
-    if (running__) {
+inline void timer::start(int ms, bool once)
+{
+    if (running__)
+    {
         return;
     }
     running__ = true;
 
     std::thread new_thread = std::thread(
         [this, ms](bool is_once) {
-            while (true) {
+            while (true)
+            {
                 std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-                if (std::this_thread::get_id() != current_timer_thread__) {
+                if (std::this_thread::get_id() != current_timer_thread__)
+                {
                     return;
                 }
-                if (running__) {
+                if (running__)
+                {
                     timeout();
-                    if (is_once) {
+                    if (is_once)
+                    {
                         running__ = false;
                         return;
                     }
-                } else {
+                }
+                else
+                {
                     break;
                 }
             }
@@ -48,6 +57,6 @@ inline void timer::start(int ms, bool once) {
 inline bool timer::is_active() const { return running__; }
 
 inline void timer::stop() { running__ = false; }
-}    // namespace skyfire
+} // namespace skyfire
 
 #pragma clang diagnostic pop

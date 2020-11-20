@@ -7,7 +7,7 @@
 
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_header.h"
 #include "sf_http_request_line.h"
@@ -18,23 +18,25 @@
 #include "sf_type.h"
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * @brief  http请求
  */
-class http_server_request final {
+class http_server_request final
+{
 private:
-    const byte_array raw__;
-    bool valid__ = false;
-    bool error__ = false;
-    http_request_line request_line__;
-    http_server_req_header header__;
-    byte_array body__;
-    bool multipart_data__ = false;
-    http_server_req_multipart_data_context_t multipart_data_context__;
+    const byte_array                             raw__;
+    bool                                         valid__ = false;
+    bool                                         error__ = false;
+    http_request_line                            request_line__;
+    http_server_req_header                       header__;
+    byte_array                                   body__;
+    bool                                         multipart_data__ = false;
+    http_server_req_multipart_data_context_t     multipart_data_context__;
     std::unordered_map<std::string, std::string> cookies__;
-    std::shared_ptr<std::istream> istream_ptr__ = nullptr;
-    SOCKET sock__;
+    std::shared_ptr<std::istream>                istream_ptr__ = nullptr;
+    SOCKET                                       sock__;
 
     bool parse_request__();
 
@@ -94,7 +96,7 @@ public:
      * @param sock 请求套接字
      */
     explicit http_server_request(http_server_req_multipart_data_context_t multipart_data,
-        SOCKET sock);
+                                 SOCKET                                   sock);
 
     /**
      * 判断请求是否合法
@@ -130,7 +132,7 @@ public:
      * @return std::string 值
      */
     std::string header(const std::string& key,
-        const std::string& default_value = "") const;
+                       const std::string& default_value = "") const;
 
     /**
      * 获取请求体（在非分块请求可用）
@@ -211,8 +213,8 @@ public:
      * @return 是否分割成功
      */
     static bool split_request(const byte_array& raw, std::string& request_line,
-        std::vector<std::string>& header_lines,
-        byte_array& body);
+                              std::vector<std::string>& header_lines,
+                              byte_array&               body);
 
     /**
      * 解析请求行数据
@@ -221,7 +223,7 @@ public:
      * @return 是否解析成功
      */
     static bool parse_request_line(const std::string& request_line,
-        http_request_line& request_line_para);
+                                   http_request_line& request_line_para);
 
     /**
      * 解析请求头
@@ -230,7 +232,7 @@ public:
      * @return 是否解析成功
      */
     static bool parse_header(std::vector<std::string> header_lines,
-        http_header& header);
+                             http_header&             header);
 
     /**
      * 解析cookies
@@ -238,7 +240,7 @@ public:
      * @param cookies cookie
      */
     static void parse_cookies(
-        const http_header& header_data,
+        const http_header&                            header_data,
         std::unordered_map<std::string, std::string>& cookies);
 };
 } // namespace skyfire

@@ -18,7 +18,8 @@
 #include <zconf.h>
 #include <zlib.h>
 
-namespace skyfire {
+namespace skyfire
+{
 constexpr char session_id_key[] = "_SESSION_ID";
 
 class http_server_req_multipart;
@@ -38,9 +39,10 @@ constexpr char websocket_sha1_append_str[] = "258EAFA5-E914-47DA-95CA-C5AB0DC85B
 /**
  * @brief  请求上下文
  */
-struct request_context_t {
-    bool new_req = false; // 是否是新情求
-    byte_array buffer; // buffer
+struct request_context_t
+{
+    bool       new_req = false; // 是否是新情求
+    byte_array buffer;          // buffer
 };
 
 SF_JSONIFY(request_context_t, new_req, buffer)
@@ -48,11 +50,12 @@ SF_JSONIFY(request_context_t, new_req, buffer)
 /**
  *  @brief websocket上下文
  */
-struct websocket_context_t final {
-    std::string url; // url
-    SOCKET sock; // socket
-    byte_array buffer; // 原始buffer（未解析）
-    byte_array data_buffer; // 解析出来的buffer
+struct websocket_context_t final
+{
+    std::string url;         // url
+    SOCKET      sock;        // socket
+    byte_array  buffer;      // 原始buffer（未解析）
+    byte_array  data_buffer; // 解析出来的buffer
 };
 
 SF_JSONIFY(websocket_context_t, url, sock, buffer, data_buffer)
@@ -60,41 +63,45 @@ SF_JSONIFY(websocket_context_t, url, sock, buffer, data_buffer)
 /**
  *  @brief 分块请求上下文
  */
-struct http_server_req_multipart_data_context_t final {
-    SOCKET sock; // socket
-    std::string boundary_str; // 分解字符串
-    http_header_t header; // 头
-    http_request_line request_line; // 请求行
-    std::vector<http_server_req_multipart> multipart; // 分块信息
+struct http_server_req_multipart_data_context_t final
+{
+    SOCKET                                 sock;         // socket
+    std::string                            boundary_str; // 分解字符串
+    http_header_t                          header;       // 头
+    http_request_line                      request_line; // 请求行
+    std::vector<http_server_req_multipart> multipart;    // 分块信息
 };
 
 /**
  * @brief  cookie生存期类型
  */
-enum class cookie_life_type {
-    session = 0, // session生存期
-    time_point = 1 // 时间点生存期
+enum class cookie_life_type
+{
+    session    = 0, // session生存期
+    time_point = 1  // 时间点生存期
 };
 
 /**
  *  @brief cookie
  */
-struct http_cookie_item_t final {
-    std::string key; // 键
-    std::string value; // 值
-    cookie_life_type life_type = cookie_life_type ::session; // 生存期类型
+struct http_cookie_item_t final
+{
+    std::string                           key;                                           // 键
+    std::string                           value;                                         // 值
+    cookie_life_type                      life_type  = cookie_life_type ::session;       // 生存期类型
     std::chrono::system_clock::time_point time_point = std::chrono::system_clock::now(); // 生存期
-    std::string path = "/"; // 路径
-    bool secure = false; // 安全性
-    bool http_only = true; // http only
+    std::string                           path       = "/";                              // 路径
+    bool                                  secure     = false;                            // 安全性
+    bool                                  http_only  = true;                             // http only
 };
 
 /**
  * @brief  响应类型
  */
-enum class http_data_type {
-    normal, // 普通类型
-    file, // 文件类型
+enum class http_data_type
+{
+    normal,    // 普通类型
+    file,      // 文件类型
     multipart, // multipart类型
     stream
 };
@@ -103,30 +110,34 @@ enum class http_data_type {
  * @brief
  * 响应文件信息（当响应类型为file或者响应类型为multipart，子类型为file时，使用改数据结构声明文件）
  */
-struct http_file_info_t final {
-    std::string filename;
-    long long begin;
-    long long end;
+struct http_file_info_t final
+{
+    std::string       filename;
+    long long         begin;
+    long long         end;
     long unsigned int file_size;
 };
 
 /**
  * @brief  multipart类型信息
  */
-struct http_multipart_info_t final {
+struct http_multipart_info_t final
+{
     /**
      *  @brief multipart子类型
      */
-    enum class multipart_info_type {
+    enum class multipart_info_type
+    {
         form, // 表单
-        file // 文件
+        file  // 文件
     };
     /**
      *  @brief 表单信息，当type为multipart_info_type::form时有效
      */
-    struct form_info_t final {
+    struct form_info_t final
+    {
         http_header_t header; // 响应头
-        byte_array body; // 响应体
+        byte_array    body;   // 响应体
     };
 
     multipart_info_type
@@ -136,8 +147,6 @@ struct http_multipart_info_t final {
     http_file_info_t
         file_info; // 响应文件信息，当type为multipart_info_type::file时有效
 };
-
-
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -162,7 +171,7 @@ inline unsigned char from_hex(unsigned char x);
  * @return 编码后的字符串
  */
 inline std::string url_encode(const std::string& str,
-    bool decode_plus = true);
+                              bool               decode_plus = true);
 
 /**
  * url解码
@@ -171,7 +180,7 @@ inline std::string url_encode(const std::string& str,
  * @return 解码后的字符串
  */
 inline std::string url_decode(const std::string& str,
-    bool decode_plus = true);
+                              bool               decode_plus = true);
 
 /**
  * 解析表单参数
@@ -181,14 +190,25 @@ inline std::string url_decode(const std::string& str,
 http_param_t parse_param(std::string param_str);
 
 /**
- * 解析url
+ * 服务器侧解析url
  * @param raw_url 原始url
  * @param url url
  * @param param 参数
  * @param frame 锚点信息
  */
-inline void parse_url(const std::string& raw_url, std::string& url,
-    http_param_t& param, std::string& frame);
+inline void parse_server_req_url(const std::string& raw_url, std::string& url,
+                                 http_param_t& param, std::string& frame);
+
+/**
+ * @brief 客户端侧解析url
+ * 
+ * @param raw_url 原始url
+ * @param agreement 协议
+ * @param host 主机名
+ * @param port 端口
+ * @param resource 请求资源
+ */
+inline void parse_client_req_url(const std::string& raw_url, std::string& agreement, std::string& host, short& port, std::string& resource);
 
 /**
  * 生成http时间字符串
@@ -212,9 +232,7 @@ inline std::string to_header_key_format(std::string key);
  * @return 读取结果
  */
 inline byte_array read_file(const std::string& filename,
-    size_t max_size = 4096);
-
-#pragma clang diagnostic pop
+                            size_t             max_size = 4096);
 
 /**
  * base64编码
@@ -222,9 +240,6 @@ inline byte_array read_file(const std::string& filename,
  * @return 编码后的base64字符串
  */
 inline std::string base64_encode(const byte_array& data);
-
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
 /**
  * base64解码

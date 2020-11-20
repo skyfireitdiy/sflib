@@ -7,27 +7,28 @@
 * 
 */
 
-
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#include "sf_stdc++.h"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_grammer_utils.h"
+#include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * @brief 词法分析器
  */
-class lex final {
-   private:
+class lex final
+{
+private:
     std::vector<lex_rule_t> rules__;
 
-   public:
+public:
     /**
      * 设置规则
      * @param rule 规则集合
      */
-    void set_rules(const std::vector<lex_rule_t> &rule);
+    void set_rules(const std::vector<lex_rule_t>& rule);
 
     /**
      * 解析
@@ -35,7 +36,7 @@ class lex final {
      * @param result 结果
      * @return 是否解析成功
      */
-    bool parse(std::string content, std::vector<lex_result_t> &result);
+    bool parse(std::string content, std::vector<lex_result_t>& result);
 
     /**
      * 获取规则
@@ -50,5 +51,5 @@ class lex final {
     std::unordered_set<std::string> real_term() const;
 };
 
-}    // namespace skyfire
+} // namespace skyfire
 #pragma clang diagnostic pop

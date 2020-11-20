@@ -6,18 +6,20 @@
 */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_router.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 inline int router::priority() const { return 0; }
 
-inline bool router::run_route(const http_server_request &req,
-                                 http_server_response &res, const std::string &url,
-                                 const std::string &method) {
+inline bool router::run_route(const http_server_request& req,
+                              http_server_response& res, const std::string& url,
+                              const std::string& method)
+{
     return false;
 }
-}    // namespace skyfire
+} // namespace skyfire
 #pragma clang diagnostic pop

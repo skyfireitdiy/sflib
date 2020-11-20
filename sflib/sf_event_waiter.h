@@ -11,7 +11,7 @@
 
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_meta.hpp"
 #include "sf_nocopy.h"
@@ -24,23 +24,25 @@
  * @param obj 对象
  * @param name 信号
  */
-#define sf_wait(obj, name)                                                            \
-    {                                                                                 \
+#define sf_wait(obj, name)                                                         \
+    {                                                                              \
         auto p_waiter = skyfire::make_waiter((obj)->__##name##_signal_func_vec__); \
-        auto bind_id = sf_bind(obj, name, p_waiter->make_quit_func__(), true);        \
-        p_waiter->wait__();                                                           \
-        sf_unbind(obj, name, bind_id);                                                \
+        auto bind_id  = sf_bind(obj, name, p_waiter->make_quit_func__(), true);    \
+        p_waiter->wait__();                                                        \
+        sf_unbind(obj, name, bind_id);                                             \
     }
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * 等待对象
  * @tparam ARGS 等待参数列表
  */
 template <typename... ARGS>
-class __event_waiter__ : public nocopy<> {
+class __event_waiter__ : public nocopy<>
+{
 private:
-    std::mutex mu_cond__;
+    std::mutex              mu_cond__;
     std::condition_variable cond__;
 
 public:

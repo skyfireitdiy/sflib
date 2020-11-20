@@ -2,18 +2,20 @@
 
 #include "sf_http_header.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  * @brief http响应头
  * 
  */
 
-class http_server_res_header : public http_header {
+class http_server_res_header : public http_header
+{
 private:
-    int status__ = 200;
-    std::string http_version__ = "HTTP/1.1";
-    std::string status_desc__ = "OK";
+    int                                                 status__       = 200;
+    std::string                                         http_version__ = "HTTP/1.1";
+    std::string                                         status_desc__  = "OK";
     std::unordered_map<std::string, http_cookie_item_t> res_cookies__;
 
 public:

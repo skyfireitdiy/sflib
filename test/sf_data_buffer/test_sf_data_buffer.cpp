@@ -6,7 +6,7 @@
 sf_test(test_read_write)
 {
     skyfire::data_buffer buffer;
-    auto data = skyfire::to_byte_array("hello world");
+    auto                 data = skyfire::to_byte_array("hello world");
     buffer.write(data);
     auto t = buffer.read(1024);
     return data == std::get<1>(t);
@@ -15,7 +15,7 @@ sf_test(test_read_write)
 sf_test(test_read_empty_buffer)
 {
     skyfire::data_buffer buffer;
-    auto t = buffer.read(1024);
+    auto                 t = buffer.read(1024);
     return skyfire::err { { skyfire::err_finished, "" } } == std::get<0>(t);
 }
 
@@ -36,7 +36,7 @@ sf_test(test_pipe)
 {
     auto reader = skyfire::data_buffer::make_instance();
     auto writer = skyfire::data_buffer::make_instance();
-    auto pipe = skyfire::data_buffer::make_instance();
+    auto pipe   = skyfire::data_buffer::make_instance();
 
     pipe->set_reader(writer);
     reader->set_reader(pipe);

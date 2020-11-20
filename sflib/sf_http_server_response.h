@@ -6,27 +6,29 @@
 */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_server_res_header.h"
 #include "sf_http_server_request.h"
+#include "sf_http_server_res_header.h"
 #include "sf_http_utils.h"
 #include "sf_json.h"
 #include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 class http_server_base;
 
 /**
  * @brief  HTTP响应
  */
-class http_server_response final {
+class http_server_response final
+{
 
 private:
-    http_server_res_header header__;
-    byte_array body__;
-    http_data_type type__ = { http_data_type ::normal };
-    http_file_info_t file_info__;
+    http_server_res_header             header__;
+    byte_array                         body__;
+    http_data_type                     type__ = { http_data_type ::normal };
+    http_file_info_t                   file_info__;
     std::vector<http_multipart_info_t> multipart_info_vec__;
 
     const http_server_request req__;

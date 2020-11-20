@@ -13,7 +13,8 @@
 
 #include "sf_type.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 inline std::string to_string(const byte_array& data)
 {
@@ -53,7 +54,7 @@ inline byte_array to_byte_array(const std::string& str)
 }
 
 inline bool dump_byte_array(const byte_array& data, const std::string& filename,
-    bool app)
+                            bool app)
 {
     std::ofstream fo(filename, app ? (std::ios::app | std::ios::binary) : (std::ios::trunc | std::ios::out));
     if (!fo)

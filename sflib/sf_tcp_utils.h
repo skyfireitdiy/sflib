@@ -27,38 +27,44 @@
 #include <thread>
 #include <vector>
 
-namespace skyfire {
+namespace skyfire
+{
 #pragma pack(1)
 
 /**
  *  @brief 包头
  */
-struct pkg_header_t {
+struct pkg_header_t
+{
     unsigned char checksum; // 校验和
-    int type; // 包类型
-    int length; // 包长度
+    int           type;     // 包类型
+    int           length;   // 包长度
 };
 
 #pragma pack()
 
-struct tcp_server_opt_t {
-    bool raw = false;
-    bool manage_read = true;
-    int thread_count = std::thread::hardware_concurrency() * 2 + 2;
+struct tcp_server_opt_t
+{
+    bool raw            = false;
+    bool manage_read    = true;
+    int  thread_count   = std::thread::hardware_concurrency() * 2 + 2;
     bool manage_clients = true;
 };
 
 using tcp_server_opt_option = option<tcp_server_opt_t>;
-using tcp_server_config = tcp_server_opt_option::OptionFuncType;
+using tcp_server_config     = tcp_server_opt_option::OptionFuncType;
 
-namespace tcp {
-    namespace {
+namespace tcp
+{
+    namespace
+    {
         auto raw = tcp_server_opt_option::make_option(std::function([](tcp_server_opt_t& opt, bool r) {
             opt.raw = r;
         }));
 
         auto thread_count = tcp_server_opt_option::make_option(std::function([](tcp_server_opt_t& opt, int count) {
-            if (count < 1) {
+            if (count < 1)
+            {
                 count = 1;
             }
             opt.thread_count = count;

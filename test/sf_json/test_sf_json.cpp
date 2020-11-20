@@ -23,9 +23,9 @@ sf_test(test_construct)
 sf_test(test_insert)
 {
     json js;
-    js["name"] = "zhangsan";
-    js["age"] = 30;
-    js["man"] = false;
+    js["name"]    = "zhangsan";
+    js["age"]     = 30;
+    js["man"]     = false;
     js["address"] = json {};
 
     return js["address"].is_null();
@@ -35,11 +35,11 @@ sf_test(test_compare)
 {
     json js1;
     js1["name"] = "zhangsan";
-    js1["age"] = 30;
+    js1["age"]  = 30;
 
     json js2;
     js2["name"] = "zhangsan";
-    js2["age"] = 30;
+    js2["age"]  = 30;
 
     test_p_eq(js1, js2);
 

@@ -10,17 +10,18 @@
  */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_watch_time.h"
 #include "sf_utils.hpp"
+#include "sf_watch_time.h"
 
-namespace skyfire {
+namespace skyfire
+{
 template <typename T>
 check_point<T>::~check_point()
 {
     parent__.data__[point_name__][std::this_thread::id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(
-        std::chrono::high_resolution_clock::now() - clock__)
+                                                                 std::chrono::high_resolution_clock::now() - clock__)
                                                                  .count();
 }
 
@@ -42,7 +43,7 @@ template <typename T>
 std::string watch_time<T>::to_string()
 {
     std::ostringstream so;
-    auto old = so.flags();
+    auto               old = so.flags();
 
     so << std::right;
     so << std::setw(55) << "SkyFire Time Watch" << std::endl;
@@ -58,8 +59,10 @@ std::string watch_time<T>::to_string()
           "====================="
        << std::endl;
 
-    for (auto& p : data__) {
-        for (auto& q : p.second) {
+    for (auto& p : data__)
+    {
+        for (auto& q : p.second)
+        {
             so << std::setw(30) << p.first << std::setw(6) << "|"
                << std::setw(12) << q.first << std::setw(6) << "|"
                << convert_ns_to_readable(q.second) << std::endl;

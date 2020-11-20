@@ -7,21 +7,23 @@
 
 #pragma once
 
+#include "sf_nocopy.h"
 #include "sf_object.hpp"
 #include "sf_stdc++.h"
 #include "sf_tcp_client.h"
 #include "sf_tcp_nat_traversal_utils.hpp"
 #include "sf_tcp_server.h"
-#include "sf_nocopy.h"
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * nat穿透服务器类
  */
 class tcp_nat_traversal_server final
     : public make_instance_t<tcp_nat_traversal_server,
-          nocopy<object>> {
+                             nocopy<object>>
+{
 private:
     // 保存客户端列表
     std::unordered_set<SOCKET> clients__;
@@ -42,7 +44,7 @@ private:
         tcp_nat_traversal_context_t__& context, SOCKET sock) const;
 
     void on_msg_coming__(SOCKET sock, const pkg_header_t& header,
-        const byte_array& data);
+                         const byte_array& data);
 
     void on_client_require_connect_to_peer_client__(
         tcp_nat_traversal_context_t__& context) const;

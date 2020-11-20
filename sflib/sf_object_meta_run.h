@@ -11,13 +11,15 @@
 
 #include <functional>
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * @brief 辅助函数，让一个函数在main之前运行
  *
  */
-class object_meta_run final {
-   public:
+class object_meta_run final
+{
+public:
     /**
      * @brief Construct a new sf object meta run object
      *
@@ -25,4 +27,4 @@ class object_meta_run final {
      */
     explicit object_meta_run(const std::function<void()> f);
 };
-}    // namespace skyfire
+} // namespace skyfire

@@ -114,7 +114,7 @@
  */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedMacroInspection"
+#pragma ide diagnostic   ignored "OCUnusedMacroInspection"
 
 #include "sf_json.hpp"
 #include "sf_object_msg_queue.hpp"
@@ -123,55 +123,61 @@
 /*
  * sf_singal 注册信号的宏
  */
-#define sf_singal(name, ...)                                               \
-public:                                                                    \
-    std::recursive_mutex __mu_##name##_signal__;                           \
-    std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>   \
-        __##name##_signal_func_vec__;                                      \
-    template <typename... __SF_OBJECT_ARGS__>                              \
-    void name(__SF_OBJECT_ARGS__&&... args)                                \
-    {                                                                      \
-        std::lock_guard<std::recursive_mutex> lck(__mu_##name##_signal__); \
-        for (auto& p : __##name##_signal_func_vec__) {                     \
-            if (std::get<1>(p)) {                                          \
-                std::get<0>(p)(std::forward<__SF_OBJECT_ARGS__>(args)...); \
-            } else {                                                       \
-                auto bind_obj = std::bind(std::get<0>(p),                  \
-                    std::forward<__SF_OBJECT_ARGS__>(args)...);            \
-                __p_msg_queue__->add_msg(std::pair(this, bind_obj));       \
-            }                                                              \
-        }                                                                  \
+#define sf_singal(name, ...)                                                          \
+public:                                                                               \
+    std::recursive_mutex __mu_##name##_signal__;                                      \
+    std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>              \
+        __##name##_signal_func_vec__;                                                 \
+    template <typename... __SF_OBJECT_ARGS__>                                         \
+    void name(__SF_OBJECT_ARGS__&&... args)                                           \
+    {                                                                                 \
+        std::lock_guard<std::recursive_mutex> lck(__mu_##name##_signal__);            \
+        for (auto& p : __##name##_signal_func_vec__)                                  \
+        {                                                                             \
+            if (std::get<1>(p))                                                       \
+            {                                                                         \
+                std::get<0>(p)(std::forward<__SF_OBJECT_ARGS__>(args)...);            \
+            }                                                                         \
+            else                                                                      \
+            {                                                                         \
+                auto bind_obj = std::bind(std::get<0>(p),                             \
+                                          std::forward<__SF_OBJECT_ARGS__>(args)...); \
+                __p_msg_queue__->add_msg(std::pair(this, bind_obj));                  \
+            }                                                                         \
+        }                                                                             \
     }
 
 /*
  * sf_bind 信号绑定
  */
-#define sf_bind(objptr, name, func, ...)                           \
-    (objptr)->__bind_helper__((objptr)->__mu_##name##_signal__, \
-        (objptr)->__##name##_signal_func_vec__, func,              \
-        __VA_ARGS__)
+#define sf_bind(objptr, name, func, ...)                                    \
+    (objptr)->__bind_helper__((objptr)->__mu_##name##_signal__,             \
+                              (objptr)->__##name##_signal_func_vec__, func, \
+                              __VA_ARGS__)
 
 /*
  * sf_unbind 信号解绑
  */
 #define sf_unbind(objptr, name, bind_id)  \
-    (objptr)->__unbind_helper__(       \
+    (objptr)->__unbind_helper__(          \
         (objptr)->__mu_##name##_signal__, \
         (objptr)->__##name##_signal_func_vec__, bind_id);
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  *  @brief 元对象
  */
-class object {
+class object
+{
 public:
     template <typename _VectorType, typename _FuncType>
     int __bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
-        _FuncType func, bool single_thread = true);
+                        _FuncType func, bool single_thread = true);
 
     template <typename _VectorType>
     void __unbind_helper__(std::recursive_mutex& mu, _VectorType& vec,
-        int bind_id);
+                           int bind_id);
 
     virtual ~object();
 

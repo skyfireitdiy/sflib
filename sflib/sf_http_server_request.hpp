@@ -7,24 +7,25 @@
 
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_server_req_header.hpp"
 #include "sf_http_request_line.h"
+#include "sf_http_server_req_header.hpp"
 #include "sf_http_server_request.h"
 #include "sf_http_utils.hpp"
 #include "sf_logger.hpp"
 #include "sf_random.hpp"
 #include "sf_utils.hpp"
 
-namespace skyfire {
+namespace skyfire
+{
 
 inline bool http_server_request::split_request(
     const byte_array& raw, std::string& request_line,
     std::vector<std::string>& header_lines, byte_array& body)
 {
-    auto raw_string = to_string(raw);
-    const auto pos = raw_string.find("\r\n\r\n");
+    auto       raw_string = to_string(raw);
+    const auto pos        = raw_string.find("\r\n\r\n");
     if (pos == std::string::npos)
         return false;
     body = byte_array(raw.begin() + pos + 4, raw.end());
@@ -33,7 +34,8 @@ inline bool http_server_request::split_request(
     getline(si, request_line);
     std::string tmp_str;
     header_lines.clear();
-    while (!si.eof()) {
+    while (!si.eof())
+    {
         getline(si, tmp_str);
         header_lines.push_back(tmp_str);
     }
@@ -60,17 +62,20 @@ inline http_server_request::http_server_request(byte_array raw, SOCKET sock)
 
 inline bool http_server_request::parse_request__()
 {
-    std::string request_line;
+    std::string              request_line;
     std::vector<std::string> header_lines;
-    if (!split_request(raw__, request_line, header_lines, body__)) {
+    if (!split_request(raw__, request_line, header_lines, body__))
+    {
         sf_debug("split request error");
         return false;
     }
-    if (!parse_request_line(request_line, request_line__)) {
+    if (!parse_request_line(request_line, request_line__))
+    {
         sf_debug("parse request line error");
         return false;
     }
-    if (!parse_header(header_lines, header__)) {
+    if (!parse_header(header_lines, header__))
+    {
         sf_debug("parse header error");
         return false;
     }
@@ -80,20 +85,25 @@ inline bool http_server_request::parse_request__()
     auto content_len = header__.header_value("Content-Length", "0");
 
     auto content_type = header__.header_value("Content-Type", "");
-    if (!content_type.empty()) {
+    if (!content_type.empty())
+    {
         auto content_type_list = split_string(content_type, ";");
-        for (const auto& p : content_type_list) {
+        for (const auto& p : content_type_list)
+        {
             auto tmp_str = string_trim(p);
-            if (tmp_str.find("boundary=") == 0) {
-                multipart_data__ = true;
+            if (tmp_str.find("boundary=") == 0)
+            {
+                multipart_data__       = true;
                 auto boundary_str_list = split_string(tmp_str, "=");
-                if (boundary_str_list.size() != 2) {
+                if (boundary_str_list.size() != 2)
+                {
                     sf_error("boundary str size error");
                     error__ = true;
                     return false;
                 }
                 multipart_data_context__.request_line = request_line__;
-                if (boundary_str_list[1].size() <= 2) {
+                if (boundary_str_list[1].size() <= 2)
+                {
                     sf_error("boundary is too short");
                     error__ = true;
                     return false;
@@ -109,7 +119,8 @@ inline bool http_server_request::parse_request__()
         }
     }
     char* pos;
-    if (std::strtoll(content_len.c_str(), &pos, 10) != body__.size()) {
+    if (std::strtoll(content_len.c_str(), &pos, 10) != body__.size())
+    {
         sf_debug("body size error", content_len.c_str(), body__.size());
         return false;
     }
@@ -120,12 +131,13 @@ inline bool http_server_request::parse_request__()
 inline bool http_server_request::parse_header(
     const std::vector<std::string> header_lines, http_header& header)
 {
-    for (auto& line : header_lines) {
+    for (auto& line : header_lines)
+    {
         const auto pos = line.find(':');
         if (pos == std::string::npos)
             return false;
         const std::string key(line.begin(), line.begin() + pos);
-        std::string value(line.begin() + pos + 1, line.end());
+        std::string       value(line.begin() + pos + 1, line.end());
         value = string_trim(value);
         header.set_header(key, value);
     }
@@ -157,36 +169,41 @@ inline http_server_req_multipart_data_context_t http_server_request::multipart_d
 inline http_server_request::http_server_request(
     http_server_req_multipart_data_context_t multipart_data, SOCKET sock)
 {
-    valid__ = true;
+    valid__        = true;
     request_line__ = multipart_data.request_line;
     header__.set_header(multipart_data.header);
-    multipart_data__ = true;
+    multipart_data__         = true;
     multipart_data_context__ = multipart_data;
-    sock__ = sock;
+    sock__                   = sock;
     parse_cookies(header__, cookies__);
 }
 
 inline void http_server_request::parse_cookies(
-    const http_header& header_data,
+    const http_header&                            header_data,
     std::unordered_map<std::string, std::string>& cookies)
 {
     cookies.clear();
-    if (header_data.has_key("Cookie")) {
+    if (header_data.has_key("Cookie"))
+    {
         const auto cookie_str = header_data.header_value("Cookie");
-        auto str_list = split_string(cookie_str, ";");
-        for (auto& p : str_list) {
+        auto       str_list   = split_string(cookie_str, ";");
+        for (auto& p : str_list)
+        {
             p = string_trim(p);
         }
-        for (auto& p : str_list) {
+        for (auto& p : str_list)
+        {
             auto tmp_list = split_string(p, "=");
-            if (tmp_list.size() != 2) {
+            if (tmp_list.size() != 2)
+            {
                 continue;
             }
             cookies[tmp_list[0]] = tmp_list[1];
         }
     }
-    if (cookies.count(session_id_key) == 0 || cookies[session_id_key].empty()) {
-        auto rd = random::instance();
+    if (cookies.count(session_id_key) == 0 || cookies[session_id_key].empty())
+    {
+        auto rd                 = random::instance();
         cookies[session_id_key] = rd->uuid_str();
     }
 }
@@ -200,7 +217,8 @@ inline std::unordered_map<std::string, std::string> http_server_request::cookies
 inline std::string http_server_request::session_id() const
 {
     auto ck = cookies();
-    if (cookies__.count(session_id_key) == 0) {
+    if (cookies__.count(session_id_key) == 0)
+    {
         return "";
     }
     return ck[session_id_key];
@@ -212,10 +230,10 @@ inline std::string http_server_request::url() const { return request_line__.url;
 
 inline std::string http_server_request::base_url() const
 {
-    std::string ret;
+    std::string  ret;
     http_param_t params;
-    std::string frame;
-    parse_url(request_line__.url, ret, params, frame);
+    std::string  frame;
+    parse_server_req_url(request_line__.url, ret, params, frame);
     return ret;
 }
 
@@ -228,10 +246,10 @@ inline addr_info_t http_server_request::addr() const
 
 inline http_param_t http_server_request::params() const
 {
-    std::string url;
+    std::string  url;
     http_param_t params;
-    std::string frame;
-    parse_url(request_line__.url, url, params, frame);
+    std::string  frame;
+    parse_server_req_url(request_line__.url, url, params, frame);
     return params;
 }
 
@@ -242,10 +260,10 @@ inline http_param_t http_server_request::body_params() const
 
 inline std::string http_server_request::frame() const
 {
-    std::string url;
+    std::string  url;
     http_param_t params;
-    std::string frame;
-    parse_url(request_line__.url, url, params, frame);
+    std::string  frame;
+    parse_server_req_url(request_line__.url, url, params, frame);
     return frame;
 }
 

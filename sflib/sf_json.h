@@ -9,25 +9,27 @@
 
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic ignored "google-explicit-constructor"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "google-explicit-constructor"
 
 #include "sf_define.h"
 #include "sf_json_utils.h"
 #include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * @brief json库
  */
-class json final {
+class json final
+{
 private:
     std::shared_ptr<json_value> value__;
 
     explicit json(const std::shared_ptr<json_value>& value);
 
     void value_copy__(const std::shared_ptr<json_value>& src,
-        std::shared_ptr<json_value>& dst) const;
+                      std::shared_ptr<json_value>&       dst) const;
 
 public:
     /**
@@ -176,7 +178,7 @@ public:
      * @param number 数字
      */
     template <typename T,
-        typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
+              typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
     json(T number);
 
     /**
@@ -185,7 +187,7 @@ public:
      * @return 数字
      */
     template <typename T,
-        typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
+              typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
     operator T() const;
 
     /**
@@ -195,7 +197,7 @@ public:
      * @return json对象
      */
     template <typename T,
-        typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
+              typename = std::enable_if_t<std::is_arithmetic_v<T>, void>>
     json& operator=(T value);
 
     /**
@@ -432,19 +434,19 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
 template <typename... ARGS>
 json to_json_tuple_helper__(const ARGS&... value);
 
-#define SF_CONTAINER_JSON_EXTERN(container)                 \
-    template <typename T>                                   \
+#define SF_CONTAINER_JSON_EXTERN(container)              \
+    template <typename T>                                \
     json to_json(const container<T>& value);             \
-    template <typename T>                                   \
+    template <typename T>                                \
     void from_json(const json& js, container<T>& value); \
-    template <>                                             \
+    template <>                                          \
     json to_json(const container<char>& value);          \
-    template <>                                             \
+    template <>                                          \
     void from_json(const json& js, container<char>& value);
 
 #define SF_ASSOCIATED_CONTAINER_JSON_EXTERN(container) \
     template <typename K, typename V>                  \
-    json to_json(const container<K, V>& value);     \
+    json to_json(const container<K, V>& value);        \
     template <typename K, typename V>                  \
     void from_json(const json& js, container<K, V>& value);
 
@@ -469,27 +471,27 @@ json to_json_helper__(const std::string& key, const T& value);
 
 template <typename T, typename... ARGS>
 json to_json_helper__(const std::string& key, const T& value,
-    const ARGS&... args);
+                      const ARGS&... args);
 
 template <typename T>
 void from_json_helper__(const json& js, const std::string& key, T& value);
 
 template <typename T, typename... ARGS>
 void from_json_helper__(const json& js, const std::string& key, T& value,
-    ARGS&&... args);
+                        ARGS&&... args);
 
 } // namespace skyfire
 
-#define SF_JSONIFY(ClassName, ...)                                    \
+#define SF_JSONIFY(ClassName, ...)                                 \
     inline skyfire::json to_json(const ClassName& obj)             \
-    {                                                                 \
+    {                                                              \
         return skyfire::to_json_helper__(                          \
-            SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));           \
-    }                                                                 \
+            SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));        \
+    }                                                              \
     inline void from_json(const skyfire::json& js, ClassName& obj) \
-    {                                                                 \
+    {                                                              \
         skyfire::from_json_helper__(                               \
-            js, SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));       \
+            js, SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));    \
     }
 
 #pragma clang diagnostic pop

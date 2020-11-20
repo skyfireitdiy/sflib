@@ -10,11 +10,12 @@
  */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_event_waiter.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 template <typename... ARGS>
 void __event_waiter__<ARGS...>::wait__()

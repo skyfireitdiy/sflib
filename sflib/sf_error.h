@@ -1,11 +1,13 @@
 #pragma once
 #include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 // error_code
 
-enum error_code {
+enum error_code
+{
     // 无错误
     err_ok = 0,
 
@@ -54,10 +56,11 @@ enum error_code {
  * 
  */
 
-class exception : public std::exception {
+class exception : public std::exception
+{
 private:
-    int ec__;
-    std::string msg__;
+    int                 ec__;
+    std::string         msg__;
     mutable std::string buf__;
 
 public:
@@ -81,7 +84,8 @@ public:
  * @brief 错误
  * 
  */
-class err {
+class err
+{
 private:
     exception exp__;
 

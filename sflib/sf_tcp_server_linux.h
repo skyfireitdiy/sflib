@@ -29,15 +29,17 @@
 
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  * @brief socket 数据上下文
  * 
  */
-struct sock_data_context_t {
-    epoll_event ev {};
-    byte_array data_buffer_in {};
+struct sock_data_context_t
+{
+    epoll_event            ev {};
+    byte_array             data_buffer_in {};
     std::deque<byte_array> data_buffer_out {};
 };
 
@@ -45,15 +47,17 @@ struct sock_data_context_t {
  * @brief epoll上下文
  * 
  */
-struct epoll_context_t {
+struct epoll_context_t
+{
     int epoll_fd {};
 
-    std::shared_mutex mu_epoll_context__;
+    std::shared_mutex                               mu_epoll_context__;
     std::unordered_map<SOCKET, sock_data_context_t> sock_context__ {};
 };
 
 class tcp_server
-    : public make_instance_t<tcp_server, tcp_server_interface> {
+    : public make_instance_t<tcp_server, tcp_server_interface>
+{
 private:
     tcp_server_opt_t config__;
 

@@ -13,7 +13,8 @@
 
 #include "sf_msg_queue.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 template <typename T>
 void msg_queue<T>::add_msg(T msg)
@@ -41,7 +42,8 @@ template <typename T>
 std::shared_ptr<T> msg_queue<T>::take_msg()
 {
     std::lock_guard<std::mutex> lck(mu_data_op__);
-    if (data__.empty()) {
+    if (data__.empty())
+    {
         return nullptr;
     }
     auto ret = std::make_shared<T>(data__.front());

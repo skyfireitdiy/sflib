@@ -10,10 +10,11 @@
 //
 #pragma once
 
-#include "sf_stdc++.h"
 #include "sf_finally.h"
+#include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 inline __finally__::__finally__(std::function<void()> func)
     : func__(std::move(func))
 {
@@ -21,4 +22,4 @@ inline __finally__::__finally__(std::function<void()> func)
 
 inline __finally__::~__finally__() { func__(); }
 
-}    // namespace skyfire
+} // namespace skyfire

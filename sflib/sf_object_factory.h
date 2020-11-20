@@ -7,23 +7,24 @@
 * 
 */
 
-
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#include "sf_stdc++.h"
-#include "sf_object_factory_utils.h"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_json.h"
 #include "sf_nocopy.h"
+#include "sf_object_factory_utils.h"
+#include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  * @brief 对象工厂
  * 
  */
-class object_factory final : public nocopy<> {
-   public:
+class object_factory final : public nocopy<>
+{
+public:
     /**
      * @brief 加载配置
      *
@@ -61,12 +62,12 @@ class object_factory final : public nocopy<> {
     template <typename T, typename... ARGS>
     std::shared_ptr<T> object(const std::string& obj_id, ARGS&&... args);
 
-   private:
+private:
     std::unordered_map<std::string, object_factory_config_item_t>
         object_data__;
 
     bool load_data__(const json& config_obj);
     json object_data(const std::string& obj_name);
 };
-}    // namespace skyfire
+} // namespace skyfire
 #pragma clang diagnostic pop

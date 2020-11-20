@@ -6,17 +6,19 @@
 */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_header.h"
 
-namespace skyfire {
+namespace skyfire
+{
 inline void http_header::clear() { header_data__.clear(); }
 
 inline std::vector<std::string> http_header::key_list() const
 {
     std::vector<std::string> keys;
-    for (auto& p : header_data__) {
+    for (auto& p : header_data__)
+    {
         keys.push_back(p.first);
     }
     return keys;
@@ -37,10 +39,10 @@ inline std::string http_header::header_value(
     return header_data__.at(key);
 }
 
-inline void http_header::set_header(std::string key,
-    const std::string& value)
+inline void http_header::set_header(std::string        key,
+                                    const std::string& value)
 {
-    key = to_header_key_format(key);
+    key                = to_header_key_format(key);
     header_data__[key] = value;
 }
 
@@ -55,7 +57,6 @@ inline bool http_header::has_key(const std::string& key) const
 {
     return header_data__.count(to_header_key_format(key)) != 0;
 }
-
 
 } // namespace skyfire
 #pragma clang diagnostic pop

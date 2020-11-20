@@ -10,17 +10,19 @@
  */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_stdc++.h"
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  *  @brief  线程池
  */
-class thread_pool : public make_instance_t<thread_pool> {
+class thread_pool : public make_instance_t<thread_pool>
+{
 public:
     /**
      * @brief thread_pool 构造函数
@@ -82,20 +84,20 @@ public:
     void wait_all_task_finished();
 
 private:
-    std::atomic<size_t> thread_count__ { 0 };
+    std::atomic<size_t>               thread_count__ { 0 };
     std::deque<std::function<void()>> task_deque__;
 
     static void thread_run__(thread_pool* this__);
 
-    std::mutex mu_task_deque__;
+    std::mutex                                mu_task_deque__;
     std::vector<std::shared_ptr<std::thread>> thread_vec__;
-    bool is_pause__ { false };
-    bool is_exit__ { false };
-    std::atomic_int busy_thread_num__ { 0 };
-    std::mutex mu_thread__cv__;
-    std::condition_variable thread_cv__;
-    std::mutex mu_wait_finish__;
-    std::condition_variable wait_finish_cv__;
+    bool                                      is_pause__ { false };
+    bool                                      is_exit__ { false };
+    std::atomic_int                           busy_thread_num__ { 0 };
+    std::mutex                                mu_thread__cv__;
+    std::condition_variable                   thread_cv__;
+    std::mutex                                mu_wait_finish__;
+    std::condition_variable                   wait_finish_cv__;
 
     void add_thread__(size_t num);
 };

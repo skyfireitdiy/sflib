@@ -15,7 +15,7 @@ bool test_sf_string_operator()
 
 bool test_sf_string_output()
 {
-    return (std::cout << string::repeat("hello", 5) << std::endl).good() ;
+    return (std::cout << string::repeat("hello", 5) << std::endl).good();
 }
 
 int main()

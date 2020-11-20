@@ -11,18 +11,20 @@
 
 #pragma once
 
-#include "sf_stdc++.h"
 #include "sf_single_instance.hpp"
+#include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  *  @brief 消息队列
  */
 template <typename T>
-class msg_queue {
+class msg_queue
+{
 private:
     std::list<T> data__;
-    std::mutex mu_data_op__;
+    std::mutex   mu_data_op__;
 
     std::condition_variable wait_cond__;
 

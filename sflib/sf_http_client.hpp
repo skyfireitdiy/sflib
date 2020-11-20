@@ -2,7 +2,8 @@
 
 #include "sf_http_client.h"
 
-namespace skyfire {
+namespace skyfire
+{
 
 std::shared_ptr<http_request_result> http_client::request(std::shared_ptr<http_client_request>& req)
 {

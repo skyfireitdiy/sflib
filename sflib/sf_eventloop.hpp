@@ -13,7 +13,8 @@
 
 #include "sf_eventloop.h"
 
-namespace skyfire {
+namespace skyfire
+{
 inline void eventloop::quit()
 {
     running__ = false;
@@ -27,18 +28,25 @@ inline void eventloop::clear() const { __p_msg_queue__->clear(); }
 inline void eventloop::exec()
 {
     running__ = true;
-    while (true) {
-        if (running__ == false) {
+    while (true)
+    {
+        if (running__ == false)
+        {
             break;
         }
-        if (__p_msg_queue__->empty()) {
+        if (__p_msg_queue__->empty())
+        {
             __p_msg_queue__->wait_new_msg();
         }
-        if (!__p_msg_queue__->empty()) {
+        if (!__p_msg_queue__->empty())
+        {
             auto fp = __p_msg_queue__->take_msg();
-            if (!fp) {
+            if (!fp)
+            {
                 continue;
-            } else {
+            }
+            else
+            {
                 fp->second();
             }
         }

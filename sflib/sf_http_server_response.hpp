@@ -6,30 +6,34 @@
 */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "sf_http_server_res_header.hpp"
 #include "sf_http_server_request.hpp"
+#include "sf_http_server_res_header.hpp"
 #include "sf_http_server_response.h"
 #include "sf_http_status.h"
 #include "sf_json.hpp"
 
-namespace skyfire {
+namespace skyfire
+{
 
 inline http_server_response::http_server_response(const http_server_request& request)
     : req__(request)
 {
 }
 
-inline int http_server_response::status() const {
+inline int http_server_response::status() const
+{
     return header__.status();
 }
 
-inline std::string http_server_response::status_desc() const {
+inline std::string http_server_response::status_desc() const
+{
     return header__.status_desc();
 }
 
-inline std::string http_server_response::http_version() const {
+inline std::string http_server_response::http_version() const
+{
     return header__.http_version();
 }
 
@@ -38,10 +42,13 @@ inline const http_server_request http_server_response::get_req() const { return 
 inline void http_server_response::set_status(int status)
 {
     header__.set_status(status);
-    if (http_status.count(status) != 0) {
+    if (http_status.count(status) != 0)
+    {
         set_status_desc(http_status[status]);
         set_body(to_byte_array(http_status[status]));
-    } else {
+    }
+    else
+    {
         set_status_desc("Unknown");
         set_body(to_byte_array("Unknown"s));
     }
@@ -79,20 +86,20 @@ inline void http_server_response::set_json(const json& json)
 inline void http_server_response::set_file(
     const http_file_info_t& file_info)
 {
-    type__ = http_data_type ::file;
+    type__      = http_data_type ::file;
     file_info__ = file_info;
 }
 
 inline void http_server_response::set_file(const std::string& filename)
 {
-    type__ = http_data_type ::file;
+    type__      = http_data_type ::file;
     file_info__ = http_file_info_t { filename, 0, -1 };
 }
 
 inline void http_server_response::set_multipart(
     const std::vector<http_multipart_info_t>& multipart_info_vec)
 {
-    type__ = http_data_type ::multipart;
+    type__               = http_data_type ::multipart;
     multipart_info_vec__ = multipart_info_vec;
 }
 
@@ -152,20 +159,20 @@ http_server_response::cookies() const
 }
 
 inline void http_server_response::redirect(const std::string& new_location,
-    int code)
+                                           int                code)
 {
     set_status(code);
     header().set_header("Location", new_location);
 }
 
 inline void http_server_response::add_header(const std::string& key,
-    const std::string& value)
+                                             const std::string& value)
 {
     header().set_header(key, value);
 }
 
 inline void http_server_response::add_cookie(const std::string& key,
-    const std::string& value)
+                                             const std::string& value)
 {
     header__.add_cookies(key, value);
 }

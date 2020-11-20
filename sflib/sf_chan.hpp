@@ -10,7 +10,8 @@
 #pragma once
 #include "sf_chan.h"
 
-namespace skyfire {
+namespace skyfire
+{
 template <typename T>
 chan<T>::chan(int buffer_size)
 {
@@ -26,9 +27,12 @@ void chan<T>::close()
     // FIXME deque没有clear成员了？
     // data__.clear();
     data__ = std::queue<T> {};
-    if (max_size__ != 0) {
+    if (max_size__ != 0)
+    {
         cond__.notify_all();
-    } else {
+    }
+    else
+    {
         cond_pop__.notify_all();
     }
 }

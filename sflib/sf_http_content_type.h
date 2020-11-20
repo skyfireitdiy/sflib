@@ -7,9 +7,10 @@
 
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "cert-err58-cpp"
+#pragma ide diagnostic   ignored "cert-err58-cpp"
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  * @brief  http Content-Type映射表

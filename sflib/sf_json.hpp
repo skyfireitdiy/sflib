@@ -9,9 +9,9 @@
 
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "cppcoreguidelines-c-copy-assignment-signature"
-#pragma ide diagnostic ignored "cert-err34-c"
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "cppcoreguidelines-c-copy-assignment-signature"
+#pragma ide diagnostic   ignored "cert-err34-c"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_define.h"
 #include "sf_error.h"
@@ -23,135 +23,138 @@
 #include "sf_utils.hpp"
 #include "sf_yacc.hpp"
 
-namespace skyfire {
+namespace skyfire
+{
 inline json json::from_string(const std::string& json_str)
 {
     lex lex;
     lex.set_rules(
         { { "string",
-              R"("([^\\"]|(\\["\\bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")" },
-            { "[", R"(\[)" },
-            { "]", R"(\])" },
-            { "{", R"(\{)" },
-            { "}", R"(\})" },
-            { ",", R"(,)" },
-            { ":", R"(:)" },
-            { "ws", R"([\r\n\t ]+)" },
-            { "number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)" },
-            { "true", R"(true)" },
-            { "false", R"(false)" },
-            { "null", R"(null)" } });
+            R"("([^\\"]|(\\["\\bnrt]|(u[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F])))*")" },
+          { "[", R"(\[)" },
+          { "]", R"(\])" },
+          { "{", R"(\{)" },
+          { "}", R"(\})" },
+          { ",", R"(,)" },
+          { ":", R"(:)" },
+          { "ws", R"([\r\n\t ]+)" },
+          { "number", R"(-?(0|[1-9]\d*)(\.\d+)?(e|E(\+|-)?0|[1-9]\d*)?)" },
+          { "true", R"(true)" },
+          { "false", R"(false)" },
+          { "null", R"(null)" } });
 
     std::vector<lex_result_t> lex_result;
-    if (!lex.parse(json_str, lex_result)) {
+    if (!lex.parse(json_str, lex_result))
+    {
         return json();
     }
     lex_result.erase(
         std::remove_if(lex_result.begin(), lex_result.end(),
-            [](const lex_result_t& r) { return r.id == "ws"; }),
+                       [](const lex_result_t& r) { return r.id == "ws"; }),
         lex_result.end());
     yacc yacc;
     yacc.set_rules(
         { { "value",
-              { { { "object" },
-                    [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                        -> std::any { return data[0]->user_data; } },
-                  { { "array" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any { return data[0]->user_data; } },
-                  { { "string" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any {
-                          return json(json::json_string_to_string(data[0]->text));
-                      } },
-                  { { "number" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any {
-                          return json(string_to_long_double(data[0]->text));
-                      } },
-                  { { "true" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any { return json(true); } },
-                  { { "false" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any { return json(false); } },
-                  { { "null" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any { return json(); } } } },
-            { "object",
-                { { { "{", "}" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any {
-                          json json;
-                          json.convert_to_object();
-                          return json;
-                      } },
-                    { { "{", "members", "}" },
-                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                            -> std::any { return data[1]->user_data; } } } },
-            { "members",
-                { { { "member" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any { return data[0]->user_data; } },
-                    { { "members", ",", "member" },
-                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                            -> std::any {
-                            json js;
-                            js.convert_to_object();
-                            const auto js1 = std::any_cast<json>(data[0]->user_data);
-                            const auto js2 = std::any_cast<json>(data[2]->user_data);
-                            // ReSharper disable once CppExpressionWithoutSideEffects
-                            js.join(js1);
-                            // ReSharper disable once CppExpressionWithoutSideEffects
-                            js.join(js2);
-                            return js;
-                        } } } },
-            { "member",
-                { { { "string", ":", "value" },
-                    [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                        -> std::any {
-                        json js;
-                        js.convert_to_object();
-                        const auto json1 = std::any_cast<json>(data[2]->user_data);
-                        js[json::json_string_to_string(data[0]->text)] = json1;
-                        return js;
-                    } } } },
-            { "array",
-                { { { "[", "]" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any {
-                          json json;
-                          json.convert_to_array();
-                          return json;
-                      } },
-                    { { "[", "values", "]" },
-                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                            -> std::any { return data[1]->user_data; } } } },
-            { "values",
-                { { { "value" },
-                      [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                          -> std::any {
-                          json js;
-                          js.convert_to_array();
-                          js.append(std::any_cast<json>(data[0]->user_data));
-                          return js;
-                      } },
-                    { { "values", ",", "value" },
-                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                            -> std::any {
-                            json js;
-                            js.convert_to_array();
-                            const auto json1 = std::any_cast<json>(data[0]->user_data);
-                            const auto json2 = std::any_cast<json>(data[2]->user_data);
-                            // ReSharper disable once CppExpressionWithoutSideEffects
-                            js.join(json1);
-                            js.append(json2);
-                            return js;
-                        } } } } });
+            { { { "object" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return data[0]->user_data; } },
+              { { "array" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return data[0]->user_data; } },
+              { { "string" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    return json(json::json_string_to_string(data[0]->text));
+                } },
+              { { "number" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    return json(string_to_long_double(data[0]->text));
+                } },
+              { { "true" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return json(true); } },
+              { { "false" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return json(false); } },
+              { { "null" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return json(); } } } },
+          { "object",
+            { { { "{", "}" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    json json;
+                    json.convert_to_object();
+                    return json;
+                } },
+              { { "{", "members", "}" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return data[1]->user_data; } } } },
+          { "members",
+            { { { "member" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return data[0]->user_data; } },
+              { { "members", ",", "member" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    json js;
+                    js.convert_to_object();
+                    const auto js1 = std::any_cast<json>(data[0]->user_data);
+                    const auto js2 = std::any_cast<json>(data[2]->user_data);
+                    // ReSharper disable once CppExpressionWithoutSideEffects
+                    js.join(js1);
+                    // ReSharper disable once CppExpressionWithoutSideEffects
+                    js.join(js2);
+                    return js;
+                } } } },
+          { "member",
+            { { { "string", ":", "value" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    json js;
+                    js.convert_to_object();
+                    const auto json1                               = std::any_cast<json>(data[2]->user_data);
+                    js[json::json_string_to_string(data[0]->text)] = json1;
+                    return js;
+                } } } },
+          { "array",
+            { { { "[", "]" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    json json;
+                    json.convert_to_array();
+                    return json;
+                } },
+              { { "[", "values", "]" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any { return data[1]->user_data; } } } },
+          { "values",
+            { { { "value" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    json js;
+                    js.convert_to_array();
+                    js.append(std::any_cast<json>(data[0]->user_data));
+                    return js;
+                } },
+              { { "values", ",", "value" },
+                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                    -> std::any {
+                    json js;
+                    js.convert_to_array();
+                    const auto json1 = std::any_cast<json>(data[0]->user_data);
+                    const auto json2 = std::any_cast<json>(data[2]->user_data);
+                    // ReSharper disable once CppExpressionWithoutSideEffects
+                    js.join(json1);
+                    js.append(json2);
+                    return js;
+                } } } } });
 
     yacc.add_terminate_ids({ "value" });
     std::vector<std::shared_ptr<yacc_result_t>> yacc_result;
-    if (!yacc.parse(lex_result, yacc_result)) {
+    if (!yacc.parse(lex_result, yacc_result))
+    {
         return json();
     }
     return std::any_cast<json>(yacc_result[0]->user_data);
@@ -160,10 +163,12 @@ inline json json::from_string(const std::string& json_str)
 inline std::unordered_set<std::string> json::keys() const
 {
     std::unordered_set<std::string> ret;
-    if (value__->type != json_type::object) {
+    if (value__->type != json_type::object)
+    {
         return ret;
     }
-    for (auto& p : value__->object_value) {
+    for (auto& p : value__->object_value)
+    {
         ret.insert(p.first);
     }
     return ret;
@@ -178,7 +183,7 @@ inline json::json()
 inline json::json(const std::string& str)
     : json()
 {
-    value__->type = json_type::string;
+    value__->type  = json_type::string;
     value__->value = str;
 }
 
@@ -196,7 +201,7 @@ inline json::json(const json& js)
 inline json::json(bool boolean_value)
     : json()
 {
-    value__->type = json_type::boolean;
+    value__->type  = json_type::boolean;
     value__->value = boolean_value ? "true" : "false";
 }
 
@@ -207,7 +212,8 @@ inline json::json(const std::shared_ptr<json_value>& value)
 
 inline void json::convert_to_object() const
 {
-    if (value__->type == json_type::object) {
+    if (value__->type == json_type::object)
+    {
         return;
     }
     value__->type = json_type::object;
@@ -216,7 +222,8 @@ inline void json::convert_to_object() const
 
 inline void json::convert_to_array() const
 {
-    if (value__->type == json_type::array) {
+    if (value__->type == json_type::array)
+    {
         return;
     }
     value__->type = json_type::array;
@@ -227,10 +234,12 @@ inline json_type json::type() const { return value__->type; }
 
 inline json json::at(const std::string& key) const
 {
-    if (value__->type != json_type::object) {
+    if (value__->type != json_type::object)
+    {
         return json();
     }
-    if (value__->object_value.count(key) == 0) {
+    if (value__->object_value.count(key) == 0)
+    {
         return json();
     }
     return json(value__->object_value[key]);
@@ -238,10 +247,12 @@ inline json json::at(const std::string& key) const
 
 inline json json::operator[](const std::string& key) const
 {
-    if (value__->type != json_type::object) {
+    if (value__->type != json_type::object)
+    {
         convert_to_object();
     }
-    if (value__->object_value.count(key) == 0) {
+    if (value__->object_value.count(key) == 0)
+    {
         value__->object_value[key] = json().value__;
     }
     return json(value__->object_value[key]);
@@ -249,10 +260,12 @@ inline json json::operator[](const std::string& key) const
 
 inline json json::at(int key) const
 {
-    if (value__->type != json_type::array) {
+    if (value__->type != json_type::array)
+    {
         return json();
     }
-    if (value__->array_value.size() <= key) {
+    if (value__->array_value.size() <= key)
+    {
         return json();
     }
     return json(value__->array_value[key]);
@@ -260,7 +273,8 @@ inline json json::at(int key) const
 
 inline json::operator std::string() const
 {
-    switch (value__->type) {
+    switch (value__->type)
+    {
     case json_type::array:
     case json_type::object:
     case json_type::null:
@@ -311,7 +325,8 @@ inline std::string json::string_to_json_string(std::string str)
 
 inline json::operator bool() const
 {
-    switch (value__->type) {
+    switch (value__->type)
+    {
     case json_type::array:
         return !value__->array_value.empty();
     case json_type::object:
@@ -332,7 +347,8 @@ inline json::operator bool() const
 template <typename T, typename>
 json& json::operator=(T value)
 {
-    if (value__->type != json_type::number) {
+    if (value__->type != json_type::number)
+    {
         value__->type = json_type::number;
         clear();
     }
@@ -342,7 +358,8 @@ json& json::operator=(T value)
 
 inline json& json::operator=(const std::string& value)
 {
-    if (value__->type != json_type::string) {
+    if (value__->type != json_type::string)
+    {
         value__->type = json_type::string;
         clear();
     }
@@ -365,13 +382,17 @@ inline json json::deep_copy() const
 
 inline bool json::join(const json& other) const
 {
-    if (value__->type == json_type::array && other.value__->type == json_type::array) {
+    if (value__->type == json_type::array && other.value__->type == json_type::array)
+    {
         value__->array_value.insert(value__->array_value.end(),
-            other.value__->array_value.begin(),
-            other.value__->array_value.end());
+                                    other.value__->array_value.begin(),
+                                    other.value__->array_value.end());
         return true;
-    } else if (value__->type == json_type::object && other.value__->type == json_type::object) {
-        for (auto& p : other.value__->object_value) {
+    }
+    else if (value__->type == json_type::object && other.value__->type == json_type::object)
+    {
+        for (auto& p : other.value__->object_value)
+        {
             value__->object_value[p.first] = p.second;
         }
         return true;
@@ -394,19 +415,22 @@ inline void json::resize(const int size) const
 
 inline void json::remove(const int pos) const
 {
-    if (value__->array_value.size() > pos) {
+    if (value__->array_value.size() > pos)
+    {
         value__->array_value.erase(value__->array_value.begin() + pos);
     }
 }
 
 inline void json::remove(const int pos, int len) const
 {
-    if (value__->array_value.size() > pos) {
-        if (len > value__->array_value.size() - pos) {
+    if (value__->array_value.size() > pos)
+    {
+        if (len > value__->array_value.size() - pos)
+        {
             len = static_cast<int>(value__->array_value.size() - pos);
         }
         value__->array_value.erase(value__->array_value.begin() + pos,
-            value__->array_value.begin() + pos + len);
+                                   value__->array_value.begin() + pos + len);
     }
 }
 
@@ -418,25 +442,30 @@ inline void json::remove(const std::string& key) const
 inline std::string json::to_string() const
 {
     std::string ret;
-    switch (value__->type) {
+    switch (value__->type)
+    {
     case json_type::object: {
         ret += "{";
-        for (auto& p : value__->object_value) {
+        for (auto& p : value__->object_value)
+        {
             ret += string_to_json_string(p.first) + ":" + json(p.second).to_string() + ",";
         }
         if (ret.back() == ',')
             ret.pop_back();
         ret += "}";
-    } break;
+    }
+    break;
     case json_type::array: {
         ret += "[";
-        for (auto& p : value__->array_value) {
+        for (auto& p : value__->array_value)
+        {
             ret += json(p).to_string() + ",";
         }
         if (ret.back() == ',')
             ret.pop_back();
         ret += "]";
-    } break;
+    }
+    break;
     case json_type::string:
         ret += string_to_json_string(value__->value);
         break;
@@ -458,27 +487,34 @@ inline std::string json::to_string(int indent, int current_indent) const
 {
     std::string indent_string(current_indent, ' ');
     std::string ret;
-    switch (value__->type) {
+    switch (value__->type)
+    {
     case json_type::object: {
         ret += "{\n";
-        for (auto& p : value__->object_value) {
+        for (auto& p : value__->object_value)
+        {
             ret += indent_string + std::string(indent, ' ') + string_to_json_string(p.first) + ":" + json(p.second).to_string(indent, current_indent + indent) + ",\n";
         }
-        if (!value__->object_value.empty()) {
+        if (!value__->object_value.empty())
+        {
             ret.erase(ret.end() - 2);
         }
         ret += indent_string + "}";
-    } break;
+    }
+    break;
     case json_type::array: {
         ret += "[\n";
-        for (auto& p : value__->array_value) {
+        for (auto& p : value__->array_value)
+        {
             ret += indent_string + std::string(indent, ' ') + json(p).to_string(indent, current_indent + indent) + ",\n";
         }
-        if (!value__->object_value.empty()) {
+        if (!value__->object_value.empty())
+        {
             ret.erase(ret.end() - 2);
         }
         ret += indent_string + "]";
-    } break;
+    }
+    break;
     case json_type::string:
         ret += string_to_json_string(value__->value);
         break;
@@ -498,10 +534,11 @@ inline std::string json::to_string(int indent, int current_indent) const
 
 inline json& json::operator=(const json& value)
 {
-    if (&value != this) {
-        value__->type = value.value__->type;
-        value__->value = value.value__->value;
-        value__->array_value = value.value__->array_value;
+    if (&value != this)
+    {
+        value__->type         = value.value__->type;
+        value__->value        = value.value__->value;
+        value__->array_value  = value.value__->array_value;
         value__->object_value = value.value__->object_value;
     }
     return *this;
@@ -509,24 +546,29 @@ inline json& json::operator=(const json& value)
 
 inline void json::copy(const json& src)
 {
-    if (this != &src) {
+    if (this != &src)
+    {
         value__ = src.value__;
     }
 }
 
 inline void json::value_copy__(const std::shared_ptr<json_value>& src,
-    std::shared_ptr<json_value>& dst) const
+                               std::shared_ptr<json_value>&       dst) const
 {
-    dst->type = src->type;
+    dst->type  = src->type;
     dst->value = src->value;
-    if (!src->array_value.empty()) {
-        for (auto i = 0; i < src->array_value.size(); ++i) {
+    if (!src->array_value.empty())
+    {
+        for (auto i = 0; i < src->array_value.size(); ++i)
+        {
             dst->array_value.push_back(std::make_shared<json_value>());
             value_copy__(src->array_value[i], dst->array_value[i]);
         }
     }
-    if (!src->object_value.empty()) {
-        for (auto& p : src->object_value) {
+    if (!src->object_value.empty())
+    {
+        for (auto& p : src->object_value)
+        {
             dst->object_value[p.first] = std::make_shared<json_value>();
             value_copy__(p.second, dst->object_value[p.first]);
         }
@@ -545,10 +587,12 @@ inline json json::operator[](const char* c_key) const
 
 inline json json::operator[](const int key) const
 {
-    if (value__->type != json_type::array) {
+    if (value__->type != json_type::array)
+    {
         convert_to_array();
     }
-    if (value__->array_value.size() <= key) {
+    if (value__->array_value.size() <= key)
+    {
         resize(key + 1);
     }
     return json(value__->array_value[key]);
@@ -556,7 +600,8 @@ inline json json::operator[](const int key) const
 
 inline json& json::operator=(const bool value)
 {
-    if (value__->type != json_type::boolean) {
+    if (value__->type != json_type::boolean)
+    {
         value__->type = json_type::boolean;
         clear();
     }
@@ -589,8 +634,8 @@ inline size_t json::size() const
 inline bool json::has(const std::string& key) const
 {
     return value__->type == json_type ::object
-        ? value__->object_value.count(key) != 0
-        : false;
+               ? value__->object_value.count(key) != 0
+               : false;
 }
 
 inline bool json::has(const char* c_key) const
@@ -627,20 +672,25 @@ inline bool json::operator!=(const json& other) const
 
 inline bool json::operator==(const json& other) const
 {
-    if (value__->type != other.value__->type) {
+    if (value__->type != other.value__->type)
+    {
         return false;
     }
-    switch (value__->type) {
+    switch (value__->type)
+    {
     case json_type::null:
         return true;
     case json_type::array: {
-        auto sz = size();
+        auto sz  = size();
         auto osz = other.size();
-        if (sz != osz) {
+        if (sz != osz)
+        {
             return false;
         }
-        for (int i = 0; i < sz; ++i) {
-            if ((*this)[i] != other[i]) {
+        for (int i = 0; i < sz; ++i)
+        {
+            if ((*this)[i] != other[i])
+            {
                 return false;
             }
         }
@@ -653,13 +703,16 @@ inline bool json::operator==(const json& other) const
         return static_cast<long double>(*this) == static_cast<long double>(other);
     }
     case json_type::object: {
-        auto this_keys = keys();
+        auto this_keys  = keys();
         auto other_keys = other.keys();
-        if (this_keys != other_keys) {
+        if (this_keys != other_keys)
+        {
             return false;
         }
-        for (auto p : this_keys) {
-            if ((*this)[p] != other[p]) {
+        for (auto p : this_keys)
+        {
+            if ((*this)[p] != other[p])
+            {
                 return false;
             }
         }
@@ -676,7 +729,8 @@ inline bool json::operator==(const json& other) const
 template <typename T, typename>
 json::operator T() const
 {
-    switch (value__->type) {
+    switch (value__->type)
+    {
     case json_type::array:
     case json_type::object:
     case json_type::null:
@@ -695,7 +749,7 @@ template <typename T, typename>
 json::json(T number)
     : json()
 {
-    value__->type = json_type::number;
+    value__->type  = json_type::number;
     value__->value = long_double_to_string(number);
 }
 
@@ -710,7 +764,7 @@ json to_json_helper__(const std::string& key, const T& value)
 
 template <typename T, typename... ARGS>
 json to_json_helper__(const std::string& key, const T& value,
-    const ARGS&... args)
+                      const ARGS&... args)
 {
     json js;
     js.convert_to_object();
@@ -721,14 +775,14 @@ json to_json_helper__(const std::string& key, const T& value,
 
 template <typename T>
 void from_json_helper__(const json& js, const std::string& key,
-    T& value)
+                        T& value)
 {
     from_json(js.at(key), value);
 }
 
 template <typename T, typename... ARGS>
 void from_json_helper__(const json& js, const std::string& key, T& value,
-    ARGS&&... args)
+                        ARGS&&... args)
 {
     from_json(js.at(key), value);
     from_json_helper__(js, std::forward<ARGS>(args)...);
@@ -743,7 +797,8 @@ void from_json(const json& js, std::tuple<ARGS...>& value)
 template <typename T>
 void from_json(const json& js, T& value)
 {
-    if (js.is_null()) {
+    if (js.is_null())
+    {
         return;
     }
     value = static_cast<T>(js);
@@ -752,7 +807,8 @@ void from_json(const json& js, T& value)
 template <typename T>
 void from_json(const json& js, std::shared_ptr<T>& value)
 {
-    if (js.is_null()) {
+    if (js.is_null())
+    {
         return;
     }
     value = std::make_shared<T>(static_cast<T>(js));
@@ -763,7 +819,7 @@ json to_json(const std::pair<K, V>& value)
 {
     json js;
     js.convert_to_object();
-    js["key"] = to_json(value.first);
+    js["key"]   = to_json(value.first);
     js["value"] = to_json(value.second);
     return js;
 }
@@ -815,7 +871,8 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
     {                                                             \
         json js;                                                  \
         js.convert_to_array();                                    \
-        for (auto& p : value) {                                   \
+        for (auto& p : value)                                     \
+        {                                                         \
             js.append(to_json(p));                                \
         }                                                         \
         return js;                                                \
@@ -829,9 +886,10 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
     inline void from_json(const json& js, container<T>& value)    \
     {                                                             \
         std::vector<T> data;                                      \
-        int sz = js.size();                                       \
+        int            sz = js.size();                            \
         data.resize(sz);                                          \
-        for (int i = 0; i < sz; ++i) {                            \
+        for (int i = 0; i < sz; ++i)                              \
+        {                                                         \
             from_json<T>(js.at(i), data[i]);                      \
         }                                                         \
         value = container<T> { data.begin(), data.end() };        \
@@ -844,32 +902,34 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
         hex_string_to_char_container(tmp, value);                 \
     }
 
-#define SF_ASSOCIATED_CONTAINER_JSON_IMPL(container)             \
-    template <typename K, typename V>                            \
-    json to_json(const container<K, V>& value)                   \
-    {                                                            \
-        json js;                                                 \
-        js.convert_to_array();                                   \
-        for (auto& p : value) {                                  \
-            json tmp_js;                                         \
-            tmp_js.convert_to_object();                          \
-            tmp_js["key"] = to_json(p.first);                    \
-            tmp_js["value"] = to_json(p.second);                 \
-            js.append(tmp_js);                                   \
-        }                                                        \
-        return js;                                               \
-    }                                                            \
-    template <typename K, typename V>                            \
-    void from_json(const json& js, container<K, V>& value)       \
-    {                                                            \
-        std::vector<std::pair<K, V>> data;                       \
-        int sz = js.size();                                      \
-        for (int i = 0; i < sz; ++i) {                           \
-            data.push_back(                                      \
-                std::make_pair(from_json<K>(js.at(i).at("key")), \
-                    from_json<V>(js.at(i).at("value"))));        \
-        }                                                        \
-        value = container<K, V> { data.begin(), data.end() };    \
+#define SF_ASSOCIATED_CONTAINER_JSON_IMPL(container)                 \
+    template <typename K, typename V>                                \
+    json to_json(const container<K, V>& value)                       \
+    {                                                                \
+        json js;                                                     \
+        js.convert_to_array();                                       \
+        for (auto& p : value)                                        \
+        {                                                            \
+            json tmp_js;                                             \
+            tmp_js.convert_to_object();                              \
+            tmp_js["key"]   = to_json(p.first);                      \
+            tmp_js["value"] = to_json(p.second);                     \
+            js.append(tmp_js);                                       \
+        }                                                            \
+        return js;                                                   \
+    }                                                                \
+    template <typename K, typename V>                                \
+    void from_json(const json& js, container<K, V>& value)           \
+    {                                                                \
+        std::vector<std::pair<K, V>> data;                           \
+        int                          sz = js.size();                 \
+        for (int i = 0; i < sz; ++i)                                 \
+        {                                                            \
+            data.push_back(                                          \
+                std::make_pair(from_json<K>(js.at(i).at("key")),     \
+                               from_json<V>(js.at(i).at("value")))); \
+        }                                                            \
+        value = container<K, V> { data.begin(), data.end() };        \
     }
 
 SF_CONTAINER_JSON_IMPL(std::vector)

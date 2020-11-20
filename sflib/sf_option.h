@@ -9,7 +9,8 @@
  */
 
 template <typename TargetType>
-class option {
+class option
+{
 public:
     using OptionFuncType = std::function<void(TargetType&)>;
 

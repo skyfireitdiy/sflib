@@ -6,17 +6,19 @@
 */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_request.h"
 #include "sf_http_server_response.h"
 #include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  *  @brief 路由
  */
-class router {
+class router
+{
 public:
     virtual ~router() = default;
     /**
@@ -26,7 +28,7 @@ public:
     virtual int priority() const;
 
     virtual bool run_route(const http_server_request& req, http_server_response& res,
-        const std::string& url, const std::string& method);
+                           const std::string& url, const std::string& method);
 };
 
 } // namespace skyfire

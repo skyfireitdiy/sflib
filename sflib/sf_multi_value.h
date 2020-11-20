@@ -2,14 +2,16 @@
 
 #include "sf_stdc++.h"
 
-namespace skyfire {
+namespace skyfire
+{
 template <typename... Type>
 
 /**
  * @brief 多值类型
  * 
  */
-class multi_value : public std::tuple<Type...> {
+class multi_value : public std::tuple<Type...>
+{
 private:
 public:
     using std::tuple<Type...>::tuple;

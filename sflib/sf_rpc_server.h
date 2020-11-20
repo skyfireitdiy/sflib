@@ -11,32 +11,33 @@
 
 #pragma once
 
+#include "sf_nocopy.h"
 #include "sf_rpc_utils.h"
 #include "sf_tcp_server.h"
-#include "sf_nocopy.h"
 #include <functional>
 #include <memory>
 #include <string>
 #include <tuple>
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  *  @brief rpc server类
  */
 class rpc_server
-    : public make_instance_t<rpc_server, nocopy<object>> {
+    : public make_instance_t<rpc_server, nocopy<object>>
+{
     /**
      * 客户端连接信号
      */
     sf_singal(client_connected, SOCKET)
-    /**
+        /**
      * 客户端断开连接信号
      */
-    sf_singal(client_disconnected, SOCKET)
+        sf_singal(client_disconnected, SOCKET)
 
-private:
-    std::unordered_set<SOCKET> client_list__;
+            private : std::unordered_set<SOCKET> client_list__;
 
     std::shared_mutex mu_client_list__;
 
@@ -49,7 +50,7 @@ private:
     void send_back__(SOCKET sock, int id_code, _Type data);
 
     void on_data_coming__(SOCKET sock, const pkg_header_t& header,
-        const byte_array& data);
+                          const byte_array& data);
 
 public:
     rpc_server();

@@ -21,12 +21,14 @@
 #include <utility>
 #include <vector>
 
-namespace skyfire {
+namespace skyfire
+{
 
 /**
  *  @brief  HTTP服务器基础框架
  */
-class http_server_base {
+class http_server_base
+{
 private:
     const http_server_config config__;
 
@@ -48,28 +50,31 @@ private:
     std::function<void(SOCKET, const std::string& url)>
         websocket_close_callback__;
 
-    std::unordered_map<SOCKET, request_context_t> request_context__;
-    std::recursive_mutex mu_request_context__;
+    std::unordered_map<SOCKET, request_context_t>   request_context__;
+    std::recursive_mutex                            mu_request_context__;
     std::unordered_map<SOCKET, websocket_context_t> websocket_context__;
-    std::recursive_mutex mu_websocket_context__;
+    std::recursive_mutex                            mu_websocket_context__;
     std::unordered_map<SOCKET, http_server_req_multipart_data_context_t>
         multipart_data_context__;
     std::recursive_mutex mu_multipart_data_context__;
 
-    std::shared_ptr<cache> file_cache__;
+    std::shared_ptr<cache>                        file_cache__;
     std::vector<std::shared_ptr<http_middleware>> middleware__;
 
-    struct session_data_t {
-        int timeout;
+    struct session_data_t
+    {
+        int  timeout;
         json data;
     };
 
-    struct file_cache_data_t {
-        byte_array data;
+    struct file_cache_data_t
+    {
+        byte_array         data;
         fs::file_time_type modify_time;
     };
 
-    struct file_etag_t {
+    struct file_etag_t
+    {
         std::string etag;
         std::string last_modify;
     };
@@ -85,8 +90,8 @@ private:
 
     template <typename T>
     bool analysis_websocket_pkg__(SOCKET sock, const T* header,
-        int& resolve_pos, unsigned long long& len,
-        byte_array& body, bool& fin, int& op_code);
+                                  int& resolve_pos, unsigned long long& len,
+                                  byte_array& body, bool& fin, int& op_code);
 
     void websocket_data_coming__(SOCKET sock, const byte_array& data);
 
@@ -96,7 +101,7 @@ private:
 
     byte_array append_multipart_data__(
         http_server_req_multipart_data_context_t& multipart_data,
-        const byte_array& data) const;
+        const byte_array&                         data) const;
 
     void file_response__(SOCKET sock, http_server_response& res) const;
 
@@ -111,11 +116,11 @@ private:
 
     void http_handler__(SOCKET sock, const http_server_request& http_server_request);
 
-    void build_boundary_context_data(SOCKET sock,
-        const http_server_request& request);
+    void build_boundary_context_data(SOCKET                     sock,
+                                     const http_server_request& request);
 
-    void build_websocket_context_data__(SOCKET sock,
-        const http_server_request& request);
+    void build_websocket_context_data__(SOCKET                     sock,
+                                        const http_server_request& request);
 
     void send_response_file_part__(
         SOCKET sock, const http_file_info_t& file,
@@ -149,7 +154,7 @@ public:
      */
     template <typename T>
     void set_session(const std::string& session_key, const std::string& key,
-        const T& value);
+                     const T& value);
 
     /**
      * 构造函数

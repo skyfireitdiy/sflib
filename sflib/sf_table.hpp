@@ -2,7 +2,8 @@
 #include "sf_string.hpp"
 #include "sf_table.h"
 
-namespace skyfire {
+namespace skyfire
+{
 table::table(int col_size)
     : col_num__(col_size)
     , table_config__(col_size)
@@ -11,7 +12,8 @@ table::table(int col_size)
 
 table_result_t table::add_row(const std::vector<std::string>& data)
 {
-    if (data.size() != col_num__) {
+    if (data.size() != col_num__)
+    {
         return table_result_t {
             err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(data.size()))
@@ -26,8 +28,10 @@ table_result_t table::add_row(const std::vector<std::string>& data)
 
 table_result_t table::add_rows(const std::vector<std::vector<std::string>>& data)
 {
-    for (auto& p : data) {
-        if (p.size() != col_num__) {
+    for (auto& p : data)
+    {
+        if (p.size() != col_num__)
+        {
             return table_result_t {
                 err_col_count_mismatch,
                 "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(p.size()))
@@ -43,13 +47,15 @@ table_result_t table::add_rows(const std::vector<std::vector<std::string>>& data
 
 table_result_t table::insert_row(size_t n, const std::vector<std::string>& data)
 {
-    if (data.size() != col_num__) {
+    if (data.size() != col_num__)
+    {
         return table_result_t {
             err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(data.size()))
         };
     }
-    if (n > body__.size()) {
+    if (n > body__.size())
+    {
         return table_result_t {
             err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size()) + " give:" + std::to_string(n)
@@ -64,15 +70,18 @@ table_result_t table::insert_row(size_t n, const std::vector<std::string>& data)
 
 table_result_t table::insert_rows(size_t n, const std::vector<std::vector<std::string>>& data)
 {
-    for (auto& p : data) {
-        if (p.size() != col_num__) {
+    for (auto& p : data)
+    {
+        if (p.size() != col_num__)
+        {
             return table_result_t {
                 err_col_count_mismatch,
                 "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(p.size()))
             };
         }
     }
-    if (n > body__.size()) {
+    if (n > body__.size())
+    {
         return table_result_t {
             err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size()) + " give:" + std::to_string(n)
@@ -87,13 +96,15 @@ table_result_t table::insert_rows(size_t n, const std::vector<std::vector<std::s
 
 table_result_t table::delete_rows(size_t n, size_t len)
 {
-    if (n >= body__.size()) {
+    if (n >= body__.size())
+    {
         return table_result_t {
             err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size() - 1) + " give:" + std::to_string(n)
         };
     }
-    if (body__.size() - n < len) {
+    if (body__.size() - n < len)
+    {
         return table_result_t {
             err_index_out_of_range,
             "index out of range,max:" + std::to_string(body__.size() - n) + " give:" + std::to_string(n + len)
@@ -108,7 +119,8 @@ table_result_t table::delete_rows(size_t n, size_t len)
 
 table_result_t table::set_header(const std::vector<std::string>& header)
 {
-    if (header.size() != col_num__) {
+    if (header.size() != col_num__)
+    {
         return table_result_t {
             err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(header.size()))
@@ -123,7 +135,8 @@ table_result_t table::set_header(const std::vector<std::string>& header)
 
 table_result_t table::set_config(size_t c, const table_column_config_t& config)
 {
-    if (c >= col_num__) {
+    if (c >= col_num__)
+    {
         return table_result_t {
             err_index_out_of_range,
             "index out of range,max:" + std::to_string(col_num__ - 1) + " give:" + std::to_string(c)
@@ -138,7 +151,8 @@ table_result_t table::set_config(size_t c, const table_column_config_t& config)
 
 table_result_t table::set_config(const std::vector<table_column_config_t>& config)
 {
-    if (config.size() != col_num__) {
+    if (config.size() != col_num__)
+    {
         return table_result_t {
             err_col_count_mismatch,
             "column count mismatch, want:" + std::to_string(col_num__) + " give:" + std::to_string(sizeof(config.size()))
@@ -158,7 +172,8 @@ void table::set_proxy_callback(std::function<std::string(size_t, size_t, std::st
 
 inline std::string full_string(const std::string& str, table_align align, int space_count)
 {
-    switch (align) {
+    switch (align)
+    {
     case table_align::align_left:
         return str + string::repeat(" ", space_count);
     case table_align::align_center:
@@ -174,7 +189,8 @@ inline std::string full_string(const std::string& str, table_align align, int sp
 inline std::string table_make_column_string(std::string str, const table_column_config_t& config, int width)
 {
     int space_count = width - str.length();
-    if (!config.cl.empty()) {
+    if (!config.cl.empty())
+    {
         str = color_string(str, config.cl);
     }
     return full_string(str, config.align, space_count);
@@ -182,53 +198,70 @@ inline std::string table_make_column_string(std::string str, const table_column_
 
 std::string table::to_string() const
 {
-    std::string ret;
-    std::vector<int> width_vec(col_num__);
-    std::vector<std::string> header = header__;
+    std::string                           ret;
+    std::vector<int>                      width_vec(col_num__);
+    std::vector<std::string>              header = header__;
     std::vector<std::vector<std::string>> body;
-    if (proxy_callback__) {
+    if (proxy_callback__)
+    {
         body.resize(body__.size());
-        for (int i = 0; i < body__.size(); ++i) {
+        for (int i = 0; i < body__.size(); ++i)
+        {
             body[i].resize(col_num__);
-            for (int j = 0; j < col_num__; ++j) {
+            for (int j = 0; j < col_num__; ++j)
+            {
                 body[i][j] = proxy_callback__(i, j, body__[i][j]);
             }
         }
-    } else {
+    }
+    else
+    {
         body = body__;
     }
 
-    for (int i = 0; i < col_num__; ++i) {
+    for (int i = 0; i < col_num__; ++i)
+    {
         width_vec[i] = table_config__[i].min_width;
     }
 
-    if (!header.empty()) {
-        for (int i = 0; i < header.size(); ++i) {
-            if (width_vec[i] < header[i].length()) {
+    if (!header.empty())
+    {
+        for (int i = 0; i < header.size(); ++i)
+        {
+            if (width_vec[i] < header[i].length())
+            {
                 width_vec[i] = header[i].length();
             }
         }
     }
-    for (auto& p : body) {
-        for (int i = 0; i < col_num__; ++i) {
-            if (width_vec[i] < p[i].length()) {
+    for (auto& p : body)
+    {
+        for (int i = 0; i < col_num__; ++i)
+        {
+            if (width_vec[i] < p[i].length())
+            {
                 width_vec[i] = p[i].length();
             }
         }
     }
-    if (!header.empty()) {
-        for (int i = 0; i < col_num__; ++i) {
-            header[i] = full_string(header[i], table_config__[i].align, width_vec[i]-header[i].length());
+    if (!header.empty())
+    {
+        for (int i = 0; i < col_num__; ++i)
+        {
+            header[i] = full_string(header[i], table_config__[i].align, width_vec[i] - header[i].length());
         }
     }
-    for (auto& p : body) {
-        for (int i = 0; i < col_num__; ++i) {
+    for (auto& p : body)
+    {
+        for (int i = 0; i < col_num__; ++i)
+        {
             p[i] = table_make_column_string(p[i], table_config__[i], width_vec[i]);
         }
     }
 
     std::string split_line = "+";
-    for (auto& p : width_vec) {
+    for (auto& p : width_vec)
+    {
         split_line += string::repeat("-", p) + "+";
     }
     split_line += "\n";
@@ -236,21 +269,24 @@ std::string table::to_string() const
     auto make_row = [](auto& row) {
         std::string r;
         r += "|";
-        for (auto& p : row) {
+        for (auto& p : row)
+        {
             r += p + "|";
         }
         r += "\n";
         return r;
     };
 
-    if (!header.empty()) {
+    if (!header.empty())
+    {
         ret += split_line;
         ret += make_row(header);
     }
 
     ret += split_line;
 
-    for (auto& p : body) {
+    for (auto& p : body)
+    {
         ret += make_row(p);
     }
 

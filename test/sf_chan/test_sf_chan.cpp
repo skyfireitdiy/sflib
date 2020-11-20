@@ -10,16 +10,18 @@ using namespace std;
 
 bool test_chan_order()
 {
-    auto ch = chan<int>::make_instance();
+    auto             ch = chan<int>::make_instance();
     std::vector<int> data;
     std::vector<int> result { 1, 2, 3, 4, 5 };
-    auto th1 = std::thread([&ch] {
-        for (int i = 0; i < 5; ++i) {
+    auto             th1 = std::thread([&ch] {
+        for (int i = 0; i < 5; ++i)
+        {
             (i + 1) >> ch;
         }
     });
-    auto th2 = std::thread([&data, &ch] {
-        for (int i = 0; i < 5; ++i) {
+    auto             th2 = std::thread([&data, &ch] {
+        for (int i = 0; i < 5; ++i)
+        {
             int t = 100;
             ch >> t;
             data.push_back(t);
@@ -33,16 +35,18 @@ bool test_chan_order()
 
 bool test_chan_order_with_buffer()
 {
-    auto ch = chan<int>::make_instance(5);
+    auto             ch = chan<int>::make_instance(5);
     std::vector<int> data;
     std::vector<int> result { 1, 2, 3, 4, 5 };
-    auto th1 = std::thread([&ch] {
-        for (int i = 0; i < 5; ++i) {
+    auto             th1 = std::thread([&ch] {
+        for (int i = 0; i < 5; ++i)
+        {
             (i + 1) >> ch;
         }
     });
-    auto th2 = std::thread([&data, &ch] {
-        for (int i = 0; i < 5; ++i) {
+    auto             th2 = std::thread([&data, &ch] {
+        for (int i = 0; i < 5; ++i)
+        {
             int t = 100;
             ch >> t;
             data.push_back(t);
@@ -56,8 +60,8 @@ bool test_chan_order_with_buffer()
 
 bool test_write_to_closed_chan()
 {
-    auto ch = chan<int>::make_instance(5);
-    auto ret = true;
+    auto   ch  = chan<int>::make_instance(5);
+    auto   ret = true;
     thread th1([ch]() {
         ch->close();
     });
@@ -74,8 +78,8 @@ bool test_write_to_closed_chan()
 
 bool test_read_from_closed_chan()
 {
-    auto ch = chan<int>::make_instance(5);
-    auto ret = true;
+    auto   ch  = chan<int>::make_instance(5);
+    auto   ret = true;
     thread th1([ch, &ret]() {
         this_thread::sleep_for(chrono::seconds(3));
         int t;

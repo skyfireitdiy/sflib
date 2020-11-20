@@ -6,7 +6,8 @@
 
 using namespace skyfire;
 
-struct body_data {
+struct body_data
+{
     int tall;
     int weight;
 };

@@ -6,7 +6,7 @@
 */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_stdc++.h"
 #include <sys/stat.h>
@@ -16,21 +16,26 @@
 #include "sf_type.hpp"
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 inline std::string string_trim(const std::string& str)
 {
     if (str.length() == 0)
         return "";
     unsigned long begin = 0;
-    for (unsigned long i = 0; i < str.length(); ++i) {
-        if (!isspace(str[i])) {
+    for (unsigned long i = 0; i < str.length(); ++i)
+    {
+        if (!isspace(str[i]))
+        {
             begin = i;
             break;
         }
     }
     unsigned long end = begin;
-    for (unsigned long i = str.length(); i > begin; --i) {
-        if (!isspace(str[i - 1])) {
+    for (unsigned long i = str.length(); i > begin; --i)
+    {
+        if (!isspace(str[i - 1]))
+        {
             end = i;
             break;
         }
@@ -54,17 +59,18 @@ inline std::string get_path_ext(const std::string& path)
 }
 
 inline bool equal_nocase_string(const std::string& str1,
-    const std::string& str2)
+                                const std::string& str2)
 {
     return to_lower_string(str1) == to_lower_string(str2);
 }
 
-inline std::vector<std::string> split_string(std::string str,
-    const std::string& split_str)
+inline std::vector<std::string> split_string(std::string        str,
+                                             const std::string& split_str)
 {
     std::vector<std::string> ret;
-    unsigned long pos = 0;
-    while (std::string::npos != (pos = str.find(split_str))) {
+    unsigned long            pos = 0;
+    while (std::string::npos != (pos = str.find(split_str)))
+    {
         ret.emplace_back(str.begin(), str.begin() + pos);
         str = std::string(str.begin() + pos + split_str.length(), str.end());
     }
@@ -73,7 +79,7 @@ inline std::vector<std::string> split_string(std::string str,
 }
 
 inline bool write_file(const std::string& file_name, const byte_array& data,
-    bool append)
+                       bool append)
 {
     std::ofstream fo(
         file_name, (append ? std::ios::app : std::ios::out) | std::ios::binary);
@@ -99,12 +105,13 @@ inline bool read_file(const std::string& file_name, byte_array& data)
 }
 
 inline void string_replace(std::string& str, const std::string& from,
-    const std::string& to)
+                           const std::string& to)
 {
     if (str.empty())
         return;
     size_t start_pos = 0;
-    while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+    while ((start_pos = str.find(from, start_pos)) != std::string::npos)
+    {
         str.replace(start_pos, from.length(), to);
         start_pos += to.length();
     }
@@ -113,8 +120,10 @@ inline void string_replace(std::string& str, const std::string& from,
 inline std::string long_double_to_string(const long double& num)
 {
     auto buffer = std::to_string(num);
-    if (buffer.length() > 7) {
-        if (std::string(buffer.end() - 7, buffer.end()) == ".000000") {
+    if (buffer.length() > 7)
+    {
+        if (std::string(buffer.end() - 7, buffer.end()) == ".000000")
+        {
             buffer = { buffer.begin(), buffer.end() - 7 };
         }
     }
@@ -133,11 +142,11 @@ inline long double string_to_long_double(const std::string& str)
 }
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnusedValue"
+#pragma ide diagnostic   ignored "UnusedValue"
 
 inline std::string tm2string(std::time_t tt, const std::string& fmt)
 {
-    tm tm_d;
+    tm   tm_d;
     auto ptm = &tm_d;
 #ifdef _MSC_VER
     localtime_s(ptm, &tt);
@@ -168,7 +177,8 @@ std::string char_container_to_hex_string(const T& data)
     std::string str;
     str.reserve(data.size() * 2 + 1);
     char tmp[4];
-    for (auto& p : data) {
+    for (auto& p : data)
+    {
         safe_sprintf(tmp, 4, "%02x", p);
         str += tmp;
     }
@@ -179,11 +189,13 @@ template <typename T>
 void hex_string_to_char_container(const std::string& str, T& data)
 {
     data.clear();
-    if (str.size() % 2 != 0) {
+    if (str.size() % 2 != 0)
+    {
         return;
     }
     std::vector<char> tmp_ret_data(str.size() / 2);
-    for (auto i = 0; i < str.length() / 2; ++i) {
+    for (auto i = 0; i < str.length() / 2; ++i)
+    {
         int tmp;
 #ifdef _MSC_VER
         sscanf_s(str.data() + i * 2, "%02x", &tmp);
@@ -196,13 +208,13 @@ void hex_string_to_char_container(const std::string& str, T& data)
 }
 
 inline bool string_start_with(const std::string& str,
-    const std::string& prefix)
+                              const std::string& prefix)
 {
     return str.find(prefix) == 0;
 }
 
 inline bool string_end_with(const std::string& str,
-    const std::string& suffix)
+                            const std::string& suffix)
 {
     return str.find_last_of(suffix) == str.length() - suffix.size();
 }
@@ -210,66 +222,85 @@ inline bool string_end_with(const std::string& str,
 inline std::string safe_path(std::string danger_path)
 {
     string_replace(danger_path,
-        std::string(1, fs::path::preferred_separator), "");
+                   std::string(1, fs::path::preferred_separator), "");
     return danger_path;
 }
 
 inline std::string convert_ns_to_readable(long long time)
 {
     std::ostringstream so;
-    auto old = so.flags();
+    auto               old = so.flags();
     so << std::left;
     const long long ns = 1;
     const long long us = 1000;
-    const auto ms = 1000 * us;
-    const auto s = 1000 * ms;
-    const auto m = 60 * s;
-    const auto h = 60 * m;
-    const auto d = 24 * h;
+    const auto      ms = 1000 * us;
+    const auto      s  = 1000 * ms;
+    const auto      m  = 60 * s;
+    const auto      h  = 60 * m;
+    const auto      d  = 24 * h;
 
-    if (time >= d) {
+    if (time >= d)
+    {
         so << std::to_string(time / d) + "d";
         time %= d;
-    } else {
+    }
+    else
+    {
         so << "";
     }
     so << std::setw(6);
-    if (time >= h) {
+    if (time >= h)
+    {
         so << std::to_string(time / h) + "h";
         time %= h;
-    } else {
+    }
+    else
+    {
         so << "";
     }
     so << std::setw(6);
-    if (time >= m) {
+    if (time >= m)
+    {
         so << std::to_string(time / m) + "m";
         time %= m;
-    } else {
+    }
+    else
+    {
         so << "";
     }
     so << std::setw(6);
-    if (time >= s) {
+    if (time >= s)
+    {
         so << std::to_string(time / s) + "s";
         time %= s;
-    } else {
+    }
+    else
+    {
         so << "";
     }
     so << std::setw(6);
-    if (time >= ms) {
+    if (time >= ms)
+    {
         so << std::to_string(time / ms) + "ms";
         time %= ms;
-    } else {
+    }
+    else
+    {
         so << "";
     }
     so << std::setw(6);
-    if (time >= us) {
+    if (time >= us)
+    {
         so << std::to_string(time / us) + "us";
         time %= us;
-    } else {
+    }
+    else
+    {
         so << "";
     }
     so << std::setw(6);
-    if (time >= ns) {
+    if (time >= ns)
+    {
         so << std::to_string(time / ns) + "ns";
     }
     so.setf(old);

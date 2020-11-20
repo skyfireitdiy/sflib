@@ -10,18 +10,20 @@
  */
 #pragma once
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_object.hpp"
 #include "sf_tcp_client.h"
 #include "sf_utils.h"
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  *  @brief 消息总线客户端
  */
 class msg_bus_client
-    : public make_instance_t<msg_bus_client, nocopy<object>> {
+    : public make_instance_t<msg_bus_client, nocopy<object>>
+{
     /**
      * @brief msg_come 消息到来信号
      */

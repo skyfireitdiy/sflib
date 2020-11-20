@@ -13,7 +13,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-namespace skyfire {
+namespace skyfire
+{
 /**
  * 字符串去除首尾空白
  * @param str 字符串
@@ -42,7 +43,7 @@ inline std::string get_path_ext(const std::string& path);
  * @return 是否相等
  */
 inline bool equal_nocase_string(const std::string& str1,
-    const std::string& str2);
+                                const std::string& str2);
 
 /**
  * 分割字符串
@@ -50,11 +51,11 @@ inline bool equal_nocase_string(const std::string& str1,
  * @param split_str 分隔符
  * @return 分割后的字符串数组
  */
-inline std::vector<std::string> split_string(std::string str,
-    const std::string& split_str);
+inline std::vector<std::string> split_string(std::string        str,
+                                             const std::string& split_str);
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 /**
  * 写文件
@@ -64,12 +65,12 @@ inline std::vector<std::string> split_string(std::string str,
  * @return 是否写入成功
  */
 bool write_file(const std::string& file_name, const byte_array& data,
-    bool append);
+                bool append);
 
 #pragma clang diagnostic pop
 
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 /**
  * 读文件
@@ -88,7 +89,7 @@ bool read_file(const std::string& file_name, byte_array& data);
  * @param to 替换后的新字符串
  */
 void string_replace(std::string& str, const std::string& from,
-    const std::string& to);
+                    const std::string& to);
 
 /**
  * 判断字符串是否是由指定前缀开始的
@@ -110,8 +111,8 @@ bool string_end_with(const std::string& str, const std::string& suffix);
  * 生成时间字符串
  * @return 时间字符串
  */
-std::string make_time_str(const std::chrono::system_clock::time_point& tp = std::chrono::system_clock::now(),
-    const std::string& fmt = "%Y-%m-%d %H:%M:%S");
+std::string make_time_str(const std::chrono::system_clock::time_point& tp  = std::chrono::system_clock::now(),
+                          const std::string&                           fmt = "%Y-%m-%d %H:%M:%S");
 
 std::string make_time_str(const std::filesystem::file_time_type& tp, const std::string& fmt = "%Y-%m-%d %H:%M:%S");
 
@@ -155,7 +156,8 @@ std::string convert_ns_to_readable(long long time);
  * @tparam empty_class 父类
  */
 template <typename T, typename Base = empty_class>
-struct make_instance_t : public Base {
+struct make_instance_t : public Base
+{
 private:
     make_instance_t() = default;
 
