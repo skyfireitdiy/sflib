@@ -208,7 +208,7 @@ inline void parse_server_req_url(const std::string& raw_url, std::string& url,
  * @param port 端口
  * @param resource 请求资源
  */
-inline void parse_client_req_url(const std::string& raw_url, std::string& agreement, std::string& host, short& port, std::string& resource);
+inline void parse_client_req_url(std::string raw_url, std::string& agreement, std::string& host, short& port, std::string& resource);
 
 /**
  * 生成http时间字符串

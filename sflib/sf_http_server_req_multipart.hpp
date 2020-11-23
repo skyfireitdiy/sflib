@@ -6,10 +6,9 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_req_multipart.h"
+#include "sf_http_server_request.h"
 
 namespace skyfire
 {
@@ -122,4 +121,3 @@ inline bool http_server_req_multipart::append_data(const byte_array& data,
     }
 }
 } // namespace skyfire
-#pragma clang diagnostic pop

@@ -10,6 +10,7 @@
 
 #include "sf_http_server_req_multipart.hpp"
 #include "sf_http_utils.h"
+#include "sf_logger.hpp"
 
 namespace skyfire
 {
@@ -141,13 +142,66 @@ inline void parse_server_req_url(const std::string& raw_url, std::string& url,
     param                = parse_param(param_str);
 }
 
-inline void parse_client_req_url(const std::string& raw_url,
-                                 std::string&       agreement,
-                                 std::string&       host,
-                                 short&             port,
-                                 std::string&       resource)
+inline void parse_client_req_url(std::string  raw_url,
+                                 std::string& agreement,
+                                 std::string& host,
+                                 short&       port,
+                                 std::string& resource)
 {
-    // TODO 实现url解析
+    agreement = "";
+    host      = "";
+    port      = 80;
+    resource  = "";
+
+    const auto agreement_end_pos = raw_url.find("://");
+    if (agreement_end_pos != std::string::npos)
+    {
+        agreement = to_lower_string(raw_url.substr(0, agreement_end_pos));
+        raw_url   = raw_url.substr(agreement_end_pos + 3);
+    }
+
+    auto host_end_pos = raw_url.find(":");
+    if (host_end_pos != std::string::npos)
+    {
+        host    = raw_url.substr(0, host_end_pos);
+        raw_url = raw_url.substr(host_end_pos + 1);
+
+        const auto port_end_pos = raw_url.find("/");
+        if (port_end_pos != std::string::npos)
+        {
+            port     = atoi(raw_url.substr(0, port_end_pos).c_str());
+            resource = raw_url.substr(port_end_pos);
+        }
+        else
+        {
+            port     = atoi(raw_url.c_str());
+            resource = "/";
+        }
+    }
+    else
+    {
+        if (agreement == "http")
+        {
+            port = 80;
+        }
+        else
+        {
+            // FIXME 支持其他协议？
+            sf_debug("not supported");
+        }
+
+        const auto host_end_pos = raw_url.find("/");
+        if (host_end_pos != std::string::npos)
+        {
+            host     = raw_url.substr(0, host_end_pos);
+            resource = raw_url.substr(host_end_pos);
+        }
+        else
+        {
+            host     = raw_url;
+            resource = "/";
+        }
+    }
 }
 
 inline std::string to_header_key_format(std::string key)
