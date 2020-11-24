@@ -26,8 +26,9 @@ inline std::shared_ptr<http_client_request> http_client_request::add_cookies(con
 
 inline std::shared_ptr<http_client_request> http_client_request::set_url(const std::string& url)
 {
-    // FIXME 解析 url ，拿出 host，port 和真正的 url
-    // header__.get_request_line().url = url;
+    // 忽略agreement
+    std::string agreement;
+    parse_client_req_url(url, agreement, server_host__, server_port__, header__.get_request_line().url);
     return shared_from_this();
 }
 
