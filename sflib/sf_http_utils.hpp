@@ -148,16 +148,24 @@ inline void parse_client_req_url(std::string  raw_url,
                                  short&       port,
                                  std::string& resource)
 {
-    agreement = "";
+    agreement = "http";
     host      = "";
     port      = 80;
-    resource  = "";
+    resource  = "/";
 
     const auto agreement_end_pos = raw_url.find("://");
     if (agreement_end_pos != std::string::npos)
     {
         agreement = to_lower_string(raw_url.substr(0, agreement_end_pos));
         raw_url   = raw_url.substr(agreement_end_pos + 3);
+    }
+    else
+    {
+        const auto host_end_pos = raw_url.find("//");
+        if (host_end_pos != std::string::npos)
+        {
+            raw_url = raw_url.substr(host_end_pos + 2);
+        }
     }
 
     auto host_end_pos = raw_url.find(":");
