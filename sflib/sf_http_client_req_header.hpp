@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sf_http_client_req_header.h"
+#include "sf_http_header.hpp"
 
 namespace skyfire
 {
@@ -36,7 +37,12 @@ inline void http_client_req_header::set_request_line(const http_request_line& re
     request_line__ = request_line;
 }
 
-inline http_header_line& http_client_req_header::get_request_line() const
+inline const http_request_line& http_client_req_header::get_request_line() const
+{
+    return request_line__;
+}
+
+inline http_request_line& http_client_req_header::get_request_line()
 {
     return request_line__;
 }

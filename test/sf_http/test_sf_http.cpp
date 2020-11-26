@@ -1,5 +1,7 @@
 #include "sf_http_utils"
+#include "sf_http_client_request"
 #include "sf_test"
+#include "sflib/sf_http_client_request.h"
 
 sf_test(test_parse_client_req_url)
 {
@@ -40,6 +42,16 @@ sf_test(test_parse_client_req_url)
     test_str_eq(host, "www.baidu.com");
     test_num_eq(port, 8080);
     test_str_eq(resource, "/hello/world");
+
+    return true;
+}
+
+sf_test(test_build_request)
+{
+    auto req = skyfire::http_client_request::make_instance();
+    req->add_header("Host", "www.baidu.com")->set_method("POST")->set_body(skyfire::to_byte_array("hello world"));
+
+    // TODO 完善用例
 
     return true;
 }

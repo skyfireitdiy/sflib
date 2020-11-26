@@ -45,13 +45,13 @@ inline tcp_client::tcp_client(SOCKET sock, bool raw)
 
 inline SOCKET tcp_client::raw_socket() { return sock__; }
 
-inline bool tcp_client::sf_bind(const std::string& ip, unsigned short port)
+inline bool tcp_client::bind(const std::string& ip, unsigned short port)
 {
     sockaddr_in address {};
     address.sin_family      = AF_INET;
     address.sin_addr.s_addr = inet_addr(ip.c_str());
     address.sin_port        = htons(port);
-    return -1 != ::sf_bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
+    return -1 != ::bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 }
 
 inline tcp_client::~tcp_client() { close(); }

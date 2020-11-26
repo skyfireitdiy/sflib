@@ -12,7 +12,9 @@
 namespace skyfire
 {
 
-class http_client_request : public nocopy<make_instance_t<http_client_request, std::enable_shared_from_this<http_client_request>>>
+class http_client_request : public nocopy<>,
+                            public make_instance_t<http_client_request>,
+                            public std::enable_shared_from_this<http_client_request>
 {
 private:
     byte_array                    body__;

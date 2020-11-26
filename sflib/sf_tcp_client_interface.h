@@ -58,7 +58,7 @@ class tcp_client_interface : public nocopy<object>
      * @param port 端口号
      * @return 绑定是否成功
      */
-    virtual bool sf_bind(const std::string& ip, unsigned short port) = 0;
+    virtual bool bind(const std::string& ip, unsigned short port) = 0;
 
     /**
      * 连接服务器

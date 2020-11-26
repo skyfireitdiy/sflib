@@ -39,7 +39,7 @@ public:
 
     SOCKET raw_socket() override;
 
-    bool sf_bind(const std::string& ip, unsigned short port) override;
+    bool bind(const std::string& ip, unsigned short port) override;
 
     ~tcp_client(); // NOLINT(modernize-use-override)
 

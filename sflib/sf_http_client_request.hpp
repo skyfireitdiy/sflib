@@ -1,7 +1,9 @@
 #pragma once
 
 #include "sf_http_client.hpp"
+#include "sf_http_client_req_header.hpp"
 #include "sf_http_client_request.h"
+
 namespace skyfire
 {
 
