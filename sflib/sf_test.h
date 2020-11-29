@@ -72,7 +72,7 @@ void test_base__(const std::string& file, int line, const std::string& func_name
 template <typename U>
 void test_base__(const std::string& file, int line, const std::string& func_name, std::function<bool(const U&)> func, const std::string& class_name, const std::vector<U>& data, std::function<void()> before = nullptr, std::function<void()> after = nullptr);
 
-int  test_run(int thread_count = 1, bool flashing = true);
+int  run_test(int thread_count = 1, bool flashing = true);
 void test_set_env(const std::string& class_name, std::function<void()> setup, std::function<void()> teardown);
 void test_set_global_env(std::function<void()> setup, std::function<void()> teardown);
 

@@ -16,5 +16,5 @@ bool test_multi_value()
 int main()
 {
     sf_test_add(test_multi_value);
-    test_run();
+    run_test();
 }

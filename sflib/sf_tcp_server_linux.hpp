@@ -338,7 +338,7 @@ inline bool tcp_server::handle_accept__()
     }
 }
 
-inline err tcp_server::recv(SOCKET sock, byte_array& data, int length)
+inline sf_error tcp_server::recv(SOCKET sock, byte_array& data, int length)
 {
     auto& epoll_data     = epoll_data__();
     auto& sock_context__ = epoll_data.sock_context__;
@@ -351,7 +351,7 @@ inline err tcp_server::recv(SOCKET sock, byte_array& data, int length)
         // EWOULDBLOCK == EAGAIN
         if ((errno == EAGAIN || errno == EINTR /* || errno == EWOULDBLOCK */) && count_read < 0)
         {
-            return err { exception(err_finished, "read finished") };
+            return sf_error { exception(err_finished, "read finished") };
         }
         else
         {
@@ -364,11 +364,11 @@ inline err tcp_server::recv(SOCKET sock, byte_array& data, int length)
             }
             closed(sock);
             close(sock);
-            return err { exception(err_disconnect, "connection closed") };
+            return sf_error { exception(err_disconnect, "connection closed") };
         }
     }
     data.resize(static_cast<unsigned long>(count_read));
-    return err {};
+    return sf_error {};
 }
 
 inline void tcp_server::handle_read__(const epoll_event& ev)

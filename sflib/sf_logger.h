@@ -181,7 +181,7 @@ private:
 #define sf_warn(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_WARN_LEVEL, __FILE__, __LINE__, \
                               __FUNCTION__, __VA_ARGS__)
-#define sf_error(...)                                                      \
+#define sf_err(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_ERROR_LEVEL, __FILE__, __LINE__, \
                               __FUNCTION__, __VA_ARGS__)
 #define sf_fatal(...)                                                      \

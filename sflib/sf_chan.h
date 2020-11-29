@@ -61,12 +61,12 @@ public:
      * @param d 读取的数据
      * @param ch 管道
      */
-    friend err operator>>(chan<T>& ch, T& d)
+    friend sf_error operator>>(chan<T>& ch, T& d)
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
         if (ch.closed__)
         {
-            return err { exception(err_chan_close, "channel already closed") };
+            return sf_error { exception(err_chan_close, "channel already closed") };
         }
         if (ch.max_size__ != 0)
         {
@@ -89,7 +89,7 @@ public:
             ch.has_value__ = false;
             ch.cond_pop_finish__.notify_one();
         }
-        return err {};
+        return sf_error {};
     }
 
     /**
@@ -97,12 +97,12 @@ public:
      * @param ch 管道
      * @param d 写入的数据
      */
-    friend err operator>>(T d, chan<T>& ch)
+    friend sf_error operator>>(T d, chan<T>& ch)
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
         if (ch.closed__)
         {
-            return err(exception(err_chan_close, "channel already closed"));
+            return sf_error(exception(err_chan_close, "channel already closed"));
         }
         if (ch.max_size__ != 0)
         {
@@ -133,15 +133,15 @@ public:
             ch.cond_pop_finish__.wait(lck, [&ch] { return !ch.has_value__; });
             ch.cond_push_prepare__.notify_one();
         }
-        return err {};
+        return sf_error {};
     }
 
-    friend err operator>>(T d, const std::shared_ptr<chan<T>> ch)
+    friend sf_error operator>>(T d, const std::shared_ptr<chan<T>> ch)
     {
         return d >> *ch;
     }
 
-    friend err operator>>(const std::shared_ptr<chan<T>> ch, T& d)
+    friend sf_error operator>>(const std::shared_ptr<chan<T>> ch, T& d)
     {
         return *ch >> d;
     }

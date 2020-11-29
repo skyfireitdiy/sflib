@@ -15,9 +15,7 @@
 #include <string>
 #include <vector>
 
-#ifndef _WIN32
-#define SOCKET int
-#endif
+using SOCKET = int;
 
 #define SF_GET_OFFSET(obj, member) \
     (reinterpret_cast<size_t>(&(reinterpret_cast<obj*>(0)->member)))

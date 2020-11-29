@@ -102,5 +102,5 @@ int main()
     sf_test_add(test_write_to_closed_chan);
     sf_test_add(test_read_from_closed_chan);
 
-    test_run(4);
+    run_test(4);
 }

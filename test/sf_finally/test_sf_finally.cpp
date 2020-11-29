@@ -40,5 +40,5 @@ int main()
     sf_test_add(test_finally_order);
     sf_test_add(test_finally_order2);
 
-    test_run();
+    run_test();
 }

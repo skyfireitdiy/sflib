@@ -1,7 +1,7 @@
 #include "sf_http_utils"
 #include "sf_http_client_request"
 #include "sf_test"
-#include "sflib/sf_http_client_request.h"
+#include "sf_tcp_client"
 
 sf_test(test_parse_client_req_url)
 {
@@ -56,7 +56,9 @@ sf_test(test_build_request)
     return true;
 }
 
+
+
 int main()
 {
-    return skyfire::test_run();
+    return skyfire::run_test();
 }

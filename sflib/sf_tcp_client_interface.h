@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "sf_error.h"
 #include "sf_net_utils.h"
 #include "sf_nocopy.h"
 #include "sf_object.h"
@@ -66,7 +67,7 @@ class tcp_client_interface : public nocopy<object>
      * @param port 服务器端口
      * @return 是否连接成功
      */
-    virtual bool connect_to_server(const std::string& ip,
+    virtual sf_error connect_to_server(const std::string& ip,
                                    unsigned short     port)
         = 0;
 

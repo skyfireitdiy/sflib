@@ -49,6 +49,15 @@ enum error_code
     // channel 关闭
     err_chan_close = 0x0000000e,
 
+    // dns 解析失败
+    err_resolve_dns = 0x0000000f,
+
+    // 连接失败
+    err_connect = 0x00000010,
+
+    // 未初始化
+    err_uninit = 0x00000011,
+
 };
 
 /**
@@ -84,17 +93,27 @@ public:
  * @brief 错误
  * 
  */
-class err
+class sf_error
 {
 private:
     exception exp__;
+    std::any  err_info__;
 
 public:
-    err(exception e = exception(err_ok, ""))
+    sf_error(exception e = exception(err_ok, ""), std::any&& err_info = nullptr)
         : exp__(e)
+        , err_info__(err_info)
     {
     }
-    operator bool() const { return exp__.code() == err_ok; }
+    sf_error(int code, std::string msg, std::any&& err_info = nullptr)
+        : sf_error(exception(code, msg))
+    {
+        err_info__ = std::move(err_info);
+    }
+
+              operator bool() const { return exp__.code() == err_ok; }
     exception exp() const { return exp__; }
+
+    std::any err_info() const { return err_info__; }
 };
 }

@@ -24,7 +24,7 @@ byte_array_result data_buffer::read(int max_size)
 
     if (data__.empty() && (reader__ == nullptr || !reader__->can_read()))
     {
-        return { err { { err_finished, "read finished" } }, byte_array {} };
+        return { sf_error { { err_finished, "read finished" } }, byte_array {} };
     }
 
     byte_array data(max_size);
@@ -34,7 +34,7 @@ byte_array_result data_buffer::read(int max_size)
         memcpy(data.data(), data__.data(), max_size);
         memcpy(data__.data(), data__.data() + max_size, data__.size() - max_size);
         data__.resize(data__.size() - max_size);
-        return { err {}, data };
+        return { sf_error {}, data };
     }
 
     data = data__;
@@ -42,7 +42,7 @@ byte_array_result data_buffer::read(int max_size)
 
     if (reader__ == nullptr || !reader__->can_read())
     {
-        return { err {}, data };
+        return { sf_error {}, data };
     }
 
     byte_array tmp_data;
@@ -53,10 +53,10 @@ byte_array_result data_buffer::read(int max_size)
     }
 
     data += e;
-    return { err {}, data };
+    return { sf_error {}, data };
 }
 
-err data_buffer::write(const byte_array& data)
+sf_error data_buffer::write(const byte_array& data)
 {
     std::lock_guard<std::mutex> lock(mutex__);
 
@@ -64,7 +64,7 @@ err data_buffer::write(const byte_array& data)
 
     if (writer__ == nullptr || !writer__->can_write())
     {
-        return err {};
+        return sf_error {};
     }
 
     auto e = writer__->write(data);
@@ -72,7 +72,7 @@ err data_buffer::write(const byte_array& data)
     {
         return e;
     }
-    return err {};
+    return sf_error {};
 }
 
 bool data_buffer::can_read() const

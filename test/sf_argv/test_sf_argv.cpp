@@ -166,5 +166,5 @@ int main()
                 { { { "sub1", "-s", "string", "-o", "one" }, R"({"sub1":{"--string":"string", "--one": "one"}})"_json },
                   { { "sub2", "-t", "two", "-s", "string" }, R"({"sub2":{"--string":"string", "--two": "two"}})"_json } });
 
-    return test_run();
+    return run_test();
 }

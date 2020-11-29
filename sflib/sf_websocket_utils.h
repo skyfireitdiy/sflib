@@ -16,12 +16,8 @@
 #include "sf_tcp_utils.hpp"
 #include "sf_type.hpp"
 
-#ifdef _WIN32
-#include <winsock2.h>
-#else
 
 #include <arpa/inet.h>
-#endif
 
 namespace skyfire
 {

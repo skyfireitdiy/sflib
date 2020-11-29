@@ -136,7 +136,7 @@ inline void test_set_global_env(std::function<void()> setup, std::function<void(
     *get_global_teardown__() = teardown;
 }
 
-inline int test_run(int thread_count, bool flashing)
+inline int run_test(int thread_count, bool flashing)
 {
     int  ret        = 0;
     auto start_time = std::chrono::system_clock::now();

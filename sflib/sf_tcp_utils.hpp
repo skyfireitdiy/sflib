@@ -17,11 +17,7 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
     const T& data)
 {
     byte_array ret(sizeof(data));
-#ifdef _WIN32
-    memmove_s(ret.data(), sizeof(data), &data, sizeof(data));
-#else
     memmove(ret.data(), &data, sizeof(data));
-#endif
     return ret;
 }
 
@@ -33,11 +29,7 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
 {
     assert(data.size() == sizeof(T));
     T ret;
-#ifdef _WIN32
-    memmove_s(&ret, sizeof(ret), data.data(), sizeof(ret));
-#else
     memmove(&ret, data.data(), sizeof(ret));
-#endif
     return ret;
 }
 #pragma clang diagnostic pop

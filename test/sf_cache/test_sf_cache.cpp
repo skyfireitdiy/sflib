@@ -69,5 +69,5 @@ int main()
     sf_test_add(update_timestamp_test);
     sf_test_add(mismatch_type_test);
 
-    test_run(4);
+    run_test(4);
 }

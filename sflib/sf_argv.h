@@ -45,7 +45,7 @@ struct argv_opt_t
     json        default_value {};              // 默认值
 };
 
-using argv_result_t = multi_value<err, json>;
+using argv_result_t = multi_value<sf_error, json>;
 
 using argv_opt_option           = option<argv_opt_t>;
 using argv_opt_option_func_type = argv_opt_option::OptionFuncType;

@@ -417,9 +417,9 @@ inline bool http_server_base::check_analysis_multipart_file__(
 
 inline http_server_base::file_etag_t http_server_base::make_etag__(const http_file_info_t& file) const
 {
-    std::error_code err;
-    auto            modify_time = fs::last_write_time(file.filename, err);
-    if (err)
+    std::error_code sf_error;
+    auto            modify_time = fs::last_write_time(file.filename, sf_error);
+    if (sf_error)
     {
         sf_debug("get file modify time error", file.filename);
     }
@@ -545,9 +545,9 @@ inline void http_server_base::file_response__(SOCKET                sock,
         }
         else
         {
-            std::error_code err;
-            auto            modify_time = fs::last_write_time(file.filename, err);
-            if (err)
+            std::error_code sf_error;
+            auto            modify_time = fs::last_write_time(file.filename, sf_error);
+            if (sf_error)
             {
                 sf_debug("get modify time error");
                 res.set_status(404);

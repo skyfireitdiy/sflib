@@ -139,7 +139,7 @@ public:
      */
     bool send(SOCKET sock, const byte_array& data) override;
 
-    err recv(SOCKET sock, byte_array& data, int length = default_buffer_size) override;
+    sf_error recv(SOCKET sock, byte_array& data, int length = default_buffer_size) override;
 };
 
 } // namespace skyfire

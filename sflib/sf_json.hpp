@@ -19,7 +19,6 @@
 #include "sf_lex.hpp"
 #include "sf_logger.hpp"
 #include "sf_meta.hpp"
-#include "sf_msvc_safe.h"
 #include "sf_utils.hpp"
 #include "sf_yacc.hpp"
 

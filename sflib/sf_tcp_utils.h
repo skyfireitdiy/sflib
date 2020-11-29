@@ -7,24 +7,19 @@
 
 #pragma once
 
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <arpa/inet.h>
-#include <errno.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#endif
-
 #include "sf_define.h"
 #include "sf_option.h"
 #include "sf_type.hpp"
+#include <arpa/inet.h>
 #include <cassert>
 #include <cstring>
+#include <errno.h>
+#include <netinet/in.h>
 #include <string>
+#include <sys/socket.h>
+#include <sys/types.h>
 #include <thread>
+#include <unistd.h>
 #include <vector>
 
 namespace skyfire

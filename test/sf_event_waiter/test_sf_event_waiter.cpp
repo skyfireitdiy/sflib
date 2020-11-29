@@ -36,5 +36,5 @@ int main()
     sf_test_add(none_param_event_waiter_test);
     sf_test_add(many_param_event_waiter_test);
 
-    skyfire::test_run();
+    skyfire::run_test();
 }

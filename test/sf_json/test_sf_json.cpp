@@ -99,5 +99,5 @@ sf_test(test_convert)
 
 int main()
 {
-    return test_run(4);
+    return run_test(4);
 }

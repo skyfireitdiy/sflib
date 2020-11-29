@@ -132,8 +132,8 @@ public:
      * @param sock 套接字
      * @param data 数据
      * @param length 长度
-     * @return err 错误信息
+     * @return sf_error 错误信息
      */
-    virtual err recv(SOCKET sock, byte_array& data, int length = default_buffer_size) = 0;
+    virtual sf_error recv(SOCKET sock, byte_array& data, int length = default_buffer_size) = 0;
 };
 } // namespace skyfire

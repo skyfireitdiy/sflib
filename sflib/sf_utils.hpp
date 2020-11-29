@@ -12,7 +12,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "sf_msvc_safe.h"
 #include "sf_type.hpp"
 #include "sf_utils.h"
 
@@ -142,7 +141,7 @@ inline long double string_to_long_double(const std::string& str)
 }
 
 #pragma clang diagnostic push
-#pragma ide diagnostic   ignored "UnusedValue"
+#pragma ide diagnostic ignored "UnusedValue"
 
 inline std::string tm2string(std::time_t tt, const std::string& fmt)
 {
@@ -179,7 +178,8 @@ std::string char_container_to_hex_string(const T& data)
     char tmp[4];
     for (auto& p : data)
     {
-        safe_sprintf(tmp, 4, "%02x", p);
+        // FIXME 溢出
+        sprintf(tmp, "%02x", p);
         str += tmp;
     }
     return str;

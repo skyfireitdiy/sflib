@@ -24,5 +24,5 @@ int main()
     sf_test_add(test_sf_string_output);
     sf_test_add(test_sf_string_operator);
 
-    test_run();
+    run_test();
 }

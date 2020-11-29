@@ -9,7 +9,7 @@
 namespace skyfire
 {
 
-using byte_array_result = multi_value<err, byte_array>;
+using byte_array_result = multi_value<sf_error, byte_array>;
 
 class reader
 {
@@ -21,7 +21,7 @@ public:
 class writer
 {
 public:
-    virtual err  write(const byte_array& data) = 0;
+    virtual sf_error  write(const byte_array& data) = 0;
     virtual bool can_write() const             = 0;
 };
 
@@ -38,7 +38,7 @@ public:
     void              set_data(const byte_array& data);
     void              clear();
     byte_array_result read(int max_size) override;
-    err               write(const byte_array& data) override;
+    sf_error               write(const byte_array& data) override;
     bool              can_read() const override;
     bool              can_write() const override;
     void              set_reader(std::shared_ptr<reader> rdr);

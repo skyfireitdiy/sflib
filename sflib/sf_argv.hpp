@@ -177,7 +177,7 @@ inline argv_result_t argparser::parse_argv__(
             if (pos >= position_arg_.size())
             {
                 return {
-                    err { { err_parse,
+                    sf_error { { err_parse,
                             "too many postion argv" } },
                     json()
 
@@ -210,7 +210,7 @@ inline argv_result_t argparser::parse_argv__(
                 break;
             default:
                 return argv_result_t {
-                    err { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {}
+                    sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {}
                 };
             }
         }
@@ -274,7 +274,7 @@ inline argv_result_t argparser::parse_argv__(
                 last_opt                 = nullptr;
                 break;
             default:
-                return argv_result_t { err { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {} };
+                return argv_result_t { sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(last_opt->type)) } }, json {} };
             }
         }
     }
@@ -285,7 +285,7 @@ inline argv_result_t argparser::parse_argv__(
             if (!ret.has(p.json_name))
             {
                 return {
-                    err { { err_not_enough,
+                    sf_error { { err_not_enough,
                             p.short_name + "/" + p.long_name + " is required" } },
                     json()
                 };
@@ -299,14 +299,14 @@ inline argv_result_t argparser::parse_argv__(
             if (!ret.has(p.json_name))
             {
                 return {
-                    err { { err_not_enough,
+                    sf_error { { err_not_enough,
                             p.short_name + "/" + p.long_name + " is required" } },
                     json()
                 };
             }
         }
     }
-    return { err { { err_ok, "" } }, ret };
+    return { sf_error { { err_ok, "" } }, ret };
 }
 
 inline argv_result_t argparser::parse_argv(int argc, const char** argv, bool skip0)
@@ -383,15 +383,15 @@ inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args,
         if (!find_flag)
         {
             auto result = parser->parse_argv__({ data.begin() + i, data.end() });
-            if (err(result).exp().code() != err_ok)
+            if (sf_error(result).exp().code() != err_ok)
             {
                 return result;
             }
             curr.join(json(result));
-            return { err { { err_ok, "" } }, ret };
+            return { sf_error { { err_ok, "" } }, ret };
         }
     }
-    return { err { { err_ok, "" } }, ret };
+    return { sf_error { { err_ok, "" } }, ret };
 }
 
 bool argparser::add_argument(std::string short_name, std::string long_name,

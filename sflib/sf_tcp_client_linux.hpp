@@ -56,23 +56,35 @@ inline bool tcp_client::bind(const std::string& ip, unsigned short port)
 
 inline tcp_client::~tcp_client() { close(); }
 
-inline bool tcp_client::connect_to_server(const std::string& ip,
-                                          unsigned short     port)
+inline sf_error tcp_client::connect_to_server(const std::string& host,
+                                         unsigned short     port)
 {
     if (!inited__)
-        return false;
+        return { err_uninit, "Uninit" };
     sockaddr_in address {};
-    address.sin_family      = AF_INET;
-    address.sin_addr.s_addr = inet_addr(ip.c_str());
-    address.sin_port        = htons(port);
-    if (::connect(sock__, reinterpret_cast<const sockaddr*>(&address),
-                  sizeof(address))
-        != 0)
+
+    auto host_list = resolve_dns(host);
+    if (!sf_error(host_list))
     {
-        return false;
+        return sf_error(host_list);
     }
-    std::thread(&tcp_client::recv_thread__, this).detach();
-    return true;
+
+    for (auto& ip : std::vector<std::string>(host_list))
+    {
+        address.sin_family      = AF_INET;
+        address.sin_addr.s_addr = inet_addr(ip.c_str());
+        address.sin_port        = htons(port);
+        if (::connect(sock__, reinterpret_cast<const sockaddr*>(&address),
+                      sizeof(address))
+            != 0)
+        {
+            continue;
+        }
+        std::thread(&tcp_client::recv_thread__, this).detach();
+        return sf_error {};
+    }
+
+    return sf_error { err_connect, "Connect failed" };
 }
 
 inline bool tcp_client::send(int type, const byte_array& data)

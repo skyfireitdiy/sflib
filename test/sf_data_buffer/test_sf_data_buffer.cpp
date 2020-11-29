@@ -16,7 +16,7 @@ sf_test(test_read_empty_buffer)
 {
     skyfire::data_buffer buffer;
     auto                 t = buffer.read(1024);
-    return skyfire::err { { skyfire::err_finished, "" } } == std::get<0>(t);
+    return skyfire::sf_error { { skyfire::err_finished, "" } } == std::get<0>(t);
 }
 
 sf_test(test_read_twice)
@@ -53,5 +53,5 @@ sf_test(test_pipe)
 
 int main()
 {
-    return skyfire::test_run();
+    return skyfire::run_test();
 }

@@ -7,17 +7,16 @@
 
 #pragma once
 
+#include "sf_error.h"
+#include "sf_stdc++.h"
+#include "sf_tcp_client_interface.h"
+#include "sf_utils.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-#include "sf_stdc++.h"
-
-#include "sf_tcp_client_interface.h"
-#include "sf_utils.h"
 
 namespace skyfire
 {
@@ -43,7 +42,7 @@ public:
 
     ~tcp_client(); // NOLINT(modernize-use-override)
 
-    bool connect_to_server(const std::string& ip, unsigned short port) override;
+    sf_error connect_to_server(const std::string& host, unsigned short port) override;
 
     bool send(int type, const byte_array& data) override;
 
