@@ -21,7 +21,12 @@ sf_test(test_connect_host)
     auto client = skyfire::tcp_client::make_instance();
     auto ret    = client->connect_to_server("www.baidu.com", 80);
 
-    return ret; 
+    test_assert(ret);
+    ret = client->connect_to_server("14.215.177.38", 80);
+
+    test_assert(!ret);
+
+    return true;
 }
 
 int main()

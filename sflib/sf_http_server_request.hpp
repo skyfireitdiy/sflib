@@ -97,7 +97,7 @@ inline bool http_server_request::parse_request__()
                 auto boundary_str_list = split_string(tmp_str, "=");
                 if (boundary_str_list.size() != 2)
                 {
-                    sf_err("boundary str size error");
+                    ("boundary str size error");
                     error__ = true;
                     return false;
                 }
