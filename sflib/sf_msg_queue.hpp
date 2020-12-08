@@ -76,5 +76,8 @@ void msg_queue<T>::wait_msg()
 }
 
 template <typename T>
-void msg_queue<T>::add_empty_msg() { wait_cond__.notify_all(); }
+void msg_queue<T>::add_empty_msg()
+{
+    wait_cond__.notify_all();
+}
 } // namespace skyfire

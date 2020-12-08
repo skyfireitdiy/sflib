@@ -794,7 +794,7 @@ inline http_server_base::http_server_base(
     const http_server_config& config)
     : config__(config)
     , file_cache__(cache::make_instance(config.max_cache_count))
-    , server__(tcp_server::make_instance(std::initializer_list { tcp::raw(true), tcp::thread_count(config.thread_count) }))
+    , server__(tcp_server::make_instance(tcp::raw(true), tcp::thread_count(config.thread_count)))
 {
     sf_info("server config:", to_json(config));
 

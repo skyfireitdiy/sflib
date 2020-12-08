@@ -34,21 +34,15 @@ inline void eventloop::exec()
         {
             break;
         }
-        if (__p_msg_queue__->empty())
+        __p_msg_queue__->wait_new_msg();
+        auto fp = __p_msg_queue__->take_msg();
+        if (fp == nullptr)
         {
-            __p_msg_queue__->wait_new_msg();
+            continue;
         }
-        if (!__p_msg_queue__->empty())
+        else
         {
-            auto fp = __p_msg_queue__->take_msg();
-            if (!fp)
-            {
-                continue;
-            }
-            else
-            {
-                fp->second();
-            }
+            fp->second();
         }
     }
 }

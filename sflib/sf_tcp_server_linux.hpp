@@ -14,12 +14,11 @@
 
 namespace skyfire
 {
-inline tcp_server::tcp_server(const std::initializer_list<tcp_server_config>& config)
+
+template <typename... Args>
+inline tcp_server::tcp_server(Args&&... args)
 {
-    for (auto& f : config)
-    {
-        f(config__);
-    }
+    (args(config__), ..., 0);
 }
 
 inline SOCKET tcp_server::raw_socket() { return listen_fd__; }
@@ -115,9 +114,9 @@ inline void tcp_server::close(SOCKET sock)
 
 inline void tcp_server::close()
 {
-    shutdown(listen_fd__, SHUT_RDWR);
+    closed__ = true;
+    ::shutdown(listen_fd__, SHUT_RDWR);
     ::close(listen_fd__);
-    listen_fd__ = -1;
 
     for (auto& p : thread_vec__)
     {
@@ -186,6 +185,7 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
 
 inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
 {
+    // FIXME 增加一个pipe，用于退出唤醒
     sf_debug("start thread");
     auto& epoll_data    = epoll_data__();
     epoll_data.epoll_fd = epoll_create(max_tcp_connection);
@@ -218,7 +218,7 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
     }
     std::vector<epoll_event> evs(max_tcp_connection);
 
-    while (true)
+    while (!closed__)
     {
         int wait_fds = 0;
         if ((wait_fds = epoll_wait(epoll_data.epoll_fd, evs.data(),
@@ -230,6 +230,11 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                 continue;
             }
             break;
+        }
+
+        if(closed__)
+        {
+            return;
         }
 
         if (wait_fds == 0)

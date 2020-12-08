@@ -150,9 +150,9 @@ public:                                                                         
 /*
  * sf_bind 信号绑定
  */
-#define sf_bind(objptr, name, func, ...)                                    \
-    (objptr)->__bind_helper__((objptr)->__mu_##name##_signal__,             \
-                              (objptr)->__##name##_signal_func_vec__, func, \
+#define sf_bind(objptr, name, ...)                                    \
+    (objptr)->__bind_helper__((objptr)->__mu_##name##_signal__,       \
+                              (objptr)->__##name##_signal_func_vec__, \
                               __VA_ARGS__)
 
 /*

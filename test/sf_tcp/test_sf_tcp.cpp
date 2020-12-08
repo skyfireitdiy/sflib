@@ -1,4 +1,7 @@
+#define SF_DEBUG
+#include "sflib/sf_type.h"
 #include <sf_tcp_client>
+#include <sf_tcp_server>
 #include <sf_test>
 
 sf_test(test_resolve_dns)
@@ -26,6 +29,29 @@ sf_test(test_connect_host)
 
     test_assert(!ret);
 
+    return true;
+}
+
+sf_test(test_server_client)
+{
+    auto server = skyfire::tcp_server::make_instance(skyfire::tcp::raw(true));
+
+    skyfire::eventloop lp;
+
+    sf_bind(server, new_connection, [](SOCKET sock) {
+        sf_info("new connection", sock);
+    }, false);
+
+    sf_bind(server, raw_data_coming, [&server, &lp](SOCKET sock, skyfire::byte_array data) {
+        sf_info("recv:", skyfire::to_string(data));
+        server->close(sock);
+        server->close();
+        lp.quit(); 
+    }, false);
+
+    server->listen("127.0.0.1", 9300);
+
+    lp.exec();
     return true;
 }
 

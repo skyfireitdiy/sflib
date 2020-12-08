@@ -59,6 +59,8 @@ class tcp_server
     : public make_instance_t<tcp_server, tcp_server_interface>
 {
 private:
+    std::atomic<bool> closed__ = false;
+    
     tcp_server_opt_t config__;
 
     SOCKET listen_fd__;
@@ -91,7 +93,9 @@ public:
      */
     SOCKET raw_socket() override;
 
-    tcp_server(const std::initializer_list<tcp_server_config>& config);
+    template<typename ...Args>
+    tcp_server(Args&& ...args);
+    
 
     ~tcp_server() override;
 
