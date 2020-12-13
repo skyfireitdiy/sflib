@@ -8,7 +8,7 @@
 using namespace skyfire;
 using namespace std;
 
-bool test_chan_order()
+sf_test(test_chan_order)
 {
     auto             ch = chan<int>::make_instance();
     std::vector<int> data;
@@ -30,10 +30,10 @@ bool test_chan_order()
 
     th1.join();
     th2.join();
-    return data == result;
+    test_np_eq(data, result);
 }
 
-bool test_chan_order_with_buffer()
+sf_test(test_chan_order_with_buffer)
 {
     auto             ch = chan<int>::make_instance(5);
     std::vector<int> data;
@@ -55,10 +55,10 @@ bool test_chan_order_with_buffer()
 
     th1.join();
     th2.join();
-    return data == result;
+    test_np_eq(data, result);
 }
 
-bool test_write_to_closed_chan()
+sf_test(test_write_to_closed_chan)
 {
     auto   ch  = chan<int>::make_instance(5);
     auto   ret = true;
@@ -73,10 +73,10 @@ bool test_write_to_closed_chan()
     });
     th1.join();
     th2.join();
-    return ret == false;
+    test_assert(!ret);
 }
 
-bool test_read_from_closed_chan()
+sf_test(test_read_from_closed_chan)
 {
     auto   ch  = chan<int>::make_instance(5);
     auto   ret = true;
@@ -92,15 +92,10 @@ bool test_read_from_closed_chan()
     });
     th1.join();
     th2.join();
-    return ret == false;
+    test_assert(!ret);
 }
 
 int main()
 {
-    sf_test_add(test_chan_order);
-    sf_test_add(test_chan_order_with_buffer);
-    sf_test_add(test_write_to_closed_chan);
-    sf_test_add(test_read_from_closed_chan);
-
     run_test(4);
 }

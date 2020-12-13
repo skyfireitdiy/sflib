@@ -53,102 +53,160 @@ inline json json::from_string(const std::string& json_str)
         lex_result.end());
     yacc yacc;
     yacc.set_rules(
-        { { "value",
-            { { { "object" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return data[0]->user_data; } },
-              { { "array" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return data[0]->user_data; } },
-              { { "string" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    return json(json::json_string_to_string(data[0]->text));
-                } },
-              { { "number" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    return json(string_to_long_double(data[0]->text));
-                } },
-              { { "true" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return json(true); } },
-              { { "false" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return json(false); } },
-              { { "null" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return json(); } } } },
-          { "object",
-            { { { "{", "}" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    json json;
-                    json.convert_to_object();
-                    return json;
-                } },
-              { { "{", "members", "}" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return data[1]->user_data; } } } },
-          { "members",
-            { { { "member" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return data[0]->user_data; } },
-              { { "members", ",", "member" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    json js;
-                    js.convert_to_object();
-                    const auto js1 = std::any_cast<json>(data[0]->user_data);
-                    const auto js2 = std::any_cast<json>(data[2]->user_data);
-                    // ReSharper disable once CppExpressionWithoutSideEffects
-                    js.join(js1);
-                    // ReSharper disable once CppExpressionWithoutSideEffects
-                    js.join(js2);
-                    return js;
-                } } } },
-          { "member",
-            { { { "string", ":", "value" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    json js;
-                    js.convert_to_object();
-                    const auto json1                               = std::any_cast<json>(data[2]->user_data);
-                    js[json::json_string_to_string(data[0]->text)] = json1;
-                    return js;
-                } } } },
-          { "array",
-            { { { "[", "]" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    json json;
-                    json.convert_to_array();
-                    return json;
-                } },
-              { { "[", "values", "]" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any { return data[1]->user_data; } } } },
-          { "values",
-            { { { "value" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    json js;
-                    js.convert_to_array();
-                    js.append(std::any_cast<json>(data[0]->user_data));
-                    return js;
-                } },
-              { { "values", ",", "value" },
-                [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
-                    -> std::any {
-                    json js;
-                    js.convert_to_array();
-                    const auto json1 = std::any_cast<json>(data[0]->user_data);
-                    const auto json2 = std::any_cast<json>(data[2]->user_data);
-                    // ReSharper disable once CppExpressionWithoutSideEffects
-                    js.join(json1);
-                    js.append(json2);
-                    return js;
-                } } } } });
+        {
+            {
+                "value",
+                {
+                    {
+                        { "object" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return data[0]->user_data; },
+                    },
+                    {
+                        { "array" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return data[0]->user_data; },
+                    },
+                    {
+                        { "string" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            return json(json::json_string_to_string(data[0]->text));
+                        },
+                    },
+                    {
+                        { "number" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            return json(string_to_long_double(data[0]->text));
+                        },
+                    },
+                    {
+                        { "true" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return json(true); },
+                    },
+                    {
+                        { "false" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return json(false); },
+                    },
+                    {
+                        { "null" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return json(); },
+                    },
+                },
+            },
+            {
+                "object",
+                {
+                    {
+                        { "{", "}" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            json json;
+                            json.convert_to_object();
+                            return json;
+                        },
+                    },
+                    {
+                        { "{", "members", "}" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return data[1]->user_data; },
+                    },
+                },
+            },
+            {
+                "members",
+                {
+                    {
+                        { "member" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return data[0]->user_data; },
+                    },
+                    {
+                        { "members", ",", "member" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            json js;
+                            js.convert_to_object();
+                            const auto js1 = std::any_cast<json>(data[0]->user_data);
+                            const auto js2 = std::any_cast<json>(data[2]->user_data);
+
+                            js.join(js1);
+
+                            js.join(js2);
+                            return js;
+                        },
+                    },
+                },
+            },
+            {
+                "member",
+                {
+                    {
+                        { "string", ":", "value" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            json js;
+                            js.convert_to_object();
+                            const auto json1                               = std::any_cast<json>(data[2]->user_data);
+                            js[json::json_string_to_string(data[0]->text)] = json1;
+                            return js;
+                        },
+                    },
+                },
+            },
+            {
+                "array",
+                {
+                    {
+                        { "[", "]" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            json json;
+                            json.convert_to_array();
+                            return json;
+                        },
+                    },
+                    {
+                        { "[", "values", "]" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any { return data[1]->user_data; },
+                    },
+                },
+            },
+            {
+                "values",
+                {
+                    {
+                        { "value" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            json js;
+                            js.convert_to_array();
+                            js.append(std::any_cast<json>(data[0]->user_data));
+                            return js;
+                        },
+                    },
+                    {
+                        { "values", ",", "value" },
+                        [](const std::vector<std::shared_ptr<yacc_result_t>>& data)
+                            -> std::any {
+                            json js;
+                            js.convert_to_array();
+                            const auto json1 = std::any_cast<json>(data[0]->user_data);
+                            const auto json2 = std::any_cast<json>(data[2]->user_data);
+                            // ReSharper disable once CppExpressionWithoutSideEffects
+                            js.join(json1);
+                            js.append(json2);
+                            return js;
+                        },
+                    },
+                },
+            },
+        });
 
     yacc.add_terminate_ids({ "value" });
     std::vector<std::shared_ptr<yacc_result_t>> yacc_result;

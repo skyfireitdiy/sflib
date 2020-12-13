@@ -9,14 +9,14 @@ sf_test(test_read_write)
     auto                 data = skyfire::to_byte_array("hello world");
     buffer.write(data);
     auto t = buffer.read(1024);
-    return data == std::get<1>(t);
+    test_np_eq(data, std::get<1>(t));
 }
 
 sf_test(test_read_empty_buffer)
 {
     skyfire::data_buffer buffer;
     auto                 t = buffer.read(1024);
-    return skyfire::sf_error { { skyfire::err_finished, "" } } == std::get<0>(t);
+    test_np_eq((skyfire::sf_error { { skyfire::err_finished, "" } }), std::get<0>(t));
 }
 
 sf_test(test_read_twice)
@@ -29,7 +29,6 @@ sf_test(test_read_twice)
     t = buffer.read(10);
     test_num_eq(skyfire::to_string(t).length(), 6);
     test_str_eq(skyfire::to_string(t), " world");
-    return true;
 }
 
 sf_test(test_pipe)
@@ -47,8 +46,6 @@ sf_test(test_pipe)
     using namespace std::string_literals;
 
     test_str_eq(std::get<1>(t).data(), "hello world"s);
-
-    return true;
 }
 
 int main()

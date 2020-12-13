@@ -28,14 +28,21 @@ struct table_column_config_t
     int                min_width = 0;
 };
 
+struct table_item_config_t
+{
+    table_align        align = table_align::align_left;
+    std::vector<color> cl;
+};
+
 class table
 {
 private:
-    const int                                               col_num__;
-    std::vector<std::string>                                header__;
-    std::vector<std::vector<std::string>>                   body__;
-    std::function<std::string(size_t, size_t, std::string)> proxy_callback__;
-    std::vector<table_column_config_t>                      table_config__;
+    const int                                                                           col_num__;
+    std::vector<std::string>                                                            header__;
+    std::vector<std::vector<std::string>>                                               body__;
+    std::function<std::string(size_t, size_t, std::string)>                             proxy_callback__;
+    std::vector<table_column_config_t>                                                  table_config__;
+    mutable std::unordered_map<size_t, std::unordered_map<size_t, table_item_config_t>> item_config__;
     // mutable std::mutex mu__;
 public:
     /**
@@ -105,6 +112,16 @@ public:
          * @return table_result_t 结果
          */
     table_result_t set_config(const std::vector<table_column_config_t>& config);
+
+    /**
+     * @brief 设置item配置
+     * 
+     * @param r 行
+     * @param c 列
+     * @param config 配置
+     * @return table_result_t 设置结果 
+     */
+    table_result_t set_config(size_t r, size_t c, const table_item_config_t& config);
     /**
          * @brief 设置代理回调函数
          * @param cb 回调函数

@@ -42,8 +42,6 @@ sf_test(test_parse_client_req_url)
     test_str_eq(host, "www.baidu.com");
     test_num_eq(port, 8080);
     test_str_eq(resource, "/hello/world");
-
-    return true;
 }
 
 sf_test(test_build_request)
@@ -52,8 +50,6 @@ sf_test(test_build_request)
     req->add_header("Host", "www.baidu.com")->set_method("POST")->set_body(skyfire::to_byte_array("hello world"));
 
     // TODO 完善用例
-
-    return true;
 }
 
 

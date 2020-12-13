@@ -6,7 +6,7 @@
 */
 
 /*
- * finally 清理过程
+ * sf_finally 清理过程
  */
 
 #pragma once
@@ -21,7 +21,7 @@ class __finally__ final
 {
 public:
     /**
-     * @brief finally 构造一个清理过程对象
+     * @brief sf_finally 构造一个清理过程对象
      * @param func 作用域结束后会调用的函数
      */
     explicit __finally__(std::function<void()> func);
@@ -39,4 +39,4 @@ private:
 
 #define __SF_VAR_NAME_WP__(prefix, line) prefix##line
 #define __SF_VAR_NAME__(prefix, line) __SF_VAR_NAME_WP__(prefix, line)
-#define finally(...) skyfire::__finally__ __SF_VAR_NAME__(__SF_FINALLY_N_, __LINE__)(std::function<void()>(__VA_ARGS__))
+#define sf_finally(...) skyfire::__finally__ __SF_VAR_NAME__(__SF_FINALLY_N_, __LINE__)(std::function<void()>(__VA_ARGS__))

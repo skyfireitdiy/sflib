@@ -15,8 +15,6 @@ sf_test(test_resolve_dns)
     {
         sf_info(ip);
     }
-
-    return true;
 }
 
 sf_test(test_connect_host)
@@ -28,8 +26,6 @@ sf_test(test_connect_host)
     ret = client->connect_to_server("14.215.177.38", 80);
 
     test_assert(!ret);
-
-    return true;
 }
 
 sf_test(test_server_client)
@@ -52,7 +48,6 @@ sf_test(test_server_client)
     server->listen("127.0.0.1", 9300);
 
     lp.exec();
-    return true;
 }
 
 int main()

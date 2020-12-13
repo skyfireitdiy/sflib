@@ -26,13 +26,12 @@ class cache
 private:
     struct cache_data_t
     {
-        std::string                           key;
         std::chrono::system_clock::time_point timestamp_access;
         std::any                              data;
     };
-    std::vector<cache_data_t> data__;
-    size_t                    max_count__;
-    std::recursive_mutex      mu_data__;
+    std::unordered_map<std::string, cache_data_t> data__;
+    size_t                                        max_count__;
+    std::recursive_mutex                          mu_data__;
 
 public:
     /**

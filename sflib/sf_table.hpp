@@ -4,13 +4,13 @@
 
 namespace skyfire
 {
-table::table(int col_size)
+inline table::table(int col_size)
     : col_num__(col_size)
     , table_config__(col_size)
 {
 }
 
-table_result_t table::add_row(const std::vector<std::string>& data)
+inline table_result_t table::add_row(const std::vector<std::string>& data)
 {
     if (data.size() != col_num__)
     {
@@ -26,7 +26,7 @@ table_result_t table::add_row(const std::vector<std::string>& data)
     };
 }
 
-table_result_t table::add_rows(const std::vector<std::vector<std::string>>& data)
+inline table_result_t table::add_rows(const std::vector<std::vector<std::string>>& data)
 {
     for (auto& p : data)
     {
@@ -45,7 +45,7 @@ table_result_t table::add_rows(const std::vector<std::vector<std::string>>& data
     };
 }
 
-table_result_t table::insert_row(size_t n, const std::vector<std::string>& data)
+inline table_result_t table::insert_row(size_t n, const std::vector<std::string>& data)
 {
     if (data.size() != col_num__)
     {
@@ -68,7 +68,7 @@ table_result_t table::insert_row(size_t n, const std::vector<std::string>& data)
     };
 }
 
-table_result_t table::insert_rows(size_t n, const std::vector<std::vector<std::string>>& data)
+inline table_result_t table::insert_rows(size_t n, const std::vector<std::vector<std::string>>& data)
 {
     for (auto& p : data)
     {
@@ -94,7 +94,7 @@ table_result_t table::insert_rows(size_t n, const std::vector<std::vector<std::s
     };
 }
 
-table_result_t table::delete_rows(size_t n, size_t len)
+inline table_result_t table::delete_rows(size_t n, size_t len)
 {
     if (n >= body__.size())
     {
@@ -117,7 +117,7 @@ table_result_t table::delete_rows(size_t n, size_t len)
     };
 }
 
-table_result_t table::set_header(const std::vector<std::string>& header)
+inline table_result_t table::set_header(const std::vector<std::string>& header)
 {
     if (header.size() != col_num__)
     {
@@ -133,7 +133,27 @@ table_result_t table::set_header(const std::vector<std::string>& header)
     };
 }
 
-table_result_t table::set_config(size_t c, const table_column_config_t& config)
+inline table_result_t table::set_config(size_t r, size_t c, const table_item_config_t& config)
+{
+    if (c >= col_num__)
+    {
+        return table_result_t {
+            err_index_out_of_range,
+            "index out of range,max:" + std::to_string(col_num__ - 1) + " give:" + std::to_string(c)
+        };
+    }
+    if (!item_config__.contains(r))
+    {
+        item_config__[r] = std::unordered_map<size_t, table_item_config_t> {};
+    }
+    item_config__[r][c] = config;
+    return table_result_t {
+        err_ok,
+        ""
+    };
+}
+
+inline table_result_t table::set_config(size_t c, const table_column_config_t& config)
 {
     if (c >= col_num__)
     {
@@ -149,7 +169,7 @@ table_result_t table::set_config(size_t c, const table_column_config_t& config)
     };
 }
 
-table_result_t table::set_config(const std::vector<table_column_config_t>& config)
+inline table_result_t table::set_config(const std::vector<table_column_config_t>& config)
 {
     if (config.size() != col_num__)
     {
@@ -165,7 +185,7 @@ table_result_t table::set_config(const std::vector<table_column_config_t>& confi
     };
 }
 
-void table::set_proxy_callback(std::function<std::string(size_t, size_t, std::string)> cb)
+inline void table::set_proxy_callback(std::function<std::string(size_t, size_t, std::string)> cb)
 {
     proxy_callback__ = cb;
 }
@@ -196,7 +216,7 @@ inline std::string table_make_column_string(std::string str, const table_column_
     return full_string(str, config.align, space_count);
 }
 
-std::string table::to_string() const
+inline std::string table::to_string() const
 {
     std::string                           ret;
     std::vector<int>                      width_vec(col_num__);
@@ -251,11 +271,17 @@ std::string table::to_string() const
             header[i] = full_string(header[i], table_config__[i].align, width_vec[i] - header[i].length());
         }
     }
-    for (auto& p : body)
+    for (size_t i = 0; i < body.size(); ++i)
     {
-        for (int i = 0; i < col_num__; ++i)
+        for (int j = 0; j < col_num__; ++j)
         {
-            p[i] = table_make_column_string(p[i], table_config__[i], width_vec[i]);
+            auto col_config = table_config__[j];
+            if (item_config__.contains(i) && item_config__[i].contains(j))
+            {
+                col_config.align = item_config__[i][j].align;
+                col_config.cl    = item_config__[i][j].cl;
+            }
+            body[i][j] = table_make_column_string(body[i][j], col_config, width_vec[j]);
         }
     }
 

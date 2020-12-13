@@ -9,7 +9,7 @@ class test_object : public skyfire::object
     sf_singal(s2, int, float, double);
 };
 
-bool none_param_event_waiter_test()
+sf_test(none_param_event_waiter_test)
 {
     test_object t;
     std::thread([&t]() {
@@ -17,10 +17,9 @@ bool none_param_event_waiter_test()
         t.s1();
     }).detach();
     sf_wait(&t, s1);
-    return true;
 }
 
-bool many_param_event_waiter_test()
+sf_test(many_param_event_waiter_test)
 {
     test_object t;
     std::thread([&t]() {
@@ -28,13 +27,9 @@ bool many_param_event_waiter_test()
         t.s2(5, 6.5, 504.2);
     }).detach();
     sf_wait(&t, s2);
-    return true;
 }
 
 int main()
 {
-    sf_test_add(none_param_event_waiter_test);
-    sf_test_add(many_param_event_waiter_test);
-
     skyfire::run_test();
 }

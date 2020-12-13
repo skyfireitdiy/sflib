@@ -494,7 +494,7 @@ inline void http_server_base::file_response__(SOCKET                sock,
             return;
         }
         res.set_status(206);
-        finally([&fi]() {
+        sf_finally([&fi]() {
             fi.close();
         });
         if (!server__->send(sock, res.to_header_package()))
@@ -530,7 +530,7 @@ inline void http_server_base::file_response__(SOCKET                sock,
                 normal_response__(sock, res);
                 return;
             }
-            finally([&fi]() {
+            sf_finally([&fi]() {
                 fi.close();
             });
 

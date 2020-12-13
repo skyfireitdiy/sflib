@@ -5,40 +5,37 @@
 using namespace skyfire;
 using namespace std;
 
-bool test_finally_order()
+sf_test(test_finally_order)
 {
     int a = 10;
     {
-        finally([&]() {
+        sf_finally([&]() {
             a *= 10;
         });
         {
-            finally([&]() {
+            sf_finally([&]() {
                 a += 10;
             });
         }
     }
-    return a == 200;
+    test_p_eq(a , 200);
 }
 
-bool test_finally_order2()
+sf_test(test_finally_order2)
 {
     int a = 10;
     {
-        finally([&]() {
+        sf_finally([&]() {
             a *= 10;
         });
-        finally([&]() {
+        sf_finally([&]() {
             a += 10;
         });
     }
-    return a == 200;
+    test_p_eq(a , 200);
 }
 
 int main()
 {
-    sf_test_add(test_finally_order);
-    sf_test_add(test_finally_order2);
-
     run_test();
 }

@@ -17,7 +17,6 @@ sf_test(test_construct)
     test_assert(js);
     js = false;
     test_assert(!js);
-    return true;
 }
 
 sf_test(test_insert)
@@ -28,7 +27,7 @@ sf_test(test_insert)
     js["man"]     = false;
     js["address"] = json {};
 
-    return js["address"].is_null();
+    test_assert(js["address"].is_null());
 }
 
 sf_test(test_compare)
@@ -52,8 +51,6 @@ sf_test(test_compare)
     test_p_eq(js1["unknown"], json {});
 
     test_p_neq(js1, js2);
-
-    return true;
 }
 
 sf_test(test_parse)
@@ -80,8 +77,6 @@ sf_test(test_parse)
     test_assert(!js.at("has_girlfriend"));
     test_assert(js.at("car").is_null());
     test_assert(js.at("house").is_null());
-
-    return true;
 }
 
 sf_test(test_convert)
@@ -93,8 +88,6 @@ sf_test(test_convert)
     test_np_eq(js.type(), json_type::array);
     js.convert_to_null();
     test_assert(js.is_null());
-
-    return true;
 }
 
 int main()
