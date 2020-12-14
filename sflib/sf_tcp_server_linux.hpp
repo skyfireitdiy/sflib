@@ -216,13 +216,6 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
         return;
     }
     {
-        std::unique_lock<std::shared_mutex>
-            lck(mu_context_pool__);
-        context_pool__.push_back(&epoll_data);
-        sf_debug("create epoll_data, sock_context__", &epoll_data.sock_context__, context_pool__.size());
-    }
-
-    {
         std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
         auto&                              sock_context__ = epoll_data.sock_context__;
 
@@ -251,6 +244,13 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
             ::close(epoll_data.pipe__[1]);
             return;
         }
+    }
+
+    {
+        std::unique_lock<std::shared_mutex>
+            lck(mu_context_pool__);
+        context_pool__.push_back(&epoll_data);
+        sf_debug("create epoll_data, sock_context__", &epoll_data.sock_context__, context_pool__.size());
     }
 
     // 需要为管道留一个位置
@@ -302,7 +302,8 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                         sf_err("read pipe error");
                     }
                     ::close(epoll_data.pipe__[0]);
-                }
+                    ::close(epoll_data.pipe__[1]);
+                                }
             }
             else if (evs[i].events & EPOLLOUT)
             {
