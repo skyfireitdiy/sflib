@@ -8,10 +8,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "cppcoreguidelines-c-copy-assignment-signature"
-#pragma ide diagnostic   ignored "cert-err34-c"
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_define.h"
 #include "sf_error.h"
@@ -315,7 +311,7 @@ inline json json::operator[](const std::string& key) const
     return json(value__->object_value[key]);
 }
 
-inline json json::at(int key) const
+inline json json::at(size_t key) const
 {
     if (value__->type != json_type::array)
     {
@@ -464,13 +460,13 @@ inline void json::clear() const
     value__->object_value.clear();
 }
 
-inline void json::resize(const int size) const
+inline void json::resize(const size_t size) const
 {
     convert_to_array();
-    value__->array_value.resize((unsigned long)size);
+    value__->array_value.resize(size);
 }
 
-inline void json::remove(const int pos) const
+inline void json::remove(const size_t pos) const
 {
     if (value__->array_value.size() > pos)
     {
@@ -478,7 +474,7 @@ inline void json::remove(const int pos) const
     }
 }
 
-inline void json::remove(const int pos, int len) const
+inline void json::remove(const size_t pos, size_t len) const
 {
     if (value__->array_value.size() > pos)
     {
@@ -616,7 +612,7 @@ inline void json::value_copy__(const std::shared_ptr<json_value>& src,
     dst->value = src->value;
     if (!src->array_value.empty())
     {
-        for (auto i = 0; i < src->array_value.size(); ++i)
+        for (size_t i = 0; i < src->array_value.size(); ++i)
         {
             dst->array_value.push_back(std::make_shared<json_value>());
             value_copy__(src->array_value[i], dst->array_value[i]);
@@ -642,7 +638,7 @@ inline json json::operator[](const char* c_key) const
     return operator[](std::string(c_key));
 }
 
-inline json json::operator[](const int key) const
+inline json json::operator[](const size_t key) const
 {
     if (value__->type != json_type::array)
     {
@@ -744,7 +740,7 @@ inline bool json::operator==(const json& other) const
         {
             return false;
         }
-        for (int i = 0; i < sz; ++i)
+        for (size_t i = 0; i < sz; ++i)
         {
             if ((*this)[i] != other[i])
             {
@@ -1006,5 +1002,3 @@ SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::unordered_multimap)
 #undef SF_ASSOCIATED_CONTAINER_JSON_IMPL
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

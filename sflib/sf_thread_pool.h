@@ -9,8 +9,6 @@
  * thread_pool 线程池
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_stdc++.h"
 #include "sf_utils.h"
@@ -103,5 +101,3 @@ private:
 };
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

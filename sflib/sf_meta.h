@@ -16,11 +16,6 @@
  * meta 元编程辅助函数
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedStructInspection"
-#pragma ide diagnostic   ignored "google-explicit-constructor"
-#pragma ide diagnostic   ignored "readability-redundant-declaration"
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_stdc++.h"
 
@@ -215,5 +210,3 @@ class is_shared_ptr<std::shared_ptr<T>> : public std::true_type
 };
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

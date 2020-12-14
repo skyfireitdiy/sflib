@@ -8,8 +8,7 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
+
 #include "sf_grammer_utils.h"
 #include "sf_stdc++.h"
 
@@ -52,4 +51,3 @@ public:
 };
 
 } // namespace skyfire
-#pragma clang diagnostic pop

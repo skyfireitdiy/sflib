@@ -8,6 +8,7 @@
 #pragma once
 
 #include "sf_define.h"
+#include "sf_finally.hpp"
 #include "sf_net_utils.hpp"
 #include "sf_tcp_server_interface.hpp"
 #include "sf_tcp_server_linux.h"
@@ -18,7 +19,7 @@ namespace skyfire
 template <typename... Args>
 inline tcp_server::tcp_server(Args&&... args)
 {
-    (args(config__), ..., 0);
+    (args(config__), ...);
 }
 
 inline SOCKET tcp_server::raw_socket() { return listen_fd__; }
@@ -118,10 +119,24 @@ inline void tcp_server::close()
     ::shutdown(listen_fd__, SHUT_RDWR);
     ::close(listen_fd__);
 
+    {
+        std::unique_lock<std::shared_mutex>
+            lck(mu_context_pool__);
+        char buf = '0';
+        for (auto& p : context_pool__)
+        {
+            if (::write(p->pipe__[1], &buf, 1) != 1)
+            {
+                sf_err("write pipe failed");
+            }
+        }
+    }
+
     for (auto& p : thread_vec__)
     {
         p.join();
     }
+    thread_vec__.clear();
 }
 
 inline bool tcp_server::listen(const std::string& ip, unsigned short port)
@@ -174,7 +189,7 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
 
     if (config__.manage_clients)
     {
-        for (int i = 1; i < config__.thread_count; ++i)
+        for (size_t i = 0; i < config__.thread_count; ++i)
         {
             thread_vec__.emplace_back(std::thread(&tcp_server::work_thread__,
                                                   this, true, listen_fd__));
@@ -189,6 +204,17 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
     sf_debug("start thread");
     auto& epoll_data    = epoll_data__();
     epoll_data.epoll_fd = epoll_create(max_tcp_connection);
+    auto pipe_ret       = pipe(epoll_data.pipe__);
+    sf_finally([this, &epoll_data] {
+        std::unique_lock<std::shared_mutex>
+            lck(mu_context_pool__);
+        context_pool__.erase(std::remove(context_pool__.begin(), context_pool__.end(), &epoll_data), context_pool__.end());
+    });
+    if (pipe_ret != 0)
+    {
+        sf_err("create pipe failed");
+        return;
+    }
     {
         std::unique_lock<std::shared_mutex>
             lck(mu_context_pool__);
@@ -210,13 +236,25 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                           &sock_context__[listen_fd].ev)
                 < 0)
             {
-                sf_debug("add to epoll error");
+                sf_err("add to epoll error");
                 close(listen_fd);
                 return;
             }
         }
+
+        epoll_data.pipe_event__.events  = EPOLLIN | EPOLLET;
+        epoll_data.pipe_event__.data.fd = epoll_data.pipe__[0];
+        if (epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_ADD, epoll_data.pipe__[0], &epoll_data.pipe_event__) < 0)
+        {
+            sf_err("add to epoll error");
+            ::close(epoll_data.pipe__[0]);
+            ::close(epoll_data.pipe__[1]);
+            return;
+        }
     }
-    std::vector<epoll_event> evs(max_tcp_connection);
+
+    // 需要为管道留一个位置
+    std::vector<epoll_event> evs(max_tcp_connection + 1);
 
     while (!closed__)
     {
@@ -230,11 +268,6 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                 continue;
             }
             break;
-        }
-
-        if(closed__)
-        {
-            return;
         }
 
         if (wait_fds == 0)
@@ -257,17 +290,34 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
             }
             else if (evs[i].events & EPOLLIN)
             {
-                handle_read__(evs[i]);
+                if (evs[i].data.fd != epoll_data.pipe__[0])
+                {
+                    handle_read__(evs[i]);
+                }
+                else
+                {
+                    char buf;
+                    if (::read(epoll_data.pipe__[0], &buf, 1) != 1)
+                    {
+                        sf_err("read pipe error");
+                    }
+                    ::close(epoll_data.pipe__[0]);
+                }
             }
             else if (evs[i].events & EPOLLOUT)
             {
                 handle_write__(evs[i]);
             }
         }
+
         if (listen_err)
         {
             sf_debug("listen error");
             break;
+        }
+        if (closed__)
+        {
+            return;
         }
     }
 }

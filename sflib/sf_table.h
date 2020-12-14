@@ -37,7 +37,7 @@ struct table_item_config_t
 class table
 {
 private:
-    const int                                                                           col_num__;
+    const size_t                                                                        col_num__;
     std::vector<std::string>                                                            header__;
     std::vector<std::vector<std::string>>                                               body__;
     std::function<std::string(size_t, size_t, std::string)>                             proxy_callback__;

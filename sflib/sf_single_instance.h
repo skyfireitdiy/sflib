@@ -9,8 +9,6 @@
  * single_instance单例支持
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedStructInspection"
 
 #include "sf_empty_class.h"
 #include "sf_stdc++.h"
@@ -50,5 +48,3 @@ private:
         static ClassName instance__;                        \
         return &instance__;                                 \
     }
-
-#pragma clang diagnostic pop

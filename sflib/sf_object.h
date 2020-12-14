@@ -113,8 +113,6 @@
  * 依然可以从队列中获取任务执行。
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedMacroInspection"
 
 #include "sf_json.hpp"
 #include "sf_object_msg_queue.hpp"
@@ -186,5 +184,3 @@ protected:
 };
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

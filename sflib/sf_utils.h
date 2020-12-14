@@ -54,8 +54,6 @@ inline bool equal_nocase_string(const std::string& str1,
 inline std::vector<std::string> split_string(std::string        str,
                                              const std::string& split_str);
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 /**
  * 写文件
@@ -67,11 +65,6 @@ inline std::vector<std::string> split_string(std::string        str,
 bool write_file(const std::string& file_name, const byte_array& data,
                 bool append);
 
-#pragma clang diagnostic pop
-
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
-
 /**
  * 读文件
  * @param file_name 文件名称
@@ -80,7 +73,6 @@ bool write_file(const std::string& file_name, const byte_array& data,
  */
 bool read_file(const std::string& file_name, byte_array& data);
 
-#pragma clang diagnostic pop
 
 /**
  * 字符串替换

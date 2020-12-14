@@ -34,7 +34,7 @@ inline bool yacc::parse(
     yacc_result.clear();
 
     // NOTE 这里故意不+1
-    for (auto i = 0; i < prepare_items.size();)
+    for (size_t i = 0; i < prepare_items.size();)
     {
 #if 0
 			for (auto &p : yacc_result)
@@ -175,7 +175,7 @@ yacc::nfa_to_dfa(
         state.push_back({ { p, nullptr } });
     }
 
-    for (auto i = 0; i < state.size(); ++i)
+    for (size_t i = 0; i < state.size(); ++i)
     {
         std::set<yacc_state_node_t> state_backup = state[i];
         for (auto& q : state_backup)
@@ -230,18 +230,19 @@ yacc::make_nfa(const std::vector<yacc_rule>& rules)
                 p.rule.emplace_back(yacc_end_mark);
             }
         }
-        for (auto i = 0; i < rule.rules.size(); ++i)
+        for (size_t i = 0; i < rule.rules.size(); ++i)
         {
             if (rule.rules[i].rule.empty())
                 continue;
-            for (auto j = 0; j < rule.rules[i].rule.size() - 1; ++j)
+            for (size_t j = 0; j < rule.rules[i].rule.size() - 1; ++j)
             {
-                nfa.push_back({ { { (j == 0 ? rule.rules[i].rule[0]
-                                            : rule.id + "_" + std::to_string(i) + "_" + std::to_string(j)),
-                                    nullptr },
-                                  rule.rules[i].rule[j + 1] },
-                                { rule.id + "_" + std::to_string(i) + "_" + std::to_string(j + 1),
-                                  nullptr } });
+                nfa.push_back({
+                    { { (j == 0 ? rule.rules[i].rule[0]
+                                : rule.id + "_" + std::to_string(i) + "_" + std::to_string(j)),
+                        nullptr },
+                      rule.rules[i].rule[j + 1] },
+                    { rule.id + "_" + std::to_string(i) + "_" + std::to_string(j + 1), nullptr },
+                });
             }
             nfa.back() = {
                 { { (rule.rules[i].rule.size() == 2
@@ -249,7 +250,7 @@ yacc::make_nfa(const std::vector<yacc_rule>& rules)
                          : rule.id + "_" + std::to_string(i) + "_" + std::to_string(rule.rules[i].rule.size() - 2)),
                     nullptr },
                   rule.rules[i].rule[rule.rules[i].rule.size() - 1] },
-                { rule.id, rule.rules[i].callback }
+                { rule.id, rule.rules[i].callback },
             };
         }
     }

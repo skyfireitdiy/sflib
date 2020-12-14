@@ -8,8 +8,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_lex.h"
 #include "sf_stdc++.h"
@@ -35,7 +33,7 @@ inline bool lex::parse(std::string                content,
             {
                 if (flag)
                 {
-                    if (tmp_result.matched_str.length() < sm[0].length())
+                    if (tmp_result.matched_str.length() < static_cast<size_t>(sm[0].length()))
                     {
                         tmp_result.id          = p.id;
                         tmp_result.matched_str = sm[0].str();
@@ -82,4 +80,3 @@ inline std::unordered_set<std::string> lex::real_term() const
     return ret;
 }
 } // namespace skyfire
-#pragma clang diagnostic pop

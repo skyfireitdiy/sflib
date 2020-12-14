@@ -51,6 +51,9 @@ struct epoll_context_t
 {
     int epoll_fd {};
 
+    int         pipe__[2];
+    epoll_event pipe_event__ {};
+
     std::shared_mutex                               mu_epoll_context__;
     std::unordered_map<SOCKET, sock_data_context_t> sock_context__ {};
 };
@@ -60,7 +63,7 @@ class tcp_server
 {
 private:
     std::atomic<bool> closed__ = false;
-    
+
     tcp_server_opt_t config__;
 
     SOCKET listen_fd__;
@@ -93,9 +96,8 @@ public:
      */
     SOCKET raw_socket() override;
 
-    template<typename ...Args>
-    tcp_server(Args&& ...args);
-    
+    template <typename... Args>
+    tcp_server(Args&&... args);
 
     ~tcp_server() override;
 

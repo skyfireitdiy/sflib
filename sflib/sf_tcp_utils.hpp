@@ -21,8 +21,6 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
     return ret;
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 template <typename T>
 typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>::value, T>::type take_pkg(
     const byte_array& data)
@@ -32,7 +30,6 @@ typename std::enable_if<std::is_standard_layout<T>::value && std::is_trivial<T>:
     memmove(&ret, data.data(), sizeof(ret));
     return ret;
 }
-#pragma clang diagnostic pop
 
 inline void make_header_checksum(pkg_header_t& header)
 {

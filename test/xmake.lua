@@ -4,7 +4,7 @@ add_includedirs("../")
 set_languages("c++20")
 add_links("pthread")
 
-add_cxxflags("-g")
+add_cxxflags("-g", "-Wall", "-Werror")
 
 target("sf_argv")
     set_kind("binary")

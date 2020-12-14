@@ -6,8 +6,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_nocopy.h"
 #include "sf_single_instance.h"
@@ -52,4 +50,3 @@ public:
 };
 
 } // namespace skyfire
-#pragma clang diagnostic pop

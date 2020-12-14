@@ -8,9 +8,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic   ignored "google-explicit-constructor"
 
 #include "sf_define.h"
 #include "sf_json_utils.h"
@@ -151,14 +148,14 @@ public:
      * @param key 索引
      * @return 值
      */
-    json at(int key) const;
+    json at(size_t key) const;
 
     /**
      * 获取数组值
      * @param key 索引
      * @return 值
      */
-    json operator[](int key) const;
+    json operator[](size_t key) const;
 
     /**
      * 转换为字符串
@@ -256,7 +253,7 @@ public:
      * 修改数组大小
      * @param size 大小
      */
-    void resize(int size) const;
+    void resize(size_t size) const;
 
     /**
      * 获取数组大小
@@ -282,14 +279,14 @@ public:
      * 删除数组元素
      * @param pos 位置
      */
-    void remove(int pos) const;
+    void remove(size_t pos) const;
 
     /**
      * 删除数组元素
      * @param pos 位置
      * @param len 长度
      */
-    void remove(int pos, int len) const;
+    void remove(size_t pos, size_t len) const;
 
     /**
      * 删除对象元素
@@ -493,5 +490,3 @@ void from_json_helper__(const json& js, const std::string& key, T& value,
         skyfire::from_json_helper__(                               \
             js, SF_EXPAND_OBJ_MEM_WITH_NAME(obj, __VA_ARGS__));    \
     }
-
-#pragma clang diagnostic pop

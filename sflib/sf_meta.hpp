@@ -9,8 +9,6 @@
  * meta 元编程辅助函数
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_meta.h"
 
@@ -64,5 +62,3 @@ decltype(auto) invoke_impl(Function&& func, Tuple&& t,
 }
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

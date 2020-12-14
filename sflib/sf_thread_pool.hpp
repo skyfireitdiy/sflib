@@ -9,8 +9,6 @@
  * thread_pool 线程池
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_thread_pool.h"
 #include "sf_utils.hpp"
@@ -142,5 +140,3 @@ inline thread_pool::~thread_pool() { clear_thread(); }
 inline void thread_pool::pause() { is_pause__ = true; }
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

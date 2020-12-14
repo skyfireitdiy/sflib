@@ -5,8 +5,6 @@
 * @file sf_utils.hpp
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_stdc++.h"
 #include <sys/stat.h>
@@ -51,8 +49,8 @@ inline std::string to_lower_string(std::string str)
 
 inline std::string get_path_ext(const std::string& path)
 {
-    auto pos = path.rfind('.');
-    if (pos == -1)
+    size_t pos = path.rfind('.');
+    if (pos == std::string::npos)
         return "";
     return std::string(path.begin() + pos + 1, path.end());
 }
@@ -140,9 +138,6 @@ inline long double string_to_long_double(const std::string& str)
     return tmp_num;
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnusedValue"
-
 inline std::string tm2string(std::time_t tt, const std::string& fmt)
 {
     tm   tm_d;
@@ -168,8 +163,6 @@ inline std::string make_time_str(const std::filesystem::file_time_type& tp, cons
     return tm2string(std::time_t(std::chrono::duration_cast<std::chrono::seconds>(tp.time_since_epoch()).count()), fmt);
 }
 
-#pragma clang diagnostic pop
-
 template <typename T>
 std::string char_container_to_hex_string(const T& data)
 {
@@ -194,7 +187,7 @@ void hex_string_to_char_container(const std::string& str, T& data)
         return;
     }
     std::vector<char> tmp_ret_data(str.size() / 2);
-    for (auto i = 0; i < str.length() / 2; ++i)
+    for (size_t i = 0; i < str.length() / 2; ++i)
     {
         int tmp;
 #ifdef _MSC_VER
@@ -308,4 +301,3 @@ inline std::string convert_ns_to_readable(long long time)
 }
 
 } // namespace skyfire
-#pragma clang diagnostic pop

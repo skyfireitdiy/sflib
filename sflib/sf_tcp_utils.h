@@ -32,18 +32,18 @@ namespace skyfire
 struct pkg_header_t
 {
     unsigned char checksum; // 校验和
-    int           type;     // 包类型
-    int           length;   // 包长度
+    size_t        type;     // 包类型
+    size_t        length;   // 包长度
 };
 
 #pragma pack()
 
 struct tcp_server_opt_t
 {
-    bool raw            = false;
-    bool manage_read    = true;
-    int  thread_count   = std::thread::hardware_concurrency() * 2 + 2;
-    bool manage_clients = true;
+    bool   raw            = false;
+    bool   manage_read    = true;
+    size_t thread_count   = std::thread::hardware_concurrency() * 2 + 2;
+    bool   manage_clients = true;
 };
 
 using tcp_server_opt_option = option<tcp_server_opt_t>;

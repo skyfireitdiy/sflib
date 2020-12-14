@@ -219,16 +219,16 @@ inline std::string table_make_column_string(std::string str, const table_column_
 inline std::string table::to_string() const
 {
     std::string                           ret;
-    std::vector<int>                      width_vec(col_num__);
+    std::vector<size_t>                      width_vec(col_num__);
     std::vector<std::string>              header = header__;
     std::vector<std::vector<std::string>> body;
     if (proxy_callback__)
     {
         body.resize(body__.size());
-        for (int i = 0; i < body__.size(); ++i)
+        for (size_t i = 0; i < body__.size(); ++i)
         {
             body[i].resize(col_num__);
-            for (int j = 0; j < col_num__; ++j)
+            for (size_t j = 0; j < col_num__; ++j)
             {
                 body[i][j] = proxy_callback__(i, j, body__[i][j]);
             }
@@ -239,14 +239,14 @@ inline std::string table::to_string() const
         body = body__;
     }
 
-    for (int i = 0; i < col_num__; ++i)
+    for (size_t i = 0; i < col_num__; ++i)
     {
         width_vec[i] = table_config__[i].min_width;
     }
 
     if (!header.empty())
     {
-        for (int i = 0; i < header.size(); ++i)
+        for (size_t i = 0; i < header.size(); ++i)
         {
             if (width_vec[i] < header[i].length())
             {
@@ -256,7 +256,7 @@ inline std::string table::to_string() const
     }
     for (auto& p : body)
     {
-        for (int i = 0; i < col_num__; ++i)
+        for (size_t i = 0; i < col_num__; ++i)
         {
             if (width_vec[i] < p[i].length())
             {
@@ -266,14 +266,14 @@ inline std::string table::to_string() const
     }
     if (!header.empty())
     {
-        for (int i = 0; i < col_num__; ++i)
+        for (size_t i = 0; i < col_num__; ++i)
         {
             header[i] = full_string(header[i], table_config__[i].align, width_vec[i] - header[i].length());
         }
     }
     for (size_t i = 0; i < body.size(); ++i)
     {
-        for (int j = 0; j < col_num__; ++j)
+        for (size_t j = 0; j < col_num__; ++j)
         {
             auto col_config = table_config__[j];
             if (item_config__.contains(i) && item_config__[i].contains(j))
