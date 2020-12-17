@@ -5,8 +5,6 @@
 * @file sf_websocket_router.h
 */
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_stdc++.h"
@@ -25,9 +23,9 @@ class websocket_router
     : public make_instance_t<websocket_router, router>
 {
 private:
-    const int                                     priority__;
     std::string                                   url__;
     std::function<void(const websocket_param_t&)> callback__;
+    const int                                     priority__;
 
 public:
     /**
@@ -60,4 +58,3 @@ public:
 };
 
 } // namespace skyfire
-#pragma clang diagnostic pop

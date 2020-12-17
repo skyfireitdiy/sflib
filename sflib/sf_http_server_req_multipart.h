@@ -6,8 +6,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_req_header.h"
 #include "sf_type.h"
@@ -69,5 +67,3 @@ public:
 };
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

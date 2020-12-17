@@ -399,10 +399,18 @@ inline bool http_server_base::check_analysis_multipart_file__(
     {
         if (p.type == http_multipart_info_t::multipart_info_type::file)
         {
-            const auto file_size = fs::file_size(p.file_info.filename);
-            if (file_size == -1)
+            uintmax_t file_size = 0;
+            try
+            {
+                file_size = fs::file_size(p.file_info.filename);
+            }
+            catch (fs::filesystem_error& e)
+            {
+                sf_err("get file size failed", e.what());
                 return false;
-            if (p.file_info.begin >= file_size)
+            }
+
+            if (p.file_info.begin >= static_cast<long long>(file_size))
                 return false;
             if (p.file_info.end == -1)
             {
@@ -456,14 +464,14 @@ inline void http_server_base::file_response__(SOCKET                sock,
 
     auto file_size = fs::file_size(file.filename);
     sf_debug("file:", file.filename, file.begin, file.end);
-    if (file.begin != 0 || (file.end != file_size && file.end != -1))
+    if (file.begin != 0 || (file.end != static_cast<long long>(file_size) && file.end != -1))
     {
         auto& header = res.header();
         if (file.end == -1)
         {
             file.end = file_size;
         }
-        if (file_size != 0 && (file.begin > file_size || file.end > file_size))
+        if (file_size != 0 && (file.begin > static_cast<long long>(file_size) || file.end > static_cast<long long>(file_size)))
         {
             res.set_status(416);
             res.set_body(to_byte_array("Requested Range Not Satisfiable"s));
@@ -973,7 +981,6 @@ void http_server_base::set_session(const std::string& session_key,
     session_data__[session_key]->data[key] = json(value);
 }
 } // namespace skyfire
-#pragma clang diagnostic pop
 
 #undef SF_SSL
 #undef SF_ZLIB

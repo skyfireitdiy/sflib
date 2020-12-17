@@ -13,8 +13,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "cert-err58-cpp"
 #include <string>
 
 namespace skyfire
@@ -67,4 +65,3 @@ inline std::unordered_map<int, std::string> http_status = {
     { 505, "HTTP Version not supported" },
 };
 } // namespace skyfire
-#pragma clang diagnostic pop

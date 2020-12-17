@@ -108,7 +108,7 @@ void test_base__(
     std::function<void()>                         before,
     std::function<void()>                         after)
 {
-    for (int i = 0; i < data.size(); ++i)
+    for (size_t i = 0; i < data.size(); ++i)
     {
         auto test_data = data[i];
         get_test_data__().push_back(test_data_t__ {

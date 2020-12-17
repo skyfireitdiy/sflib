@@ -6,8 +6,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_header.h"
 #include "sf_http_request_line.h"
@@ -244,4 +242,3 @@ public:
         std::unordered_map<std::string, std::string>& cookies);
 };
 } // namespace skyfire
-#pragma clang diagnostic pop

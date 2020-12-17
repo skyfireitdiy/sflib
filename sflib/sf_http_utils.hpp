@@ -5,8 +5,6 @@
 * @file sf_http_utils.hpp
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_req_multipart.hpp"
 #include "sf_http_utils.h"
@@ -258,7 +256,7 @@ inline byte_array read_file(const std::string& filename, size_t max_size)
         return data;
     }
     fi.seekg(0, std::ios::end);
-    auto file_size = fi.tellg();
+    size_t file_size = fi.tellg();
     if (file_size > max_size)
     {
         file_size = max_size;
@@ -330,5 +328,3 @@ inline byte_array deflate_compress(const byte_array& input_buffer)
 }
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

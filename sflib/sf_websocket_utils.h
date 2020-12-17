@@ -5,9 +5,6 @@
 * @file sf_websocket_utils.h
 */
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic   ignored "OCUnusedStructInspection"
 #pragma once
 
 #include <memory>
@@ -15,7 +12,6 @@
 #include "sf_json.hpp"
 #include "sf_tcp_utils.hpp"
 #include "sf_type.hpp"
-
 
 #include <arpa/inet.h>
 
@@ -235,5 +231,3 @@ inline int get_op_code(const T& header);
 inline unsigned long long get_size(
     const websocket_client_data_3_header_t& header);
 } // namespace skyfire
-
-#pragma clang diagnostic pop

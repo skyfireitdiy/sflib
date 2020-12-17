@@ -137,5 +137,3 @@ inline void http_part_router::add_router(std::shared_ptr<router> router)
 }
 
 } // namespace skyfire
-#pragma clang diagnostic pop
-#pragma clang diagnostic pop

@@ -6,8 +6,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_request_line.h"
 #include "sf_http_server_req_header.hpp"
@@ -97,7 +95,7 @@ inline bool http_server_request::parse_request__()
                 auto boundary_str_list = split_string(tmp_str, "=");
                 if (boundary_str_list.size() != 2)
                 {
-                    ("boundary str size error");
+                    sf_err("boundary str size error");
                     error__ = true;
                     return false;
                 }
@@ -119,7 +117,7 @@ inline bool http_server_request::parse_request__()
         }
     }
     char* pos;
-    if (std::strtoll(content_len.c_str(), &pos, 10) != body__.size())
+    if (std::strtoull(content_len.c_str(), &pos, 10) != body__.size())
     {
         sf_debug("body size error", content_len.c_str(), body__.size());
         return false;
@@ -305,4 +303,3 @@ inline byte_array http_server_request::gen_req_data() const
 }
 
 } // namespace skyfire
-#pragma clang diagnostic pop

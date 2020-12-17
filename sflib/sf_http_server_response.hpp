@@ -5,8 +5,6 @@
 * @file sf_http_server_response.hpp
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_request.hpp"
 #include "sf_http_server_res_header.hpp"
@@ -201,4 +199,3 @@ inline void http_server_response::set_content_type(
 }
 
 } // namespace skyfire
-#pragma clang diagnostic pop

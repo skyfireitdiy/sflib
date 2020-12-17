@@ -5,8 +5,6 @@
 * @file sf_http_server_response.h
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_request.h"
 #include "sf_http_server_res_header.h"
@@ -229,4 +227,3 @@ public:
     friend http_server_base;
 };
 } // namespace skyfire
-#pragma clang diagnostic pop

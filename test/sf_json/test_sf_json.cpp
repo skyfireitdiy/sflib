@@ -72,8 +72,8 @@ sf_test(test_parse)
     test_num_eq(int(js.at("age")), 25);
     test_str_eq(std::string(js.at("birthday")), "1990-01-01");
     test_str_eq(std::string(js.at("school")), "蓝翔");
-    test_str_eq(std::string(js.at("major").at(0)), "理发");
-    test_str_eq(std::string(js.at("major").at(1)), "挖掘机");
+    test_str_eq(std::string(js.at("major").at(size_t(0))), "理发");
+    test_str_eq(std::string(js.at("major").at(size_t(1))), "挖掘机");
     test_assert(!js.at("has_girlfriend"));
     test_assert(js.at("car").is_null());
     test_assert(js.at("house").is_null());

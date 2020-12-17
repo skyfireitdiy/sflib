@@ -23,9 +23,9 @@ class static_router
     : public make_instance_t<static_router, router>
 {
 private:
-    int                      priority__ = default_http_static_priority;
     std::string              static_path__;
     std::vector<std::string> methods__;
+    int                      priority__ = default_http_static_priority;
     std::function<void(const http_server_request&, http_server_response&,
                        const std::string&, const std::string&)>
         callback__;

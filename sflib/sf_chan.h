@@ -33,7 +33,7 @@ class chan : public make_instance_t<chan<T>, nocopy<>>
 {
 private:
     std::queue<T>           data__;
-    int                     max_size__;
+    size_t                  max_size__;
     std::atomic_bool        closed__ { false };
     std::mutex              mu__;
     std::condition_variable cond__;
@@ -49,7 +49,7 @@ public:
      * 构造一个缓冲区大小为buffer_size的管道
      * @param buffer_size 缓冲区大小
      */
-    explicit chan(int buffer_size = 0);
+    explicit chan(size_t buffer_size = 0);
 
     /**
      * 关闭管道

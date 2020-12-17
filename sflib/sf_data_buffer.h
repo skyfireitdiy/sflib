@@ -14,15 +14,15 @@ using byte_array_result = multi_value<sf_error, byte_array>;
 class reader
 {
 public:
-    virtual byte_array_result read(int max_size) = 0;
+    virtual byte_array_result read(size_t max_size) = 0;
     virtual bool              can_read() const   = 0;
 };
 
 class writer
 {
 public:
-    virtual sf_error  write(const byte_array& data) = 0;
-    virtual bool can_write() const             = 0;
+    virtual sf_error write(const byte_array& data) = 0;
+    virtual bool     can_write() const             = 0;
 };
 
 class data_buffer : public reader, public writer, public make_instance_t<data_buffer>, public std::enable_shared_from_this<data_buffer>
@@ -37,8 +37,8 @@ public:
     data_buffer() = default;
     void              set_data(const byte_array& data);
     void              clear();
-    byte_array_result read(int max_size) override;
-    sf_error               write(const byte_array& data) override;
+    byte_array_result read(size_t max_size) override;
+    sf_error          write(const byte_array& data) override;
     bool              can_read() const override;
     bool              can_write() const override;
     void              set_reader(std::shared_ptr<reader> rdr);

@@ -13,9 +13,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#pragma ide diagnostic   ignored "bugprone-lambda-function-name"
 
 #include "sf_http_server.h"
 
@@ -192,4 +189,3 @@ inline void http_server::add_router(
 }
 
 } // namespace skyfire
-#pragma clang diagnostic pop

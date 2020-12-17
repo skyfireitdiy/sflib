@@ -5,8 +5,6 @@
 * @file sf_router.hpp
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_router.h"
 
@@ -22,4 +20,3 @@ inline bool router::run_route(const http_server_request& req,
     return false;
 }
 } // namespace skyfire
-#pragma clang diagnostic pop

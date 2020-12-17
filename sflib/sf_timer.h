@@ -9,8 +9,6 @@
  * timer 定时器
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_nocopy.h"
 #include "sf_object.hpp"
@@ -55,4 +53,3 @@ private:
 
 } // namespace skyfire
 
-#pragma clang diagnostic pop

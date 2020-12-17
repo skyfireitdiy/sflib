@@ -9,8 +9,6 @@
  * timer 定时器
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_timer.h"
 
@@ -58,5 +56,3 @@ inline bool timer::is_active() const { return running__; }
 
 inline void timer::stop() { running__ = false; }
 } // namespace skyfire
-
-#pragma clang diagnostic pop

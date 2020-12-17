@@ -30,11 +30,10 @@ namespace skyfire
 class http_server_base
 {
 private:
-    const http_server_config config__;
-
+    const http_server_config    config__;
+    std::shared_ptr<cache>      file_cache__;
     std::shared_ptr<tcp_server> server__;
-
-    eventloop event_loop__;
+    eventloop                   event_loop__;
 
     std::function<void(const http_server_request&, http_server_response&)>
         request_callback__;
@@ -58,13 +57,12 @@ private:
         multipart_data_context__;
     std::recursive_mutex mu_multipart_data_context__;
 
-    std::shared_ptr<cache>                        file_cache__;
     std::vector<std::shared_ptr<http_middleware>> middleware__;
 
     struct session_data_t
     {
-        int  timeout;
-        json data;
+        size_t timeout;
+        json   data;
     };
 
     struct file_cache_data_t

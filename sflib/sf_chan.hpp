@@ -13,9 +13,8 @@
 namespace skyfire
 {
 template <typename T>
-chan<T>::chan(int buffer_size)
+chan<T>::chan(size_t buffer_size)
 {
-    // 此处可以为负数，为负数表示不限制大小
     max_size__ = buffer_size;
 }
 

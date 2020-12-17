@@ -117,7 +117,7 @@ inline argv_result_t argparser::parse_argv__(
     json ret;
     ret.convert_to_object();
     std::shared_ptr<argv_opt_t> last_opt;
-    int                         pos = 0;
+    size_t                      pos = 0;
     for (auto& p : none_position_arg__)
     {
         if (p.type == json_type::array)
@@ -178,7 +178,7 @@ inline argv_result_t argparser::parse_argv__(
             {
                 return {
                     sf_error { { err_parse,
-                            "too many postion argv" } },
+                                 "too many postion argv" } },
                     json()
 
                 };
@@ -286,7 +286,7 @@ inline argv_result_t argparser::parse_argv__(
             {
                 return {
                     sf_error { { err_not_enough,
-                            p.short_name + "/" + p.long_name + " is required" } },
+                                 p.short_name + "/" + p.long_name + " is required" } },
                     json()
                 };
             }
@@ -300,7 +300,7 @@ inline argv_result_t argparser::parse_argv__(
             {
                 return {
                     sf_error { { err_not_enough,
-                            p.short_name + "/" + p.long_name + " is required" } },
+                                 p.short_name + "/" + p.long_name + " is required" } },
                     json()
                 };
             }
@@ -365,7 +365,7 @@ inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args,
         }
     }
 
-    for (int i = 0; i < data.size(); ++i)
+    for (size_t i = 0; i < data.size(); ++i)
     {
         bool find_flag = false;
         for (auto& p : parser->sub_parsers_)

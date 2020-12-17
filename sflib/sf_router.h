@@ -5,8 +5,6 @@
 * @file sf_router.h
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_server_request.h"
 #include "sf_http_server_response.h"
@@ -32,4 +30,3 @@ public:
 };
 
 } // namespace skyfire
-#pragma clang diagnostic pop

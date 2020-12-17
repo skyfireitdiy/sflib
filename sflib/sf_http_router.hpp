@@ -7,16 +7,11 @@
 * 
 */
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "bugprone-lambda-function-name"
-
 /**
 * @author skyfire
 * @file sf_http_router.hpp
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_router.h"
 
@@ -114,5 +109,3 @@ inline bool http_router::operator<(const http_router& router) const
 }
 
 } // namespace skyfire
-#pragma clang diagnostic pop
-#pragma clang diagnostic pop

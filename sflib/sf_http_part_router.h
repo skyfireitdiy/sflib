@@ -8,8 +8,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_router.h"
 #include "sf_http_server_request.h"
@@ -109,4 +107,3 @@ public:
     [[nodiscard]] int priority() const override;
 };
 } // namespace skyfire
-#pragma clang diagnostic pop

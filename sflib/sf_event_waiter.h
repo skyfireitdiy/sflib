@@ -10,8 +10,6 @@
  */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_meta.hpp"
 #include "sf_nocopy.h"
@@ -73,5 +71,3 @@ std::shared_ptr<__event_waiter__<ARGS...>> make_waiter(
     const std::vector<std::tuple<std::function<void(ARGS...)>, bool, int>>&);
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

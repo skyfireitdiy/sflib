@@ -18,7 +18,7 @@ void data_buffer::clear()
     data__.clear();
 }
 
-byte_array_result data_buffer::read(int max_size)
+byte_array_result data_buffer::read(size_t max_size)
 {
     std::lock_guard<std::mutex> lock(mutex__);
 

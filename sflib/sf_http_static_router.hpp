@@ -88,112 +88,116 @@ inline static_router::static_router(std::string              path,
             header.set_header("Content-Type", "text/html; charset=" + charset);
         };
 
-        auto file_size = fs::file_size(abs_path);
-        if (file_size == -1)
+        uintmax_t file_size = 0;
+        try
         {
-            _404_res();
+            fs::file_size(abs_path);
         }
-        else
+        catch (fs::filesystem_error& e)
         {
-            if (req.header().has_key("Range"))
+            sf_err("get file size failed", e.what());
+            _404_res();
+            return;
+        }
+
+        if (req.header().has_key("Range"))
+        {
+            sf_debug("Range found");
+            auto range_header       = req.header().header_value("Range", "");
+            auto range_content_list = split_string(range_header, "=");
+            if (range_content_list.size() < 2)
             {
-                sf_debug("Range found");
-                auto range_header       = req.header().header_value("Range", "");
-                auto range_content_list = split_string(range_header, "=");
-                if (range_content_list.size() < 2)
+                _401_res();
+            }
+            else
+            {
+                auto range_list = split_string(range_content_list[1], ",");
+                for (auto& p : range_list)
                 {
-                    _401_res();
+                    p = string_trim(p);
                 }
-                else
+                if (range_list.size() > 1)
                 {
-                    auto range_list = split_string(range_content_list[1], ",");
-                    for (auto& p : range_list)
-                    {
-                        p = string_trim(p);
-                    }
-                    if (range_list.size() > 1)
-                    {
-                        std::vector<http_multipart_info_t>
-                             multipart_info_vec;
-                        bool error_flag = false;
-                        for (auto& range_str : range_list)
-                        {
-#if defined(LLONG_MAX)
-                            long long start = LLONG_MAX;
-#elif defined(LONG_LONG_MAX)
-                            long long start = LONG_LONG_MAX;
-#else
-#error long long max not define!
-#endif
-                            long long end = -1;
-#ifdef _MSC_VER
-                            if (scanf_s(range_str.c_str(), "%lld-%lld", &start,
-                                        &end)
-                                < 1)
-#else
-                            if (sscanf(range_str.c_str(), "%lld-%lld", &start,
-                                       &end)
-                                < 1)
-#endif
-                            {
-                                error_flag = true;
-                                _416_res();
-                                break;
-                            }
-                            http_multipart_info_t tmp_part;
-                            tmp_part.type = http_multipart_info_t::
-                                multipart_info_type::file;
-                            tmp_part.file_info = http_file_info_t {
-                                abs_path, start, end
-                            };
-                            multipart_info_vec.emplace_back(tmp_part);
-                        }
-                        if (!error_flag)
-                        {
-                            res.set_header(header);
-                            res.set_multipart(multipart_info_vec);
-                            return;
-                        }
-                    }
-                    else
+                    std::vector<http_multipart_info_t>
+                        multipart_info_vec;
+                    bool error_flag = false;
+                    for (auto& range_str : range_list)
                     {
 #if defined(LLONG_MAX)
-                        auto start = LLONG_MAX;
+                        long long start = LLONG_MAX;
 #elif defined(LONG_LONG_MAX)
-                        auto start = LONG_LONG_MAX;
+                        long long start = LONG_LONG_MAX;
 #else
 #error long long max not define!
 #endif
                         long long end = -1;
 #ifdef _MSC_VER
-                        if (sscanf_s(range_list[0].c_str(), "%lld-%lld", &start,
-                                     &end)
+                        if (scanf_s(range_str.c_str(), "%lld-%lld", &start,
+                                    &end)
                             < 1)
 #else
-                        if (sscanf(range_list[0].c_str(), "%lld-%lld", &start,
+                        if (sscanf(range_str.c_str(), "%lld-%lld", &start,
                                    &end)
                             < 1)
+#endif
+                        {
+                            error_flag = true;
+                            _416_res();
+                            break;
+                        }
+                        http_multipart_info_t tmp_part;
+                        tmp_part.type = http_multipart_info_t::
+                            multipart_info_type::file;
+                        tmp_part.file_info = http_file_info_t {
+                            abs_path, start, end
+                        };
+                        multipart_info_vec.emplace_back(tmp_part);
+                    }
+                    if (!error_flag)
+                    {
+                        res.set_header(header);
+                        res.set_multipart(multipart_info_vec);
+                        return;
+                    }
+                }
+                else
+                {
+#if defined(LLONG_MAX)
+                    auto start = LLONG_MAX;
+#elif defined(LONG_LONG_MAX)
+                    auto start = LONG_LONG_MAX;
+#else
+#error long long max not define!
+#endif
+                    long long end = -1;
+#ifdef _MSC_VER
+                    if (sscanf_s(range_list[0].c_str(), "%lld-%lld", &start,
+                                 &end)
+                        < 1)
+#else
+                    if (sscanf(range_list[0].c_str(), "%lld-%lld", &start,
+                               &end)
+                        < 1)
 #endif // _MSC_VER
-                        {
-                            _401_res();
-                        }
-                        else
-                        {
-                            res.set_header(header);
-                            res.set_file(http_file_info_t {
-                                abs_path, start, end, file_size });
-                            return;
-                        }
+                    {
+                        _401_res();
+                    }
+                    else
+                    {
+                        res.set_header(header);
+                        res.set_file(http_file_info_t {
+                            abs_path, start, end, file_size });
+                        return;
                     }
                 }
             }
-            else
-            {
-                sf_debug("big file", abs_path);
-                res.set_header(header);
-                res.set_file(http_file_info_t { abs_path, 0, -1, file_size });
-                return;
-            }
+        }
+        else
+        {
+            sf_debug("big file", abs_path);
+            res.set_header(header);
+            res.set_file(http_file_info_t { abs_path, 0, -1, file_size });
+            return;
         }
 
         auto accept      = req.header().header_value("Accept-Encoding", "");

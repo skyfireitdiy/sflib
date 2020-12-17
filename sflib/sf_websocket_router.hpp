@@ -16,8 +16,6 @@
 
 #include "sf_stdc++.h"
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 #pragma once
 
 #include "sf_utils.hpp"
@@ -57,4 +55,3 @@ inline bool websocket_router::run_route(
 }
 
 } // namespace skyfire
-#pragma clang diagnostic pop

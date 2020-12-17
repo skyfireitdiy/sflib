@@ -6,8 +6,9 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "cert-err58-cpp"
+
+#include <string>
+#include <unordered_map>
 
 namespace skyfire
 {
@@ -361,4 +362,3 @@ inline std::unordered_map<std::string, std::string> http_content_type {
     { "xap", "application/x-silverlight-app" }
 };
 } // namespace skyfire
-#pragma clang diagnostic pop

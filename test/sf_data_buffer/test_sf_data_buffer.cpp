@@ -25,9 +25,9 @@ sf_test(test_read_twice)
     buffer.set_data(skyfire::to_byte_array("hello world"));
     auto t = buffer.read(5);
     test_assert(std::get<0>(t));
-    test_num_eq(std::get<1>(t).size(), 5);
+    test_num_eq(std::get<1>(t).size(), 5U);
     t = buffer.read(10);
-    test_num_eq(skyfire::to_string(t).length(), 6);
+    test_num_eq(skyfire::to_string(t).length(), 6U);
     test_str_eq(skyfire::to_string(t), " world");
 }
 

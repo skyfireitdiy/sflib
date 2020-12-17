@@ -5,8 +5,6 @@
 * @file sf_http_header.h
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_http_utils.h"
 
@@ -78,4 +76,3 @@ public:
     bool has_key(const std::string& key) const;
 };
 } // namespace skyfire
-#pragma clang diagnostic pop
