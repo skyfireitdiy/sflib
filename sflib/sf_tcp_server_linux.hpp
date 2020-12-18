@@ -121,13 +121,13 @@ inline void tcp_server::close()
 
     {
         std::unique_lock<std::shared_mutex>
-            lck(mu_context_pool__);
+             lck(mu_context_pool__);
         char buf = '0';
         for (auto& p : context_pool__)
         {
             if (::write(p->pipe__[1], &buf, 1) != 1)
             {
-                sf_err("write pipe failed");
+                sf_debug("write pipe failed");
             }
         }
     }
@@ -212,7 +212,7 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
     });
     if (pipe_ret != 0)
     {
-        sf_err("create pipe failed");
+        sf_debug("create pipe failed");
         return;
     }
     {
@@ -229,7 +229,7 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                           &sock_context__[listen_fd].ev)
                 < 0)
             {
-                sf_err("add to epoll error");
+                sf_debug("add to epoll error");
                 close(listen_fd);
                 return;
             }
@@ -239,7 +239,7 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
         epoll_data.pipe_event__.data.fd = epoll_data.pipe__[0];
         if (epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_ADD, epoll_data.pipe__[0], &epoll_data.pipe_event__) < 0)
         {
-            sf_err("add to epoll error");
+            sf_debug("add to epoll error");
             ::close(epoll_data.pipe__[0]);
             ::close(epoll_data.pipe__[1]);
             return;
@@ -299,11 +299,11 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                     char buf;
                     if (::read(epoll_data.pipe__[0], &buf, 1) != 1)
                     {
-                        sf_err("read pipe error");
+                        sf_debug("read pipe error");
                     }
                     ::close(epoll_data.pipe__[0]);
                     ::close(epoll_data.pipe__[1]);
-                                }
+                }
             }
             else if (evs[i].events & EPOLLOUT)
             {

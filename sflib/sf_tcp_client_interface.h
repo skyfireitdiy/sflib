@@ -68,7 +68,7 @@ class tcp_client_interface : public nocopy<object>
      * @return 是否连接成功
      */
     virtual sf_error connect_to_server(const std::string& ip,
-                                   unsigned short     port)
+                                       unsigned short     port)
         = 0;
 
     /**

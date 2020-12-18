@@ -95,7 +95,7 @@ inline static_router::static_router(std::string              path,
         }
         catch (fs::filesystem_error& e)
         {
-            sf_err("get file size failed", e.what());
+            sf_debug("get file size failed", e.what());
             _404_res();
             return;
         }

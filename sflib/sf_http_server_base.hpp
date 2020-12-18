@@ -406,7 +406,7 @@ inline bool http_server_base::check_analysis_multipart_file__(
             }
             catch (fs::filesystem_error& e)
             {
-                sf_err("get file size failed", e.what());
+                sf_debug("get file size failed", e.what());
                 return false;
             }
 
