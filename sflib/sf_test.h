@@ -86,23 +86,25 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
 #define MAKE_TEST_VAR_NAME_WRAP(a, b) a##b
 #define MAKE_TEST_VAR_NAME(a, b) MAKE_TEST_VAR_NAME_WRAP(a, b)
 
-#define sf_test(name, ...)                                                                              \
-    void                     name(skyfire::test_data_t__&);                                             \
-    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                              \
-        []() { skyfire::test_base__(__FILE__,                                                           \
-                                    __LINE__,                                                           \
-                                    #name,                                                              \
-                                    std::function(name),                                                \
+#define sf_test(cls, name, ...)                                                                               \
+    void                     name(skyfire::test_data_t__&);                                                   \
+    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                                    \
+        []() { skyfire::test_base__(__FILE__,                                                                 \
+                                    __LINE__,                                                                 \
+                                    #name,                                                                    \
+                                    std::function(name),                                                      \
+                                    #cls,                                                                     \
                                     ##__VA_ARGS__); }); \
     void name(skyfire::test_data_t__& __result__)
 
-#define sf_test_p(name, type, ...)                                                                      \
-    void                     name(skyfire::test_data_t__&, const type&);                                \
-    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                              \
-        []() { skyfire::test_base__(__FILE__,                                                           \
-                                    __LINE__,                                                           \
-                                    #name,                                                              \
-                                    std::function(name),                                                \
+#define sf_test_p(cls, name, type, ...)                                                                       \
+    void                     name(skyfire::test_data_t__&, const type&);                                      \
+    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                                    \
+        []() { skyfire::test_base__(__FILE__,                                                                 \
+                                    __LINE__,                                                                 \
+                                    #name,                                                                    \
+                                    std::function(name),                                                      \
+                                    #cls,                                                                     \
                                     ##__VA_ARGS__); }); \
     void name(skyfire::test_data_t__& __result__, const type& test_param)
 

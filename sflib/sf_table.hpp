@@ -195,11 +195,11 @@ inline std::string full_string(const std::string& str, table_align align, int sp
     switch (align)
     {
     case table_align::align_left:
-        return str + string::repeat(" ", space_count);
+        return str + sf_string::repeat(" ", space_count);
     case table_align::align_center:
-        return string::repeat(" ", space_count / 2) + str + string::repeat(" ", space_count - space_count / 2);
+        return sf_string::repeat(" ", space_count / 2) + str + sf_string::repeat(" ", space_count - space_count / 2);
     case table_align::align_right:
-        return string::repeat(" ", space_count) + str;
+        return sf_string::repeat(" ", space_count) + str;
     default:
         throw exception(err_unsupport_type, "unsupport type:" + std::to_string(static_cast<int>(align)));
         break;
@@ -288,7 +288,7 @@ inline std::string table::to_string() const
     std::string split_line = "+";
     for (auto& p : width_vec)
     {
-        split_line += string::repeat("-", p) + "+";
+        split_line += sf_string::repeat("-", p) + "+";
     }
     split_line += "\n";
 

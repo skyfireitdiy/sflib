@@ -14,7 +14,7 @@ public:
     static basic_string<StringType> repeat(const basic_string<StringType>& src, int count);
 };
 
-using string = basic_string<std::string>;
+using sf_string = basic_string<std::string>;
 
 template <typename StringType>
 basic_string<StringType> operator*(const basic_string<StringType>& str, int n);

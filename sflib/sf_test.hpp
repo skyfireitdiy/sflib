@@ -70,44 +70,6 @@ void test_base__(
     std::function<void()>                         before,
     std::function<void()>                         after)
 {
-    for (int i = 0; i < data.size(); ++i)
-    {
-        auto test_data = data[i];
-        get_test_data__().push_back(test_data_t__ {
-            before,
-            after,
-            func_name + " " + std::to_string(i),
-            [test_data, func]() -> bool {
-                return func(test_data);
-            },
-            class_name,
-            file,
-            line,
-            true });
-    }
-}
-
-inline void test_base__(
-    const std::string&                  file,
-    int                                 line,
-    const std::string&                  func_name,
-    std::function<void(test_data_t__&)> func,
-    std::function<void()>               before,
-    std::function<void()>               after)
-{
-    get_test_data__().push_back(test_data_t__ { before, after, func_name, func, "", file, line, true });
-}
-
-template <typename U>
-void test_base__(
-    const std::string&                            file,
-    int                                           line,
-    const std::string&                            func_name,
-    std::function<void(test_data_t__&, const U&)> func,
-    const std::vector<U>&                         data,
-    std::function<void()>                         before,
-    std::function<void()>                         after)
-{
     for (size_t i = 0; i < data.size(); ++i)
     {
         auto test_data = data[i];
@@ -115,10 +77,10 @@ void test_base__(
             before,
             after,
             func_name + " " + std::to_string(i),
-            [test_data, func](test_data_t__& t) {
-                func(t, test_data);
+            [test_data, func](test_data_t__& td) {
+                return func(td, test_data);
             },
-            "",
+            class_name,
             file,
             line,
             true });
