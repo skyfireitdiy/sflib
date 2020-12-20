@@ -172,7 +172,7 @@ private:
     skyfire::g_logger->logout(skyfire::SF_DEBUG_LEVEL, __FILE__, __LINE__, \
                               __FUNCTION__, __VA_ARGS__)
 #else
-#define sf_debug(...) skyfire::g_logger->empty_func__()
+#define sf_debug(...) 
 #endif
 
 #define sf_info(...)                                                      \

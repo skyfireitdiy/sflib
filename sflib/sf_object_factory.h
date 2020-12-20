@@ -8,8 +8,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_json.h"
 #include "sf_nocopy.h"
 #include "sf_object_factory_utils.h"
@@ -70,4 +68,3 @@ private:
     json object_data(const std::string& obj_name);
 };
 } // namespace skyfire
-#pragma clang diagnostic pop

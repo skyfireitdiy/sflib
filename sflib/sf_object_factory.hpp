@@ -8,8 +8,6 @@
 */
 
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 #include "sf_json.hpp"
 #include "sf_object_factory.h"
 #include "sf_stdc++.h"
@@ -112,4 +110,3 @@ std::shared_ptr<T> object_factory::object(const std::string& obj_id,
     return obj;
 }
 } // namespace skyfire
-#pragma clang diagnostic pop
