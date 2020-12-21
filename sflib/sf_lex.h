@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "sf_grammer_utils.h"
+#include "sf_compiler_utils.h"
 #include "sf_stdc++.h"
 
 namespace skyfire

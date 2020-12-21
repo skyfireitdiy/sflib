@@ -5,8 +5,6 @@
 * @file sf_tcp_nat_traversal_client.hpp
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCDFAInspection"
 
 #include "sf_error.h"
 #include "sf_tcp_nat_traversal_client.h"
@@ -358,4 +356,3 @@ inline void tcp_nat_traversal_client::on_server_reply_b_addr(
     }
 }
 } // namespace skyfire
-#pragma clang diagnostic pop

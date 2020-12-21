@@ -2,28 +2,14 @@
 
 #include "sf_error.h"
 #include "sf_multi_value.h"
+#include "sf_reader.h"
 #include "sf_stdc++.h"
 #include "sf_type.h"
 #include "sf_utils.h"
+#include "sf_writer.h"
 
 namespace skyfire
 {
-
-using byte_array_result = multi_value<sf_error, byte_array>;
-
-class reader
-{
-public:
-    virtual byte_array_result read(size_t max_size) = 0;
-    virtual bool              can_read() const   = 0;
-};
-
-class writer
-{
-public:
-    virtual sf_error write(const byte_array& data) = 0;
-    virtual bool     can_write() const             = 0;
-};
 
 class data_buffer : public reader, public writer, public make_instance_t<data_buffer>, public std::enable_shared_from_this<data_buffer>
 {

@@ -95,17 +95,17 @@ inline bool tcp_client::send(int type, const byte_array& data)
     header.type   = htonl(type);
     header.length = htonl(data.size());
     make_header_checksum(header);
-    auto ret = write(sock__, make_pkg(header).data(), sizeof(header));
+    auto ret = ::write(sock__, make_pkg(header).data(), sizeof(header));
     if (ret != sizeof(header))
         return false;
-    return write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
+    return ::write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
 
 inline bool tcp_client::send(const byte_array& data)
 {
     if (!inited__)
         return false;
-    return write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
+    return ::write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
 
 inline void tcp_client::close()
@@ -124,7 +124,7 @@ void tcp_client::recv_thread__()
     pkg_header_t header {};
     while (true)
     {
-        auto len = read(sock__, recv_buffer.data(), default_buffer_size);
+        auto len = ::read(sock__, recv_buffer.data(), default_buffer_size);
         if (len <= 0)
         {
             closed();

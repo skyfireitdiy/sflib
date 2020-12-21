@@ -5,8 +5,6 @@
 * @file sf_tcp_nat_traversal_utils.h
 */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_json.hpp"
 #include "sf_nocopy.h"
@@ -97,4 +95,3 @@ public:
 };
 } // namespace skyfire
 
-#pragma clang diagnostic pop

@@ -58,11 +58,6 @@ class tcp_nat_traversal_client
     void on_client_data_coming__(const pkg_header_t& header,
                                  const byte_array&   data);
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
-    void on_client_close__();
-#pragma clang diagnostic pop
-
 public:
     tcp_nat_traversal_client();
 
