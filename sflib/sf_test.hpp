@@ -116,7 +116,7 @@ inline int run_test(int thread_count, bool flashing)
     for (auto& p : test_data)
     {
         result.push_back(pool->add_task(
-            [&p, flashing, &ret]() {
+            [&p]() {
                 std::function<void()> setup;
                 std::function<void()> teardown;
 

@@ -21,6 +21,7 @@ private:
 
 public:
     data_buffer() = default;
+    virtual ~data_buffer();
     void              set_data(const byte_array& data);
     void              clear();
     byte_array_result read(size_t max_size) override;
