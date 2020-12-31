@@ -1,14 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_part_router.hpp
-
-* 
-*/
-
 #pragma once
-
 #include "sf_http_part_router.h"
 #include "sf_http_router.hpp"
 #include "sf_http_server_request.hpp"
@@ -17,7 +8,6 @@
 #include "sf_stdc++.h"
 #include "sf_utils.hpp"
 #include <utility>
-
 namespace skyfire
 {
 inline http_part_router::http_part_router(
@@ -27,7 +17,6 @@ inline http_part_router::http_part_router(
     : http_part_router(prefix, std::function(callback), methods, priority)
 {
 }
-
 inline http_part_router::http_part_router(
     std::string                                                            prefix,
     std::function<bool(const http_server_request&, http_server_response&)> callback,
@@ -42,7 +31,6 @@ inline http_part_router::http_part_router(
     }
     prefix__.push_back(prefix);
 }
-
 inline bool http_part_router::run_route(const http_server_request& req,
                                         http_server_response&      res,
                                         const std::string&         url,
@@ -59,7 +47,6 @@ inline bool http_part_router::run_route(const http_server_request& req,
             return false;
         }
     }
-
     bool        match_flag = false;
     std::string matched_prefix;
     for (auto& p : prefix__)
@@ -71,7 +58,6 @@ inline bool http_part_router::run_route(const http_server_request& req,
             break;
         }
     }
-
     if (!match_flag)
     {
         return false;
@@ -84,7 +70,6 @@ inline bool http_part_router::run_route(const http_server_request& req,
             return false;
         }
     }
-
     if (callback__(req, res))
     {
         auto new_url = "/" + std::string(url.begin() + matched_prefix.size(), url.end());
@@ -116,24 +101,19 @@ inline bool http_part_router::run_route(const http_server_request& req,
     }
     return true;
 }
-
-inline int http_part_router::priority() const { return priority__; }
-
+inline int  http_part_router::priority() const { return priority__; }
 inline bool http_part_router::operator<(
     const http_part_router& router) const
 {
     return priority__ < router.priority__;
 }
-
 inline void http_part_router::add_router(
     std::shared_ptr<http_part_router> router)
 {
     middle_router__.insert(router);
 }
-
 inline void http_part_router::add_router(std::shared_ptr<router> router)
 {
     endpoint_router__.insert(router);
 }
-
 } // namespace skyfire

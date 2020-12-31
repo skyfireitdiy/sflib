@@ -1,5 +1,4 @@
 #pragma once
-
 #include "sf_error.h"
 #include "sf_multi_value.h"
 #include "sf_reader.h"
@@ -7,10 +6,8 @@
 #include "sf_type.h"
 #include "sf_utils.h"
 #include "sf_writer.h"
-
 namespace skyfire
 {
-
 class data_buffer : public reader, public writer, public make_instance_t<data_buffer>, public std::enable_shared_from_this<data_buffer>
 {
 private:

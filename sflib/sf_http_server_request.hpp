@@ -1,12 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_server_request.hpp
-*/
-
 #pragma once
-
 #include "sf_http_request_line.h"
 #include "sf_http_server_req_header.hpp"
 #include "sf_http_server_request.h"
@@ -14,10 +7,8 @@
 #include "sf_logger.hpp"
 #include "sf_random.hpp"
 #include "sf_utils.hpp"
-
 namespace skyfire
 {
-
 inline bool http_server_request::split_request(
     const byte_array& raw, std::string& request_line,
     std::vector<std::string>& header_lines, byte_array& body)
@@ -39,25 +30,19 @@ inline bool http_server_request::split_request(
     }
     return true;
 }
-
-inline byte_array http_server_request::body() const { return body__; }
-
+inline byte_array             http_server_request::body() const { return body__; }
 inline http_server_req_header http_server_request::header() const { return header__; }
-
-inline http_request_line http_server_request::request_line() const
+inline http_request_line      http_server_request::request_line() const
 {
     return request_line__;
 }
-
 inline bool http_server_request::is_valid() const { return valid__; }
-
 inline http_server_request::http_server_request(byte_array raw, SOCKET sock)
     : raw__(std::move(raw))
     , sock__(sock)
 {
     valid__ = parse_request__();
 }
-
 inline bool http_server_request::parse_request__()
 {
     std::string              request_line;
@@ -77,11 +62,8 @@ inline bool http_server_request::parse_request__()
         sf_debug("parse header error");
         return false;
     }
-
     parse_cookies(header__, cookies__);
-
-    auto content_len = header__.header_value("Content-Length", "0");
-
+    auto content_len  = header__.header_value("Content-Length", "0");
     auto content_type = header__.header_value("Content-Type", "");
     if (!content_type.empty())
     {
@@ -122,10 +104,8 @@ inline bool http_server_request::parse_request__()
         sf_debug("body size error", content_len.c_str(), body__.size());
         return false;
     }
-
     return true;
 }
-
 inline bool http_server_request::parse_header(
     const std::vector<std::string> header_lines, http_header& header)
 {
@@ -141,7 +121,6 @@ inline bool http_server_request::parse_header(
     }
     return true;
 }
-
 inline bool http_server_request::parse_request_line(
     const std::string& request_line, http_request_line& request_line_para)
 {
@@ -152,18 +131,15 @@ inline bool http_server_request::parse_request_line(
         return false;
     return !!(si >> request_line_para.http_version);
 }
-
 inline bool http_server_request::is_multipart_data() const
 {
     return multipart_data__;
 }
-
 inline http_server_req_multipart_data_context_t http_server_request::multipart_data_context()
     const
 {
     return multipart_data_context__;
 }
-
 inline http_server_request::http_server_request(
     http_server_req_multipart_data_context_t multipart_data, SOCKET sock)
 {
@@ -175,7 +151,6 @@ inline http_server_request::http_server_request(
     sock__                   = sock;
     parse_cookies(header__, cookies__);
 }
-
 inline void http_server_request::parse_cookies(
     const http_header&                            header_data,
     std::unordered_map<std::string, std::string>& cookies)
@@ -205,13 +180,11 @@ inline void http_server_request::parse_cookies(
         cookies[session_id_key] = rd->uuid_str();
     }
 }
-
 inline std::unordered_map<std::string, std::string> http_server_request::cookies()
     const
 {
     return cookies__;
 }
-
 inline std::string http_server_request::session_id() const
 {
     auto ck = cookies();
@@ -221,11 +194,8 @@ inline std::string http_server_request::session_id() const
     }
     return ck[session_id_key];
 }
-
-inline bool http_server_request::is_error() const { return error__; }
-
+inline bool        http_server_request::is_error() const { return error__; }
 inline std::string http_server_request::url() const { return request_line__.url; }
-
 inline std::string http_server_request::base_url() const
 {
     std::string  ret;
@@ -234,14 +204,12 @@ inline std::string http_server_request::base_url() const
     parse_server_req_url(request_line__.url, ret, params, frame);
     return ret;
 }
-
 inline addr_info_t http_server_request::addr() const
 {
     addr_info_t ret;
     peer_addr(sock__, ret);
     return ret;
 }
-
 inline http_param_t http_server_request::params() const
 {
     std::string  url;
@@ -250,12 +218,10 @@ inline http_param_t http_server_request::params() const
     parse_server_req_url(request_line__.url, url, params, frame);
     return params;
 }
-
 inline http_param_t http_server_request::body_params() const
 {
     return parse_param(to_string(body__));
 }
-
 inline std::string http_server_request::frame() const
 {
     std::string  url;
@@ -264,42 +230,34 @@ inline std::string http_server_request::frame() const
     parse_server_req_url(request_line__.url, url, params, frame);
     return frame;
 }
-
 inline std::string http_server_request::header(
     const std::string& key, const std::string& default_value) const
 {
     return header__.header_value(key, default_value);
 }
-
 inline void http_server_request::set_body(const byte_array& body)
 {
     body__ = body;
 }
-
 inline void http_server_request::set_body(std::shared_ptr<std::istream> ptr)
 {
     istream_ptr__ = ptr;
 }
-
 inline void http_server_request::set_request_line(const http_request_line& request_line)
 {
     request_line__ = request_line;
 }
-
 inline void http_server_request::set_header(const http_server_req_header& header)
 {
     header__ = header;
 }
-
 inline void http_server_request::set_cookies(const std::unordered_map<std::string, std::string>& cookies)
 {
     cookies__ = cookies;
 }
-
 inline byte_array http_server_request::gen_req_data() const
 {
     // TODO 生成请求数据
     return byte_array();
 }
-
 } // namespace skyfire

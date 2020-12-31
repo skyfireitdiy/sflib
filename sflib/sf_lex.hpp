@@ -1,17 +1,7 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_lex.hpp
-
-* 
-*/
-
 #pragma once
-
 #include "sf_lex.h"
 #include "sf_stdc++.h"
-
 namespace skyfire
 {
 inline bool lex::parse(std::string                content,
@@ -62,14 +52,11 @@ inline bool lex::parse(std::string                content,
     }
     return true;
 }
-
 inline void lex::set_rules(const std::vector<lex_rule_t>& rule)
 {
     rules__ = rule;
 }
-
-inline std::vector<lex_rule_t> lex::rules() const { return rules__; }
-
+inline std::vector<lex_rule_t>         lex::rules() const { return rules__; }
 inline std::unordered_set<std::string> lex::real_term() const
 {
     std::unordered_set<std::string> ret;

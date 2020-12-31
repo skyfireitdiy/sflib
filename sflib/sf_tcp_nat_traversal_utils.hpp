@@ -1,17 +1,8 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_tcp_nat_traversal_utils.hpp
-*/
-
 #pragma once
-
 #include "sf_tcp_nat_traversal_utils.h"
-
 namespace skyfire
 {
-
 inline bool tcp_nat_traversal_connection::send(
     const byte_array& data) const
 {
@@ -21,7 +12,6 @@ inline bool tcp_nat_traversal_connection::send(
     }
     return server__->send(sock__, data);
 }
-
 inline bool tcp_nat_traversal_connection::send(
     int type, const byte_array& data) const
 {
@@ -31,7 +21,6 @@ inline bool tcp_nat_traversal_connection::send(
     }
     return server__->send(sock__, type, data);
 }
-
 inline tcp_nat_traversal_connection::tcp_nat_traversal_connection(
     std::shared_ptr<tcp_client> client,
     std::shared_ptr<tcp_server> server, int sock, std::string connect_id,
@@ -71,5 +60,4 @@ inline tcp_nat_traversal_connection::tcp_nat_traversal_connection(
             server__, closed, [this](SOCKET) { closed(); }, true);
     }
 }
-
 } // namespace skyfire

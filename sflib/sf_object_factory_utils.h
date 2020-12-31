@@ -1,23 +1,9 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_object_factory_utils.h
-
-* 
-*/
-
 #pragma once
-
 #include "sf_json.h"
 #include "sf_stdc++.h"
-
 namespace skyfire
 {
-/**
- * @brief 对象工厂配置项
- *
- */
 struct object_factory_config_item_t
 {
     std::string id;                // 对象id

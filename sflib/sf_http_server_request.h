@@ -1,12 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_server_request.h
-*/
-
 #pragma once
-
 #include "sf_http_header.h"
 #include "sf_http_request_line.h"
 #include "sf_http_server_req_header.h"
@@ -15,12 +8,8 @@
 #include "sf_tcp_server.h"
 #include "sf_type.h"
 #include "sf_utils.h"
-
 namespace skyfire
 {
-/**
- * @brief  http请求
- */
 class http_server_request final
 {
 private:
@@ -35,210 +24,44 @@ private:
     std::unordered_map<std::string, std::string> cookies__;
     std::shared_ptr<std::istream>                istream_ptr__ = nullptr;
     SOCKET                                       sock__;
-
-    bool parse_request__();
+    bool                                         parse_request__();
 
 public:
-    /**
-     * 构造函数
-     * @param raw 原始数据
-     * @param sock 请求套接字
-     */
     explicit http_server_request(byte_array raw, SOCKET sock);
-
-    /**
-     * @brief 设置body
-     * 
-     * @param body 请求数据
-     */
-    void set_body(const byte_array& body);
-
-    /**
-     * @brief 设置body输入流
-     * 
-     * @param ptr 输入流指针
-     */
-    void set_body(std::shared_ptr<std::istream> ptr);
-
-    /**
-     * @brief 设置请求行
-     * 
-     * @param request_line 请求行
-     */
-    void set_request_line(const http_request_line& request_line);
-
-    /**
-     * @brief 设置header
-     * 
-     * @param header header
-     */
-    void set_header(const http_server_req_header& header);
-
-    /**
-     * @brief 设置cookies
-     * 
-     * @param cookies cookies
-     */
-    void set_cookies(const std::unordered_map<std::string, std::string>& cookies);
-
-    /**
-     * @brief 生成请求数据
-     * 
-     * @return byte_array 请求数据
-     */
+    void       set_body(const byte_array& body);
+    void       set_body(std::shared_ptr<std::istream> ptr);
+    void       set_request_line(const http_request_line& request_line);
+    void       set_header(const http_server_req_header& header);
+    void       set_cookies(const std::unordered_map<std::string, std::string>& cookies);
     byte_array gen_req_data() const;
-
-    /**
-     * 构造函数
-     * @param multipart_data 分块数据集合
-     * @param sock 请求套接字
-     */
     explicit http_server_request(http_server_req_multipart_data_context_t multipart_data,
                                  SOCKET                                   sock);
-
-    /**
-     * 判断请求是否合法
-     * @return 是否合法
-     */
-    bool is_valid() const;
-
-    /**
-     * @brief 是否错误
-     *
-     * @return true 有错误
-     * @return false 无错误
-     */
-    bool is_error() const;
-
-    /**
-     * 获取请求行
-     * @return 请求行对象
-     */
-    http_request_line request_line() const;
-
-    /**
-     * 获取请求头
-     * @return 请求头对象（不包括cookie）
-     */
-    http_server_req_header header() const;
-
-    /**
-     * @brief 获取http 头
-     *
-     * @param key 键
-     * @param default_value 默认值
-     * @return std::string 值
-     */
-    std::string header(const std::string& key,
-                       const std::string& default_value = "") const;
-
-    /**
-     * 获取请求体（在非分块请求可用）
-     * @return 请求体数据
-     */
-    byte_array body() const;
-
-    /**
-     * 判断是否是分块请求
-     * @return 是否是分块请求
-     */
-    bool is_multipart_data() const;
-
-    /**
-     * 获取分块请求的分块集合（在分块请求可用）
-     * @return 分块集合
-     */
-    http_server_req_multipart_data_context_t multipart_data_context() const;
-
-    /**
-     * 获取cookies
-     * @return cookies
-     */
+    bool                                         is_valid() const;
+    bool                                         is_error() const;
+    http_request_line                            request_line() const;
+    http_server_req_header                       header() const;
+    std::string                                  header(const std::string& key,
+                                                        const std::string& default_value = "") const;
+    byte_array                                   body() const;
+    bool                                         is_multipart_data() const;
+    http_server_req_multipart_data_context_t     multipart_data_context() const;
     std::unordered_map<std::string, std::string> cookies() const;
-
-    /**
-     * 获取session id
-     * @return session id， 如果没有，就为空
-     */
-    std::string session_id() const;
-    /**
-     * @brief 获取请求url
-     *
-     * @return std::string 请求url
-     */
-    std::string url() const;
-
-    /**
-     * @brief 获取基础url（去掉请求参数与frame）
-     *
-     * @return std::string 基础url
-     */
-    std::string base_url() const;
-
-    /**
-     * @brief 获取客户端地址信息
-     *
-     * @return addr_info_t 地址信息
-     */
-    addr_info_t addr() const;
-
-    /**
-     * @brief 获取请求参数
-     *
-     * @return http_param_t 请求参数
-     */
-    http_param_t params() const;
-
-    /**
-     * @brief body 请求参数
-     *
-     * @return http_param_t 请求参数
-     */
-    http_param_t body_params() const;
-    /**
-     * @brief frame
-     *
-     * @return std::string frame
-     */
-    std::string frame() const;
-
-    /**
-     * 分割请求
-     * @param raw 原始数据
-     * @param request_line 请求行原始数据
-     * @param header_lines 请求头原始数据（一行一个）
-     * @param body 请求体数据
-     * @return 是否分割成功
-     */
-    static bool split_request(const byte_array& raw, std::string& request_line,
-                              std::vector<std::string>& header_lines,
-                              byte_array&               body);
-
-    /**
-     * 解析请求行数据
-     * @param request_line 原始请求行数据（来自split_request）
-     * @param request_line_para 请求行函数
-     * @return 是否解析成功
-     */
-    static bool parse_request_line(const std::string& request_line,
-                                   http_request_line& request_line_para);
-
-    /**
-     * 解析请求头
-     * @param header_lines 请求头原始数据，一行一个（来自split_request）
-     * @param header 请求头
-     * @return 是否解析成功
-     */
-    static bool parse_header(std::vector<std::string> header_lines,
-                             http_header&             header);
-
-    /**
-     * 解析cookies
-     * @param header_data 头数据
-     * @param cookies cookie
-     */
-    static void parse_cookies(
-        const http_header&                            header_data,
-        std::unordered_map<std::string, std::string>& cookies);
+    std::string                                  session_id() const;
+    std::string                                  url() const;
+    std::string                                  base_url() const;
+    addr_info_t                                  addr() const;
+    http_param_t                                 params() const;
+    http_param_t                                 body_params() const;
+    std::string                                  frame() const;
+    static bool                                  split_request(const byte_array& raw, std::string& request_line,
+                                                               std::vector<std::string>& header_lines,
+                                                               byte_array&               body);
+    static bool                                  parse_request_line(const std::string& request_line,
+                                                                    http_request_line& request_line_para);
+    static bool                                  parse_header(std::vector<std::string> header_lines,
+                                                              http_header&             header);
+    static void                                  parse_cookies(
+                                         const http_header&                            header_data,
+                                         std::unordered_map<std::string, std::string>& cookies);
 };
 } // namespace skyfire

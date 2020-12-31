@@ -1,21 +1,9 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_server_config.h
-*/
-
 #pragma once
-
 #include "sf_json.hpp"
 #include <thread>
-
 namespace skyfire
 {
-
-/**
- * @brief  http服务器配置项
- */
 struct http_server_config final
 {
     std::string    host                = "0.0.0.0";                   // 主机ip地址
@@ -28,7 +16,6 @@ struct http_server_config final
     bool   debug        = false;                                    // debug 模式不会使用缓存
     size_t thread_count = std::thread::hardware_concurrency() * 16; // 线程数量
 };
-
 SF_JSONIFY(http_server_config, host, port, tmp_file_path, session_timeout,
            max_cache_count, max_cache_file_size, debug, thread_count)
 } // namespace skyfire

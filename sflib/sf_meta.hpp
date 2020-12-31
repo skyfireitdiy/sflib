@@ -1,27 +1,14 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_meta.hpp
-*/
-
-/*
- * meta 元编程辅助函数
- */
 #pragma once
-
 #include "sf_meta.h"
-
 namespace skyfire
 {
-
 template <int N>
 auto make_placeholders()
 {
     return typename decltype(
         __placeholders_type(std::placeholders::_1))::template type<N> {};
 }
-
 template <typename _Type, typename Tuple>
 _Type* make_obj_from_tuple(Tuple&& t)
 {
@@ -29,13 +16,11 @@ _Type* make_obj_from_tuple(Tuple&& t)
     return make_obj_from_tuple_impl<_Type>(std::forward<Tuple>(t),
                                            std::make_index_sequence<size> {});
 }
-
 template <typename _Type, typename Tuple, size_t... Index>
 _Type* make_obj_from_tuple_impl(Tuple&& t, std::index_sequence<Index...>)
 {
     return new _Type(std::get<Index>(std::forward<Tuple>(t))...);
 }
-
 template <typename Function, typename Tuple>
 decltype(auto) invoke(Function&& func, Tuple&& t)
 {
@@ -43,7 +28,6 @@ decltype(auto) invoke(Function&& func, Tuple&& t)
     return invoke_impl(std::forward<Function>(func), std::forward<Tuple>(t),
                        std::make_index_sequence<size> {});
 }
-
 template <typename Function, typename Tuple, size_t... Index>
 decltype(auto) invoke_impl(Function&& func, Tuple&& t,
                            std::index_sequence<Index...>)
@@ -60,5 +44,4 @@ decltype(auto) invoke_impl(Function&& func, Tuple&& t,
         return func(std::get<Index>(std::forward<Tuple>(t))...);
     }
 }
-
 } // namespace skyfire

@@ -1,23 +1,14 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_utils.hpp
-*/
 #pragma once
-
 #include "sf_http_server_req_multipart.hpp"
 #include "sf_http_utils.h"
 #include "sf_logger.hpp"
-
 namespace skyfire
 {
-
 inline unsigned char to_hex(const unsigned char x)
 {
     return static_cast<unsigned char>(x > 9 ? x + 55 : x + 48);
 }
-
 inline unsigned char from_hex(unsigned char x)
 {
     unsigned char y = 0;
@@ -29,7 +20,6 @@ inline unsigned char from_hex(unsigned char x)
         y = x - '0';
     return y;
 }
-
 inline std::string url_encode(const std::string& str, bool encode_plus)
 {
     std::string strTemp {};
@@ -52,7 +42,6 @@ inline std::string url_encode(const std::string& str, bool encode_plus)
     }
     return strTemp;
 }
-
 inline std::string url_decode(const std::string& str, bool decode_plus)
 {
     std::string strTemp {};
@@ -77,7 +66,6 @@ inline std::string url_decode(const std::string& str, bool decode_plus)
     }
     return strTemp;
 }
-
 inline http_param_t parse_param(std::string param_str)
 {
     std::unordered_map<std::string, std::string> param;
@@ -107,7 +95,6 @@ inline http_param_t parse_param(std::string param_str)
     param[key] = value;
     return param;
 }
-
 inline void parse_server_req_url(const std::string& raw_url, std::string& url,
                                  http_param_t& param, std::string& frame)
 {
@@ -139,18 +126,16 @@ inline void parse_server_req_url(const std::string& raw_url, std::string& url,
                                        raw_url_without_frame.end());
     param                = parse_param(param_str);
 }
-
 inline void parse_client_req_url(std::string  raw_url,
                                  std::string& agreement,
                                  std::string& host,
                                  short&       port,
                                  std::string& resource)
 {
-    agreement = "http";
-    host      = "";
-    port      = 80;
-    resource  = "/";
-
+    agreement                    = "http";
+    host                         = "";
+    port                         = 80;
+    resource                     = "/";
     const auto agreement_end_pos = raw_url.find("://");
     if (agreement_end_pos != std::string::npos)
     {
@@ -165,13 +150,11 @@ inline void parse_client_req_url(std::string  raw_url,
             raw_url = raw_url.substr(host_end_pos + 2);
         }
     }
-
     auto host_end_pos = raw_url.find(":");
     if (host_end_pos != std::string::npos)
     {
-        host    = raw_url.substr(0, host_end_pos);
-        raw_url = raw_url.substr(host_end_pos + 1);
-
+        host                    = raw_url.substr(0, host_end_pos);
+        raw_url                 = raw_url.substr(host_end_pos + 1);
         const auto port_end_pos = raw_url.find("/");
         if (port_end_pos != std::string::npos)
         {
@@ -195,7 +178,6 @@ inline void parse_client_req_url(std::string  raw_url,
             // FIXME 支持其他协议？
             sf_debug("not supported");
         }
-
         const auto host_end_pos = raw_url.find("/");
         if (host_end_pos != std::string::npos)
         {
@@ -209,7 +191,6 @@ inline void parse_client_req_url(std::string  raw_url,
         }
     }
 }
-
 inline std::string to_header_key_format(std::string key)
 {
     auto flag = false;
@@ -228,7 +209,6 @@ inline std::string to_header_key_format(std::string key)
     }
     return key;
 }
-
 inline std::string make_http_time_str(
     const std::chrono::system_clock::time_point& tp)
 {
@@ -246,7 +226,6 @@ inline std::string make_http_time_str(
     ret.resize(strlen(ret.c_str()));
     return ret;
 }
-
 inline byte_array read_file(const std::string& filename, size_t max_size)
 {
     byte_array    data;
@@ -267,7 +246,6 @@ inline byte_array read_file(const std::string& filename, size_t max_size)
     fi.close();
     return data;
 }
-
 inline std::string base64_encode(const byte_array& data)
 {
     BIO *    b64, *bio;
@@ -283,7 +261,6 @@ inline std::string base64_encode(const byte_array& data)
     BIO_free_all(bio);
     return out_str;
 }
-
 inline byte_array base64_decode(const std::string& data)
 {
     BIO *b64, *bio;
@@ -299,7 +276,6 @@ inline byte_array base64_decode(const std::string& data)
     BIO_free_all(bio);
     return out_str;
 }
-
 inline byte_array sha1_encode(const byte_array& data)
 {
     SHA_CTX sha_ctx;
@@ -314,7 +290,6 @@ inline byte_array sha1_encode(const byte_array& data)
     OPENSSL_cleanse(&sha_ctx, sizeof(sha_ctx));
     return ret;
 }
-
 inline byte_array deflate_compress(const byte_array& input_buffer)
 {
     auto       max_len = compressBound(input_buffer.size());
@@ -326,5 +301,4 @@ inline byte_array deflate_compress(const byte_array& input_buffer)
     ret.resize(size);
     return ret;
 }
-
 } // namespace skyfire

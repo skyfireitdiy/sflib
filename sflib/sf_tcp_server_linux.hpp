@@ -1,29 +1,18 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_tcp_server_linux.hpp
-*/
-
 #pragma once
-
 #include "sf_define.h"
 #include "sf_finally.hpp"
 #include "sf_net_utils.hpp"
 #include "sf_tcp_server_interface.hpp"
 #include "sf_tcp_server_linux.h"
-
 namespace skyfire
 {
-
 template <typename... Args>
 inline tcp_server::tcp_server(Args&&... args)
 {
     (args(config__), ...);
 }
-
-inline SOCKET tcp_server::raw_socket() { return listen_fd__; }
-
+inline SOCKET           tcp_server::raw_socket() { return listen_fd__; }
 inline epoll_context_t* tcp_server::find_context__(SOCKET sock) const
 {
     auto& epoll_data = epoll_data__();
@@ -50,7 +39,6 @@ inline epoll_context_t* tcp_server::find_context__(SOCKET sock) const
     sf_debug(sock, "socket fd not found");
     return nullptr;
 }
-
 inline bool tcp_server::send(int sock, const byte_array& data)
 {
     sf_debug("send", data.size());
@@ -60,22 +48,18 @@ inline bool tcp_server::send(int sock, const byte_array& data)
         sf_debug("psock_context_data__ is nullptr");
         return false;
     }
-
     std::shared_lock<std::shared_mutex> lck(psock_context_data__->mu_epoll_context__);
     auto&                               sock_context__ = psock_context_data__->sock_context__;
-
-    auto send_data = data;
+    auto                                send_data      = data;
     lck.unlock();
     before_raw_send_filter__(sock, send_data);
     lck.lock();
     sock_context__[sock].data_buffer_out.push_back(send_data);
     sock_context__[sock].ev.events |= EPOLLOUT;
-
     return epoll_ctl(psock_context_data__->epoll_fd, EPOLL_CTL_MOD, sock,
                      &sock_context__[sock].ev)
            != -1;
 }
-
 inline bool tcp_server::send(int sock, int type, const byte_array& data)
 {
     auto psock_context_data__ = find_context__(sock);
@@ -91,34 +75,27 @@ inline bool tcp_server::send(int sock, int type, const byte_array& data)
     header.length = htonl(data.size());
     make_header_checksum(header);
     auto tmp_data = data;
-
     lck.unlock();
     before_send_filter__(sock, header, tmp_data);
     auto send_data = make_pkg(header) + tmp_data;
     before_raw_send_filter__(sock, send_data);
     lck.lock();
-
     sock_context__[sock].data_buffer_out.push_back(send_data);
-
     sock_context__[sock].ev.events |= EPOLLOUT;
-
     return epoll_ctl(psock_context_data__->epoll_fd, EPOLL_CTL_MOD, sock,
                      &sock_context__[sock].ev)
            != -1;
 }
-
 inline void tcp_server::close(SOCKET sock)
 {
     ::shutdown(sock, SHUT_RDWR);
     ::close(sock);
 }
-
 inline void tcp_server::close()
 {
     closed__ = true;
     ::shutdown(listen_fd__, SHUT_RDWR);
     ::close(listen_fd__);
-
     {
         std::unique_lock<std::shared_mutex>
              lck(mu_context_pool__);
@@ -131,14 +108,12 @@ inline void tcp_server::close()
             }
         }
     }
-
     for (auto& p : thread_vec__)
     {
         p.join();
     }
     thread_vec__.clear();
 }
-
 inline bool tcp_server::listen(const std::string& ip, unsigned short port)
 {
     listen_fd__ = socket(AF_INET, SOCK_STREAM, 0);
@@ -146,47 +121,38 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
     {
         return false;
     }
-
     listen_sock_filter__(listen_fd__);
-
     if (fcntl(listen_fd__, F_SETFL,
               fcntl(listen_fd__, F_GETFD, 0) | O_NONBLOCK)
         == -1)
     {
         return false;
     }
-
     int opt = 1;
     if (-1 == setsockopt(listen_fd__, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const void*>(&opt), sizeof(opt)))
     {
         return false;
     }
-
     if (-1 == setsockopt(listen_fd__, SOL_SOCKET, SO_REUSEPORT, reinterpret_cast<const void*>(&opt), sizeof(opt)))
     {
         return false;
     }
-
     sockaddr_in internet_addr {};
     internet_addr.sin_family      = AF_INET;
     internet_addr.sin_addr.s_addr = inet_addr(ip.c_str());
     internet_addr.sin_port        = htons(port);
-
     if (::bind(listen_fd__, reinterpret_cast<sockaddr*>(&internet_addr),
                sizeof(sockaddr_in))
         == -1)
     {
         return false;
     }
-
     if (::listen(listen_fd__, max_tcp_connection) == -1)
     {
         return false;
     }
-
     thread_vec__.emplace_back(
         std::thread(&tcp_server::work_thread__, this, true, listen_fd__));
-
     if (config__.manage_clients)
     {
         for (size_t i = 0; i < config__.thread_count; ++i)
@@ -197,7 +163,6 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
     }
     return true;
 }
-
 inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
 {
     // FIXME 增加一个pipe，用于退出唤醒
@@ -218,13 +183,11 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
     {
         std::lock_guard<std::shared_mutex> lck(epoll_data.mu_epoll_context__);
         auto&                              sock_context__ = epoll_data.sock_context__;
-
         if (listen_thread)
         {
             sock_context__[listen_fd]            = sock_data_context_t {};
             sock_context__[listen_fd].ev.events  = EPOLLIN | EPOLLET;
             sock_context__[listen_fd].ev.data.fd = listen_fd;
-
             if (epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_ADD, listen_fd,
                           &sock_context__[listen_fd].ev)
                 < 0)
@@ -234,7 +197,6 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                 return;
             }
         }
-
         epoll_data.pipe_event__.events  = EPOLLIN | EPOLLET;
         epoll_data.pipe_event__.data.fd = epoll_data.pipe__[0];
         if (epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_ADD, epoll_data.pipe__[0], &epoll_data.pipe_event__) < 0)
@@ -245,17 +207,14 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
             return;
         }
     }
-
     {
         std::unique_lock<std::shared_mutex>
             lck(mu_context_pool__);
         context_pool__.push_back(&epoll_data);
         sf_debug("create epoll_data, sock_context__", &epoll_data.sock_context__, context_pool__.size());
     }
-
     // 需要为管道留一个位置
     std::vector<epoll_event> evs(max_tcp_connection + 1);
-
     while (!closed__)
     {
         int wait_fds = 0;
@@ -269,16 +228,12 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
             }
             break;
         }
-
         if (wait_fds == 0)
         {
             continue;
         }
-
         sf_debug("new epoll event", wait_fds);
-
         auto listen_err = false;
-
         for (auto i = 0; i < wait_fds; ++i)
         {
             if (evs[i].data.fd == listen_fd__ && (evs[i].events & EPOLLIN))
@@ -310,7 +265,6 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
                 handle_write__(evs[i]);
             }
         }
-
         if (listen_err)
         {
             sf_debug("listen error");
@@ -322,9 +276,7 @@ inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
         }
     }
 }
-
 inline tcp_server::~tcp_server() { close(); }
-
 inline bool tcp_server::in_dispatch__(SOCKET fd)
 {
     sf_debug("add new fd", fd);
@@ -334,9 +286,7 @@ inline bool tcp_server::in_dispatch__(SOCKET fd)
     sock_context__[fd]                                = sock_data_context_t {};
     sock_context__[fd].ev.events                      = EPOLLIN | EPOLLET;
     sock_context__[fd].ev.data.fd                     = fd;
-
     sf_debug("add sock to sock_context__", fd, &sock_context__);
-
     if (epoll_ctl(epoll_data.epoll_fd, EPOLL_CTL_ADD, fd,
                   &sock_context__[fd].ev)
         < 0)
@@ -347,7 +297,6 @@ inline bool tcp_server::in_dispatch__(SOCKET fd)
     }
     return true;
 }
-
 inline bool tcp_server::handle_accept__()
 {
     int         conn_fd = 0;
@@ -375,7 +324,6 @@ inline bool tcp_server::handle_accept__()
         sf_debug("new connection", conn_fd);
         new_connection(conn_fd);
     }
-
     if (errno == EAGAIN || errno == EINTR)
     {
         return true;
@@ -393,7 +341,6 @@ inline bool tcp_server::handle_accept__()
         return false;
     }
 }
-
 inline sf_error tcp_server::recv(SOCKET sock, byte_array& data, int length)
 {
     auto& epoll_data     = epoll_data__();
@@ -426,7 +373,6 @@ inline sf_error tcp_server::recv(SOCKET sock, byte_array& data, int length)
     data.resize(static_cast<unsigned long>(count_read));
     return sf_error {};
 }
-
 inline void tcp_server::handle_read__(const epoll_event& ev)
 {
     if (!config__.manage_read)
@@ -440,7 +386,6 @@ inline void tcp_server::handle_read__(const epoll_event& ev)
     auto&        sock_context__ = epoll_data.sock_context__;
     while (true)
     {
-
         auto e = recv(ev.data.fd, recv_buf);
         if (e.exp().code() == err_finished)
         {
@@ -452,9 +397,7 @@ inline void tcp_server::handle_read__(const epoll_event& ev)
             sf_debug("read error / connection closed");
             break;
         }
-
         after_raw_recv_filter__(ev.data.fd, recv_buf);
-
         if (config__.raw)
         {
             sf_debug("raw data", recv_buf.size());
@@ -510,7 +453,6 @@ inline void tcp_server::handle_read__(const epoll_event& ev)
         }
     }
 }
-
 inline void tcp_server::handle_write__(const epoll_event& ev)
 {
     auto&  epoll_data     = epoll_data__();
@@ -543,7 +485,6 @@ inline void tcp_server::handle_write__(const epoll_event& ev)
             }
             p = sock_context__[fd].data_buffer_out.front();
         }
-
         sf_debug("pkg size:", p.size());
         auto data_size = p.size();
         auto n         = data_size;
@@ -599,11 +540,9 @@ inline void tcp_server::handle_write__(const epoll_event& ev)
         }
     }
 }
-
 inline epoll_context_t& tcp_server::epoll_data__() const
 {
     thread_local static epoll_context_t d;
     return d;
 }
-
 } // namespace skyfire

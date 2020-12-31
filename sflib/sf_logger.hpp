@@ -1,23 +1,11 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_logger.hpp
-*/
-
-/*
- * logger日志打印
- */
 #pragma once
-
 #include "sf_color.hpp"
 #include "sf_json.hpp"
 #include "sf_logger.h"
 #include "sf_thread_pool.hpp"
-
 namespace skyfire
 {
-
 inline std::unordered_map<int, std::vector<color>> log_color_map = {
     { SF_DEBUG_LEVEL, { color_fg_cyan } },
     { SF_INFO_LEVEL, { color_fg_blue } },
@@ -25,7 +13,6 @@ inline std::unordered_map<int, std::vector<color>> log_color_map = {
     { SF_ERROR_LEVEL, { color_fg_magenta } },
     { SF_FATAL_LEVEL, { color_fg_red } },
 };
-
 inline int
 logger::add_level_func(
     int level, const std::function<void(const logger_info_t&, bool)> func, bool colored)
@@ -40,7 +27,6 @@ logger::add_level_func(
     logger_func_set__[level][key] = { func, colored };
     return key;
 }
-
 inline int logger::add_level_stream(const int     level,
                                     std::ostream* os,
                                     std::string format_str, bool colored)
@@ -58,7 +44,6 @@ inline int logger::add_level_stream(const int     level,
                                       colored };
     return key;
 }
-
 inline int logger::add_level_file(const int          level,
                                   const std::string& filename,
                                   std::string format_str, bool colored)
@@ -72,7 +57,6 @@ inline int logger::add_level_file(const int          level,
             logger_func_set__[level] = std::unordered_map<
                 int, log_attr>();
         }
-
         const auto key                = make_random_logger_id__();
         logger_func_set__[level][key] = {
             [=](const logger_info_t& log_info, bool colored) {
@@ -87,7 +71,6 @@ inline int logger::add_level_file(const int          level,
         return -1;
     }
 }
-
 inline void logger::remove_filter(const int key)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
@@ -96,7 +79,6 @@ inline void logger::remove_filter(const int key)
         p.second.erase(key);
     }
 }
-
 inline bool logger::check_key_can_use__(const int key)
 {
     std::unique_lock<std::recursive_mutex> lock(func_set_mutex__);
@@ -110,7 +92,6 @@ inline bool logger::check_key_can_use__(const int key)
     }
     return true;
 }
-
 inline int logger::make_random_logger_id__()
 {
     const auto make_rand = [] {
@@ -123,7 +104,6 @@ inline int logger::make_random_logger_id__()
     }
     return tmp_key;
 }
-
 template <typename T>
 inline void logger::logout(int level, const std::string& file,
                            int line, const std::string& func, const T& dt)
@@ -140,7 +120,6 @@ inline void logger::logout(int level, const std::string& file,
     std::ostringstream oss;
     logout__(oss, log_info, dt);
 }
-
 inline logger::logger()
 {
     add_level_stream(SF_DEBUG_LEVEL, &std::cout);
@@ -180,7 +159,6 @@ inline logger::logger()
     });
 #endif
 }
-
 inline logger::~logger()
 {
     if (log_thread__)
@@ -189,7 +167,6 @@ inline logger::~logger()
         log_thread__->join();
     }
 }
-
 template <typename T, typename... U>
 inline void logger::logout__(std::ostringstream& oss,
                              logger_info_t& log_info, const T& tmp,
@@ -198,7 +175,6 @@ inline void logger::logout__(std::ostringstream& oss,
     oss << "[" << tmp << "]";
     logout__(oss, log_info, tmp2...);
 }
-
 template <typename T>
 inline void logger::logout__(std::ostringstream& oss,
                              logger_info_t& log_info, const T& tmp)
@@ -225,7 +201,6 @@ inline void logger::logout__(std::ostringstream& oss,
     }
 #endif
 }
-
 template <typename... T>
 inline void logger::logout(const int level, const std::string& file,
                            const int line, const std::string& func,
@@ -243,15 +218,12 @@ inline void logger::logout(const int level, const std::string& file,
     std::ostringstream oss;
     logout__(oss, log_info, dt...);
 }
-
 inline void logger::stop_logger()
 {
     run__ = false;
     cond__.notify_all();
 }
-
 inline auto g_logger = logger::instance();
-
 #ifdef QT_CORE_LIB
 inline void logger::logout__(std::ostringstream& oss,
                              logger_info_t&      log_info,
@@ -279,7 +251,6 @@ inline void logger::logout__(std::ostringstream& oss,
     }
 #endif
 }
-
 template <typename... U>
 void logger::logout__(std::ostringstream& oss, logger_info_t& log_info,
                       const QString& tmp, const U&... tmp2)
@@ -287,9 +258,7 @@ void logger::logout__(std::ostringstream& oss, logger_info_t& log_info,
     oss << "[" << tmp.toStdString() << "]";
     logout__(oss, log_info, tmp2...);
 }
-
 #endif
-
 inline std::string logger::format(std::string          format_str,
                                   const logger_info_t& log_info, bool colored)
 {
@@ -311,5 +280,4 @@ inline std::string logger::format(std::string          format_str,
     replace(format_str, "{msg}", log_info.msg);
     return colored ? color_string(format_str, log_color_map[log_info.level]) : format_str;
 }
-
 } // namespace skyfire

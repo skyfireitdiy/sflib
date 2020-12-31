@@ -1,14 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_cache.hpp
-
-* 
-*/
-
 #pragma once
-
 #include "sf_cache.h"
 #include "sf_finally.hpp"
 #include "sf_logger.hpp"
@@ -24,7 +15,6 @@ inline cache::cache(int max_count)
         max_count__ = 1;
     }
 }
-
 template <typename T>
 std::shared_ptr<T> cache::data(const std::string& key)
 {
@@ -43,12 +33,10 @@ std::shared_ptr<T> cache::data(const std::string& key)
     }
     return nullptr;
 }
-
 template <typename T>
 void cache::set_data(const std::string& key, const T& d)
 {
-    cache_data_t tmp_cache { std::chrono::system_clock::now(), std::decay_t<T>(d) };
-
+    cache_data_t                          tmp_cache { std::chrono::system_clock::now(), std::decay_t<T>(d) };
     std::lock_guard<std::recursive_mutex> lck(mu_data__);
     if (data__.contains(key))
     {
@@ -60,7 +48,6 @@ void cache::set_data(const std::string& key, const T& d)
         data__[key] = tmp_cache;
         return;
     }
-
     auto        min_tm    = data__.begin()->second.timestamp_access;
     std::string min_index = data__.begin()->first;
     for (auto& p : data__)
@@ -72,7 +59,6 @@ void cache::set_data(const std::string& key, const T& d)
         }
     }
     data__.erase(min_index);
-
     data__[key] = tmp_cache;
 }
 } // namespace skyfire

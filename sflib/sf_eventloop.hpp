@@ -1,18 +1,6 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_eventloop.hpp
-*/
-
-/*
- * eventloop 事件循环
- */
-
 #pragma once
-
 #include "sf_eventloop.h"
-
 namespace skyfire
 {
 inline void eventloop::quit()
@@ -20,11 +8,8 @@ inline void eventloop::quit()
     running__ = false;
     wake();
 }
-
 inline void eventloop::wake() const { __p_msg_queue__->add_empty_msg(); }
-
 inline void eventloop::clear() const { __p_msg_queue__->clear(); }
-
 inline void eventloop::exec()
 {
     running__ = true;
@@ -46,5 +31,4 @@ inline void eventloop::exec()
         }
     }
 }
-
 } // namespace skyfire

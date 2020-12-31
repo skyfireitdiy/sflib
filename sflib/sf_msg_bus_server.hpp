@@ -1,23 +1,11 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_msg_bus_server.hpp
-*/
-
-/*
- * msg_bus_server 消息总线服务器
- */
 #pragma once
-
 #include "sf_msg_bus_server.h"
 #include "sf_msg_bus_utils.h"
 #include "sf_tcp_server.h"
 #include "sf_tcp_server_interface.hpp"
-
 namespace skyfire
 {
-
 inline void msg_bus_server::on_disconnect__(const SOCKET sock)
 {
     std::vector<std::string> remove_msg;
@@ -33,7 +21,6 @@ inline void msg_bus_server::on_disconnect__(const SOCKET sock)
         msg_map__.erase(p);
     }
 }
-
 inline void msg_bus_server::unreg_msg__(SOCKET             sock,
                                         const std::string& msg)
 {
@@ -42,7 +29,6 @@ inline void msg_bus_server::unreg_msg__(SOCKET             sock,
         msg_map__[msg].remove(sock);
     }
 }
-
 inline void msg_bus_server::on_reg_data__(SOCKET              sock,
                                           const pkg_header_t& header,
                                           const byte_array&   data)
@@ -86,7 +72,6 @@ inline void msg_bus_server::on_reg_data__(SOCKET              sock,
         }
     }
 }
-
 inline void msg_bus_server::reg_msg__(SOCKET             sock,
                                       const std::string& msg_name)
 {
@@ -103,7 +88,6 @@ inline void msg_bus_server::reg_msg__(SOCKET             sock,
         msg_map__[msg_name].push_back(sock);
     }
 }
-
 inline void msg_bus_server::send_msg(const std::string& type,
                                      const byte_array&  data)
 {
@@ -119,23 +103,18 @@ inline void msg_bus_server::send_msg(const std::string& type,
         }
     }
 }
-
 inline void msg_bus_server::clear_client() { msg_map__.clear(); }
-
 inline void msg_bus_server::close()
 {
     p_server__->close();
     msg_map__.clear();
 }
-
 inline bool msg_bus_server::listen(const std::string& ip,
                                    unsigned short     port) const
 {
     return p_server__->listen(ip, port);
 }
-
 inline msg_bus_server::~msg_bus_server() { close(); }
-
 inline msg_bus_server::msg_bus_server()
 {
     sf_bind(
@@ -147,7 +126,6 @@ inline msg_bus_server::msg_bus_server()
         p_server__, closed, [this](SOCKET sock) { on_disconnect__(sock); },
         true);
 }
-
 inline bool msg_bus_server::server_addr(addr_info_t& addr) const
 {
     return p_server__->server_addr(addr);

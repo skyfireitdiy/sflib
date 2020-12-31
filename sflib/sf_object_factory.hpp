@@ -1,20 +1,10 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_object_factory.hpp
-
-* 
-*/
-
 #pragma once
 #include "sf_json.hpp"
+#include "sf_logger.hpp"
 #include "sf_object_factory.h"
 #include "sf_stdc++.h"
 #include "sf_utils.hpp"
-
-#include "sf_logger.hpp"
-
 namespace skyfire
 {
 bool object_factory::load_config(const std::string& config_str)
@@ -26,7 +16,6 @@ bool object_factory::load_config(const std::string& config_str)
     }
     return load_data__(config_obj);
 }
-
 bool object_factory::load_config_file(const std::string& config_file)
 {
     byte_array data;
@@ -36,12 +25,10 @@ bool object_factory::load_config_file(const std::string& config_file)
     }
     return load_config(skyfire::to_string(data));
 }
-
 bool object_factory::set_config(const json& config_obj)
 {
     return load_data__(config_obj);
 }
-
 bool object_factory::load_data__(const json& config_obj)
 {
     object_data__.clear();
@@ -62,7 +49,6 @@ bool object_factory::load_data__(const json& config_obj)
     }
     return true;
 }
-
 json object_factory::object_data(const std::string& obj_name)
 {
     if (object_data__.count(obj_name) == 0)
@@ -82,7 +68,6 @@ json object_factory::object_data(const std::string& obj_name)
         return obj;
     }
 }
-
 template <typename T, typename... ARGS>
 std::shared_ptr<T> object_factory::object(const std::string& obj_id,
                                           ARGS&&... args)
@@ -92,7 +77,6 @@ std::shared_ptr<T> object_factory::object(const std::string& obj_id,
         return nullptr;
     }
     auto& tmp_config = object_data__[obj_id];
-
     if (tmp_config.singleton)
     {
         if (tmp_config.object.has_value())
@@ -101,10 +85,8 @@ std::shared_ptr<T> object_factory::object(const std::string& obj_id,
         }
     }
     std::shared_ptr<T> obj;
-    obj = std::make_shared<T>(std::forward<ARGS>(args)...);
-
+    obj           = std::make_shared<T>(std::forward<ARGS>(args)...);
     auto obj_data = object_data(obj_id);
-
     from_json(obj_data, *obj);
     tmp_config.object = obj;
     return obj;

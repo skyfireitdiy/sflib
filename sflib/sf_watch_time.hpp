@@ -1,18 +1,7 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_watch_time.hpp
-*/
-
-/*
- * watch_time 时间监测类型
- */
 #pragma once
-
 #include "sf_utils.hpp"
 #include "sf_watch_time.h"
-
 namespace skyfire
 {
 template <typename T>
@@ -22,7 +11,6 @@ check_point<T>::~check_point()
                                                                  std::chrono::high_resolution_clock::now() - clock__)
                                                                  .count();
 }
-
 template <typename T>
 check_point<T>::check_point(const T& name, watch_time<T>& parent)
     : point_name__(name)
@@ -30,19 +18,16 @@ check_point<T>::check_point(const T& name, watch_time<T>& parent)
     , parent__(parent)
 {
 }
-
 template <typename T>
 void watch_time<T>::watch()
 {
     std::cout << to_string() << std::flush;
 }
-
 template <typename T>
 std::string watch_time<T>::to_string()
 {
     std::ostringstream so;
     auto               old = so.flags();
-
     so << std::right;
     so << std::setw(55) << "SkyFire Time Watch" << std::endl;
     ;
@@ -56,7 +41,6 @@ std::string watch_time<T>::to_string()
     so << "===================================================================="
           "====================="
        << std::endl;
-
     for (auto& p : data__)
     {
         for (auto& q : p.second)

@@ -1,29 +1,13 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_static_router.hpp
-
-* 
-*/
-
-/**
-* @author skyfire
-* @file sf_http_static_router.hpp
-*/
-
 #pragma once
-
 #include "sf_http_server_req_header.hpp"
 #include "sf_http_static_router.h"
 #include "sf_stdc++.h"
 #include "sf_utils.hpp"
 #include <utility>
-
 namespace skyfire
 {
 using namespace std::literals;
-
 inline bool static_router::run_route(const http_server_request& req,
                                      http_server_response&      res,
                                      const std::string&         raw_url,
@@ -47,7 +31,6 @@ inline bool static_router::run_route(const http_server_request& req,
     callback__(req, res, url, abs_path);
     return true;
 }
-
 inline static_router::static_router(std::string              path,
                                     std::vector<std::string> methods,
                                     std::string charset, bool deflate,
@@ -64,14 +47,11 @@ inline static_router::static_router(std::string              path,
             static_path__.pop_back();
         }
     }
-
     callback__ = [=](const http_server_request& req, http_server_response& res,
                      const std::string& url, const std::string& abs_path) {
         http_server_res_header header;
         byte_array             body_data;
-
         header.set_header("Date", make_http_time_str());
-
         auto _401_res = [&] {
             res.set_status(401);
             header.set_header("Content-Type", "text/html; charset=" + charset);
@@ -87,7 +67,6 @@ inline static_router::static_router(std::string              path,
             body_data = to_byte_array("<p>" + url + " Requested Range Not Satisfiable</p>");
             header.set_header("Content-Type", "text/html; charset=" + charset);
         };
-
         uintmax_t file_size = 0;
         try
         {
@@ -99,7 +78,6 @@ inline static_router::static_router(std::string              path,
             _404_res();
             return;
         }
-
         if (req.header().has_key("Range"))
         {
             sf_debug("Range found");
@@ -199,12 +177,10 @@ inline static_router::static_router(std::string              path,
             res.set_file(http_file_info_t { abs_path, 0, -1, file_size });
             return;
         }
-
         auto accept      = req.header().header_value("Accept-Encoding", "");
         auto accept_list = split_string(accept, ",");
         for (auto& p : accept_list)
             p = string_trim(p);
-
         if (deflate && std::find_if(accept_list.begin(), accept_list.end(), [=](const std::string& str) {
                            return equal_nocase_string(
                                str, "deflate");
@@ -217,7 +193,5 @@ inline static_router::static_router(std::string              path,
         res.set_body(body_data);
     };
 }
-
 inline int static_router::priority() const { return priority__; }
-
 } // namespace skyfire

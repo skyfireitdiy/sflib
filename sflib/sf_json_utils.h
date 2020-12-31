@@ -1,21 +1,8 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_json_utils.h
-
-* 
-*/
-
 #pragma once
-
 #include "sf_stdc++.h"
-
 namespace skyfire
 {
-/**
- * @brief json数据类型
- */
 enum class json_type
 {
     null    = 0,
@@ -25,10 +12,6 @@ enum class json_type
     array   = 4,
     object  = 5,
 };
-
-/**
- * json 值结构
- */
 struct json_value final
 {
     json_type                                type;        // 类型

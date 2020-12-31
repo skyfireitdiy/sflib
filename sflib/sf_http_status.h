@@ -1,26 +1,8 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_status.h
-
-* 
-*/
-
-/**
-* @author skyfire
-* @file sf_http_status.h
-*/
-
 #pragma once
 #include <string>
-
 namespace skyfire
 {
-
-/**
- * @brief  HTTP状态码对应的描述信息
- */
 inline std::unordered_map<int, std::string> http_status = {
     { 100, "Continue" },
     { 101, "Switching Protocols" },

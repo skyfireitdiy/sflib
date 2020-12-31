@@ -1,15 +1,6 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_chan.hpp
-
-* 
-*/
-
 #pragma once
 #include "sf_chan.h"
-
 namespace skyfire
 {
 template <typename T>
@@ -17,7 +8,6 @@ chan<T>::chan(size_t buffer_size)
 {
     max_size__ = buffer_size;
 }
-
 template <typename T>
 void chan<T>::close()
 {
@@ -35,5 +25,4 @@ void chan<T>::close()
         cond_pop__.notify_all();
     }
 }
-
 }

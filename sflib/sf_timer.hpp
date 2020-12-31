@@ -1,28 +1,15 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_timer.hpp
-*/
-
-/*
- * timer 定时器
- */
 #pragma once
-
 #include "sf_timer.h"
-
 namespace skyfire
 {
-
 inline void timer::start(int ms, bool once)
 {
     if (running__)
     {
         return;
     }
-    running__ = true;
-
+    running__              = true;
     std::thread new_thread = std::thread(
         [this, ms](bool is_once) {
             while (true)
@@ -51,8 +38,6 @@ inline void timer::start(int ms, bool once)
     current_timer_thread__ = new_thread.get_id();
     new_thread.detach();
 }
-
 inline bool timer::is_active() const { return running__; }
-
 inline void timer::stop() { running__ = false; }
 } // namespace skyfire

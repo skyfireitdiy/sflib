@@ -1,14 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_json.hpp
-
-* 
-*/
-
 #pragma once
-
 #include "sf_define.h"
 #include "sf_error.h"
 #include "sf_json.h"
@@ -17,7 +8,6 @@
 #include "sf_meta.hpp"
 #include "sf_utils.hpp"
 #include "sf_yacc.hpp"
-
 namespace skyfire
 {
 inline json json::from_string(const std::string& json_str)
@@ -37,7 +27,6 @@ inline json json::from_string(const std::string& json_str)
           { "true", R"(true)" },
           { "false", R"(false)" },
           { "null", R"(null)" } });
-
     std::vector<lex_result_t> lex_result;
     if (!lex.parse(json_str, lex_result))
     {
@@ -129,9 +118,7 @@ inline json json::from_string(const std::string& json_str)
                             js.convert_to_object();
                             const auto js1 = std::any_cast<json>(data[0]->user_data);
                             const auto js2 = std::any_cast<json>(data[2]->user_data);
-
                             js.join(js1);
-
                             js.join(js2);
                             return js;
                         },
@@ -203,7 +190,6 @@ inline json json::from_string(const std::string& json_str)
                 },
             },
         });
-
     yacc.add_terminate_ids({ "value" });
     std::vector<std::shared_ptr<yacc_result_t>> yacc_result;
     if (!yacc.parse(lex_result, yacc_result))
@@ -212,7 +198,6 @@ inline json json::from_string(const std::string& json_str)
     }
     return std::any_cast<json>(yacc_result[0]->user_data);
 }
-
 inline std::unordered_set<std::string> json::keys() const
 {
     std::unordered_set<std::string> ret;
@@ -226,43 +211,36 @@ inline std::unordered_set<std::string> json::keys() const
     }
     return ret;
 }
-
 inline json::json()
     : value__(std::make_shared<json_value>())
 {
     value__->type = json_type::null;
 }
-
 inline json::json(const std::string& str)
     : json()
 {
     value__->type  = json_type::string;
     value__->value = str;
 }
-
 inline json::json(const char* c_str)
     : json(std::string(c_str))
 {
 }
-
 inline json::json(const json& js)
     : json()
 {
     value__ = js.value__;
 }
-
 inline json::json(bool boolean_value)
     : json()
 {
     value__->type  = json_type::boolean;
     value__->value = boolean_value ? "true" : "false";
 }
-
 inline json::json(const std::shared_ptr<json_value>& value)
 {
     value__ = value;
 }
-
 inline void json::convert_to_object() const
 {
     if (value__->type == json_type::object)
@@ -272,7 +250,6 @@ inline void json::convert_to_object() const
     value__->type = json_type::object;
     clear();
 }
-
 inline void json::convert_to_array() const
 {
     if (value__->type == json_type::array)
@@ -282,10 +259,8 @@ inline void json::convert_to_array() const
     value__->type = json_type::array;
     clear();
 }
-
 inline json_type json::type() const { return value__->type; }
-
-inline json json::at(const std::string& key) const
+inline json      json::at(const std::string& key) const
 {
     if (value__->type != json_type::object)
     {
@@ -297,7 +272,6 @@ inline json json::at(const std::string& key) const
     }
     return json(value__->object_value[key]);
 }
-
 inline json json::operator[](const std::string& key) const
 {
     if (value__->type != json_type::object)
@@ -310,7 +284,6 @@ inline json json::operator[](const std::string& key) const
     }
     return json(value__->object_value[key]);
 }
-
 inline json json::at(size_t key) const
 {
     if (value__->type != json_type::array)
@@ -323,7 +296,6 @@ inline json json::at(size_t key) const
     }
     return json(value__->array_value[key]);
 }
-
 inline json::operator std::string() const
 {
     switch (value__->type)
@@ -340,7 +312,6 @@ inline json::operator std::string() const
         return "";
     }
 }
-
 inline std::string json::json_string_to_string(std::string json_str)
 {
     json_str.erase(json_str.begin());
@@ -352,14 +323,10 @@ inline std::string json::json_string_to_string(std::string json_str)
     string_replace(json_str, "\\n", "\n");
     string_replace(json_str, "\\r", "\r");
     string_replace(json_str, "\\t", "\t");
-
     // todo 未处理unicode
-
     string_replace(json_str, "\\\\", "\\");
-
     return json_str;
 }
-
 inline std::string json::string_to_json_string(std::string str)
 {
     string_replace(str, "\\", "\\\\");
@@ -375,7 +342,6 @@ inline std::string json::string_to_json_string(std::string str)
     str += "\"";
     return str;
 }
-
 inline json::operator bool() const
 {
     switch (value__->type)
@@ -396,7 +362,6 @@ inline json::operator bool() const
         return false;
     }
 }
-
 template <typename T, typename>
 json& json::operator=(T value)
 {
@@ -408,7 +373,6 @@ json& json::operator=(T value)
     value__->value = std::to_string(value);
     return *this;
 }
-
 inline json& json::operator=(const std::string& value)
 {
     if (value__->type != json_type::string)
@@ -419,20 +383,17 @@ inline json& json::operator=(const std::string& value)
     value__->value = value;
     return *this;
 }
-
 inline void json::append(const json& value) const
 {
     convert_to_array();
     value__->array_value.push_back(value.value__);
 }
-
 inline json json::deep_copy() const
 {
     json tmp_json;
     value_copy__(value__, tmp_json.value__);
     return tmp_json;
 }
-
 inline bool json::join(const json& other) const
 {
     if (value__->type == json_type::array && other.value__->type == json_type::array)
@@ -452,20 +413,17 @@ inline bool json::join(const json& other) const
     }
     return false;
 }
-
 inline void json::clear() const
 {
     value__->value.clear();
     value__->array_value.clear();
     value__->object_value.clear();
 }
-
 inline void json::resize(const size_t size) const
 {
     convert_to_array();
     value__->array_value.resize(size);
 }
-
 inline void json::remove(const size_t pos) const
 {
     if (value__->array_value.size() > pos)
@@ -473,7 +431,6 @@ inline void json::remove(const size_t pos) const
         value__->array_value.erase(value__->array_value.begin() + pos);
     }
 }
-
 inline void json::remove(const size_t pos, size_t len) const
 {
     if (value__->array_value.size() > pos)
@@ -486,12 +443,10 @@ inline void json::remove(const size_t pos, size_t len) const
                                    value__->array_value.begin() + pos + len);
     }
 }
-
 inline void json::remove(const std::string& key) const
 {
     value__->object_value.erase(key);
 }
-
 inline std::string json::to_string() const
 {
     std::string ret;
@@ -535,7 +490,6 @@ inline std::string json::to_string() const
     }
     return ret;
 }
-
 inline std::string json::to_string(int indent, int current_indent) const
 {
     std::string indent_string(current_indent, ' ');
@@ -584,7 +538,6 @@ inline std::string json::to_string(int indent, int current_indent) const
     }
     return ret;
 }
-
 inline json& json::operator=(const json& value)
 {
     if (&value != this)
@@ -596,7 +549,6 @@ inline json& json::operator=(const json& value)
     }
     return *this;
 }
-
 inline void json::copy(const json& src)
 {
     if (this != &src)
@@ -604,7 +556,6 @@ inline void json::copy(const json& src)
         value__ = src.value__;
     }
 }
-
 inline void json::value_copy__(const std::shared_ptr<json_value>& src,
                                std::shared_ptr<json_value>&       dst) const
 {
@@ -627,17 +578,14 @@ inline void json::value_copy__(const std::shared_ptr<json_value>& src,
         }
     }
 }
-
 inline json json::at(const char* c_key) const
 {
     return at(std::string(c_key));
 }
-
 inline json json::operator[](const char* c_key) const
 {
     return operator[](std::string(c_key));
 }
-
 inline json json::operator[](const size_t key) const
 {
     if (value__->type != json_type::array)
@@ -650,7 +598,6 @@ inline json json::operator[](const size_t key) const
     }
     return json(value__->array_value[key]);
 }
-
 inline json& json::operator=(const bool value)
 {
     if (value__->type != json_type::boolean)
@@ -661,68 +608,56 @@ inline json& json::operator=(const bool value)
     value__->value = value ? "true" : "false";
     return *this;
 }
-
 inline bool json::is_null() const
 {
     return value__->type == json_type::null;
 }
-
 inline json& json::operator=(const char* value)
 {
     return operator=(std::string(value));
 }
-
 inline void json::convert_to_null() const
 {
     clear();
     value__->type = json_type ::null;
 }
-
 inline size_t json::size() const
 {
     return value__->type == json_type ::array ? value__->array_value.size()
                                               : 0;
 }
-
 inline bool json::has(const std::string& key) const
 {
     return value__->type == json_type ::object
                ? value__->object_value.count(key) != 0
                : false;
 }
-
 inline bool json::has(const char* c_key) const
 {
     return has(std::string(c_key));
 }
-
 inline json operator""_json(const char* str, std::size_t)
 {
     return json::from_string(str);
 }
-
 inline std::ostream& operator<<(std::ostream& os, const json& json)
 {
     return os << json.to_string();
 }
-
 template <typename T>
 json to_json(const T& t)
 {
     return json(t);
 }
-
 template <typename T>
 json to_json(std::shared_ptr<T> pt)
 {
     return json(*pt);
 }
-
 inline bool json::operator!=(const json& other) const
 {
     return !(*this == other);
 }
-
 inline bool json::operator==(const json& other) const
 {
     if (value__->type != other.value__->type)
@@ -778,7 +713,6 @@ inline bool json::operator==(const json& other) const
         throw exception(err_unsupport_type, "unsupport type:" + std::to_string(static_cast<int>(value__->type)));
     }
 }
-
 template <typename T, typename>
 json::operator T() const
 {
@@ -797,7 +731,6 @@ json::operator T() const
         return 0;
     }
 }
-
 template <typename T, typename>
 json::json(T number)
     : json()
@@ -805,7 +738,6 @@ json::json(T number)
     value__->type  = json_type::number;
     value__->value = long_double_to_string(number);
 }
-
 template <typename T>
 json to_json_helper__(const std::string& key, const T& value)
 {
@@ -814,7 +746,6 @@ json to_json_helper__(const std::string& key, const T& value)
     js[key] = to_json(value);
     return js;
 }
-
 template <typename T, typename... ARGS>
 json to_json_helper__(const std::string& key, const T& value,
                       const ARGS&... args)
@@ -825,14 +756,12 @@ json to_json_helper__(const std::string& key, const T& value,
     js.join(to_json_helper__(args...));
     return js;
 }
-
 template <typename T>
 void from_json_helper__(const json& js, const std::string& key,
                         T& value)
 {
     from_json(js.at(key), value);
 }
-
 template <typename T, typename... ARGS>
 void from_json_helper__(const json& js, const std::string& key, T& value,
                         ARGS&&... args)
@@ -840,13 +769,11 @@ void from_json_helper__(const json& js, const std::string& key, T& value,
     from_json(js.at(key), value);
     from_json_helper__(js, std::forward<ARGS>(args)...);
 }
-
 template <typename... ARGS>
 void from_json(const json& js, std::tuple<ARGS...>& value)
 {
     from_json_tuple_helper__<0>(js, value);
 }
-
 template <typename T>
 void from_json(const json& js, T& value)
 {
@@ -856,7 +783,6 @@ void from_json(const json& js, T& value)
     }
     value = static_cast<T>(js);
 }
-
 template <typename T>
 void from_json(const json& js, std::shared_ptr<T>& value)
 {
@@ -866,7 +792,6 @@ void from_json(const json& js, std::shared_ptr<T>& value)
     }
     value = std::make_shared<T>(static_cast<T>(js));
 }
-
 template <typename K, typename V>
 json to_json(const std::pair<K, V>& value)
 {
@@ -876,7 +801,6 @@ json to_json(const std::pair<K, V>& value)
     js["value"] = to_json(value.second);
     return js;
 }
-
 template <typename K, typename V>
 void from_json(const json& js, std::pair<K, V>& value)
 {
@@ -886,13 +810,11 @@ void from_json(const json& js, std::pair<K, V>& value)
     from_json(js.at("value", v));
     value = { k, v };
 }
-
 template <typename... ARGS>
 json to_json(const std::tuple<ARGS...>& value)
 {
     return invoke(to_json_tuple_helper__<ARGS...>, value);
 }
-
 template <typename... ARGS>
 json to_json_tuple_helper__(const ARGS&... value)
 {
@@ -901,7 +823,6 @@ json to_json_tuple_helper__(const ARGS&... value)
     (js.append(to_json(value)), ...);
     return js;
 }
-
 template <int N, typename... ARGS, typename... Ret>
 std::enable_if_t<N != sizeof...(ARGS), void> from_json_tuple_helper__(
     const json& js, std::tuple<ARGS...>& data, Ret... ret)
@@ -910,14 +831,12 @@ std::enable_if_t<N != sizeof...(ARGS), void> from_json_tuple_helper__(
     from_json(js.at(N), t_data);
     from_json_tuple_helper__<N + 1>(js, data, ret..., t_data);
 }
-
 template <int N, typename... ARGS, typename... Ret>
 std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
     const json& js, std::tuple<ARGS...>& data, Ret... ret)
 {
     data = { ret... };
 }
-
 #define SF_CONTAINER_JSON_IMPL(container)                         \
     template <typename T>                                         \
     inline json to_json(const container<T>& value)                \
@@ -954,7 +873,6 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
         from_json(js, tmp);                                       \
         hex_string_to_char_container(tmp, value);                 \
     }
-
 #define SF_ASSOCIATED_CONTAINER_JSON_IMPL(container)                 \
     template <typename K, typename V>                                \
     json to_json(const container<K, V>& value)                       \
@@ -984,7 +902,6 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
         }                                                            \
         value = container<K, V> { data.begin(), data.end() };        \
     }
-
 SF_CONTAINER_JSON_IMPL(std::vector)
 SF_CONTAINER_JSON_IMPL(std::list)
 SF_CONTAINER_JSON_IMPL(std::deque)
@@ -992,13 +909,10 @@ SF_CONTAINER_JSON_IMPL(std::set)
 SF_CONTAINER_JSON_IMPL(std::multiset)
 SF_CONTAINER_JSON_IMPL(std::unordered_set)
 SF_CONTAINER_JSON_IMPL(std::unordered_multiset)
-
 SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::map)
 SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::multimap)
 SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::unordered_map)
 SF_ASSOCIATED_CONTAINER_JSON_IMPL(std::unordered_multimap)
-
 #undef SF_CONTAINER_JSON_IMPL
 #undef SF_ASSOCIATED_CONTAINER_JSON_IMPL
-
 } // namespace skyfire

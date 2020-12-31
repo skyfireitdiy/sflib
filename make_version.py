@@ -1,5 +1,4 @@
 import os
-
 version = input("input version:")
 version_info = []
 print("version info:")
@@ -8,21 +7,16 @@ while True:
     if tmp_info == "exit":
         break
     version_info.append(tmp_info)
-
 add_info = '''
 /**
 * @version ''' + version + '''
 * @author skyfire
 '''
-
 last_msg = '\n* ' + '\n* '.join(version_info) + '\n*/\n\n'
-
 comfirm = input("input yes to continue:")
 if comfirm != "yes":
     exit(0)
-
 g = os.walk(".")  
-
 for path,dir_list,file_list in g:  
     for file_name in file_list:  
         name = os.path.join(path, file_name)

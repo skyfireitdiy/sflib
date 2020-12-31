@@ -1,7 +1,6 @@
 #pragma once
 #include "sf_string.hpp"
 #include "sf_table.h"
-
 namespace skyfire
 {
 inline table::table(int col_size)
@@ -9,7 +8,6 @@ inline table::table(int col_size)
     , table_config__(col_size)
 {
 }
-
 inline table_result_t table::add_row(const std::vector<std::string>& data)
 {
     if (data.size() != col_num__)
@@ -25,7 +23,6 @@ inline table_result_t table::add_row(const std::vector<std::string>& data)
         ""
     };
 }
-
 inline table_result_t table::add_rows(const std::vector<std::vector<std::string>>& data)
 {
     for (auto& p : data)
@@ -44,7 +41,6 @@ inline table_result_t table::add_rows(const std::vector<std::vector<std::string>
         ""
     };
 }
-
 inline table_result_t table::insert_row(size_t n, const std::vector<std::string>& data)
 {
     if (data.size() != col_num__)
@@ -67,7 +63,6 @@ inline table_result_t table::insert_row(size_t n, const std::vector<std::string>
         ""
     };
 }
-
 inline table_result_t table::insert_rows(size_t n, const std::vector<std::vector<std::string>>& data)
 {
     for (auto& p : data)
@@ -93,7 +88,6 @@ inline table_result_t table::insert_rows(size_t n, const std::vector<std::vector
         ""
     };
 }
-
 inline table_result_t table::delete_rows(size_t n, size_t len)
 {
     if (n >= body__.size())
@@ -116,7 +110,6 @@ inline table_result_t table::delete_rows(size_t n, size_t len)
         ""
     };
 }
-
 inline table_result_t table::set_header(const std::vector<std::string>& header)
 {
     if (header.size() != col_num__)
@@ -132,7 +125,6 @@ inline table_result_t table::set_header(const std::vector<std::string>& header)
         ""
     };
 }
-
 inline table_result_t table::set_config(size_t r, size_t c, const table_item_config_t& config)
 {
     if (c >= col_num__)
@@ -152,7 +144,6 @@ inline table_result_t table::set_config(size_t r, size_t c, const table_item_con
         ""
     };
 }
-
 inline table_result_t table::set_config(size_t c, const table_column_config_t& config)
 {
     if (c >= col_num__)
@@ -168,7 +159,6 @@ inline table_result_t table::set_config(size_t c, const table_column_config_t& c
         ""
     };
 }
-
 inline table_result_t table::set_config(const std::vector<table_column_config_t>& config)
 {
     if (config.size() != col_num__)
@@ -184,12 +174,10 @@ inline table_result_t table::set_config(const std::vector<table_column_config_t>
         ""
     };
 }
-
 inline void table::set_proxy_callback(std::function<std::string(size_t, size_t, std::string)> cb)
 {
     proxy_callback__ = cb;
 }
-
 inline std::string full_string(const std::string& str, table_align align, int space_count)
 {
     switch (align)
@@ -205,7 +193,6 @@ inline std::string full_string(const std::string& str, table_align align, int sp
         break;
     }
 }
-
 inline std::string table_make_column_string(std::string str, const table_column_config_t& config, int width)
 {
     int space_count = width - str.length();
@@ -215,7 +202,6 @@ inline std::string table_make_column_string(std::string str, const table_column_
     }
     return full_string(str, config.align, space_count);
 }
-
 inline std::string table::to_string() const
 {
     std::string                           ret;
@@ -238,12 +224,10 @@ inline std::string table::to_string() const
     {
         body = body__;
     }
-
     for (size_t i = 0; i < col_num__; ++i)
     {
         width_vec[i] = table_config__[i].min_width;
     }
-
     if (!header.empty())
     {
         for (size_t i = 0; i < header.size(); ++i)
@@ -284,14 +268,12 @@ inline std::string table::to_string() const
             body[i][j] = table_make_column_string(body[i][j], col_config, width_vec[j]);
         }
     }
-
     std::string split_line = "+";
     for (auto& p : width_vec)
     {
         split_line += sf_string::repeat("-", p) + "+";
     }
     split_line += "\n";
-
     auto make_row = [](auto& row) {
         std::string r;
         r += "|";
@@ -302,20 +284,16 @@ inline std::string table::to_string() const
         r += "\n";
         return r;
     };
-
     if (!header.empty())
     {
         ret += split_line;
         ret += make_row(header);
     }
-
     ret += split_line;
-
     for (auto& p : body)
     {
         ret += make_row(p);
     }
-
     ret += split_line;
     return ret;
 }

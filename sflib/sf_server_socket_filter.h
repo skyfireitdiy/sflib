@@ -1,17 +1,7 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_server_socket_filter.h
-
-* 
-*/
-
 #pragma once
-
 #include "sf_tcp_utils.h"
 #include "sf_type.h"
-
 namespace skyfire
 {
 class server_socket_filter

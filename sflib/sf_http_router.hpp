@@ -1,24 +1,9 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_router.hpp
-
-* 
-*/
-
-/**
-* @author skyfire
-* @file sf_http_router.hpp
-*/
 #pragma once
-
 #include "sf_http_router.h"
-
 #include "sf_stdc++.h"
 #include "sf_utils.hpp"
 #include <utility>
-
 namespace skyfire
 {
 template <typename FuncType, int N, typename... Args>
@@ -30,7 +15,6 @@ http_router::callback_call_helper__(const http_server_request& req,
     sf_debug("call callback_call_helper__");
     func(req, res, args...);
 }
-
 template <typename FuncType, int N, typename... Args>
 typename std::enable_if<sizeof...(Args) != N, void>::type
 http_router::callback_call_helper__(const http_server_request& req,
@@ -41,7 +25,6 @@ http_router::callback_call_helper__(const http_server_request& req,
     callback_call_helper__<FuncType, N, Args..., std::string>(
         req, res, func, sm, args..., sm[sizeof...(args)].str());
 }
-
 template <typename... StringType>
 http_router::http_router(const std::string& pattern,
                          void (*callback)(const http_server_request&,
@@ -52,7 +35,6 @@ http_router::http_router(const std::string& pattern,
     : http_router(pattern, std::function(callback), methods, priority)
 {
 }
-
 template <typename... StringType>
 http_router::http_router(
     const std::string& pattern,
@@ -79,7 +61,6 @@ http_router::http_router(
         return true;
     };
 }
-
 inline bool http_router::run_route(const http_server_request& req,
                                    http_server_response&      res,
                                    const std::string&         url,
@@ -100,12 +81,9 @@ inline bool http_router::run_route(const http_server_request& req,
     }
     return route_callback__(req, res, url);
 }
-
-inline int http_router::priority() const { return priority__; }
-
+inline int  http_router::priority() const { return priority__; }
 inline bool http_router::operator<(const http_router& router) const
 {
     return priority__ < router.priority__;
 }
-
 } // namespace skyfire

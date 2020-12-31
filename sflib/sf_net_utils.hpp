@@ -1,12 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_net_utils.hpp
-*/
-
 #pragma once
-
 #include "sf_net_utils.h"
 #include <arpa/inet.h>
 #include <errno.h>
@@ -18,10 +11,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 namespace skyfire
 {
-
 inline bool peer_addr(SOCKET sock, addr_info_t& addr)
 {
     sockaddr_in sock_addr {};
@@ -35,7 +26,6 @@ inline bool peer_addr(SOCKET sock, addr_info_t& addr)
     addr.port = ntohs(sock_addr.sin_port);
     return true;
 }
-
 inline bool local_addr(SOCKET sock, addr_info_t& addr)
 {
     sockaddr_in sock_addr {};
@@ -49,7 +39,6 @@ inline bool local_addr(SOCKET sock, addr_info_t& addr)
     addr.port = ntohs(sock_addr.sin_port);
     return true;
 }
-
 inline ip_list_result resolve_dns(const std::string& host)
 {
     auto ip_list = gethostbyname(host.c_str());
@@ -57,14 +46,11 @@ inline ip_list_result resolve_dns(const std::string& host)
     {
         return { { err_resolve_dns, "Resolve dns error", h_errno }, {} };
     }
-
     std::vector<std::string> ip_list_vec;
-
     for (auto i = 0; ip_list->h_addr_list[i]; ++i)
     {
         ip_list_vec.push_back(inet_ntoa(*reinterpret_cast<in_addr*>(ip_list->h_addr_list[i])));
     }
     return { sf_error {}, ip_list_vec };
 }
-
 }

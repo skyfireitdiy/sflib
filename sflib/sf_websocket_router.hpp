@@ -1,29 +1,11 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_websocket_router.hpp
-
-* 
-*/
-
-#include <memory>
-
-/**
-* @author skyfire
-* @file sf_websocket_router.hpp
-*/
-
 #include "sf_stdc++.h"
-
+#include <memory>
 #pragma once
-
 #include "sf_utils.hpp"
 #include "sf_websocket_router.h"
-
 namespace skyfire
 {
-
 inline websocket_router::websocket_router(
     const std::string&                            url,
     std::function<void(const websocket_param_t&)> callback, int priority)
@@ -32,7 +14,6 @@ inline websocket_router::websocket_router(
     , priority__(priority)
 {
 }
-
 inline websocket_router::websocket_router(
     const std::string& url, void (*callback)(const websocket_param_t&),
     int                priority)
@@ -41,7 +22,6 @@ inline websocket_router::websocket_router(
     , priority__(priority)
 {
 }
-
 inline bool websocket_router::run_route(
     const websocket_param_t& context) const
 {
@@ -53,5 +33,5 @@ inline bool websocket_router::run_route(
     }
     return false;
 }
-
+inline int websocket_router::priority() const { return priority__; }
 } // namespace skyfire

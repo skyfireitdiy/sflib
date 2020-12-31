@@ -1,14 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_stdc++.h
-
-* 
-*/
-
 #pragma once
-
 #include <cassert>
 #include <cctype>
 #include <cerrno>
@@ -25,7 +16,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-
 // C11
 #include <ccomplex>
 #include <cfenv>
@@ -37,7 +27,6 @@
 #include <cuchar>
 #include <cwchar>
 #include <cwctype>
-
 // C++
 #include <algorithm>
 #include <bitset>
@@ -71,7 +60,6 @@
 #include <utility>
 #include <valarray>
 #include <vector>
-
 // C++11
 #include <array>
 #include <atomic>
@@ -93,14 +81,11 @@
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
-
 // C++14
 #include <shared_mutex>
-
 // C++17
 #include <any>
 #include <charconv>
 #include <filesystem>
 #include <optional>
-
 namespace fs = std::filesystem;

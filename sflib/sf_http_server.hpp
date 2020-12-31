@@ -1,21 +1,6 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_server.hpp
-
-* 
-*/
-
-/**
-* @author skyfire
-* @file sf_http_server.hpp
-*/
-
 #pragma once
-
 #include "sf_http_server.h"
-
 namespace skyfire
 {
 inline void http_server::default_request_callback__(
@@ -35,13 +20,11 @@ inline void http_server::default_request_callback__(
     }
     res.set_status(404);
 }
-
 inline void http_server::add_router(
     const std::shared_ptr<websocket_router>& router)
 {
     websocket_routers__.insert(router);
 }
-
 inline http_server::http_server(const http_server_config& config)
     : // TODO 有没有更优雅的写法？
     make_instance_t<http_server, http_server_base>(config)
@@ -52,9 +35,7 @@ inline http_server::http_server(const http_server_config& config)
             sf_debug("http callback");
             default_request_callback__(req, res);
         });
-
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     set_websocket_request_callback(
         [this](const http_server_request& req, http_server_response& res) {
             default_websocket_request_callback__(req, res);
@@ -75,7 +56,6 @@ inline http_server::http_server(const http_server_config& config)
         default_websocket_close_callback__(sock, url);
     });
 }
-
 // ReSharper disable once CppMemberFunctionMayBeStatic
 inline void http_server::default_websocket_close_callback__(
     SOCKET sock, const std::string& url)
@@ -93,7 +73,6 @@ inline void http_server::default_websocket_close_callback__(
     }
     close_websocket(sock);
 }
-
 // ReSharper disable once CppMemberFunctionMayBeStatic
 inline void http_server::default_websocket_open_callback__(
     SOCKET sock, const std::string& url)
@@ -111,7 +90,6 @@ inline void http_server::default_websocket_open_callback__(
     }
     close_websocket(sock);
 }
-
 inline void http_server::default_websocket_text_data_callback__(
     SOCKET sock, const std::string& url, const std::string& data)
 {
@@ -128,7 +106,6 @@ inline void http_server::default_websocket_text_data_callback__(
     }
     close_websocket(sock);
 }
-
 inline void http_server::default_websocket_binary_data_callback__(
     SOCKET sock, const std::string& url, const byte_array& data)
 {
@@ -145,7 +122,6 @@ inline void http_server::default_websocket_binary_data_callback__(
     }
     close_websocket(sock);
 }
-
 inline void http_server::default_websocket_request_callback__(
     const http_server_request& req, http_server_response& res) const
 {
@@ -181,11 +157,9 @@ inline void http_server::default_websocket_request_callback__(
         res.set_http_version(req.request_line().http_version);
     }
 }
-
 inline void http_server::add_router(
     const std::shared_ptr<router>& router)
 {
     http_routers__.insert(router);
 }
-
 } // namespace skyfire

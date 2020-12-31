@@ -1,18 +1,8 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_argv.hpp
-
-* 
-*/
-
 #pragma once
-
 #include "sf_argv.h"
 #include "sf_error.h"
 #include "sf_utils.hpp"
-
 namespace skyfire
 {
 inline argparser::argparser(
@@ -20,20 +10,17 @@ inline argparser::argparser(
     : help_(help)
 {
 }
-
 inline std::shared_ptr<argparser> argparser::make_parser(
     const std::string& help)
 {
     return std::shared_ptr<argparser>(new argparser(help));
 }
-
 inline void argparser::add_sub_parser(
     const std::string&                  name,
     std::shared_ptr<skyfire::argparser> sub_parser)
 {
     sub_parsers_[name] = sub_parser;
 }
-
 inline bool argparser::add_argument(const std::string&                               long_name,
                                     std::initializer_list<argv_opt_option_func_type> options)
 {
@@ -45,7 +32,6 @@ inline bool argparser::add_argument(const std::string&                          
     }
     return add_argument(opt);
 }
-
 inline bool argparser::add_argument(argv_opt_t opt)
 {
     if (opt.json_name.empty())
@@ -110,7 +96,6 @@ inline bool argparser::add_argument(argv_opt_t opt)
     }
     return true;
 }
-
 inline argv_result_t argparser::parse_argv__(
     const std::vector<std::string>& argv)
 {
@@ -180,7 +165,6 @@ inline argv_result_t argparser::parse_argv__(
                     sf_error { { err_parse,
                                  "too many postion argv" } },
                     json()
-
                 };
             }
             auto d   = json();
@@ -217,7 +201,6 @@ inline argv_result_t argparser::parse_argv__(
         else
         {
             auto d = json();
-
             if (last_opt->type == json_type::array)
             {
                 auto find_flag = false;
@@ -251,7 +234,6 @@ inline argv_result_t argparser::parse_argv__(
                     continue;
                 }
             }
-
             switch (last_opt->type)
             {
             case json_type::string:
@@ -308,12 +290,10 @@ inline argv_result_t argparser::parse_argv__(
     }
     return { sf_error { { err_ok, "" } }, ret };
 }
-
 inline argv_result_t argparser::parse_argv(int argc, const char** argv, bool skip0)
 {
     return parse_argv(std::vector<std::string>({ argv, argv + argc }), skip0);
 }
-
 inline void prepare_parser__(std::shared_ptr<argparser>& parser)
 {
     if (parser->sub_parsers_.empty())
@@ -329,7 +309,6 @@ inline void prepare_parser__(std::shared_ptr<argparser>& parser)
     parser->none_position_arg__.clear();
     parser->position_arg_.clear();
 }
-
 inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args, bool skip0)
 {
     std::vector<std::string> data({ args.begin() + skip0, args.end() });
@@ -337,9 +316,7 @@ inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args,
     json                     curr = ret;
     curr.convert_to_object();
     auto parser = shared_from_this();
-
     prepare_parser__(parser);
-
     // NOTE 首先处理默认参数
     for (auto& p : none_position_arg__)
     {
@@ -364,7 +341,6 @@ inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args,
             ret[p.json_name] = false;
         }
     }
-
     for (size_t i = 0; i < data.size(); ++i)
     {
         bool find_flag = false;
@@ -393,7 +369,6 @@ inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args,
     }
     return { sf_error { { err_ok, "" } }, ret };
 }
-
 bool argparser::add_argument(std::string short_name, std::string long_name,
                              json_type type, bool required,
                              json default_value, std::string json_name,
@@ -409,5 +384,4 @@ bool argparser::add_argument(std::string short_name, std::string long_name,
     opt.required      = required;
     return add_argument(opt);
 }
-
 } // namespace skyfire

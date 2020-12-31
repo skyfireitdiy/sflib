@@ -1,16 +1,6 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_yacc.hpp
-
-* 
-*/
-
 #pragma once
-
 #include "sf_yacc.h"
-
 namespace skyfire
 {
 inline void yacc::set_rules(const std::vector<yacc_rule>& rules)
@@ -18,7 +8,6 @@ inline void yacc::set_rules(const std::vector<yacc_rule>& rules)
     term_words__ = make_term_words(rules);
     dfa__        = dfa_optimize(nfa_to_dfa(make_nfa(rules), term_words__));
 }
-
 inline bool yacc::parse(
     const std::vector<lex_result_t>&             lex_result,
     std::vector<std::shared_ptr<yacc_result_t>>& yacc_result) const
@@ -29,10 +18,8 @@ inline bool yacc::parse(
 			printf(R"("%s"->"%s"[label="%s"])" "\n", p.first.first.c_str(), p.second.id.c_str(), p.first.second.c_str());
 		}
 #endif
-
     auto prepare_items = make_yacc_result_from_lex_result(lex_result);
     yacc_result.clear();
-
     // NOTE 这里故意不+1
     for (size_t i = 0; i < prepare_items.size();)
     {
@@ -43,7 +30,6 @@ inline bool yacc::parse(
 			}
 			printf("\n");
 #endif
-
         if (reduce_new_node(yacc_result, prepare_items[i], dfa__,
                             term_words__))
         {
@@ -69,7 +55,6 @@ inline bool yacc::parse(
         }
         return false;
     }
-
 #if 0
         for (auto &p : yacc_result)
         {
@@ -77,7 +62,6 @@ inline bool yacc::parse(
         }
         printf("\n");
 #endif
-
     while (yacc_result.size() != 1)
     {
 #if 0
@@ -93,7 +77,6 @@ inline bool yacc::parse(
             continue;
         return false;
     }
-
     while (terminate_ids__.count(yacc_result[0]->id) == 0)
     {
 #if 0
@@ -108,13 +91,11 @@ inline bool yacc::parse(
     }
     return true;
 }
-
 inline void yacc::add_terminate_ids(
     const std::unordered_set<std::string>& ids)
 {
     terminate_ids__ = ids;
 }
-
 inline std::string yacc::state_to_string(
     const std::set<yacc_state_node_t>& state)
 {
@@ -129,7 +110,6 @@ inline std::string yacc::state_to_string(
     }
     return ret;
 }
-
 inline std::vector<
     std::pair<std::pair<std::string, std::string>, yacc_state_node_t>>
 yacc::dfa_optimize(
@@ -154,7 +134,6 @@ yacc::dfa_optimize(
     }
     return ret;
 }
-
 inline std::vector<
     std::pair<std::pair<std::set<yacc_state_node_t>, std::string>,
               std::set<yacc_state_node_t>>>
@@ -166,15 +145,13 @@ yacc::nfa_to_dfa(
     std::vector<
         std::pair<std::pair<std::set<yacc_state_node_t>, std::string>,
                   std::set<yacc_state_node_t>>>
-        new_machine;
-
+                                             new_machine;
     std::vector<std::set<yacc_state_node_t>> state;
     state.reserve(term_words.size());
     for (auto& p : term_words)
     {
         state.push_back({ { p, nullptr } });
     }
-
     for (size_t i = 0; i < state.size(); ++i)
     {
         std::set<yacc_state_node_t> state_backup = state[i];
@@ -213,7 +190,6 @@ yacc::nfa_to_dfa(
     }
     return new_machine;
 }
-
 inline std::vector<std::pair<std::pair<yacc_state_node_t, std::string>,
                              yacc_state_node_t>>
 yacc::make_nfa(const std::vector<yacc_rule>& rules)
@@ -256,7 +232,6 @@ yacc::make_nfa(const std::vector<yacc_rule>& rules)
     }
     return nfa;
 }
-
 inline std::unordered_set<std::string> yacc::make_term_words(
     const std::vector<yacc_rule>& rules)
 {
@@ -274,7 +249,6 @@ inline std::unordered_set<std::string> yacc::make_term_words(
     ret.insert(yacc_end_mark);
     return ret;
 }
-
 inline std::vector<std::shared_ptr<yacc_result_t>>
 yacc::make_yacc_result_from_lex_result(
     const std::vector<lex_result_t>& lex_result)
@@ -289,7 +263,6 @@ yacc::make_yacc_result_from_lex_result(
     }
     return ret;
 }
-
 inline bool yacc::self_reduce_one(
     std::vector<std::shared_ptr<yacc_result_t>>&     result,
     const std::vector<std::pair<std::pair<std::string, std::string>,
@@ -316,7 +289,6 @@ inline bool yacc::self_reduce_one(
     result.push_back(new_node);
     return true;
 }
-
 inline bool yacc::self_reduce_two(
     std::vector<std::shared_ptr<yacc_result_t>>&     result,
     const std::vector<std::pair<std::pair<std::string, std::string>,
@@ -352,7 +324,6 @@ inline bool yacc::self_reduce_two(
     result.push_back(new_node);
     return true;
 }
-
 inline bool yacc::reduce_new_node(
     std::vector<std::shared_ptr<yacc_result_t>>&     result,
     const std::shared_ptr<yacc_result_t>&            r_node,
@@ -389,7 +360,6 @@ inline bool yacc::reduce_new_node(
     result.push_back(new_node);
     return true;
 }
-
 inline bool yacc::add_new_node(
     std::vector<std::shared_ptr<yacc_result_t>>&     result,
     const std::shared_ptr<yacc_result_t>&            r_node,
@@ -404,5 +374,4 @@ inline bool yacc::add_new_node(
     result.push_back(r_node);
     return true;
 }
-
 } // namespace skyfire

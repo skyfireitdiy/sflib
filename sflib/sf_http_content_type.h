@@ -1,21 +1,9 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_content_type.h
-*/
-
 #pragma once
-
 #include <string>
 #include <unordered_map>
-
 namespace skyfire
 {
-
-/**
- * @brief  http Content-Type映射表
- */
 inline std::unordered_map<std::string, std::string> http_content_type {
     { "001", "application/x-001" },
     { "323", "text/h323" },

@@ -1,33 +1,16 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_chan.h
-
-* 
-*/
-
 #pragma once
-
+#include "sf_error.h"
+#include "sf_logger.hpp"
+#include "sf_nocopy.h"
+#include "sf_utils.h"
 #include <atomic>
 #include <condition_variable>
 #include <exception>
 #include <mutex>
 #include <queue>
-
-#include "sf_error.h"
-#include "sf_nocopy.h"
-#include "sf_utils.h"
-
-#include "sf_logger.hpp"
-
 namespace skyfire
 {
-
-/**
- * 管道（简化线程间通信）
- * @tparam T 管道类型
- */
 template <typename T>
 class chan : public make_instance_t<chan<T>, nocopy<>>
 {
@@ -37,7 +20,6 @@ private:
     std::atomic_bool        closed__ { false };
     std::mutex              mu__;
     std::condition_variable cond__;
-
     T                       buf__;
     std::atomic_bool        has_value__ { false };
     std::condition_variable cond_pop__;
@@ -45,22 +27,8 @@ private:
     std::condition_variable cond_pop_finish__;
 
 public:
-    /**
-     * 构造一个缓冲区大小为buffer_size的管道
-     * @param buffer_size 缓冲区大小
-     */
     explicit chan(size_t buffer_size = 0);
-
-    /**
-     * 关闭管道
-     */
-    void close();
-
-    /**
-     * 读取管道
-     * @param d 读取的数据
-     * @param ch 管道
-     */
+    void            close();
     friend sf_error operator>>(chan<T>& ch, T& d)
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
@@ -91,12 +59,6 @@ public:
         }
         return sf_error {};
     }
-
-    /**
-     * 写入管道
-     * @param ch 管道
-     * @param d 写入的数据
-     */
     friend sf_error operator>>(T d, chan<T>& ch)
     {
         std::unique_lock<std::mutex> lck(ch.mu__);
@@ -135,16 +97,13 @@ public:
         }
         return sf_error {};
     }
-
     friend sf_error operator>>(T d, const std::shared_ptr<chan<T>> ch)
     {
         return d >> *ch;
     }
-
     friend sf_error operator>>(const std::shared_ptr<chan<T>> ch, T& d)
     {
         return *ch >> d;
     }
 };
-
 }

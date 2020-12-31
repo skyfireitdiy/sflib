@@ -1,6 +1,5 @@
 
 #pragma once
-
 #include "sf_http_client_req_header.h"
 #include "sf_http_client_response.h"
 #include "sf_http_request_line.h"
@@ -8,23 +7,19 @@
 #include "sf_multi_value.h"
 #include "sf_nocopy.h"
 #include "sf_stdc++.h"
-
 namespace skyfire
 {
-
 class http_client_request : public nocopy<>,
                             public make_instance_t<http_client_request>,
                             public std::enable_shared_from_this<http_client_request>
 {
 private:
-    byte_array                    body__;
-    http_client_req_header        header__;
-    std::shared_ptr<std::istream> stream__;
-
-    std::string server_host__;
-    short       server_port__ = 80;
-
-    http_data_type                     type__ = { http_data_type ::normal };
+    byte_array                         body__;
+    http_client_req_header             header__;
+    std::shared_ptr<std::istream>      stream__;
+    std::string                        server_host__;
+    short                              server_port__ = 80;
+    http_data_type                     type__        = { http_data_type ::normal };
     http_file_info_t                   file_info__;
     std::vector<http_multipart_info_t> multipart_info_vec__;
 

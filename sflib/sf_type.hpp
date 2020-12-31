@@ -1,38 +1,22 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_type.hpp
-*/
-
-/*
- * 常用类型声明
- */
-
 #pragma once
-
 #include "sf_type.h"
-
 namespace skyfire
 {
-
 inline std::string to_string(const byte_array& data)
 {
     return std::string(data.data());
 }
-
 inline byte_array operator+(byte_array b1, const byte_array& b2)
 {
     b1.insert(b1.end(), b2.begin(), b2.end());
     return b1;
 }
-
 inline byte_array& operator+=(byte_array& b1, const byte_array& b2)
 {
     b1.insert(b1.end(), b2.begin(), b2.end());
     return b1;
 }
-
 template <typename T>
 inline byte_array to_byte_array(const T& t)
 {
@@ -40,19 +24,16 @@ inline byte_array to_byte_array(const T& t)
     std::memcpy(ret.data(), &t, sizeof(t));
     return ret;
 }
-
 inline byte_array to_byte_array(const char* s)
 {
     return to_byte_array(std::string(s));
 }
-
 inline byte_array to_byte_array(const std::string& str)
 {
     byte_array ret(str.length());
     std::memcpy(ret.data(), str.data(), str.length());
     return ret;
 }
-
 inline bool dump_byte_array(const byte_array& data, const std::string& filename,
                             bool app)
 {
@@ -62,5 +43,4 @@ inline bool dump_byte_array(const byte_array& data, const std::string& filename,
     fo.write(data.data(), data.size());
     return true;
 }
-
 } // namespace skyfire

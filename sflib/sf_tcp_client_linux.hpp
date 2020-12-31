@@ -1,12 +1,5 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_tcp_client_linux.hpp
-*/
-
 #pragma once
-
 #include "sf_logger.hpp"
 #include "sf_nocopy.h"
 #include "sf_object.hpp"
@@ -14,7 +7,6 @@
 #include "sf_tcp_client_linux.h"
 #include "sf_tcp_utils.hpp"
 #include "sf_type.hpp"
-
 namespace skyfire
 {
 inline tcp_client::tcp_client(bool raw)
@@ -34,7 +26,6 @@ inline tcp_client::tcp_client(bool raw)
     inited__ = true;
     raw__    = raw;
 }
-
 inline tcp_client::tcp_client(SOCKET sock, bool raw)
 {
     sock__   = sock;
@@ -42,10 +33,8 @@ inline tcp_client::tcp_client(SOCKET sock, bool raw)
     raw__    = raw;
     std::thread(&tcp_client::recv_thread__, this).detach();
 }
-
 inline SOCKET tcp_client::raw_socket() { return sock__; }
-
-inline bool tcp_client::bind(const std::string& ip, unsigned short port)
+inline bool   tcp_client::bind(const std::string& ip, unsigned short port)
 {
     sockaddr_in address {};
     address.sin_family      = AF_INET;
@@ -53,22 +42,18 @@ inline bool tcp_client::bind(const std::string& ip, unsigned short port)
     address.sin_port        = htons(port);
     return -1 != ::bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 }
-
 inline tcp_client::~tcp_client() { close(); }
-
 inline sf_error tcp_client::connect_to_server(const std::string& host,
                                               unsigned short     port)
 {
     if (!inited__)
         return { err_uninit, "Uninit" };
     sockaddr_in address {};
-
-    auto host_list = resolve_dns(host);
+    auto        host_list = resolve_dns(host);
     if (!sf_error(host_list))
     {
         return sf_error(host_list);
     }
-
     for (auto& ip : std::vector<std::string>(host_list))
     {
         address.sin_family      = AF_INET;
@@ -83,10 +68,8 @@ inline sf_error tcp_client::connect_to_server(const std::string& host,
         std::thread(&tcp_client::recv_thread__, this).detach();
         return sf_error {};
     }
-
     return sf_error { err_connect, "Connect failed" };
 }
-
 inline bool tcp_client::send(int type, const byte_array& data)
 {
     if (!inited__)
@@ -100,14 +83,12 @@ inline bool tcp_client::send(int type, const byte_array& data)
         return false;
     return ::write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
-
 inline bool tcp_client::send(const byte_array& data)
 {
     if (!inited__)
         return false;
     return ::write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
-
 inline void tcp_client::close()
 {
     if (!inited__)
@@ -116,7 +97,6 @@ inline void tcp_client::close()
     ::close(sock__);
     sock__ = -1;
 }
-
 void tcp_client::recv_thread__()
 {
     byte_array   recv_buffer(default_buffer_size);

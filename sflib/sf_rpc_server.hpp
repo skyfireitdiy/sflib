@@ -1,19 +1,7 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_rpc_server.hpp
-*/
-
-/*
- * rpc_server RPC服务器
- */
-
 #pragma once
-
 #include "sf_rpc_server.h"
 #include "sf_rpc_utils.h"
-
 namespace skyfire
 {
 template <typename _Type>
@@ -27,7 +15,6 @@ void rpc_server::send_back__(const SOCKET sock, const int id_code,
     tcp_server__->send(sock, rpc_res_type,
                        to_byte_array(skyfire::to_json(res).to_string()));
 }
-
 inline void rpc_server::on_data_coming__(const SOCKET        sock,
                                          const pkg_header_t& header,
                                          const byte_array&   data)
@@ -46,7 +33,6 @@ inline void rpc_server::on_data_coming__(const SOCKET        sock,
         p(sock, req);
     }
 }
-
 template <typename _Func>
 void rpc_server::reg_rpc_func(const std::string& id, _Func func)
 {
@@ -61,7 +47,6 @@ void rpc_server::reg_rpc_func(const std::string& id, _Func func)
     static_assert(
         !check_return_pointer<decltype(std::function(func))>::value,
         "Return can't be pointer");
-
     using _Ret   = typename function_type_helper<decltype(func)>::return_type;
     using _Param = typename function_type_helper<decltype(func)>::param_type;
     // auto 让 constexpr-if 生效
@@ -84,7 +69,6 @@ void rpc_server::reg_rpc_func(const std::string& id, _Func func)
     };
     func_vec__.push_back(f);
 }
-
 inline rpc_server::rpc_server()
 {
     sf_bind(
@@ -115,12 +99,10 @@ inline rpc_server::rpc_server()
         },
         true);
 }
-
 inline bool rpc_server::listen(const std::string& ip,
                                unsigned short     port) const
 {
     return tcp_server__->listen(ip, port);
 }
-
 inline void rpc_server::close() const { tcp_server__->close(); }
 } // namespace skyfire

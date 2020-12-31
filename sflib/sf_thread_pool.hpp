@@ -1,21 +1,9 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_thread_pool.hpp
-*/
-
-/*
- * thread_pool 线程池
- */
 #pragma once
-
 #include "sf_thread_pool.h"
 #include "sf_utils.hpp"
-
 namespace skyfire
 {
-
 inline thread_pool::thread_pool(size_t thread_count)
 {
     if (thread_count < 1)
@@ -24,7 +12,6 @@ inline thread_pool::thread_pool(size_t thread_count)
     }
     add_thread__(thread_count);
 }
-
 inline void thread_pool::thread_run__(thread_pool* this__)
 {
     while (true)
@@ -60,7 +47,6 @@ inline void thread_pool::thread_run__(thread_pool* this__)
         }
     }
 }
-
 inline void thread_pool::add_thread__(size_t num)
 {
     if (num < 1)
@@ -74,7 +60,6 @@ inline void thread_pool::add_thread__(size_t num)
         thread_vec__.push_back(p_thread);
     }
 }
-
 inline void thread_pool::wait_all_task_finished()
 {
     while (!task_deque__.empty())
@@ -83,13 +68,11 @@ inline void thread_pool::wait_all_task_finished()
         wait_finish_cv__.wait(lck_cv);
     }
 }
-
 inline void thread_pool::clear_task()
 {
     std::lock_guard<std::mutex> lck(mu_task_deque__);
     task_deque__.clear();
 }
-
 inline void thread_pool::clear_thread()
 {
     is_pause__ = false;
@@ -101,25 +84,20 @@ inline void thread_pool::clear_thread()
     }
     thread_vec__.clear();
 }
-
 inline size_t thread_pool::busy_thread_count() const
 {
     return static_cast<size_t>(busy_thread_num__);
 }
-
 inline size_t thread_pool::thread_count() const { return thread_count__; }
-
-inline void thread_pool::add_thread(const size_t thread_num)
+inline void   thread_pool::add_thread(const size_t thread_num)
 {
     add_thread__(thread_num);
 }
-
 inline void thread_pool::resume()
 {
     is_pause__ = false;
     thread_cv__.notify_all();
 }
-
 template <typename Func, typename... Args>
 auto thread_pool::add_task(Func func, Args&&... args)
 {
@@ -134,9 +112,6 @@ auto thread_pool::add_task(Func func, Args&&... args)
     thread_cv__.notify_all();
     return fu;
 }
-
 inline thread_pool::~thread_pool() { clear_thread(); }
-
 inline void thread_pool::pause() { is_pause__ = true; }
-
 } // namespace skyfire

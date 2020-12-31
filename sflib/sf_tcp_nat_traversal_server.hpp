@@ -1,29 +1,19 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_tcp_nat_traversal_server.hpp
-*/
 #pragma once
-
 #include "sf_error.h"
 #include "sf_tcp_nat_traversal_server.h"
-
 namespace skyfire
 {
-
 inline void tcp_nat_traversal_server::on_new_connection__(SOCKET sock)
 {
     // TODO 做一些处理
     sf_debug("new connection", sock);
 }
-
 inline void tcp_nat_traversal_server::close()
 {
     server__->close();
     clients__.clear();
 }
-
 inline bool tcp_nat_traversal_server::listen(const std::string& ip,
                                              unsigned short     port)
 {
@@ -32,7 +22,6 @@ inline bool tcp_nat_traversal_server::listen(const std::string& ip,
     running__ = true;
     return server__->listen(ip, port);
 }
-
 inline tcp_nat_traversal_server::tcp_nat_traversal_server()
 {
     sf_bind(
@@ -40,14 +29,12 @@ inline tcp_nat_traversal_server::tcp_nat_traversal_server()
         [=](SOCKET sock) { on_new_connection__(sock); }, true);
     sf_bind(
         server__, closed, [this](SOCKET sock) { on_disconnect__(sock); }, true);
-
     sf_bind(
         server__, data_coming,
         [this](SOCKET sock, const pkg_header_t& header,
                const byte_array& data) { on_msg_coming__(sock, header, data); },
         true);
 }
-
 inline void
 tcp_nat_traversal_server::on_client_require_connect_to_peer_client__(
     tcp_nat_traversal_context_t__& context) const
@@ -96,7 +83,6 @@ tcp_nat_traversal_server::on_client_require_connect_to_peer_client__(
         return;
     }
 }
-
 inline void tcp_nat_traversal_server::on_msg_coming__(
     SOCKET sock, const pkg_header_t& header, const byte_array& data)
 {
@@ -127,7 +113,6 @@ inline void tcp_nat_traversal_server::on_msg_coming__(
         break;
     }
 }
-
 inline void tcp_nat_traversal_server::on_nat_traversal_b_reply_addr(
     tcp_nat_traversal_context_t__& context, SOCKET sock) const
 {
@@ -153,7 +138,6 @@ inline void tcp_nat_traversal_server::on_nat_traversal_b_reply_addr(
                        to_byte_array(skyfire::to_json(context).to_string()));
         return;
     }
-
     if (!peer_addr(sock, context.dest_addr))
     {
         context.error_code = err_disconnect;
@@ -177,7 +161,6 @@ inline void tcp_nat_traversal_server::on_nat_traversal_b_reply_addr(
         return;
     }
 }
-
 inline void tcp_nat_traversal_server::on_update_client_list__(SOCKET sock)
 {
     const std::unordered_set<unsigned long long> tmp_data { clients__.begin(),
@@ -197,7 +180,6 @@ inline void tcp_nat_traversal_server::on_update_client_list__(SOCKET sock)
         server__->send(sock, type_nat_traversal_list, data);
     }
 }
-
 inline void tcp_nat_traversal_server::on_client_reg__(SOCKET sock)
 {
     sf_debug("client reg", sock);
@@ -208,7 +190,6 @@ inline void tcp_nat_traversal_server::on_client_reg__(SOCKET sock)
                    to_byte_array(skyfire::to_json(id).to_string()));
     on_update_client_list__();
 }
-
 inline void tcp_nat_traversal_server::on_disconnect__(SOCKET sock)
 {
     clients__.erase(sock);

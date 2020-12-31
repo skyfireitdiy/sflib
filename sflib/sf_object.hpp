@@ -1,24 +1,10 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_object.hpp
-*/
-
-/*
- * object 基础对象
- * 提供了信号---槽的通信机制、AOP编程
- */
-
 #pragma once
-
 #include "sf_eventloop.hpp"
 #include "sf_object.h"
 #include "sf_random.hpp"
-
 namespace skyfire
 {
-
 template <typename _VectorType, typename _FuncType>
 int object::__bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
                             _FuncType func, bool single_thread)
@@ -35,14 +21,12 @@ int object::__bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
     vec.push_back(std::make_tuple(std::function(func), single_thread, bind_id));
     return bind_id;
 }
-
 inline object::~object()
 {
     __p_msg_queue__->remove_msg([this](std::pair<void*, std::function<void()>> d) -> bool {
         return d.first == this;
     });
 }
-
 template <typename _VectorType>
 void object::__unbind_helper__(std::recursive_mutex& mu,
                                _VectorType& vec, int bind_id)
@@ -52,5 +36,4 @@ void object::__unbind_helper__(std::recursive_mutex& mu,
                              [=](auto p) { return std::get<2>(p) == bind_id; }),
               vec.end());
 }
-
 } // namespace skyfire

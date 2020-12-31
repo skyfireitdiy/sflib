@@ -1,7 +1,5 @@
 #pragma once
-
 #include "sf_color.h"
-
 namespace skyfire
 {
 inline std::string color_string(const std::string& str, const std::vector<color>& cv)

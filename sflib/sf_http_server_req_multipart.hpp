@@ -1,15 +1,7 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_http_server_req_multipart.hpp
-*/
-
 #pragma once
-
 #include "sf_http_server_req_multipart.h"
 #include "sf_http_server_request.h"
-
 namespace skyfire
 {
 inline http_server_req_multipart::http_server_req_multipart(const std::string& boundary_str,
@@ -18,16 +10,11 @@ inline http_server_req_multipart::http_server_req_multipart(const std::string& b
     , filename__(fs::path(tmp_path) / random::instance()->uuid_str())
 {
 }
-
 inline http_server_req_header http_server_req_multipart::header() const { return header__; }
-
-inline bool http_server_req_multipart::is_end() const { return end__; }
-
-inline bool http_server_req_multipart::is_finished() const { return finish__; }
-
-inline std::string http_server_req_multipart::filename() const { return filename__; }
-
-inline bool http_server_req_multipart::append_data(const byte_array& data,
+inline bool                   http_server_req_multipart::is_end() const { return end__; }
+inline bool                   http_server_req_multipart::is_finished() const { return finish__; }
+inline std::string            http_server_req_multipart::filename() const { return filename__; }
+inline bool                   http_server_req_multipart::append_data(const byte_array& data,
                                                    byte_array&       ret)
 {
     const auto new_boundary_str = "----" + boundary_str__;

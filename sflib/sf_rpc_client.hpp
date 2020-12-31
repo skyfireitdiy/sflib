@@ -1,19 +1,8 @@
 
-/**
-* @version 1.0.0
-* @author skyfire
-* @file sf_rpc_client.hpp
-*/
-
-/*
- * rpc_client rpc客户端
- */
 #pragma once
-
 #include "sf_json.hpp"
 #include "sf_rpc_client.h"
 #include "sf_rpc_utils.h"
-
 namespace skyfire
 {
 inline int rpc_client::make_call_id__()
@@ -21,7 +10,6 @@ inline int rpc_client::make_call_id__()
     current_call_id__ = (current_call_id__ + 1) & rpc_req_type;
     return current_call_id__;
 }
-
 template <typename _Ret, typename... __SF_RPC_ARGS__>
 void rpc_client::call(const std::string&        func_id,
                       std::function<void(_Ret)> rpc_callback,
@@ -34,7 +22,6 @@ void rpc_client::call(const std::string&        func_id,
         "Param can't be reference");
     static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value,
                   "Param can't be pointer");
-
     using __Ret = typename std::decay<_Ret>::type;
     std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param { args... };
     const auto                                                call_id = make_call_id__();
@@ -65,7 +52,6 @@ void rpc_client::call(const std::string&        func_id,
             true);
     p_timer->start(rpc_timeout__, true);
 }
-
 template <typename... __SF_RPC_ARGS__>
 void rpc_client::call(const std::string&    func_id,
                       std::function<void()> rpc_callback,
@@ -101,7 +87,6 @@ void rpc_client::call(const std::string&    func_id,
             true);
     p_timer->start(rpc_timeout__, true);
 }
-
 // template<typename T>
 // void rpc_client::async_call(const std::string &func_id,
 // std::function<void()> rpc_callback) {
@@ -127,7 +112,6 @@ void rpc_client::call(const std::string&    func_id,
 //    }, true);
 //    p_timer->start(rpc_timeout__, true);
 //}
-
 template <typename... __SF_RPC_ARGS__>
 rpc_ret_t rpc_client::call(const std::string& func_id,
                            __SF_RPC_ARGS__... args)
@@ -137,12 +121,10 @@ rpc_ret_t rpc_client::call(const std::string& func_id,
         "Param can't be reference");
     static_assert(!std::disjunction<std::is_pointer<__SF_RPC_ARGS__>...>::value,
                   "Param can't be pointer");
-
     std::tuple<typename std::decay<__SF_RPC_ARGS__>::type...> param { args... };
     const auto                                                call_id = make_call_id__();
     rpc_data__[call_id]                                               = std::make_shared<rpc_context_t>();
     rpc_data__[call_id]->is_async                                     = false;
-
     rpc_req_context_t req;
     req.call_id = call_id;
     req.func_id = func_id;
@@ -165,7 +147,6 @@ rpc_ret_t rpc_client::call(const std::string& func_id,
             return { false, json() };
         }
     }
-
     // 连接断开
     if (!rpc_data__[call_id]->back_finished)
     {
@@ -173,12 +154,10 @@ rpc_ret_t rpc_client::call(const std::string& func_id,
     }
     return { true, json::from_string(to_string(rpc_data__[call_id]->data)) };
 }
-
 inline void rpc_client::set_rpc_timeout(unsigned int ms)
 {
     rpc_timeout__ = ms;
 }
-
 inline rpc_client::rpc_client()
 {
     sf_bind(
@@ -187,19 +166,15 @@ inline rpc_client::rpc_client()
             back_callback__(header_t, data_t);
         },
         true);
-
     sf_bind(
         tcp_client__, closed, [this]() { close(); }, true);
 }
-
 inline void rpc_client::close() const { tcp_client__->close(); }
-
 inline bool rpc_client::connect_to_server(const std::string ip,
                                           unsigned short    port) const
 {
     return tcp_client__->connect_to_server(ip, port);
 }
-
 inline void rpc_client::back_callback__(const pkg_header_t& header_t,
                                         const byte_array&   data_t)
 {
@@ -228,7 +203,6 @@ inline void rpc_client::back_callback__(const pkg_header_t& header_t,
         rpc_data__[call_id]->back_cond.notify_one();
     }
 }
-
 inline void rpc_client::on_closed__()
 {
     for (auto& p : rpc_data__)
