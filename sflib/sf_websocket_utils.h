@@ -147,8 +147,8 @@ struct websocket_param_t
     websocket_data_type                          type;     // 数据类型
     std::string                                  text_msg; // 文本（当type为websocket_data_type::Text时有效）
     byte_array
-        binary_data;                       // 二进制（当type为websocket_data_type::BinaryData时有效）
-    std::shared_ptr<http_server> p_server; // server指针
+                                 binary_data; // 二进制（当type为websocket_data_type::BinaryData时有效）
+    std::shared_ptr<http_server> p_server;    // server指针
 };
 
 /**

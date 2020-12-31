@@ -58,7 +58,7 @@ http_router::http_router(
     const std::string& pattern,
     std::function<void(const http_server_request&, http_server_response&,
                        StringType...)>
-        callback,
+                             callback,
     std::vector<std::string> methods, int priority)
     : priority__(priority)
     , methods__(std::move(methods))

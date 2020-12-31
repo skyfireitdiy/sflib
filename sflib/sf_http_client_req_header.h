@@ -36,6 +36,6 @@ public:
 
     const http_request_line& get_request_line() const;
 
-    http_request_line& get_request_line() ;
+    http_request_line& get_request_line();
 };
 }

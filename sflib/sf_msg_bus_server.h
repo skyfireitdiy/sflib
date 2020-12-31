@@ -9,8 +9,6 @@
  * msg_bus_server 消息总线服务器
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include <string>
 
@@ -89,5 +87,3 @@ private:
     void on_disconnect__(SOCKET sock);
 };
 } // namespace skyfire
-
-#pragma clang diagnostic pop

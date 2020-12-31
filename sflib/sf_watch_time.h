@@ -9,9 +9,6 @@
  * watch_time 时间监测类型
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic   ignored "OCUnusedStructInspection"
 
 #include "sf_stdc++.h"
 
@@ -59,5 +56,3 @@ public:
     ~check_point();
 };
 } // namespace skyfire
-
-#pragma clang diagnostic pop

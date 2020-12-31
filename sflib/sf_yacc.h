@@ -22,7 +22,7 @@ class yacc
     std::unordered_set<std::string> terminate_ids__;
     std::vector<
         std::pair<std::pair<std::string, std::string>, yacc_state_node_t>>
-        dfa__;
+                                    dfa__;
     std::unordered_set<std::string> term_words__;
 
     static std::vector<

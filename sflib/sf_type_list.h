@@ -9,8 +9,6 @@
  * type_list
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedStructInspection"
 
 #include "sf_stdc++.h"
 
@@ -384,5 +382,3 @@ struct tl_from_tuple<std::tuple<_TypeList...>>
 };
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

@@ -23,7 +23,7 @@ class http_router final
 private:
     std::function<bool(const http_server_request&, http_server_response&,
                        const std::string&)>
-        route_callback__;
+                                   route_callback__;
     const int                      priority__ {};
     const std::vector<std::string> methods__;
     std::recursive_mutex           methods_mu__;
@@ -71,7 +71,7 @@ public:
     http_router(const std::string& pattern,
                 std::function<void(const http_server_request&,
                                    http_server_response&, StringType...)>
-                    callback,
+                                         callback,
                 std::vector<std::string> methods  = { { "*" } },
                 int                      priority = default_http_endpoint_priority);
 

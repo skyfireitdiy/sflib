@@ -105,7 +105,6 @@ inline void data_buffer::set_writer(std::shared_ptr<writer> wtr)
 
 inline data_buffer::~data_buffer()
 {
-
 }
 
 }

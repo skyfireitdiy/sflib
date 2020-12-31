@@ -219,7 +219,7 @@ inline std::string table_make_column_string(std::string str, const table_column_
 inline std::string table::to_string() const
 {
     std::string                           ret;
-    std::vector<size_t>                      width_vec(col_num__);
+    std::vector<size_t>                   width_vec(col_num__);
     std::vector<std::string>              header = header__;
     std::vector<std::vector<std::string>> body;
     if (proxy_callback__)

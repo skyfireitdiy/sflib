@@ -54,7 +54,7 @@ private:
     std::unordered_map<SOCKET, websocket_context_t> websocket_context__;
     std::recursive_mutex                            mu_websocket_context__;
     std::unordered_map<SOCKET, http_server_req_multipart_data_context_t>
-        multipart_data_context__;
+                         multipart_data_context__;
     std::recursive_mutex mu_multipart_data_context__;
 
     std::vector<std::shared_ptr<http_middleware>> middleware__;
@@ -79,7 +79,7 @@ private:
 
     mutable std::recursive_mutex mu_session__;
     std::unordered_map<std::string, std::shared_ptr<session_data_t>>
-        session_data__;
+          session_data__;
     timer session_timer__;
 
     void flush_session__();

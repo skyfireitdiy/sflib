@@ -9,8 +9,6 @@
  * watch_time 时间监测类型
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_utils.hpp"
 #include "sf_watch_time.h"
@@ -75,5 +73,3 @@ std::string watch_time<T>::to_string()
     return so.str();
 }
 } // namespace skyfire
-
-#pragma clang diagnostic pop

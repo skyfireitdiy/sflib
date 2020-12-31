@@ -119,7 +119,7 @@ inline static_router::static_router(std::string              path,
                 if (range_list.size() > 1)
                 {
                     std::vector<http_multipart_info_t>
-                        multipart_info_vec;
+                         multipart_info_vec;
                     bool error_flag = false;
                     for (auto& range_str : range_list)
                     {

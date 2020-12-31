@@ -19,8 +19,6 @@
 namespace skyfire
 {
 
-
-
 /**
 * @brief  地址信息
 */

@@ -12,9 +12,7 @@
 namespace skyfire
 {
 
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "bugprone-lambda-function-name"
-inline void              tcp_nat_traversal_client::on_new_connect_required__(
+inline void tcp_nat_traversal_client::on_new_connect_required__(
     tcp_nat_traversal_context_t__& context)
 {
     // 创建连接上下文
@@ -173,7 +171,6 @@ inline void              tcp_nat_traversal_client::on_new_connect_required__(
         return;
     }
 }
-#pragma clang diagnostic pop
 
 inline void tcp_nat_traversal_client::close() const
 {

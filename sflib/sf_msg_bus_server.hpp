@@ -9,8 +9,6 @@
  * msg_bus_server 消息总线服务器
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_msg_bus_server.h"
 #include "sf_msg_bus_utils.h"
@@ -155,5 +153,3 @@ inline bool msg_bus_server::server_addr(addr_info_t& addr) const
     return p_server__->server_addr(addr);
 }
 } // namespace skyfire
-
-#pragma clang diagnostic pop

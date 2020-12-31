@@ -137,7 +137,7 @@ private:
     std::mutex                deque_mu__;
     std::unordered_map<
         int, std::unordered_map<int, log_attr>>
-        logger_func_set__;
+                                 logger_func_set__;
     std::atomic<bool>            run__ { true };
     std::recursive_mutex         func_set_mutex__;
     std::shared_ptr<std::thread> log_thread__ = nullptr;
@@ -172,7 +172,7 @@ private:
     skyfire::g_logger->logout(skyfire::SF_DEBUG_LEVEL, __FILE__, __LINE__, \
                               __FUNCTION__, __VA_ARGS__)
 #else
-#define sf_debug(...) 
+#define sf_debug(...)
 #endif
 
 #define sf_info(...)                                                      \
@@ -181,7 +181,7 @@ private:
 #define sf_warn(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_WARN_LEVEL, __FILE__, __LINE__, \
                               __FUNCTION__, __VA_ARGS__)
-#define sf_err(...)                                                      \
+#define sf_err(...)                                                        \
     skyfire::g_logger->logout(skyfire::SF_ERROR_LEVEL, __FILE__, __LINE__, \
                               __FUNCTION__, __VA_ARGS__)
 #define sf_fatal(...)                                                      \

@@ -54,7 +54,6 @@ inline bool equal_nocase_string(const std::string& str1,
 inline std::vector<std::string> split_string(std::string        str,
                                              const std::string& split_str);
 
-
 /**
  * 写文件
  * @param file_name 文件名称
@@ -72,7 +71,6 @@ bool write_file(const std::string& file_name, const byte_array& data,
  * @return 是否读取成功
  */
 bool read_file(const std::string& file_name, byte_array& data);
-
 
 /**
  * 字符串替换

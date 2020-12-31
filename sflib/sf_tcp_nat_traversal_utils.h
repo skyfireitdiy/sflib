@@ -94,4 +94,3 @@ public:
     friend tcp_nat_traversal_client;
 };
 } // namespace skyfire
-

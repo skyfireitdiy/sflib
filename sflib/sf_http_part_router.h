@@ -51,7 +51,7 @@ public:
     http_part_router(
         std::string prefix,
         std::function<bool(const http_server_request&, http_server_response&)>
-            callback,
+                                 callback,
         std::vector<std::string> methods  = { { "*" } },
         int                      priority = default_http_part_priority);
     /**

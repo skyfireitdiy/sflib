@@ -48,7 +48,7 @@ class tcp_nat_traversal_client
     std::unordered_set<unsigned long long> client_list__;
     unsigned long long                     self_id__;
     std::unordered_map<std::string, p2p_connect_context_t__>
-        connect_context_map__;
+                connect_context_map__;
     addr_info_t server_addr__;
 
     void on_new_connect_required__(tcp_nat_traversal_context_t__& context);

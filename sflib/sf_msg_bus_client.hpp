@@ -9,8 +9,6 @@
  * msg_bus_client 消息总线客户端
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_msg_bus_client.h"
 #include "sf_msg_bus_utils.h"
@@ -94,5 +92,3 @@ inline bool msg_bus_client::peer_addr(addr_info_t& addr) const
     return p_client__->peer_addr(addr);
 }
 } // namespace skyfire
-
-#pragma clang diagnostic pop

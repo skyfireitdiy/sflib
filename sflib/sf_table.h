@@ -11,7 +11,7 @@ struct table_result_t
 {
     error_code  ec;
     std::string err_string;
-    operator bool() const { return ec == err_ok; }
+                operator bool() const { return ec == err_ok; }
 };
 
 enum class table_align

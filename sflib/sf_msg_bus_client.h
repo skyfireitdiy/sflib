@@ -9,8 +9,6 @@
  * msg_bus_client 消息总线客户端
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_object.hpp"
 #include "sf_tcp_client.h"
@@ -104,5 +102,3 @@ private:
 };
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

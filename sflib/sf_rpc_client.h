@@ -9,8 +9,6 @@
  * rpc_client rpc客户端
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
 
 #include "sf_json.h"
 #include "sf_nocopy.h"
@@ -164,5 +162,3 @@ public:
     }
 
 } // namespace skyfire
-
-#pragma clang diagnostic pop

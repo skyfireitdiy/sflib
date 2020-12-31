@@ -9,9 +9,6 @@
  * rpc_client rpc客户端
  */
 #pragma once
-#pragma clang diagnostic push
-#pragma ide diagnostic   ignored "OCUnusedGlobalDeclarationInspection"
-#pragma ide diagnostic   ignored "OCSimplifyInspection"
 
 #include "sf_json.hpp"
 #include "sf_rpc_client.h"
@@ -244,5 +241,3 @@ inline void rpc_client::on_closed__()
     }
 }
 } // namespace skyfire
-
-#pragma clang diagnostic pop

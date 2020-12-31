@@ -57,7 +57,7 @@ inline bool tcp_client::bind(const std::string& ip, unsigned short port)
 inline tcp_client::~tcp_client() { close(); }
 
 inline sf_error tcp_client::connect_to_server(const std::string& host,
-                                         unsigned short     port)
+                                              unsigned short     port)
 {
     if (!inited__)
         return { err_uninit, "Uninit" };

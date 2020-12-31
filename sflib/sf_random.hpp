@@ -34,7 +34,7 @@ inline std::string random::uuid_str() const
     char                               c_str[40];
     // FIXME 溢出
     sprintf(c_str, "%0X%0X%0X%0X", data[0], data[1], data[2],
-                 data[3]);
+            data[3]);
     std::string ret = c_str;
     ret.insert(ret.begin() + 20, '-');
     ret.insert(ret.begin() + 16, '-');
