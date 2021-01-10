@@ -25,5 +25,11 @@ public:
                               int priority = 0);
     int  priority() const override;
     bool run_route(const websocket_param_t& context) const;
+    bool run_route(const http_server_request& req,
+                   http_server_response& res, const std::string& url,
+                   const std::string& method) override
+    {
+        return false;
+    }
 };
 } // namespace skyfire

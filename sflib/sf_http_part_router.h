@@ -32,11 +32,6 @@ public:
                                  callback,
         std::vector<std::string> methods  = { { "*" } },
         int                      priority = default_http_part_priority);
-    http_part_router(const std::string& prefix,
-                     bool (*callback)(const http_server_request&,
-                                      http_server_response&),
-                     const std::vector<std::string>& methods  = { { "*" } },
-                     int                             priority = default_http_part_priority);
     void              add_router(std::shared_ptr<router> router);
     void              add_router(std::shared_ptr<http_part_router> router);
     bool              run_route(const http_server_request& req, http_server_response& res,
