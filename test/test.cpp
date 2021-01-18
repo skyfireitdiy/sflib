@@ -39,12 +39,16 @@ sf_test(dns, test_parse_client_req_url)
     test_num_eq(port, 8080);
     test_str_eq(resource, "/hello/world");
 }
-sf_test(http_client, test_build_request)
+
+sf_test(http_client, test_build_request_header_to_string)
 {
     auto req = skyfire::http_client_request::make_instance();
-    req->add_header("Host", "www.baidu.com")->set_method("POST")->set_body(skyfire::to_byte_array("hello world"));
+    req->add_header("Host", "www.baidu.com")->set_url("http://www.baidu.com")->set_method("POST");
     // TODO 完善用例
+
+    test_np_eq(req->to_byte_array(), to_byte_array("POST / HTTP/1.1\r\nHost:www.baidu.com\r\n\r\n"))
 }
+
 sf_test(chan, test_chan_order)
 {
     auto             ch = chan<int>::make_instance();
@@ -68,6 +72,7 @@ sf_test(chan, test_chan_order)
     th2.join();
     test_np_eq(data, result);
 }
+
 sf_test(chan, test_chan_order_with_buffer)
 {
     auto             ch = chan<int>::make_instance(5);
@@ -91,6 +96,7 @@ sf_test(chan, test_chan_order_with_buffer)
     th2.join();
     test_np_eq(data, result);
 }
+
 sf_test(chan, test_write_to_closed_chan)
 {
     auto   ch  = chan<int>::make_instance(5);
@@ -106,6 +112,7 @@ sf_test(chan, test_write_to_closed_chan)
     th2.join();
     test_assert(!ret);
 }
+
 sf_test(chan, test_read_from_closed_chan)
 {
     auto   ch  = chan<int>::make_instance(5);
@@ -123,15 +130,19 @@ sf_test(chan, test_read_from_closed_chan)
     th2.join();
     test_assert(!ret);
 }
+
 sf_test(dns, test_resolve_dns)
 {
     auto ret = skyfire::resolve_dns("www.baidu.com");
     test_assert(skyfire::sf_error(ret));
+    bool ok = false;
     for (auto ip : std::vector<std::string>(ret))
     {
-        sf_info(ip);
+        ok = true;
     }
+    test_assert(ok);
 }
+
 sf_test(dns, test_connect_host)
 {
     auto client = skyfire::tcp_client::make_instance();
@@ -144,29 +155,34 @@ std::mutex              mu;
 std::condition_variable cv;
 sf_test(tcp, test_server)
 {
-    auto server = skyfire::tcp_server::make_instance(skyfire::tcp::raw(true));
+    auto               server = skyfire::tcp_server::make_instance(skyfire::tcp::raw(true));
     skyfire::eventloop lp;
+    bool connected = false;
+    byte_array data;
     sf_bind(
-        server, new_connection, [](SOCKET sock) {
-            sf_info("new connection", sock);
+        server, new_connection, [&connected](SOCKET sock) {
+            connected = true;
         },
         false);
     sf_bind(
-        server, raw_data_coming, [&server, &lp](SOCKET sock, skyfire::byte_array data) {
-            sf_info("recv:", skyfire::to_string(data));
+        server, raw_data_coming, [&server, &lp, &data](SOCKET sock, skyfire::byte_array d) {
+            data = d;
             server->close(sock);
             server->close();
             lp.quit();
         },
         false);
-    server->listen("127.0.0.1", 9300);
+    auto listened = server->listen("127.0.0.1", 9300);
     cv.notify_one();
     lp.exec();
+    test_assert(connected && listened);
+    test_p_eq(skyfire::to_string(data), "hello world"s);
 }
+
 sf_test(tcp, test_client)
 {
     using namespace std;
-    auto client = skyfire::tcp_client::make_instance();
+    auto               client = skyfire::tcp_client::make_instance();
     skyfire::eventloop lp;
     sf_bind(
         client, closed, [&lp]() {
@@ -179,6 +195,7 @@ sf_test(tcp, test_client)
     client->send(skyfire::to_byte_array("hello world"s));
     lp.exec();
 }
+
 sf_test(finally, test_finally_order)
 {
     int a = 10;
@@ -194,6 +211,7 @@ sf_test(finally, test_finally_order)
     }
     test_p_eq(a, 200);
 }
+
 sf_test(finally, test_finally_order2)
 {
     int a = 10;
@@ -207,6 +225,7 @@ sf_test(finally, test_finally_order2)
     }
     test_p_eq(a, 200);
 }
+
 sf_test(buffer, test_read_write)
 {
     skyfire::data_buffer buffer;
@@ -215,12 +234,14 @@ sf_test(buffer, test_read_write)
     auto t = buffer.read(1024);
     test_np_eq(data, std::get<1>(t));
 }
+
 sf_test(buffer, test_read_empty_buffer)
 {
     skyfire::data_buffer buffer;
     auto                 t = buffer.read(1024);
     test_np_eq((skyfire::sf_error { { skyfire::err_finished, "" } }), std::get<0>(t));
 }
+
 sf_test(buffer, test_read_twice)
 {
     skyfire::data_buffer buffer;
@@ -232,6 +253,7 @@ sf_test(buffer, test_read_twice)
     test_num_eq(skyfire::to_string(t).length(), 6U);
     test_str_eq(skyfire::to_string(t), " world");
 }
+
 sf_test(buffer, test_pipe)
 {
     auto reader = skyfire::data_buffer::make_instance();
@@ -265,6 +287,7 @@ sf_test_p(argv, test_parser_none_postion, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_other_name, test_argv_param, {
                                                       {
                                                           { "-t", "hello" },
@@ -281,6 +304,7 @@ sf_test_p(argv, test_other_name, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_param_type, test_argv_param, {
                                                       {
                                                           { "-s", "string value", "-a", "elem1", "-a", "elem2", "-a", "elem3", "-b", "true", "-n", "26.4" },
@@ -296,6 +320,7 @@ sf_test_p(argv, test_param_type, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_bool_value, test_argv_param, {
                                                       {
                                                           { "-b", "hello" },
@@ -324,6 +349,7 @@ sf_test_p(argv, test_bool_value, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_array, test_argv_param, {
                                                  {
                                                      {},
@@ -344,6 +370,7 @@ sf_test_p(argv, test_array, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_not_required, test_argv_param, {
                                                         {
                                                             {},
@@ -360,6 +387,7 @@ sf_test_p(argv, test_not_required, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_save_bool, test_argv_param, {
                                                      {
                                                          {},
@@ -385,6 +413,7 @@ sf_test_p(argv, test_save_bool, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_default_value, test_argv_param, {
                                                          {
                                                              {},
@@ -401,6 +430,7 @@ sf_test_p(argv, test_default_value, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test_p(argv, test_subparser, test_argv_param, {
                                                      {
                                                          { "sub1", "-s", "string", "-o", "one" },
@@ -423,14 +453,17 @@ sf_test_p(argv, test_subparser, test_argv_param, {
     auto result = parser->parse_argv(test_param.args, false);
     test_p_eq(json(result), test_param.result);
 }
+
 sf_test(sf_string, test_sf_string_repeat)
 {
     test_p_eq(sf_string::repeat("1", 6), sf_string("111111"));
 }
+
 sf_test(sf_string, test_sf_string_operator)
 {
     test_p_eq(sf_string("h") * 5, "hhhhh");
 }
+
 sf_test(sf_string, test_sf_string_output)
 {
     test_assert((std::cout << sf_string::repeat("hello", 5) << std::endl).good());
@@ -449,6 +482,7 @@ sf_test(waiter, none_param_event_waiter_test)
     }).detach();
     sf_wait(&t, s1);
 }
+
 sf_test(waiter, many_param_event_waiter_test)
 {
     test_object t;
@@ -458,6 +492,7 @@ sf_test(waiter, many_param_event_waiter_test)
     }).detach();
     sf_wait(&t, s2);
 }
+
 sf_test(multi_value, test_multi_value)
 {
     const int         a = 5;
@@ -470,6 +505,7 @@ sf_test(multi_value, test_multi_value)
     test_p_eq(c, (double)e);
     test_p_eq(d, (float)e);
 }
+
 sf_test(json, test_construct)
 {
     json js = 5;
@@ -483,6 +519,7 @@ sf_test(json, test_construct)
     js = false;
     test_assert(!js);
 }
+
 sf_test(json, test_insert)
 {
     json js;
@@ -492,6 +529,7 @@ sf_test(json, test_insert)
     js["address"] = json {};
     test_assert(js["address"].is_null());
 }
+
 sf_test(json, test_compare)
 {
     json js1;
@@ -508,6 +546,7 @@ sf_test(json, test_compare)
     test_p_eq(js1["unknown"], json {});
     test_p_neq(js1, js2);
 }
+
 sf_test(json, test_parse)
 {
     auto js = R"(
@@ -532,6 +571,7 @@ sf_test(json, test_parse)
     test_assert(js.at("car").is_null());
     test_assert(js.at("house").is_null());
 }
+
 sf_test(json, test_convert)
 {
     json js;
@@ -560,6 +600,7 @@ sf_test(cache, normal_test)
     test_p_eq(body->tall, 175);
     test_p_eq(body->weight, 60);
 }
+
 sf_test(cache, count_limit_test)
 {
     cache cache(2);
@@ -571,6 +612,7 @@ sf_test(cache, count_limit_test)
     test_np_eq(cache.data<int>("age"), nullptr);
     test_np_neq(cache.data<body_data>("body"), nullptr);
 }
+
 sf_test(cache, overwrite_test)
 {
     cache cache;
@@ -578,6 +620,7 @@ sf_test(cache, overwrite_test)
     cache.set_data("name", std::string("lisi"));
     test_p_eq(*cache.data<std::string>("name"), "lisi");
 }
+
 sf_test(cache, update_timestamp_test)
 {
     cache cache(2);
@@ -589,12 +632,16 @@ sf_test(cache, update_timestamp_test)
     test_np_eq(cache.data<int>("age"), nullptr);
     test_np_neq(cache.data<body_data>("body"), nullptr);
 }
+
 sf_test(cache, mismatch_type_test)
 {
     cache cache;
     cache.set_data("name", std::string("zhangsan"));
     test_np_eq(cache.data<int>("name"), nullptr);
 }
+
+
+
 int main()
 {
     run_test(16);

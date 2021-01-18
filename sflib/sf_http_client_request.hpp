@@ -2,6 +2,7 @@
 #include "sf_http_client.hpp"
 #include "sf_http_client_req_header.hpp"
 #include "sf_http_client_request.h"
+#include "sf_http_utils.hpp"
 namespace skyfire
 {
 inline std::shared_ptr<http_client_request> http_client_request::set_body(const byte_array& body)
@@ -43,16 +44,56 @@ inline std::shared_ptr<http_client_request> http_client_request::set_file(const 
     type__ = http_data_type::file;
     return shared_from_this();
 }
-std::shared_ptr<http_client_request> http_client_request::set_stream(std::shared_ptr<std::istream> stream)
+
+inline std::shared_ptr<http_client_request> http_client_request::set_stream(std::shared_ptr<std::istream> stream)
 {
     stream__ = stream;
     type__   = http_data_type::stream;
     return shared_from_this();
 }
-std::shared_ptr<http_client_request> http_client_request::add_multipart(const http_multipart_info_t& multip)
+
+inline std::shared_ptr<http_client_request> http_client_request::add_multipart(const http_multipart_info_t& multip)
 {
     multipart_info_vec__.push_back(multip);
     type__ = http_data_type ::multipart;
     return shared_from_this();
 }
+
+inline byte_array http_client_request::to_byte_array() const
+{
+    byte_array ret;
+    ret += skyfire::to_byte_array(header__.to_string());
+
+    switch (type__)
+    {
+    case http_data_type::normal: {
+        ret += body__;
+    }
+    break;
+    case http_data_type::stream: {
+        std::istream_iterator<char> iter(*stream__), eof;
+        ret += byte_array(iter, eof);
+    }
+    break;
+    case http_data_type::file: {
+        std::ifstream fi(file_info__.filename);
+        if (!fi)
+        {
+            sf_err("file open error", file_info__.filename);
+            break;
+        }
+        std::istream_iterator<char> iter(fi), eof;
+        ret += byte_array(iter, eof);
+        break;
+    }
+    break;
+    case http_data_type::multipart: {
+        // TODO multipart 生成
+    }
+    break;
+    }
+
+    return ret;
+}
+
 }

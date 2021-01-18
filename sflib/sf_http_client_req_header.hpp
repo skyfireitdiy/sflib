@@ -19,6 +19,7 @@ inline std::string http_client_req_header::to_string() const
         }
         ret += "\r\n";
     }
+    ret += "\r\n";
     return ret;
 }
 inline void http_client_req_header::add_cookies(const std::string& key, const std::string& value)
