@@ -43,10 +43,10 @@ sf_test(dns, test_parse_client_req_url)
 sf_test(http_client, test_build_request_header_to_string)
 {
     auto req = skyfire::http_client_request::make_instance();
-    req->add_header("Host", "www.baidu.com")->set_url("http://www.baidu.com")->set_method("POST");
+    req->add_header("Host", "www.baidu.com")->set_url("http://www.baidu.com")->set_method("POST")->set_body(skyfire::to_byte_array("hello world"));
     // TODO 完善用例
 
-    test_np_eq(req->to_byte_array(), to_byte_array("POST / HTTP/1.1\r\nHost:www.baidu.com\r\n\r\n"))
+    test_np_eq(req->to_byte_array(), to_byte_array("POST / HTTP/1.1\r\nHost:www.baidu.com\r\n\r\nhello world"));
 }
 
 sf_test(chan, test_chan_order)

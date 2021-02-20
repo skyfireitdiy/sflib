@@ -19,6 +19,7 @@ enum error_code
     err_bind_err = 0x00000005,
     // NAT穿透错误
     err_nat_traversal_err = 0x00000006,
+    // 结束
     err_finished          = 0x00000007,
     // 解析错误
     err_parse = 0x00000008,
@@ -38,6 +39,8 @@ enum error_code
     err_connect = 0x00000010,
     // 未初始化
     err_uninit = 0x00000011,
+    // 流状态错误
+    err_stream = 0x00000012,
 };
 class exception : public std::exception
 {
