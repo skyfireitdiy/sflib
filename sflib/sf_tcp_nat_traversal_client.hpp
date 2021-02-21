@@ -32,7 +32,7 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
         random::instance()->rand_int(1025, 65535));
     sf_debug("local addr", server_addr.ip, auto_port);
     // 绑定
-    if (!connect_context_map__[context.connect_id].point_b_client_1->sf_bind(
+    if (!connect_context_map__[context.connect_id].point_b_client_1->bind(
             server_addr.ip, auto_port))
     {
         context.error_code = err_bind_err;
@@ -65,7 +65,7 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
     connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 3;
     connect_context_map__[context.connect_id].point_b_client_2               = tcp_client::make_instance();
     // 将客户端2绑定至于客户端1相同的ip端口
-    if (!connect_context_map__[context.connect_id].point_b_client_2->sf_bind(
+    if (!connect_context_map__[context.connect_id].point_b_client_2->bind(
             server_addr.ip, auto_port))
     {
         context.error_code = err_bind_err;
@@ -178,14 +178,14 @@ inline std::string tcp_nat_traversal_client::connect_to_peer(
         if (!local_addr(tmp_p2p_conn_context.point_a_client_1->raw_socket(),
                         addr))
         {
-            sf_error("get local ip port error");
+            sf_err("get local ip port error");
             return "";
         }
         tmp_p2p_conn_context.point_a_server = tcp_server::make_instance();
         // 复用刚才断开的连接1端口号
         if (!tmp_p2p_conn_context.point_a_server->listen(addr.ip, addr.port))
         {
-            sf_error("listen local ip port error", addr.ip, addr.port);
+            sf_err("listen local ip port error", addr.ip, addr.port);
             return "";
         }
         sf_debug("start connect");
@@ -274,10 +274,7 @@ inline void tcp_nat_traversal_client::on_client_data_coming__(
         break;
     }
 }
-inline void tcp_nat_traversal_client::on_client_close__()
-{
-    client_list__.clear();
-}
+
 inline void tcp_nat_traversal_client::on_server_reply_b_addr(
     tcp_nat_traversal_context_t__& context)
 {

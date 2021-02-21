@@ -1,5 +1,6 @@
 
 #pragma once
+#include "sf_net_utils.hpp"
 #include "sf_tcp_server_interface.h"
 namespace skyfire
 {

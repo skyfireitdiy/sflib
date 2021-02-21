@@ -30,9 +30,9 @@ enum class tcp_nat_traversal_connection_type
 class tcp_nat_traversal_client;
 class tcp_nat_traversal_connection : public nocopy<object>
 {
-    sf_singal(data_coming, const pkg_header_t&, const byte_array&)
-        sf_singal(raw_data_coming, const byte_array&)
-            sf_singal(closed) private : std::shared_ptr<tcp_client> client__;
+    sf_singal(data_coming, const pkg_header_t&, const byte_array&);
+    sf_singal(raw_data_coming, const byte_array&);
+    sf_singal(closed) private : std::shared_ptr<tcp_client> client__;
     std::shared_ptr<tcp_server>       server__;
     SOCKET                            sock__;
     std::string                       connect_id__;

@@ -33,7 +33,7 @@ bool object_factory::load_data__(const json& config_obj)
 {
     object_data__.clear();
     auto size = config_obj.size();
-    for (int i = 0; i < size; ++i)
+    for (size_t i = 0; i < size; ++i)
     {
         object_factory_config_item_t item;
         auto                         tmp_obj = config_obj.at(i);

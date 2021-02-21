@@ -1,5 +1,6 @@
 
 #pragma once
+#include "sf_stdc++.h"
 #include "sf_utils.hpp"
 #include "sf_watch_time.h"
 namespace skyfire
@@ -7,10 +8,11 @@ namespace skyfire
 template <typename T>
 check_point<T>::~check_point()
 {
-    parent__.data__[point_name__][std::this_thread::id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(
-                                                                 std::chrono::high_resolution_clock::now() - clock__)
-                                                                 .count();
+    parent__.data__[point_name__][std::this_thread::get_id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                                                     std::chrono::high_resolution_clock::now() - clock__)
+                                                                     .count();
 }
+
 template <typename T>
 check_point<T>::check_point(const T& name, watch_time<T>& parent)
     : point_name__(name)

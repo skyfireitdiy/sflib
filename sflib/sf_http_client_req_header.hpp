@@ -1,6 +1,7 @@
 #pragma once
 #include "sf_http_client_req_header.h"
 #include "sf_http_header.hpp"
+#include "sf_utils.hpp"
 namespace skyfire
 {
 inline std::string http_client_req_header::to_string() const
