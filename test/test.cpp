@@ -7,6 +7,7 @@
 #include <sf_http_utils>
 #include <sf_tcp_client>
 #include <sf_test>
+#include <sf_co>
 using namespace skyfire;
 using namespace std;
 sf_test(dns, test_parse_client_req_url)
@@ -157,8 +158,8 @@ sf_test(tcp, test_server)
 {
     auto               server = skyfire::tcp_server::make_instance(skyfire::tcp::raw(true));
     skyfire::eventloop lp;
-    bool connected = false;
-    byte_array data;
+    bool               connected = false;
+    byte_array         data;
     sf_bind(
         server, new_connection, [&connected](SOCKET sock) {
             connected = true;
@@ -641,6 +642,28 @@ sf_test(cache, mismatch_type_test)
 }
 
 
+
+void co_test_func(void* p)
+{
+    std::string *pstr = (std::string*)p;
+    for (int i = 0; i < 3; ++i)
+    {
+        pstr->push_back('b');
+        yield_coroutine();
+    }
+}
+
+sf_test(co, co_switch)
+{
+    std::string s;
+    auto co = create_coroutine(&co_test_func, &s);
+    run_coroutine(co);
+    for(int i=0;i<3; ++i){
+        s.push_back('a');
+        yield_coroutine();
+    }
+    test_p_eq(s, "bababa");
+}
 
 int main()
 {
