@@ -27,6 +27,7 @@ constexpr int co_rspindex = 13;
 constexpr int co_rdiindex = 7;
 
 void static __co_func__(co_ctx*);
+inline void __co_sche_sighandler(int);
 
 inline co_manager& get_co_manager()
 {
@@ -34,7 +35,27 @@ inline co_manager& get_co_manager()
     return manager;
 }
 
-std::unordered_set<pthread_t> co_manager::get_co_thread_ids() const
+inline co_manager::co_manager()
+{
+    struct sigaction sa;
+    sa.sa_handler = __co_sche_sighandler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_NODEFER;
+
+    struct sigevent sigev;
+    ::memset(&sigev, 0, sizeof(sigev));
+    sigev.sigev_notify          = SIGEV_SIGNAL;
+    sigev.sigev_signo           = SIG_CO_SCHE;
+    sigev.sigev_value.sival_int = 0;
+
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIG_CO_SCHE, &sa, nullptr);
+
+    timer_create(CLOCK_REALTIME, &sigev, &timer__);
+    reset_timer();
+}
+
+inline std::unordered_set<pthread_t> co_manager::get_co_thread_ids() const
 {
     std::unique_lock<std::mutex> lck(mu_co_thread_id_set__);
     return co_thread_id__;
@@ -64,22 +85,29 @@ inline std::once_flag& get_co_once_flag()
     return flag;
 }
 
-inline void co_env::create_coroutine(std::function<void()> func)
+inline std::shared_ptr<co_ctx> co_env::create_coroutine(size_t default_stack_size, std::function<void()> func)
 {
-    auto new_co   = std::make_shared<co_ctx>();
-    new_co->entry = func;
+    auto new_co     = std::make_shared<co_ctx>(false, default_stack_size);
+    new_co->entry__ = func;
     append_co__(new_co);
+    return new_co;
 }
 
 inline std::function<void()> co_ctx::get_entry() const
 {
-    return entry;
+    return entry__;
 }
 
 template <typename Func, typename... Args>
-inline void create_coroutine(Func func, Args&&... args)
+inline std::shared_ptr<co_ctx> create_coroutine(Func func, Args&&... args)
 {
-    get_co_env().create_coroutine(std::bind(func, std::forward<Args>(args)...));
+    return get_co_env().create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
+}
+
+template <typename Func, typename... Args>
+inline std::shared_ptr<co_ctx> create_coroutine(size_t default_stack_size, Func func, Args&&... args)
+{
+    return get_co_env().create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
 }
 
 inline std::shared_ptr<co_ctx> get_current_coroutine()
@@ -126,20 +154,33 @@ inline void co_ctx_swap(void*, void*)
         "ret\n\t");
 }
 
+inline void co_env::wait_coroutine(std::shared_ptr<co_ctx> ctx)
+{
+    while (ctx->state__ != co_state::finished)
+    {
+        yield_coroutine();
+    }
+}
+
+inline void wait_coroutine(std::shared_ptr<co_ctx> ctx)
+{
+    get_co_env().wait_coroutine(ctx);
+}
+
 inline void co_env::yield_coroutine()
 {
     auto ctx = choose_co();
 
-    if (!ctx->running)
+    if (ctx->state__ == co_state::ready || ctx->state__ == co_state::finished)
     {
-        ctx->regs[co_retindex] = reinterpret_cast<void*>(&__co_func__);
-        ctx->regs[co_rdiindex] = reinterpret_cast<void*>(ctx.get());
-        void* sp               = ctx->stack_data.data() + ctx->stack_size - sizeof(void*);
-        sp                     = (char*)((unsigned long)sp & -16LL);
-        void** ret_addr        = (void**)(sp);
-        *ret_addr              = reinterpret_cast<void*>(&__co_func__);
-        ctx->regs[co_rspindex] = reinterpret_cast<char*>(sp) - sizeof(void*) * 2;
-        ctx->running           = true;
+        ctx->regs__[co_retindex] = reinterpret_cast<void*>(&__co_func__);
+        ctx->regs__[co_rdiindex] = reinterpret_cast<void*>(ctx.get());
+        void* sp                 = ctx->stack_data__.data() + ctx->stack_size__ - sizeof(void*);
+        sp                       = (char*)((unsigned long)sp & -16LL);
+        void** ret_addr          = (void**)(sp);
+        *ret_addr                = reinterpret_cast<void*>(&__co_func__);
+        ctx->regs__[co_rspindex] = reinterpret_cast<char*>(sp) - sizeof(void*) * 2;
+        ctx->state__             = co_state::running;
     }
     auto curr_co = get_current_coroutine();
     if (curr_co == ctx)
@@ -147,7 +188,11 @@ inline void co_env::yield_coroutine()
         return;
     }
     current_co__ = ctx;
-    co_ctx_swap(&curr_co->regs, &ctx->regs);
+    if (curr_co->state__ == co_state::running)
+    {
+        curr_co->state__ = co_state::suspended;
+    }
+    co_ctx_swap(&curr_co->regs__, &ctx->regs__);
 }
 
 inline void yield_coroutine()
@@ -184,7 +229,7 @@ inline void co_env::release_curr_co()
         if (*iter == current_co__)
         {
             co_set__.erase(iter);
-            current_co__->running = false;
+            current_co__->state__ = co_state::finished;
             break;
         }
     }
@@ -196,28 +241,23 @@ inline std::shared_ptr<co_ctx> co_env::choose_co()
     return co_set__[curr_co_index__];
 }
 
+inline void co_manager::reset_timer()
+{
+    timer_settime(timer__, 0, &ts__, nullptr);
+}
+
 inline void __co_sche_sighandler(int)
 {
+    get_co_manager().reset_timer();
     yield_coroutine();
 }
 
 inline co_env::co_env()
 {
-    current_co__          = std::make_shared<co_ctx>(true);
-    current_co__->running = true;
+    current_co__          = std::make_shared<co_ctx>(true, 0);
+    current_co__->state__ = co_state::running;
     co_set__.push_back(current_co__);
     get_co_manager().add_thread_id(pthread_self());
-    std::call_once(get_co_once_flag(), []() {
-        signal(SIG_CO_SCHE, __co_sche_sighandler);
-        std::thread([=] {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            auto ids = get_co_manager().get_co_thread_ids();
-            for (auto& id : ids)
-            {
-                pthread_kill(id, SIG_CO_SCHE);
-            }
-        }).detach();
-    });
 }
 
 inline co_env::~co_env()

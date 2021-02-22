@@ -1,13 +1,13 @@
 #include <sf_argv>
 #include <sf_cache>
 #include <sf_chan>
+#include <sf_co>
 #include <sf_data_buffer>
 #include <sf_event_waiter>
 #include <sf_http_client_request>
 #include <sf_http_utils>
 #include <sf_tcp_client>
 #include <sf_test>
-#include <sf_co>
 using namespace skyfire;
 using namespace std;
 sf_test(dns, test_parse_client_req_url)
@@ -641,26 +641,42 @@ sf_test(cache, mismatch_type_test)
     test_np_eq(cache.data<int>("name"), nullptr);
 }
 
-
-
-void co_test_func(std::string& p)
-{
-    for (int i = 0; i < 3; ++i)
-    {
-        p.push_back('b');
-        yield_coroutine();
-    }
-}
-
 sf_test(co, co_switch)
 {
     std::string s;
-    create_coroutine(co_test_func, std::ref(s));
-    for(int i=0;i<3; ++i){
+    create_coroutine([](std::string& p) {
+        for (int i = 0; i < 3; ++i)
+        {
+            p.push_back('b');
+            yield_coroutine();
+        }
+    },
+                     std::ref(s));
+    for (int i = 0; i < 3; ++i)
+    {
         s.push_back('a');
         yield_coroutine();
     }
     test_p_eq(s, "ababab");
+}
+
+sf_test(co, co_wait)
+{
+    int  n  = 0;
+    auto co = create_coroutine([&n] {
+        for (int i = 0; i < 10; ++i)
+        {
+            n += i;
+            yield_coroutine();
+        }
+    });
+    for (int i = 0; i < 10; ++i)
+    {
+        n += i;
+        yield_coroutine();
+    }
+    wait_coroutine(co);
+    test_p_eq(n, 90);
 }
 
 int main()
