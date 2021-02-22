@@ -26,21 +26,60 @@ constexpr int co_retindex = 9;
 constexpr int co_rspindex = 13;
 constexpr int co_rdiindex = 7;
 
-void __co_func__(co_ctx*);
+void static __co_func__(co_ctx*);
 
-inline static co_env& get_co_env()
+inline co_manager& get_co_manager()
+{
+    static co_manager manager;
+    return manager;
+}
+
+std::unordered_set<pthread_t> co_manager::get_co_thread_ids() const
+{
+    std::unique_lock<std::mutex> lck(mu_co_thread_id_set__);
+    return co_thread_id__;
+}
+
+void co_manager::add_thread_id(pthread_t th)
+{
+    std::unique_lock<std::mutex> lck(mu_co_thread_id_set__);
+    co_thread_id__.insert(th);
+}
+
+void co_manager::remove_thread_id(pthread_t th)
+{
+    std::unique_lock<std::mutex> lck(mu_co_thread_id_set__);
+    co_thread_id__.erase(th);
+}
+
+inline co_env& get_co_env()
 {
     thread_local static co_env g_env;
     return g_env;
 }
 
-inline std::shared_ptr<co_ctx> create_coroutine(void (*func)(void*), void* args)
+inline std::once_flag& get_co_once_flag()
+{
+    static std::once_flag flag;
+    return flag;
+}
+
+inline void co_env::create_coroutine(std::function<void()> func)
 {
     auto new_co   = std::make_shared<co_ctx>();
     new_co->entry = func;
-    new_co->args  = args;
+    append_co__(new_co);
+}
 
-    return new_co;
+inline std::function<void()> co_ctx::get_entry() const
+{
+    return entry;
+}
+
+template <typename Func, typename... Args>
+inline void create_coroutine(Func func, Args&&... args)
+{
+    get_co_env().create_coroutine(std::bind(func, std::forward<Args>(args)...));
 }
 
 inline std::shared_ptr<co_ctx> get_current_coroutine()
@@ -87,39 +126,33 @@ inline void co_ctx_swap(void*, void*)
         "ret\n\t");
 }
 
-inline void yield_coroutine()
+inline void co_env::yield_coroutine()
 {
-    run_coroutine(get_co_env().choose_co());
-}
+    auto ctx = choose_co();
 
-inline void co_env::run_coroutine(std::shared_ptr<co_ctx> ctx)
-{
     if (!ctx->running)
     {
         ctx->regs[co_retindex] = reinterpret_cast<void*>(&__co_func__);
         ctx->regs[co_rdiindex] = reinterpret_cast<void*>(ctx.get());
-        void* sp               = ctx->sp + ctx->stack_size - sizeof(void*);
+        void* sp               = ctx->stack_data.data() + ctx->stack_size - sizeof(void*);
         sp                     = (char*)((unsigned long)sp & -16LL);
         void** ret_addr        = (void**)(sp);
         *ret_addr              = reinterpret_cast<void*>(&__co_func__);
         ctx->regs[co_rspindex] = reinterpret_cast<char*>(sp) - sizeof(void*) * 2;
         ctx->running           = true;
-        append_co__(ctx);
     }
     auto curr_co = get_current_coroutine();
     if (curr_co == ctx)
     {
         return;
     }
-    char c;
-    current_co__->sp = &c;
-    current_co__     = ctx;
+    current_co__ = ctx;
     co_ctx_swap(&curr_co->regs, &ctx->regs);
 }
 
-inline void run_coroutine(std::shared_ptr<co_ctx> ctx)
+inline void yield_coroutine()
 {
-    get_co_env().run_coroutine(ctx);
+    get_co_env().yield_coroutine();
 }
 
 inline void co_env::append_co__(std::shared_ptr<co_ctx> ctx)
@@ -127,9 +160,9 @@ inline void co_env::append_co__(std::shared_ptr<co_ctx> ctx)
     co_set__.push_back(ctx);
 }
 
-inline void __co_func__(co_ctx* ctx)
+inline static void __co_func__(co_ctx* ctx)
 {
-    ctx->entry(ctx->args);
+    ctx->get_entry()();
     release_curr_co();
 }
 
@@ -163,11 +196,33 @@ inline std::shared_ptr<co_ctx> co_env::choose_co()
     return co_set__[curr_co_index__];
 }
 
+inline void __co_sche_sighandler(int)
+{
+    yield_coroutine();
+}
+
 inline co_env::co_env()
 {
-    current_co__ = std::make_shared<co_ctx>(true);
+    current_co__          = std::make_shared<co_ctx>(true);
     current_co__->running = true;
     co_set__.push_back(current_co__);
+    get_co_manager().add_thread_id(pthread_self());
+    std::call_once(get_co_once_flag(), []() {
+        signal(SIG_CO_SCHE, __co_sche_sighandler);
+        std::thread([=] {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            auto ids = get_co_manager().get_co_thread_ids();
+            for (auto& id : ids)
+            {
+                pthread_kill(id, SIG_CO_SCHE);
+            }
+        }).detach();
+    });
+}
+
+inline co_env::~co_env()
+{
+    get_co_manager().remove_thread_id(pthread_self());
 }
 
 }

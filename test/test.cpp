@@ -643,12 +643,11 @@ sf_test(cache, mismatch_type_test)
 
 
 
-void co_test_func(void* p)
+void co_test_func(std::string& p)
 {
-    std::string *pstr = (std::string*)p;
     for (int i = 0; i < 3; ++i)
     {
-        pstr->push_back('b');
+        p.push_back('b');
         yield_coroutine();
     }
 }
@@ -656,13 +655,12 @@ void co_test_func(void* p)
 sf_test(co, co_switch)
 {
     std::string s;
-    auto co = create_coroutine(&co_test_func, &s);
-    run_coroutine(co);
+    create_coroutine(co_test_func, std::ref(s));
     for(int i=0;i<3; ++i){
         s.push_back('a');
         yield_coroutine();
     }
-    test_p_eq(s, "bababa");
+    test_p_eq(s, "ababab");
 }
 
 int main()
