@@ -37,22 +37,25 @@ inline co_manager& get_co_manager()
 
 inline co_manager::co_manager()
 {
-    struct sigaction sa;
-    sa.sa_handler = __co_sche_sighandler;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_NODEFER;
+    // struct sigaction sa;
+    // sa.sa_handler = __co_sche_sighandler;
+    // sigemptyset(&sa.sa_mask);
+    // sa.sa_flags = SA_NODEFER;
 
-    struct sigevent sigev;
-    ::memset(&sigev, 0, sizeof(sigev));
-    sigev.sigev_notify          = SIGEV_SIGNAL;
-    sigev.sigev_signo           = SIG_CO_SCHE;
-    sigev.sigev_value.sival_int = 0;
+    // sigemptyset(&sa.sa_mask);
+    // sigaction(SIG_CO_SCHE, &sa, nullptr);
 
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIG_CO_SCHE, &sa, nullptr);
-
-    timer_create(CLOCK_REALTIME, &sigev, &timer__);
-    reset_timer();
+    // std::thread([this]() {
+    //     while (true)
+    //     {
+    //         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //         auto ids = get_co_thread_ids();
+    //         for (auto& id : ids)
+    //         {
+    //             pthread_kill(id, SIG_CO_SCHE);
+    //         }
+    //     }
+    // }).detach();
 }
 
 inline std::unordered_set<pthread_t> co_manager::get_co_thread_ids() const
@@ -154,17 +157,12 @@ inline void co_ctx_swap(void*, void*)
         "ret\n\t");
 }
 
-inline void co_env::wait_coroutine(std::shared_ptr<co_ctx> ctx)
+inline void wait_coroutine(std::shared_ptr<co_ctx> ctx)
 {
-    while (ctx->state__ != co_state::finished)
+    while (ctx->get_state() != co_state::finished)
     {
         yield_coroutine();
     }
-}
-
-inline void wait_coroutine(std::shared_ptr<co_ctx> ctx)
-{
-    get_co_env().wait_coroutine(ctx);
 }
 
 inline void co_env::yield_coroutine()
@@ -180,7 +178,6 @@ inline void co_env::yield_coroutine()
         void** ret_addr          = (void**)(sp);
         *ret_addr                = reinterpret_cast<void*>(&__co_func__);
         ctx->regs__[co_rspindex] = reinterpret_cast<char*>(sp) - sizeof(void*) * 2;
-        ctx->state__             = co_state::running;
     }
     auto curr_co = get_current_coroutine();
     if (curr_co == ctx)
@@ -192,6 +189,7 @@ inline void co_env::yield_coroutine()
     {
         curr_co->state__ = co_state::suspended;
     }
+    ctx->state__ = co_state::running;
     co_ctx_swap(&curr_co->regs__, &ctx->regs__);
 }
 
@@ -241,14 +239,8 @@ inline std::shared_ptr<co_ctx> co_env::choose_co()
     return co_set__[curr_co_index__];
 }
 
-inline void co_manager::reset_timer()
-{
-    timer_settime(timer__, 0, &ts__, nullptr);
-}
-
 inline void __co_sche_sighandler(int)
 {
-    get_co_manager().reset_timer();
     yield_coroutine();
 }
 
@@ -263,6 +255,41 @@ inline co_env::co_env()
 inline co_env::~co_env()
 {
     get_co_manager().remove_thread_id(pthread_self());
+}
+
+template <typename Tm>
+bool wait_coroutine_for(std::shared_ptr<co_ctx> ctx, Tm t)
+{
+    auto now    = std::chrono::system_clock::now();
+    auto expire = now + t;
+    while (ctx->get_state() != co_state::finished)
+    {
+        if (std::chrono::system_clock::now() > expire)
+        {
+            return false;
+        }
+        yield_coroutine();
+    }
+    return true;
+}
+
+template <typename Tm>
+bool wait_coroutine_until(std::shared_ptr<co_ctx> ctx, Tm expire)
+{
+    while (ctx->get_state() != co_state::finished)
+    {
+        if (std::chrono::system_clock::now() > expire)
+        {
+            return false;
+        }
+        yield_coroutine();
+    }
+    return true;
+}
+
+inline co_state co_ctx::get_state() const
+{
+    return state__;
 }
 
 }

@@ -14,11 +14,6 @@ class co_manager
 {
     std::unordered_set<pthread_t> co_thread_id__;
     mutable std::mutex            mu_co_thread_id_set__;
-    timer_t                       timer__;
-    struct itimerspec             ts__
-    {
-        { 0, 0 }, { 0, 1000'000'00 }
-    };
 
 public:
     std::unordered_set<pthread_t> get_co_thread_ids() const;
@@ -55,6 +50,8 @@ public:
 
     std::function<void()> get_entry() const;
 
+    co_state get_state() const;
+
     friend class co_env;
 };
 
@@ -76,7 +73,6 @@ public:
     std::shared_ptr<co_ctx> get_current_coroutine() const;
     std::shared_ptr<co_ctx> create_coroutine(size_t default_stack_size, std::function<void()> func);
     void                    yield_coroutine();
-    void                    wait_coroutine(std::shared_ptr<co_ctx> ctx);
 };
 
 template <typename Func, typename... Args>
@@ -87,5 +83,10 @@ std::shared_ptr<co_ctx> get_current_coroutine();
 void                    release_curr_co();
 void                    yield_coroutine();
 void                    wait_coroutine(std::shared_ptr<co_ctx> ctx);
+template <typename Tm>
+bool wait_coroutine_for(std::shared_ptr<co_ctx> ctx, Tm t);
+template <typename Tm>
+bool wait_coroutine_until(std::shared_ptr<co_ctx> ctx, Tm expire);
+
 
 }

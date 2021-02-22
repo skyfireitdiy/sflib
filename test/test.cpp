@@ -679,7 +679,9 @@ sf_test(co, co_wait)
     test_p_eq(n, 90);
 }
 
+
 int main()
 {
     run_test(16);
+
 }
