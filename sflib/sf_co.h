@@ -10,15 +10,17 @@ namespace skyfire
 
 constexpr int default_co_stack_size = 1024 * 2;
 
+class co_env;
+
 class co_manager
 {
-    std::unordered_set<pthread_t> co_thread_id__;
-    mutable std::mutex            mu_co_thread_id_set__;
+    std::unordered_set<std::shared_ptr<co_env>> co_env_set__;
+    mutable std::mutex                          mu_co_env_set__;
 
 public:
-    std::unordered_set<pthread_t> get_co_thread_ids() const;
-    void                          add_thread_id(pthread_t th);
-    void                          remove_thread_id(pthread_t th);
+    std::unordered_set<std::shared_ptr<co_env>> get_co_env_set() const;
+    void                                        add_env(std::shared_ptr<co_env> env);
+    void                                        remove_env(std::shared_ptr<co_env> env);
     co_manager();
     void reset_timer();
 };
@@ -87,6 +89,5 @@ template <typename Tm>
 bool wait_coroutine_for(std::shared_ptr<co_ctx> ctx, Tm t);
 template <typename Tm>
 bool wait_coroutine_until(std::shared_ptr<co_ctx> ctx, Tm expire);
-
 
 }

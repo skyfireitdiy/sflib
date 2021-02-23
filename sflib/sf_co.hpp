@@ -58,22 +58,22 @@ inline co_manager::co_manager()
     // }).detach();
 }
 
-inline std::unordered_set<pthread_t> co_manager::get_co_thread_ids() const
+inline std::unordered_set<std::shared_ptr<co_env>> co_manager::get_co_env_set() const
 {
-    std::unique_lock<std::mutex> lck(mu_co_thread_id_set__);
-    return co_thread_id__;
+    std::unique_lock<std::mutex> lck(mu_co_env_set__);
+    return co_env_set__;
 }
 
-void co_manager::add_thread_id(pthread_t th)
+void co_manager::add_env(std::shared_ptr<co_env> env)
 {
-    std::unique_lock<std::mutex> lck(mu_co_thread_id_set__);
-    co_thread_id__.insert(th);
+    std::unique_lock<std::mutex> lck(mu_co_env_set__);
+    co_env_set__.insert(env);
 }
 
-void co_manager::remove_thread_id(pthread_t th)
+void co_manager::remove_env(std::shared_ptr<co_env> env)
 {
-    std::unique_lock<std::mutex> lck(mu_co_thread_id_set__);
-    co_thread_id__.erase(th);
+    std::unique_lock<std::mutex> lck(mu_co_env_set__);
+    co_env_set__.erase(env);
 }
 
 inline co_env& get_co_env()
@@ -249,12 +249,12 @@ inline co_env::co_env()
     current_co__          = std::make_shared<co_ctx>(true, 0);
     current_co__->state__ = co_state::running;
     co_set__.push_back(current_co__);
-    get_co_manager().add_thread_id(pthread_self());
+    get_co_manager().add_env(shared_from_this());
 }
 
 inline co_env::~co_env()
 {
-    get_co_manager().remove_thread_id(pthread_self());
+    get_co_manager().remove_env(shared_from_this());
 }
 
 template <typename Tm>
