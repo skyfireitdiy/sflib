@@ -17,6 +17,8 @@ class co_manager
     std::unordered_set<std::shared_ptr<co_env>> co_env_set__;
     mutable std::mutex                          mu_co_env_set__;
 
+    void monitor_thread__();
+
 public:
     std::unordered_set<std::shared_ptr<co_env>> get_co_env_set() const;
     void                                        add_env(std::shared_ptr<co_env> env);
@@ -36,16 +38,14 @@ enum class co_state
 class co_ctx
 {
     void*                 regs__[14] = {};
-    bool                  main__;
-    co_state              state__ = co_state::ready;
+    co_state              state__    = co_state::ready;
     std::vector<char>     stack_data__;
     size_t                stack_size__;
     std::function<void()> entry__;
 
 public:
-    co_ctx(bool main = false, size_t ss = default_co_stack_size)
-        : main__(main)
-        , stack_data__(ss)
+    co_ctx(size_t ss = default_co_stack_size)
+        : stack_data__(ss)
         , stack_size__(ss)
     {
     }
@@ -61,8 +61,11 @@ struct co_env : public std::enable_shared_from_this<co_env>
 {
 private:
     std::vector<std::shared_ptr<co_ctx>> co_set__;
+    std::mutex                           mu_co_set__;
     int                                  curr_co_index__ = 0;
     std::shared_ptr<co_ctx>              current_co__    = nullptr;
+    std::shared_ptr<co_ctx>              main_co__       = nullptr;
+    std::atomic<bool>                    sched__ { false };
 
     std::shared_ptr<co_ctx> choose_co__();
     void                    append_co__(std::shared_ptr<co_ctx> ctx);
@@ -75,6 +78,8 @@ public:
     std::shared_ptr<co_ctx> get_current_coroutine() const;
     std::shared_ptr<co_ctx> create_coroutine(size_t default_stack_size, std::function<void()> func);
     void                    yield_coroutine();
+
+    friend class co_manager;
 };
 
 template <typename Func, typename... Args>

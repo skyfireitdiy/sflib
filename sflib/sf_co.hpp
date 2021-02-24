@@ -60,26 +60,26 @@ inline co_manager::co_manager()
 
 inline std::unordered_set<std::shared_ptr<co_env>> co_manager::get_co_env_set() const
 {
-    std::unique_lock<std::mutex> lck(mu_co_env_set__);
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
     return co_env_set__;
 }
 
 void co_manager::add_env(std::shared_ptr<co_env> env)
 {
-    std::unique_lock<std::mutex> lck(mu_co_env_set__);
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
     co_env_set__.insert(env);
 }
 
 void co_manager::remove_env(std::shared_ptr<co_env> env)
 {
-    std::unique_lock<std::mutex> lck(mu_co_env_set__);
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
     co_env_set__.erase(env);
 }
 
-inline co_env& get_co_env()
+inline std::shared_ptr<co_env> get_co_env()
 {
-    thread_local static co_env g_env;
-    return g_env;
+    thread_local static std::shared_ptr<co_env> env = std::make_shared<co_env>();
+    return env;
 }
 
 inline std::once_flag& get_co_once_flag()
@@ -90,7 +90,7 @@ inline std::once_flag& get_co_once_flag()
 
 inline std::shared_ptr<co_ctx> co_env::create_coroutine(size_t default_stack_size, std::function<void()> func)
 {
-    auto new_co     = std::make_shared<co_ctx>(false, default_stack_size);
+    auto new_co     = std::make_shared<co_ctx>(default_stack_size);
     new_co->entry__ = func;
     append_co__(new_co);
     return new_co;
@@ -104,18 +104,18 @@ inline std::function<void()> co_ctx::get_entry() const
 template <typename Func, typename... Args>
 inline std::shared_ptr<co_ctx> create_coroutine(Func func, Args&&... args)
 {
-    return get_co_env().create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
+    return get_co_env()->create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
 }
 
 template <typename Func, typename... Args>
 inline std::shared_ptr<co_ctx> create_coroutine(size_t default_stack_size, Func func, Args&&... args)
 {
-    return get_co_env().create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
+    return get_co_env()->create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
 }
 
 inline std::shared_ptr<co_ctx> get_current_coroutine()
 {
-    return get_co_env().get_current_coroutine();
+    return get_co_env()->get_current_coroutine();
 }
 
 inline void co_ctx_swap(void*, void*)
@@ -195,7 +195,7 @@ inline void co_env::yield_coroutine()
 
 inline void yield_coroutine()
 {
-    get_co_env().yield_coroutine();
+    get_co_env()->yield_coroutine();
 }
 
 inline void co_env::append_co__(std::shared_ptr<co_ctx> ctx)
@@ -211,7 +211,7 @@ inline static void __co_func__(co_ctx* ctx)
 
 inline void release_curr_co()
 {
-    get_co_env().release_curr_co();
+    get_co_env()->release_curr_co();
     yield_coroutine();
 }
 
@@ -235,6 +235,10 @@ inline void co_env::release_curr_co()
 
 inline std::shared_ptr<co_ctx> co_env::choose_co()
 {
+    if (co_set__.empty())
+    {
+        return main_co__;
+    }
     curr_co_index__ = (curr_co_index__ + 1) % co_set__.size();
     return co_set__[curr_co_index__];
 }
@@ -246,7 +250,8 @@ inline void __co_sche_sighandler(int)
 
 inline co_env::co_env()
 {
-    current_co__          = std::make_shared<co_ctx>(true, 0);
+    current_co__          = std::make_shared<co_ctx>(0);
+    main_co__             = current_co__;
     current_co__->state__ = co_state::running;
     co_set__.push_back(current_co__);
     get_co_manager().add_env(shared_from_this());
@@ -290,6 +295,35 @@ bool wait_coroutine_until(std::shared_ptr<co_ctx> ctx, Tm expire)
 inline co_state co_ctx::get_state() const
 {
     return state__;
+}
+
+inline void co_manager::monitor_thread__()
+{
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::lock_guard<std::mutex> lck(mu_co_env_set__);
+
+        std::vector<std::shared_ptr<co_ctx>> need_move_co;
+        std::vector<std::shared_ptr<co_env>> normal_env;
+
+        std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env, this](auto& env) {
+            if (!env->sched__)
+            {
+                // 指定时间未发生调度的，可能死循环了，转移其他协程
+                std::lock_guard<std::mutex> lck_co(env->mu_co_set__);
+                auto                        iter = std::remove(env->co_set__.begin(), env->co_set__.end(), env->current_co__);
+                need_move_co.insert(need_move_co.end(), iter, env->co_set__.end());
+                env->co_set__.erase(iter, env->co_set__.end());
+            }
+            else
+            {
+                // 记录正常的协程
+                normal_env.push_back(env);
+            }
+            env->sched__ = false;
+        });
+    }
 }
 
 }
