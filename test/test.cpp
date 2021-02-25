@@ -1,3 +1,5 @@
+
+#if 0
 #include <sf_argv>
 #include <sf_cache>
 #include <sf_chan>
@@ -679,9 +681,36 @@ sf_test(co, co_wait)
     test_p_eq(n, 90);
 }
 
-
 int main()
 {
     run_test(16);
-
 }
+
+#else
+
+#include <sf_co>
+
+using namespace skyfire;
+using namespace std;
+
+int main()
+{
+    int d = 0;
+    create_coroutine([](int& d) {
+        for (int i = 0; i < 3; ++i)
+        {
+            d += i;
+            cout << this_thread::get_id() << " " << d << endl;
+            yield_coroutine();
+        }
+    }, std::ref(d));
+    for (int i = 0; i < 3; ++i)
+    {
+        d += i;
+        cout << this_thread::get_id() << " " << d << endl;
+        yield_coroutine();
+    }
+    this_thread::sleep_for(std::chrono::seconds(1));
+}
+
+#endif

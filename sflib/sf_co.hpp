@@ -26,36 +26,91 @@ constexpr int co_retindex = 9;
 constexpr int co_rspindex = 13;
 constexpr int co_rdiindex = 7;
 
-void static __co_func__(co_ctx*);
-inline void __co_sche_sighandler(int);
+static void             __co_func__(co_ctx*);
+void                    __co_sche_sighandler(int);
+std::shared_ptr<co_env> get_co_env();
 
-inline co_manager& get_co_manager()
+class co_manager
 {
-    static co_manager manager;
-    return manager;
+    std::unordered_set<std::shared_ptr<co_env>> co_env_set__;
+    mutable std::mutex                          mu_co_env_set__;
+
+    size_t base_co_thread_count__ = std::thread::hardware_concurrency() * 2;
+
+    void monitor_thread__();
+
+public:
+    std::unordered_set<std::shared_ptr<co_env>> get_co_env_set() const;
+
+    std::shared_ptr<co_env> add_env();
+    std::shared_ptr<co_env> get_best_env();
+    void                    remove_env(std::shared_ptr<co_env> env);
+    bool                    need_destroy_co_thread() const;
+    ~co_manager();
+};
+
+class co_ctx
+{
+    void*                 regs__[14] = {};
+    co_state              state__    = co_state::ready;
+    std::vector<char>     stack_data__;
+    size_t                stack_size__;
+    std::function<void()> entry__;
+
+public:
+    co_ctx(size_t ss = default_co_stack_size)
+        : stack_data__(ss)
+        , stack_size__(ss)
+    {
+    }
+
+    std::function<void()> get_entry() const;
+
+    co_state get_state() const;
+
+    friend class co_env;
+};
+
+struct co_env
+{
+private:
+    std::vector<std::shared_ptr<co_ctx>> co_set__;
+    std::mutex                           mu_co_set__;
+    int                                  curr_co_index__ = 0;
+    std::shared_ptr<co_ctx>              current_co__    = nullptr;
+    std::shared_ptr<co_ctx>              main_co__       = nullptr;
+    std::future<void>                    env_future__;
+    std::atomic<bool>                    sched__ { false };
+    std::atomic<bool>                    need_exit__ { false };
+    std::atomic<bool>                    block__ { false };
+
+public:
+    co_env();
+    void                    append_co(std::shared_ptr<co_ctx> ctx);
+    std::shared_ptr<co_ctx> choose_co();
+    void                    release_curr_co();
+    std::shared_ptr<co_ctx> get_current_coroutine() const;
+    std::shared_ptr<co_ctx> create_coroutine(size_t default_stack_size, std::function<void()> func);
+    void                    yield_coroutine();
+
+    friend class co_manager;
+};
+
+inline co_manager::~co_manager()
+{
+    {
+        std::lock_guard<std::mutex> lck(mu_co_env_set__);
+        for (auto& env : co_env_set__)
+        {
+            env->need_exit__ = true;
+        }
+    }
 }
 
-inline co_manager::co_manager()
+inline std::shared_ptr<co_manager> get_co_manager()
 {
-    // struct sigaction sa;
-    // sa.sa_handler = __co_sche_sighandler;
-    // sigemptyset(&sa.sa_mask);
-    // sa.sa_flags = SA_NODEFER;
-
-    // sigemptyset(&sa.sa_mask);
-    // sigaction(SIG_CO_SCHE, &sa, nullptr);
-
-    // std::thread([this]() {
-    //     while (true)
-    //     {
-    //         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    //         auto ids = get_co_thread_ids();
-    //         for (auto& id : ids)
-    //         {
-    //             pthread_kill(id, SIG_CO_SCHE);
-    //         }
-    //     }
-    // }).detach();
+    static std::shared_ptr<co_manager> manager = std::make_shared<co_manager>();
+    return manager;
 }
 
 inline std::unordered_set<std::shared_ptr<co_env>> co_manager::get_co_env_set() const
@@ -64,13 +119,52 @@ inline std::unordered_set<std::shared_ptr<co_env>> co_manager::get_co_env_set() 
     return co_env_set__;
 }
 
-void co_manager::add_env(std::shared_ptr<co_env> env)
+inline std::shared_ptr<co_env> co_manager::add_env()
 {
-    std::lock_guard<std::mutex> lck(mu_co_env_set__);
-    co_env_set__.insert(env);
+    std::promise<std::shared_ptr<co_env>> pro;
+    auto                                  fu = std::async([&pro, this]() {
+        auto env = get_co_env();
+        {
+            std::lock_guard<std::mutex> lck(mu_co_env_set__);
+            co_env_set__.insert(env);
+        }
+        pro.set_value(env);
+        while (!env->need_exit__)
+        {
+            yield_coroutine();
+        }
+        get_co_manager()->remove_env(get_co_env());
+    });
+
+    auto env          = pro.get_future().get();
+    env->env_future__ = std::move(fu);
+    return env;
 }
 
-void co_manager::remove_env(std::shared_ptr<co_env> env)
+inline std::shared_ptr<co_env> co_manager::get_best_env()
+{
+    if (co_env_set__.size() < base_co_thread_count__)
+    {
+        return add_env();
+    }
+    std::shared_ptr<co_env> best = nullptr;
+    {
+        std::lock_guard<std::mutex> lck(mu_co_env_set__);
+        for (auto& env : co_env_set__)
+        {
+            if (!env->block__ && !env->need_exit__)
+            {
+                if (best == nullptr || (best->co_set__.size() > env->co_set__.size()))
+                {
+                    best = env;
+                }
+            }
+        }
+    }
+    return best == nullptr ? add_env() : best;
+}
+
+inline void co_manager::remove_env(std::shared_ptr<co_env> env)
 {
     std::lock_guard<std::mutex> lck(mu_co_env_set__);
     co_env_set__.erase(env);
@@ -92,7 +186,7 @@ inline std::shared_ptr<co_ctx> co_env::create_coroutine(size_t default_stack_siz
 {
     auto new_co     = std::make_shared<co_ctx>(default_stack_size);
     new_co->entry__ = func;
-    append_co__(new_co);
+    append_co(new_co);
     return new_co;
 }
 
@@ -104,13 +198,13 @@ inline std::function<void()> co_ctx::get_entry() const
 template <typename Func, typename... Args>
 inline std::shared_ptr<co_ctx> create_coroutine(Func func, Args&&... args)
 {
-    return get_co_env()->create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
+    return get_co_manager()->get_best_env()->create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
 }
 
 template <typename Func, typename... Args>
 inline std::shared_ptr<co_ctx> create_coroutine(size_t default_stack_size, Func func, Args&&... args)
 {
-    return get_co_env()->create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
+    return get_co_manager()->get_best_env()->create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
 }
 
 inline std::shared_ptr<co_ctx> get_current_coroutine()
@@ -198,8 +292,9 @@ inline void yield_coroutine()
     get_co_env()->yield_coroutine();
 }
 
-inline void co_env::append_co__(std::shared_ptr<co_ctx> ctx)
+inline void co_env::append_co(std::shared_ptr<co_ctx> ctx)
 {
+    std::lock_guard<std::mutex> lck_co(mu_co_set__);
     co_set__.push_back(ctx);
 }
 
@@ -222,6 +317,7 @@ inline std::shared_ptr<co_ctx> co_env::get_current_coroutine() const
 
 inline void co_env::release_curr_co()
 {
+    std::lock_guard<std::mutex> lck(mu_co_set__);
     for (auto iter = co_set__.begin(); iter != co_set__.end(); ++iter)
     {
         if (*iter == current_co__)
@@ -235,10 +331,13 @@ inline void co_env::release_curr_co()
 
 inline std::shared_ptr<co_ctx> co_env::choose_co()
 {
+    std::lock_guard<std::mutex> lck_co(mu_co_set__);
     if (co_set__.empty())
     {
         return main_co__;
     }
+    block__         = false;
+    sched__         = true;
     curr_co_index__ = (curr_co_index__ + 1) % co_set__.size();
     return co_set__[curr_co_index__];
 }
@@ -253,13 +352,6 @@ inline co_env::co_env()
     current_co__          = std::make_shared<co_ctx>(0);
     main_co__             = current_co__;
     current_co__->state__ = co_state::running;
-    co_set__.push_back(current_co__);
-    get_co_manager().add_env(shared_from_this());
-}
-
-inline co_env::~co_env()
-{
-    get_co_manager().remove_env(shared_from_this());
 }
 
 template <typename Tm>
@@ -315,6 +407,7 @@ inline void co_manager::monitor_thread__()
                 auto                        iter = std::remove(env->co_set__.begin(), env->co_set__.end(), env->current_co__);
                 need_move_co.insert(need_move_co.end(), iter, env->co_set__.end());
                 env->co_set__.erase(iter, env->co_set__.end());
+                env->block__ = true;
             }
             else
             {
