@@ -71,7 +71,7 @@ public:
     friend class co_env;
 };
 
-struct co_env
+class co_env
 {
 private:
     std::vector<std::shared_ptr<co_ctx>> co_set__;
@@ -86,15 +86,56 @@ private:
 
 public:
     co_env();
-    void                    append_co(std::shared_ptr<co_ctx> ctx);
-    std::shared_ptr<co_ctx> choose_co();
-    void                    release_curr_co();
-    std::shared_ptr<co_ctx> get_current_coroutine() const;
-    std::shared_ptr<co_ctx> create_coroutine(size_t default_stack_size, std::function<void()> func);
-    void                    yield_coroutine();
-
-    friend class co_manager;
+    void                                 append_co(std::shared_ptr<co_ctx> ctx);
+    std::shared_ptr<co_ctx>              choose_co();
+    void                                 release_curr_co();
+    std::shared_ptr<co_ctx>              get_current_coroutine() const;
+    std::shared_ptr<co_ctx>              create_coroutine(size_t default_stack_size, std::function<void()> func);
+    void                                 yield_coroutine();
+    bool                                 if_need_exit() const;
+    void                                 set_exit_flag();
+    void                                 set_env_future(std::future<void>&& fu);
+    bool                                 if_blocked() const;
+    size_t                               co_size() const;
+    bool                                 has_sched() const;
+    void                                 reset_sched();
+    std::vector<std::shared_ptr<co_ctx>> surrender_co();
 };
+
+inline bool co_env::if_need_exit() const
+{
+    return need_exit__;
+}
+
+inline void co_env::set_exit_flag()
+{
+    need_exit__ = true;
+}
+
+inline void co_env::set_env_future(std::future<void>&& fu)
+{
+    env_future__ = std::move(fu);
+}
+
+inline bool co_env::if_blocked() const
+{
+    return block__;
+}
+
+inline size_t co_env::co_size() const
+{
+    return co_set__.size();
+}
+
+inline bool co_env::has_sched() const
+{
+    return sched__;
+}
+
+inline void co_env::reset_sched()
+{
+    sched__ = false;
+}
 
 inline co_manager::~co_manager()
 {
@@ -102,7 +143,7 @@ inline co_manager::~co_manager()
         std::lock_guard<std::mutex> lck(mu_co_env_set__);
         for (auto& env : co_env_set__)
         {
-            env->need_exit__ = true;
+            env->set_exit_flag();
         }
     }
 }
@@ -129,15 +170,15 @@ inline std::shared_ptr<co_env> co_manager::add_env()
             co_env_set__.insert(env);
         }
         pro.set_value(env);
-        while (!env->need_exit__)
+        while (!env->if_need_exit())
         {
             yield_coroutine();
         }
         get_co_manager()->remove_env(get_co_env());
     });
 
-    auto env          = pro.get_future().get();
-    env->env_future__ = std::move(fu);
+    auto env = pro.get_future().get();
+    env->set_env_future(std::move(fu));
     return env;
 }
 
@@ -152,9 +193,9 @@ inline std::shared_ptr<co_env> co_manager::get_best_env()
         std::lock_guard<std::mutex> lck(mu_co_env_set__);
         for (auto& env : co_env_set__)
         {
-            if (!env->block__ && !env->need_exit__)
+            if (!env->if_blocked() && !env->if_blocked())
             {
-                if (best == nullptr || (best->co_set__.size() > env->co_set__.size()))
+                if (best == nullptr || (best->co_size() > env->co_size()))
                 {
                     best = env;
                 }
@@ -399,24 +440,31 @@ inline void co_manager::monitor_thread__()
         std::vector<std::shared_ptr<co_ctx>> need_move_co;
         std::vector<std::shared_ptr<co_env>> normal_env;
 
-        std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env, this](auto& env) {
-            if (!env->sched__)
+        std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env](auto& env) {
+            if (!env->has_sched())
             {
                 // 指定时间未发生调度的，可能死循环了，转移其他协程
-                std::lock_guard<std::mutex> lck_co(env->mu_co_set__);
-                auto                        iter = std::remove(env->co_set__.begin(), env->co_set__.end(), env->current_co__);
-                need_move_co.insert(need_move_co.end(), iter, env->co_set__.end());
-                env->co_set__.erase(iter, env->co_set__.end());
-                env->block__ = true;
+                auto blocked_co = env->surrender_co();
+                need_move_co.insert(need_move_co.end(), blocked_co.begin(), blocked_co.end());
             }
             else
             {
                 // 记录正常的协程
                 normal_env.push_back(env);
             }
-            env->sched__ = false;
+            env->reset_sched();
         });
     }
+}
+
+inline std::vector<std::shared_ptr<co_ctx>> co_env::surrender_co()
+{
+    std::lock_guard<std::mutex> lck(mu_co_set__);
+    auto                        iter = std::remove(co_set__.begin(), co_set__.end(), current_co__);
+    block__                          = true;
+    auto ret                         = std::vector<std::shared_ptr<co_ctx>>(iter, co_set__.end());
+    co_set__.erase(iter, co_set__.end());
+    return ret;
 }
 
 }

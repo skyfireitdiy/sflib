@@ -710,7 +710,6 @@ int main()
         cout << this_thread::get_id() << " " << d << endl;
         yield_coroutine();
     }
-    this_thread::sleep_for(std::chrono::seconds(1));
 }
 
 #endif
