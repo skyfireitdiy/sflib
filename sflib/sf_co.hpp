@@ -51,24 +51,31 @@ public:
 
 class co_ctx
 {
-    void*                 regs__[14] = {};
+    const void*           regs__[14] = {};
     co_state              state__    = co_state::ready;
     std::vector<char>     stack_data__;
     size_t                stack_size__;
     std::function<void()> entry__;
 
 public:
-    co_ctx(size_t ss = default_co_stack_size)
+    co_ctx(std::function<void()> entry, size_t ss = default_co_stack_size)
         : stack_data__(ss)
         , stack_size__(ss)
+        , entry__(entry)
     {
     }
 
     std::function<void()> get_entry() const;
 
-    co_state get_state() const;
+    co_state    get_state() const;
+    void        set_state(co_state state);
+    void        set_reg_ret(const void* value);
+    void        set_reg_rdi(const void* value);
+    void        set_reg_rsp(const void* value);
+    const void* get_stack_bp() const;
+    const void* get_reg_buf() const;
 
-    friend class co_env;
+    // friend class co_env;
 };
 
 class co_env
@@ -225,8 +232,7 @@ inline std::once_flag& get_co_once_flag()
 
 inline std::shared_ptr<co_ctx> co_env::create_coroutine(size_t default_stack_size, std::function<void()> func)
 {
-    auto new_co     = std::make_shared<co_ctx>(default_stack_size);
-    new_co->entry__ = func;
+    auto new_co = std::make_shared<co_ctx>(func, default_stack_size);
     append_co(new_co);
     return new_co;
 }
@@ -253,7 +259,7 @@ inline std::shared_ptr<co_ctx> get_current_coroutine()
     return get_co_env()->get_current_coroutine();
 }
 
-inline void co_ctx_swap(void*, void*)
+inline void co_ctx_swap(const void*, const void*)
 {
     __asm(
         "popq %rbp\n\t"
@@ -304,15 +310,15 @@ inline void co_env::yield_coroutine()
 {
     auto ctx = choose_co();
 
-    if (ctx->state__ == co_state::ready || ctx->state__ == co_state::finished)
+    if (ctx->get_state() == co_state::ready || ctx->get_state() == co_state::finished)
     {
-        ctx->regs__[co_retindex] = reinterpret_cast<void*>(&__co_func__);
-        ctx->regs__[co_rdiindex] = reinterpret_cast<void*>(ctx.get());
-        void* sp                 = ctx->stack_data__.data() + ctx->stack_size__ - sizeof(void*);
-        sp                       = (char*)((unsigned long)sp & -16LL);
-        void** ret_addr          = (void**)(sp);
-        *ret_addr                = reinterpret_cast<void*>(&__co_func__);
-        ctx->regs__[co_rspindex] = reinterpret_cast<char*>(sp) - sizeof(void*) * 2;
+        ctx->set_reg_ret(reinterpret_cast<void*>(&__co_func__));
+        ctx->set_reg_rdi(reinterpret_cast<void*>(ctx.get()));
+        const void* sp  = reinterpret_cast<const char*>(ctx->get_stack_bp()) - sizeof(void*);
+        sp              = reinterpret_cast<char*>((unsigned long)sp & -16LL);
+        void** ret_addr = (void**)(sp);
+        *ret_addr       = reinterpret_cast<void*>(&__co_func__);
+        ctx->set_reg_rsp(reinterpret_cast<const char*>(sp) - sizeof(void*) * 2);
     }
     auto curr_co = get_current_coroutine();
     if (curr_co == ctx)
@@ -320,12 +326,12 @@ inline void co_env::yield_coroutine()
         return;
     }
     current_co__ = ctx;
-    if (curr_co->state__ == co_state::running)
+    if (curr_co->get_state() == co_state::running)
     {
-        curr_co->state__ = co_state::suspended;
+        curr_co->set_state(co_state::suspended);
     }
-    ctx->state__ = co_state::running;
-    co_ctx_swap(&curr_co->regs__, &ctx->regs__);
+    ctx->set_state(co_state::running);
+    co_ctx_swap(curr_co->get_reg_buf(), ctx->get_reg_buf());
 }
 
 inline void yield_coroutine()
@@ -364,7 +370,7 @@ inline void co_env::release_curr_co()
         if (*iter == current_co__)
         {
             co_set__.erase(iter);
-            current_co__->state__ = co_state::finished;
+            current_co__->set_state(co_state::finished);
             break;
         }
     }
@@ -390,9 +396,9 @@ inline void __co_sche_sighandler(int)
 
 inline co_env::co_env()
 {
-    current_co__          = std::make_shared<co_ctx>(0);
-    main_co__             = current_co__;
-    current_co__->state__ = co_state::running;
+    current_co__ = std::make_shared<co_ctx>(nullptr, 0);
+    main_co__    = current_co__;
+    current_co__->set_state(co_state::running);
 }
 
 template <typename Tm>
@@ -428,6 +434,36 @@ bool wait_coroutine_until(std::shared_ptr<co_ctx> ctx, Tm expire)
 inline co_state co_ctx::get_state() const
 {
     return state__;
+}
+
+inline void co_ctx::set_state(co_state state)
+{
+    state__ = state;
+}
+
+inline void co_ctx::set_reg_ret(const void* value)
+{
+    regs__[co_retindex] = value;
+}
+
+inline void co_ctx::set_reg_rdi(const void* value)
+{
+    regs__[co_rdiindex] = value;
+}
+
+inline void co_ctx::set_reg_rsp(const void* value)
+{
+    regs__[co_rspindex] = value;
+}
+
+inline const void* co_ctx::get_stack_bp() const
+{
+    return stack_data__.data() + stack_size__;
+}
+
+inline const void* co_ctx::get_reg_buf() const
+{
+    return &regs__;
 }
 
 inline void co_manager::monitor_thread__()
