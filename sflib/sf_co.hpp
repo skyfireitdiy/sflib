@@ -35,9 +35,10 @@ class co_manager
     std::unordered_set<std::shared_ptr<co_env>> co_env_set__;
     mutable std::mutex                          mu_co_env_set__;
 
-    size_t base_co_thread_count__ = std::thread::hardware_concurrency() * 2;
+    size_t base_co_thread_count__ = 1; //std::thread::hardware_concurrency() * 2;
 
     void monitor_thread__();
+    void reassign_co__();
 
 public:
     std::unordered_set<std::shared_ptr<co_env>> get_co_env_set() const;
@@ -90,10 +91,13 @@ private:
     std::atomic<bool>                    sched__ { false };
     std::atomic<bool>                    need_exit__ { false };
     std::atomic<bool>                    block__ { false };
+    std::atomic<bool>                    used__ { false };
 
 public:
     co_env();
-    void                                 append_co(std::shared_ptr<co_ctx> ctx);
+    void append_co(std::shared_ptr<co_ctx> ctx);
+    template <typename T>
+    void                                 append_co(T begin, T end);
     std::shared_ptr<co_ctx>              choose_co();
     void                                 release_curr_co();
     std::shared_ptr<co_ctx>              get_current_coroutine() const;
@@ -146,12 +150,10 @@ inline void co_env::reset_sched()
 
 inline co_manager::~co_manager()
 {
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
+    for (auto& env : co_env_set__)
     {
-        std::lock_guard<std::mutex> lck(mu_co_env_set__);
-        for (auto& env : co_env_set__)
-        {
-            env->set_exit_flag();
-        }
+        env->set_exit_flag();
     }
 }
 
@@ -345,6 +347,13 @@ inline void co_env::append_co(std::shared_ptr<co_ctx> ctx)
     co_set__.push_back(ctx);
 }
 
+template <typename T>
+void co_env::append_co(T begin, T end)
+{
+    std::lock_guard<std::mutex> lck_co(mu_co_set__);
+    co_set__.insert(co_set__.end(), begin, end);
+}
+
 inline static void __co_func__(co_ctx* ctx)
 {
     ctx->get_entry()();
@@ -381,8 +390,13 @@ inline std::shared_ptr<co_ctx> co_env::choose_co()
     std::lock_guard<std::mutex> lck_co(mu_co_set__);
     if (co_set__.empty())
     {
+        if (get_co_manager()->need_destroy_co_thread() && used__)
+        {
+            need_exit__ = true;
+        }
         return main_co__;
     }
+    used__          = true;
     block__         = false;
     sched__         = true;
     curr_co_index__ = (curr_co_index__ + 1) % co_set__.size();
@@ -471,25 +485,48 @@ inline void co_manager::monitor_thread__()
     while (true)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        std::lock_guard<std::mutex> lck(mu_co_env_set__);
 
-        std::vector<std::shared_ptr<co_ctx>> need_move_co;
-        std::vector<std::shared_ptr<co_env>> normal_env;
+        reassign_co__();
+    }
+}
 
-        std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env](auto& env) {
-            if (!env->has_sched())
-            {
-                // 指定时间未发生调度的，可能死循环了，转移其他协程
-                auto blocked_co = env->surrender_co();
-                need_move_co.insert(need_move_co.end(), blocked_co.begin(), blocked_co.end());
-            }
-            else
-            {
-                // 记录正常的协程
-                normal_env.push_back(env);
-            }
-            env->reset_sched();
-        });
+inline void co_manager::reassign_co__()
+{
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
+
+    std::list<std::shared_ptr<co_ctx>>   need_move_co;
+    std::vector<std::shared_ptr<co_env>> normal_env;
+
+    normal_env.reserve(co_env_set__.size());
+
+    std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env](auto& env) {
+        auto blocked_co = env->surrender_co();
+        need_move_co.insert(need_move_co.end(), blocked_co.begin(), blocked_co.end());
+        if (env->has_sched())
+        {
+            // 记录正常的协程
+            normal_env.push_back(env);
+        }
+        env->reset_sched();
+    });
+
+    if (need_move_co.empty())
+    {
+        return;
+    }
+
+    if (normal_env.empty())
+    {
+        auto new_env = add_env();
+        new_env->append_co(need_move_co.begin(), need_move_co.end());
+        return;
+    }
+
+    size_t index = 0;
+    for (auto iter = need_move_co.begin(); iter != need_move_co.end(); ++iter)
+    {
+        normal_env[index]->append_co(*iter);
+        index = (index + 1) % normal_env.size();
     }
 }
 
@@ -501,6 +538,11 @@ inline std::vector<std::shared_ptr<co_ctx>> co_env::surrender_co()
     auto ret                         = std::vector<std::shared_ptr<co_ctx>>(iter, co_set__.end());
     co_set__.erase(iter, co_set__.end());
     return ret;
+}
+
+inline bool co_manager::need_destroy_co_thread() const
+{
+    return co_env_set__.size() > base_co_thread_count__;
 }
 
 }

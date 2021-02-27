@@ -695,20 +695,35 @@ using namespace std;
 
 int main()
 {
-    int d = 0;
-    create_coroutine([](int& d) {
-        for (int i = 0; i < 3; ++i)
+    auto f1 = [](int d) {
+        for (;;)
         {
-            d += i;
             cout << this_thread::get_id() << " " << d << endl;
+            this_thread::sleep_for(chrono::milliseconds(500));
             yield_coroutine();
         }
-    }, std::ref(d));
-    for (int i = 0; i < 3; ++i)
+    };
+
+    auto f2 = [](int d) {
+        for (;;)
+        {
+            cout << this_thread::get_id() << " " << d << endl;
+            this_thread::sleep_for(chrono::milliseconds(500));
+        }
+    };
+
+    for (int i = 0;; i++)
     {
-        d += i;
-        cout << this_thread::get_id() << " " << d << endl;
-        yield_coroutine();
+        int d = 0;
+        cin >> d;
+        if (d == 0)
+        {
+            create_coroutine(f1, i);
+        }
+        else
+        {
+            create_coroutine(f2, i);
+        }
     }
 }
 
