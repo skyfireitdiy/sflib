@@ -29,7 +29,7 @@ constexpr int co_rdiindex = 7;
 static void __co_func__(co_ctx*);
 co_env*&    get_co_env();
 
-class co_manager
+class co_manager final
 {
     std::unordered_set<co_env*> co_env_set__;
     mutable std::mutex          mu_co_env_set__;
@@ -50,11 +50,11 @@ public:
     ~co_manager();
 };
 
-class co_ctx
+class co_ctx final
 {
-    const void*           regs__[14] = {};
-    co_state              state__    = co_state::ready;
-    std::vector<char>     stack_data__;
+    const void*           regs__[14]   = {};
+    co_state              state__      = co_state::ready;
+    char*                 stack_data__ = nullptr;
     size_t                stack_size__;
     std::function<void()> entry__;
     bool                  detached__;
@@ -62,13 +62,17 @@ class co_ctx
 
 public:
     co_ctx(std::function<void()> entry, size_t ss = default_co_stack_size)
-        : stack_data__(ss)
-        , stack_size__(ss)
+        : stack_size__(ss)
         , entry__(entry)
     {
+        if (ss != 0)
+        {
+            stack_data__ = new char[stack_size__];
+        }
     }
 
     std::function<void()> get_entry() const;
+    ~co_ctx();
 
     co_state    get_state() const;
     void        set_state(co_state state);
@@ -83,7 +87,7 @@ public:
     // friend class co_env;
 };
 
-class co_env
+class co_env final
 {
 private:
     std::vector<co_ctx*> co_set__;
@@ -478,7 +482,7 @@ inline void co_ctx::set_reg_rsp(const void* value)
 
 inline const void* co_ctx::get_stack_bp() const
 {
-    return stack_data__.data() + stack_size__;
+    return stack_data__ + stack_size__;
 }
 
 inline const void* co_ctx::get_reg_buf() const
@@ -573,6 +577,14 @@ inline coroutine::coroutine(co_ctx* ctx)
 
 inline void coroutine::join()
 {
+    if (detached__)
+    {
+        throw std::runtime_error("already detached");
+    }
+    if (joined__)
+    {
+        throw std::runtime_error("already joined");
+    }
     joined__ = true;
     wait();
     delete ctx__;
@@ -581,6 +593,14 @@ inline void coroutine::join()
 
 inline void coroutine::detach()
 {
+    if (detached__)
+    {
+        throw std::runtime_error("already detached");
+    }
+    if (joined__)
+    {
+        throw std::runtime_error("already joined");
+    }
     detached__ = true;
     invalid__  = true;
     if (ctx__->get_state() == co_state::finished)
@@ -608,6 +628,22 @@ inline bool co_ctx::detached() const
 {
     std::lock_guard<std::mutex> lck(mu_detached__);
     return detached__;
+}
+
+inline coroutine::~coroutine()
+{
+    if (!joined__)
+    {
+        detach();
+    }
+}
+
+inline co_ctx::~co_ctx()
+{
+    if (stack_data__ != nullptr)
+    {
+        delete[] stack_data__;
+    }
 }
 
 }

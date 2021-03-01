@@ -699,7 +699,7 @@ int main()
         for (;;)
         {
             cout << this_thread::get_id() << " " << d << endl;
-            this_thread::sleep_for(chrono::milliseconds(500));
+            this_thread::sleep_for(chrono::milliseconds(1));
             yield_coroutine();
         }
     };
@@ -708,7 +708,7 @@ int main()
         for (;;)
         {
             cout << this_thread::get_id() << " " << d << endl;
-            this_thread::sleep_for(chrono::milliseconds(500));
+            this_thread::sleep_for(chrono::milliseconds(1));
         }
     };
 
@@ -718,11 +718,11 @@ int main()
         cin >> d;
         if (d == 0)
         {
-            coroutine(f1, i).detach();
+            coroutine(f1, i);
         }
         else
         {
-            coroutine(f2, i).detach();
+            coroutine(f2, i);
         }
     }
 }

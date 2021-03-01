@@ -8,7 +8,7 @@ namespace skyfire
 
 #define SIG_CO_SCHE (SIGRTMIN + 1)
 
-constexpr int default_co_stack_size = 1024 * 2;
+constexpr int default_co_stack_size = 1024 * 1024 * 2;
 
 class co_ctx;
 class co_env;
@@ -22,7 +22,7 @@ enum class co_state
     finished
 };
 
-class coroutine
+class coroutine final
 {
 private:
     co_ctx* ctx__;
@@ -48,7 +48,10 @@ public:
     template <typename Func, typename... Args>
     coroutine(size_t default_stack_size, Func func, Args&&... args);
     coroutine(co_ctx* ctx);
+    ~coroutine();
 };
+
+
 
 co_ctx* get_current_coroutine();
 void    release_curr_co();
