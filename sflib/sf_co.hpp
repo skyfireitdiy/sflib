@@ -57,6 +57,8 @@ class co_ctx
     std::vector<char>     stack_data__;
     size_t                stack_size__;
     std::function<void()> entry__;
+    bool                  detached__;
+    mutable std::mutex    mu_detached__;
 
 public:
     co_ctx(std::function<void()> entry, size_t ss = default_co_stack_size)
@@ -75,6 +77,8 @@ public:
     void        set_reg_rsp(const void* value);
     const void* get_stack_bp() const;
     const void* get_reg_buf() const;
+    void        set_detached();
+    bool        detached() const;
 
     // friend class co_env;
 };
@@ -172,7 +176,6 @@ inline std::unordered_set<co_env*> co_manager::get_co_env_set() const
 
 inline co_env* co_manager::add_env()
 {
-    std::cout << "add env" << std::endl;
     std::promise<co_env*> pro;
     auto                  fu = std::async([&pro, this]() {
         auto& env = get_co_env();
@@ -198,7 +201,6 @@ inline co_env* co_manager::get_best_env()
 {
     if (co_env_set__.size() < base_co_thread_count__)
     {
-        std::cout << "当前线程数量：" << co_env_set__.size() << " 基准线程数量：" << base_co_thread_count__ << std::endl;
         return add_env();
     }
     co_env* best = nullptr;
@@ -206,7 +208,6 @@ inline co_env* co_manager::get_best_env()
         std::lock_guard<std::mutex> lck(mu_co_env_set__);
         for (auto& env : co_env_set__)
         {
-            std::cout << "blocked:" << env->if_blocked() << " need_exit:" << env->if_need_exit() << std::endl;
             if (!env->if_blocked() && !env->if_need_exit())
             {
                 if (best == nullptr || (best->co_size() > env->co_size()))
@@ -216,7 +217,6 @@ inline co_env* co_manager::get_best_env()
             }
         }
     }
-    std::cout << "best:" << best << std::endl;
     return best == nullptr ? add_env() : best;
 }
 
@@ -252,15 +252,15 @@ inline std::function<void()> co_ctx::get_entry() const
 }
 
 template <typename Func, typename... Args>
-inline co_ctx* create_coroutine(Func func, Args&&... args)
+coroutine::coroutine(Func func, Args&&... args)
 {
-    return get_co_manager()->get_best_env()->create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
 }
 
 template <typename Func, typename... Args>
-inline co_ctx* create_coroutine(size_t default_stack_size, Func func, Args&&... args)
+coroutine::coroutine(size_t default_stack_size, Func func, Args&&... args)
 {
-    return get_co_manager()->get_best_env()->create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
 }
 
 inline co_ctx* get_current_coroutine()
@@ -307,9 +307,9 @@ inline void co_ctx_swap(const void*, const void*)
         "ret\n\t");
 }
 
-inline void wait_coroutine(co_ctx* ctx)
+inline void coroutine::wait()
 {
-    while (ctx->get_state() != co_state::finished)
+    while (ctx__->get_state() != co_state::finished)
     {
         yield_coroutine();
     }
@@ -365,6 +365,10 @@ inline static void __co_func__(co_ctx* ctx)
 {
     ctx->get_entry()();
     release_curr_co();
+    if (ctx->detached())
+    {
+        delete ctx;
+    }
 }
 
 inline void release_curr_co()
@@ -418,11 +422,11 @@ inline co_env::co_env()
 }
 
 template <typename Tm>
-bool wait_coroutine_for(co_ctx* ctx, Tm t)
+bool coroutine::wait_for(Tm t)
 {
     auto now    = std::chrono::system_clock::now();
     auto expire = now + t;
-    while (ctx->get_state() != co_state::finished)
+    while (ctx__->get_state() != co_state::finished)
     {
         if (std::chrono::system_clock::now() > expire)
         {
@@ -434,9 +438,9 @@ bool wait_coroutine_for(co_ctx* ctx, Tm t)
 }
 
 template <typename Tm>
-bool wait_coroutine_until(co_ctx* ctx, Tm expire)
+bool coroutine::wait_until(Tm expire)
 {
-    while (ctx->get_state() != co_state::finished)
+    while (ctx__->get_state() != co_state::finished)
     {
         if (std::chrono::system_clock::now() > expire)
         {
@@ -515,7 +519,6 @@ inline void co_manager::reassign_co__()
             }
             else
             {
-                std::cout << "set blocked" << std::endl;
                 env->set_blocked();
             }
             env->reset_sched();
@@ -561,6 +564,50 @@ inline bool co_manager::need_destroy_co_thread() const
 inline co_manager::co_manager()
 {
     monitor_future__ = std::async(&co_manager::monitor_thread__, this);
+}
+
+inline coroutine::coroutine(co_ctx* ctx)
+    : ctx__(ctx)
+{
+}
+
+inline void coroutine::join()
+{
+    joined__ = true;
+    wait();
+    delete ctx__;
+    invalid__ = true;
+}
+
+inline void coroutine::detach()
+{
+    detached__ = true;
+    invalid__  = true;
+    if (ctx__->get_state() == co_state::finished)
+    {
+        delete ctx__;
+    }
+    else
+    {
+        ctx__->set_detached();
+    }
+}
+
+inline bool coroutine::valid() const
+{
+    return !invalid__;
+}
+
+inline void co_ctx::set_detached()
+{
+    std::lock_guard<std::mutex> lck(mu_detached__);
+    detached__ = true;
+}
+
+inline bool co_ctx::detached() const
+{
+    std::lock_guard<std::mutex> lck(mu_detached__);
+    return detached__;
 }
 
 }

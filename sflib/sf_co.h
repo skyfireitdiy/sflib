@@ -22,17 +22,36 @@ enum class co_state
     finished
 };
 
-template <typename Func, typename... Args>
-co_ctx* create_coroutine(Func func, Args&&... args);
-template <typename Func, typename... Args>
-co_ctx* create_coroutine(size_t default_stack_size, Func func, Args&&... args);
+class coroutine
+{
+private:
+    co_ctx* ctx__;
+    bool    detached__ = false;
+    bool    joined__   = false;
+    bool    invalid__  = false;
+
+    coroutine(const coroutine& ctx)             = delete;
+    coroutine& operator==(const coroutine& ctx) = delete;
+
+public:
+    template <typename Tm>
+    bool wait_for(Tm t);
+    template <typename Tm>
+    bool wait_until(Tm expire);
+    void wait();
+    void join();
+    void detach();
+    bool valid() const;
+
+    template <typename Func, typename... Args>
+    coroutine(Func func, Args&&... args);
+    template <typename Func, typename... Args>
+    coroutine(size_t default_stack_size, Func func, Args&&... args);
+    coroutine(co_ctx* ctx);
+};
+
 co_ctx* get_current_coroutine();
 void    release_curr_co();
 void    yield_coroutine();
-void    wait_coroutine(co_ctx* ctx);
-template <typename Tm>
-bool wait_coroutine_for(co_ctx* ctx, Tm t);
-template <typename Tm>
-bool wait_coroutine_until(co_ctx* ctx, Tm expire);
 
 }

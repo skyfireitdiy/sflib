@@ -718,11 +718,11 @@ int main()
         cin >> d;
         if (d == 0)
         {
-            create_coroutine(f1, i);
+            coroutine(f1, i).detach();
         }
         else
         {
-            create_coroutine(f2, i);
+            coroutine(f2, i).detach();
         }
     }
 }
