@@ -34,6 +34,9 @@ private:
     coroutine& operator==(const coroutine& ctx) = delete;
 
 public:
+    coroutine(coroutine&& other);
+    coroutine& operator=(coroutine&& other);
+
     template <typename Tm>
     bool wait_for(Tm t);
     template <typename Tm>
@@ -51,10 +54,76 @@ public:
     ~coroutine();
 };
 
+class co_mutex final
+{
+private:
+    co_mutex(const co_mutex&) = delete;
+    co_mutex& operator=(const co_mutex&) = delete;
 
+    std::atomic<co_ctx*> owner__ { nullptr };
 
-co_ctx* get_current_coroutine();
-void    release_curr_co();
-void    yield_coroutine();
+public:
+    co_mutex() = default;
+    void lock();
+    void unlock();
+    bool try_lock();
+};
 
+class co_shared_mutex final
+{
+public:
+    void lock();
+    bool try_lock();
+    void unlock();
+
+    void lock_shared();
+    bool try_lock_shared();
+    void unlock_shared();
+};
+
+class co_recursive_mutex final
+{
+public:
+    void lock();
+    void unlock();
+    bool try_lock();
+};
+
+class co_timed_mutex final
+{
+public:
+    void lock();
+    bool try_lock();
+    bool try_lock_for();
+    bool try_lock_until();
+    void unlock();
+};
+
+class co_recursive_timed_mutex final
+{
+public:
+    void lock();
+    bool try_lock();
+    bool try_lock_for();
+    bool try_lock_until();
+    void unlock();
+};
+
+class co_shared_timed_mutex final
+{
+public:
+    void lock();
+    bool try_lock();
+    bool try_lock_for();
+    bool try_lock_until();
+    void unlock();
+    void lock_shared();
+    bool try_lock_shared();
+    bool try_lock_shared_for();
+    bool try_lock_shared_until();
+    void unlock_shared();
+};
+
+void yield_coroutine();
+long long get_coroutine_id();
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sf_co.h"
+#include <atomic>
 
 namespace skyfire
 {
@@ -27,7 +28,7 @@ constexpr int co_rspindex = 13;
 constexpr int co_rdiindex = 7;
 
 static void __co_func__(co_ctx*);
-co_env*&    get_co_env();
+co_env*     get_co_env();
 
 class co_manager final
 {
@@ -35,6 +36,7 @@ class co_manager final
     mutable std::mutex          mu_co_env_set__;
     std::future<void>           monitor_future__;
     size_t                      base_co_thread_count__ = 1; //std::thread::hardware_concurrency() * 2;
+    bool                        need_exit__            = false;
 
     void monitor_thread__();
     void reassign_co__();
@@ -83,8 +85,6 @@ public:
     const void* get_reg_buf() const;
     void        set_detached();
     bool        detached() const;
-
-    // friend class co_env;
 };
 
 class co_env final
@@ -160,6 +160,7 @@ inline void co_env::reset_sched()
 inline co_manager::~co_manager()
 {
     std::lock_guard<std::mutex> lck(mu_co_env_set__);
+    need_exit__ = true;
     for (auto& env : co_env_set__)
     {
         env->set_exit_flag();
@@ -168,8 +169,8 @@ inline co_manager::~co_manager()
 
 inline co_manager* get_co_manager()
 {
-    static co_manager* manager = new co_manager;
-    return manager;
+    static co_manager manager;
+    return &manager;
 }
 
 inline std::unordered_set<co_env*> co_manager::get_co_env_set() const
@@ -182,8 +183,8 @@ inline co_env* co_manager::add_env()
 {
     std::promise<co_env*> pro;
     auto                  fu = std::async([&pro, this]() {
-        auto& env = get_co_env();
-        env       = new co_env();
+        auto env = get_co_env();
+        // env       = new co_env();
         {
             std::lock_guard<std::mutex> lck(mu_co_env_set__);
             co_env_set__.insert(env);
@@ -227,14 +228,13 @@ inline co_env* co_manager::get_best_env()
 inline void co_manager::remove_env(co_env* env)
 {
     std::lock_guard<std::mutex> lck(mu_co_env_set__);
-    delete env;
     co_env_set__.erase(env);
 }
 
-inline co_env*& get_co_env()
+inline co_env* get_co_env()
 {
-    thread_local static co_env* env = nullptr;
-    return env;
+    thread_local static co_env env;
+    return &env;
 }
 
 inline std::once_flag& get_co_once_flag()
@@ -265,11 +265,6 @@ template <typename Func, typename... Args>
 coroutine::coroutine(size_t default_stack_size, Func func, Args&&... args)
 {
     ctx__ = get_co_manager()->get_best_env()->create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
-}
-
-inline co_ctx* get_current_coroutine()
-{
-    return get_co_env()->get_current_coroutine();
 }
 
 inline void co_ctx_swap(const void*, const void*)
@@ -352,6 +347,11 @@ inline void yield_coroutine()
     get_co_env()->yield_coroutine();
 }
 
+long long get_coroutine_id()
+{
+    return static_cast<long long>(reinterpret_cast<long>(get_co_env()->get_current_coroutine()));
+}
+
 inline void co_env::append_co(co_ctx* ctx)
 {
     std::lock_guard<std::mutex> lck_co(mu_co_set__);
@@ -368,16 +368,11 @@ void co_env::append_co(T begin, T end)
 inline static void __co_func__(co_ctx* ctx)
 {
     ctx->get_entry()();
-    release_curr_co();
+    get_co_env()->release_curr_co();
     if (ctx->detached())
     {
         delete ctx;
     }
-}
-
-inline void release_curr_co()
-{
-    get_co_env()->release_curr_co();
     yield_coroutine();
 }
 
@@ -492,7 +487,7 @@ inline const void* co_ctx::get_reg_buf() const
 
 inline void co_manager::monitor_thread__()
 {
-    while (true)
+    while (!need_exit__)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         reassign_co__();
@@ -514,8 +509,6 @@ inline void co_manager::reassign_co__()
         std::lock_guard<std::mutex> lck(mu_co_env_set__);
         normal_env.reserve(co_env_set__.size());
         std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env](auto& env) {
-            auto blocked_co = env->surrender_co();
-            need_move_co.insert(need_move_co.end(), blocked_co.begin(), blocked_co.end());
             if (env->has_sched())
             {
                 // 记录正常的协程
@@ -523,6 +516,8 @@ inline void co_manager::reassign_co__()
             }
             else
             {
+                auto blocked_co = env->surrender_co();
+                need_move_co.insert(need_move_co.end(), blocked_co.begin(), blocked_co.end());
                 env->set_blocked();
             }
             env->reset_sched();
@@ -567,7 +562,7 @@ inline bool co_manager::need_destroy_co_thread() const
 
 inline co_manager::co_manager()
 {
-    monitor_future__ = std::async(&co_manager::monitor_thread__, this);
+    // monitor_future__ = std::async(&co_manager::monitor_thread__, this);
 }
 
 inline coroutine::coroutine(co_ctx* ctx)
@@ -632,7 +627,11 @@ inline bool co_ctx::detached() const
 
 inline coroutine::~coroutine()
 {
-    if (!joined__)
+    if (ctx__ == nullptr)
+    {
+        return;
+    }
+    if (!joined__ && !detached__)
     {
         detach();
     }
@@ -646,4 +645,53 @@ inline co_ctx::~co_ctx()
     }
 }
 
+inline coroutine::coroutine(coroutine&& other)
+    : ctx__(other.ctx__)
+    , detached__(other.detached__)
+    , joined__(other.joined__)
+    , invalid__(other.invalid__)
+{
+    other.ctx__     = nullptr;
+    other.invalid__ = true;
+}
+
+inline coroutine& coroutine::operator=(coroutine&& other)
+{
+    ctx__      = other.ctx__;
+    detached__ = other.detached__;
+    joined__   = other.joined__;
+    invalid__  = other.invalid__;
+
+    other.ctx__     = nullptr;
+    other.invalid__ = true;
+
+    return *this;
+}
+
+inline void co_mutex::lock()
+{
+    auto    ctx  = get_co_env()->get_current_coroutine();
+    co_ctx* null = nullptr;
+    while (owner__.compare_exchange_strong(null, ctx))
+    {
+        yield_coroutine();
+    }
+}
+
+inline void co_mutex::unlock()
+{
+    auto    ctx  = get_co_env()->get_current_coroutine();
+    co_ctx* null = nullptr;
+    while (owner__.compare_exchange_strong(ctx, null))
+    {
+        yield_coroutine();
+    }
+}
+
+inline bool co_mutex::try_lock()
+{
+    auto    ctx  = get_co_env()->get_current_coroutine();
+    co_ctx* null = nullptr;
+    return owner__.compare_exchange_strong(null, ctx);
+}
 }

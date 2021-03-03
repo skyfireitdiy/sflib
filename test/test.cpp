@@ -643,41 +643,26 @@ sf_test(cache, mismatch_type_test)
     test_np_eq(cache.data<int>("name"), nullptr);
 }
 
-sf_test(co, co_switch)
-{
-    std::string s;
-    create_coroutine([](std::string& p) {
-        for (int i = 0; i < 3; ++i)
-        {
-            p.push_back('b');
-            yield_coroutine();
-        }
-    },
-                     std::ref(s));
-    for (int i = 0; i < 3; ++i)
-    {
-        s.push_back('a');
-        yield_coroutine();
-    }
-    test_p_eq(s, "ababab");
-}
 
 sf_test(co, co_wait)
 {
     int  n  = 0;
-    auto co = create_coroutine([&n] {
+    co_mutex mu;
+    auto     co = coroutine([&n, &mu] {
         for (int i = 0; i < 10; ++i)
         {
+            std::lock_guard<co_mutex> lck(mu);
             n += i;
             yield_coroutine();
         }
     });
     for (int i = 0; i < 10; ++i)
     {
+        std::lock_guard<co_mutex> lck(mu);
         n += i;
         yield_coroutine();
     }
-    wait_coroutine(co);
+    co.wait();
     test_p_eq(n, 90);
 }
 
@@ -695,36 +680,36 @@ using namespace std;
 
 int main()
 {
-    auto f1 = [](int d) {
-        for (;;)
+    int      n = 0;
+    co_mutex mu;
+    auto     co1 = coroutine([&n, &mu] {
+        for (int i = 0; i < 1000; ++i)
         {
-            cout << this_thread::get_id() << " " << d << endl;
-            this_thread::sleep_for(chrono::milliseconds(1));
+            {
+                std::lock_guard<co_mutex> lck(mu);
+                cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
+                n += i;
+                cout << "=" << n << endl;
+            }
             yield_coroutine();
         }
-    };
-
-    auto f2 = [](int d) {
-        for (;;)
+    });
+    auto     co2 = coroutine([&n, &mu] {
+        for (int i = 0; i < 1000; ++i)
         {
-            cout << this_thread::get_id() << " " << d << endl;
-            this_thread::sleep_for(chrono::milliseconds(1));
+            {
+                std::lock_guard<co_mutex> lck(mu);
+                cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
+                n += i;
+                cout << "=" << n << endl;
+            }
+            yield_coroutine();
         }
-    };
-
-    for (int i = 0;; i++)
-    {
-        int d = 0;
-        cin >> d;
-        if (d == 0)
-        {
-            coroutine(f1, i);
-        }
-        else
-        {
-            coroutine(f2, i);
-        }
-    }
+    });
+    co1.wait();
+    co2.wait();
+    std::cout << n << endl;
+    return 0;
 }
 
 #endif
