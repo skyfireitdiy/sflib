@@ -34,8 +34,7 @@ class co_manager final
 {
     std::unordered_set<co_env*> co_env_set__;
     mutable std::mutex          mu_co_env_set__;
-    std::future<void>           monitor_future__;
-    size_t                      base_co_thread_count__ = 1; //std::thread::hardware_concurrency() * 2;
+    size_t                      base_co_thread_count__ = std::thread::hardware_concurrency() * 2;
     bool                        need_exit__            = false;
 
     void monitor_thread__();
@@ -95,7 +94,6 @@ private:
     int                  curr_co_index__ = 0;
     co_ctx*              current_co__    = nullptr;
     co_ctx*              main_co__       = nullptr;
-    std::future<void>    env_future__;
     std::atomic<bool>    sched__ { false };
     std::atomic<bool>    need_exit__ { false };
     std::atomic<bool>    blocked__ { false };
@@ -113,7 +111,6 @@ public:
     void                 yield_coroutine();
     bool                 if_need_exit() const;
     void                 set_exit_flag();
-    void                 set_env_future(std::future<void>&& fu);
     bool                 if_blocked() const;
     void                 set_blocked();
     size_t               co_size() const;
@@ -130,11 +127,6 @@ inline bool co_env::if_need_exit() const
 inline void co_env::set_exit_flag()
 {
     need_exit__ = true;
-}
-
-inline void co_env::set_env_future(std::future<void>&& fu)
-{
-    env_future__ = std::move(fu);
 }
 
 inline bool co_env::if_blocked() const
@@ -165,12 +157,13 @@ inline co_manager::~co_manager()
     {
         env->set_exit_flag();
     }
+    co_env_set__.clear();
 }
 
 inline co_manager* get_co_manager()
 {
-    static co_manager manager;
-    return &manager;
+    static co_manager* manager = new co_manager();
+    return manager;
 }
 
 inline std::unordered_set<co_env*> co_manager::get_co_env_set() const
@@ -182,9 +175,8 @@ inline std::unordered_set<co_env*> co_manager::get_co_env_set() const
 inline co_env* co_manager::add_env()
 {
     std::promise<co_env*> pro;
-    auto                  fu = std::async([&pro, this]() {
+    std::thread([&pro, this]() {
         auto env = get_co_env();
-        // env       = new co_env();
         {
             std::lock_guard<std::mutex> lck(mu_co_env_set__);
             co_env_set__.insert(env);
@@ -195,10 +187,9 @@ inline co_env* co_manager::add_env()
             yield_coroutine();
         }
         get_co_manager()->remove_env(get_co_env());
-    });
+    }).detach();
 
     auto env = pro.get_future().get();
-    env->set_env_future(std::move(fu));
     return env;
 }
 
@@ -490,6 +481,10 @@ inline void co_manager::monitor_thread__()
     while (!need_exit__)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if (need_exit__)
+        {
+            break;
+        }
         reassign_co__();
     }
 }
@@ -562,7 +557,7 @@ inline bool co_manager::need_destroy_co_thread() const
 
 inline co_manager::co_manager()
 {
-    // monitor_future__ = std::async(&co_manager::monitor_thread__, this);
+    std::thread(&co_manager::monitor_thread__, this).detach();
 }
 
 inline coroutine::coroutine(co_ctx* ctx)
@@ -672,9 +667,10 @@ inline void co_mutex::lock()
 {
     auto    ctx  = get_co_env()->get_current_coroutine();
     co_ctx* null = nullptr;
-    while (owner__.compare_exchange_strong(null, ctx))
+    while (!owner__.compare_exchange_strong(null, ctx))
     {
         yield_coroutine();
+        null = nullptr;
     }
 }
 
@@ -682,9 +678,10 @@ inline void co_mutex::unlock()
 {
     auto    ctx  = get_co_env()->get_current_coroutine();
     co_ctx* null = nullptr;
-    while (owner__.compare_exchange_strong(ctx, null))
+    while (!owner__.compare_exchange_strong(ctx, null))
     {
         yield_coroutine();
+        ctx = get_co_env()->get_current_coroutine();
     }
 }
 

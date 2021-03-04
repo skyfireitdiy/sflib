@@ -685,24 +685,24 @@ int main()
     auto     co1 = coroutine([&n, &mu] {
         for (int i = 0; i < 1000; ++i)
         {
-            {
-                std::lock_guard<co_mutex> lck(mu);
-                cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
-                n += i;
-                cout << "=" << n << endl;
-            }
+
+            std::lock_guard<co_mutex> lck(mu);
+            cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
+            n += i;
+            cout << "=" << n << endl;
+
             yield_coroutine();
         }
     });
     auto     co2 = coroutine([&n, &mu] {
         for (int i = 0; i < 1000; ++i)
         {
-            {
-                std::lock_guard<co_mutex> lck(mu);
-                cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
-                n += i;
-                cout << "=" << n << endl;
-            }
+
+            std::lock_guard<co_mutex> lck(mu);
+            cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
+            n += i;
+            cout << "=" << n << endl;
+
             yield_coroutine();
         }
     });
