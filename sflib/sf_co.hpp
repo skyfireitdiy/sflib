@@ -36,6 +36,7 @@ class co_manager final
     mutable std::mutex          mu_co_env_set__;
     size_t                      base_co_thread_count__ = std::thread::hardware_concurrency() * 2;
     bool                        need_exit__            = false;
+    std::future<void>           monitor_future__;
 
     void monitor_thread__();
     void reassign_co__();
@@ -557,7 +558,7 @@ inline bool co_manager::need_destroy_co_thread() const
 
 inline co_manager::co_manager()
 {
-    std::thread(&co_manager::monitor_thread__, this).detach();
+    monitor_future__ = std::async(&co_manager::monitor_thread__, this);
 }
 
 inline coroutine::coroutine(co_ctx* ctx)
