@@ -59,6 +59,8 @@ class co_mutex final
 private:
     co_mutex(const co_mutex&) = delete;
     co_mutex& operator=(const co_mutex&) = delete;
+    co_mutex(co_mutex&&)                 = delete;
+    co_mutex& operator=(co_mutex&&) = delete;
 
     std::atomic<co_ctx*> owner__ { nullptr };
 
@@ -71,6 +73,16 @@ public:
 
 class co_shared_mutex final
 {
+private:
+    std::unordered_set<co_ctx*> reader__;
+    co_ctx*                     writer__;
+    co_mutex                    mu__;
+
+    co_shared_mutex(const co_mutex&) = delete;
+    co_shared_mutex& operator=(const co_mutex&) = delete;
+    co_shared_mutex(co_mutex&&)                 = delete;
+    co_shared_mutex& operator=(co_mutex&&) = delete;
+
 public:
     void lock();
     bool try_lock();
@@ -124,6 +136,6 @@ public:
     void unlock_shared();
 };
 
-void yield_coroutine();
+void      yield_coroutine();
 long long get_coroutine_id();
 }

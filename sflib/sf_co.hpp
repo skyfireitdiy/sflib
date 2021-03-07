@@ -163,8 +163,8 @@ inline co_manager::~co_manager()
 
 inline co_manager* get_co_manager()
 {
-    static co_manager* manager = new co_manager();
-    return manager;
+    static co_manager manager;
+    return &manager;
 }
 
 inline std::unordered_set<co_env*> co_manager::get_co_env_set() const
@@ -692,4 +692,109 @@ inline bool co_mutex::try_lock()
     co_ctx* null = nullptr;
     return owner__.compare_exchange_strong(null, ctx);
 }
+
+inline void co_shared_mutex::lock()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    while (true)
+    {
+        mu__.lock();
+        if (writer__ != nullptr || !reader__.empty())
+        {
+            mu__.unlock();
+            yield_coroutine();
+            continue;
+        }
+        writer__ = ctx;
+        mu__.unlock();
+        return;
+    }
+}
+
+inline bool co_shared_mutex::try_lock()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    if (!mu__.try_lock())
+    {
+        return false;
+    }
+    if (writer__ != nullptr || !reader__.empty())
+    {
+        mu__.unlock();
+        return false;
+    }
+    writer__ = ctx;
+    mu__.unlock();
+    return true;
+}
+
+inline void co_shared_mutex::unlock()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    while (true)
+    {
+        mu__.lock();
+        if (writer__ == ctx)
+        {
+            writer__ = nullptr;
+            mu__.unlock();
+            return;
+        }
+        mu__.unlock();
+        yield_coroutine();
+    }
+}
+
+inline void co_shared_mutex::lock_shared()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    while (true)
+    {
+        mu__.lock();
+        if (writer__ != nullptr || reader__.contains(ctx))
+        {
+            mu__.unlock();
+            yield_coroutine();
+            continue;
+        }
+        reader__.insert(ctx);
+        mu__.unlock();
+        return;
+    }
+}
+
+inline bool co_shared_mutex::try_lock_shared()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    if (!mu__.try_lock())
+    {
+        return false;
+    }
+    if (writer__ != nullptr || reader__.contains(ctx)){
+        mu__.unlock();
+        return false;
+    }
+    reader__.insert(ctx);
+    mu__.unlock();
+    return true;
+}
+
+inline void co_shared_mutex::unlock_shared()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    while (true)
+    {
+        mu__.lock();
+        if(!reader__.contains(ctx))
+        {
+            mu__.unlock();
+            yield_coroutine();
+            continue;
+        }
+        reader__.erase(ctx);
+        mu__.unlock();
+        return;
+    }
+}
+
 }
