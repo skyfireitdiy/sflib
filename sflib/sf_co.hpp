@@ -659,6 +659,21 @@ inline coroutine& coroutine::operator=(coroutine&& other)
     return *this;
 }
 
+template <typename T>
+void coroutine::sleep_for(const T& t)
+{
+    sleep_until(std::chrono::system_clock::now() + t);
+}
+
+template <typename T>
+void coroutine::sleep_until(const T& t)
+{
+    while (std::chrono::system_clock::now() < t)
+    {
+        yield_coroutine();
+    }
+}
+
 inline void co_mutex::lock()
 {
     auto    ctx  = get_co_env()->get_current_coroutine();

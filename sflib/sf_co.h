@@ -40,13 +40,19 @@ public:
     template <typename T>
     bool wait_for(const T& t);
     template <typename T>
-    bool      wait_until(const T& expire);
-    void      wait();
-    void      join();
-    void      detach();
-    bool      valid() const;
+    bool             wait_until(const T& expire);
+    void             wait();
+    void             join();
+    void             detach();
+    bool             valid() const;
     static long long get_id();
-    bool      joinable() const;
+    bool             joinable() const;
+
+    template <typename T>
+    static void sleep_for(const T& t);
+
+    template <typename T>
+    static void sleep_until(const T& t);
 
     template <typename Func, typename... Args>
     coroutine(Func func, Args&&... args);
