@@ -339,9 +339,14 @@ inline void yield_coroutine()
     get_co_env()->yield_coroutine();
 }
 
-long long get_coroutine_id()
+inline long long coroutine::get_id()
 {
     return static_cast<long long>(reinterpret_cast<long>(get_co_env()->get_current_coroutine()));
+}
+
+inline bool coroutine::joinable() const
+{
+    return !(joined__ || detached__);
 }
 
 inline void co_env::append_co(co_ctx* ctx)
@@ -412,24 +417,14 @@ inline co_env::co_env()
     current_co__->set_state(co_state::running);
 }
 
-template <typename Tm>
-bool coroutine::wait_for(Tm t)
+template <typename T>
+bool coroutine::wait_for(const T& t)
 {
-    auto now    = std::chrono::system_clock::now();
-    auto expire = now + t;
-    while (ctx__->get_state() != co_state::finished)
-    {
-        if (std::chrono::system_clock::now() > expire)
-        {
-            return false;
-        }
-        yield_coroutine();
-    }
-    return true;
+    return wait_until(std::chrono::system_clock::now() + t);
 }
 
-template <typename Tm>
-bool coroutine::wait_until(Tm expire)
+template <typename T>
+bool coroutine::wait_until(const T& expire)
 {
     while (ctx__->get_state() != co_state::finished)
     {

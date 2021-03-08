@@ -687,7 +687,7 @@ int main()
         {
 
             std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
+            cout << "thread:" << this_thread::get_id() << " coroutine:" << coroutine::get_id() << " " << n << "+" << i;
             n += i;
             cout << "=" << n << endl;
 
@@ -699,7 +699,7 @@ int main()
         {
 
             std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << get_coroutine_id() << " " << n << "+" << i;
+            cout << "thread:" << this_thread::get_id() << " coroutine:" << coroutine::get_id() << " " << n << "+" << i;
             n += i;
             cout << "=" << n << endl;
 

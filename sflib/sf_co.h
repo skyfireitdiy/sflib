@@ -37,14 +37,16 @@ public:
     coroutine(coroutine&& other);
     coroutine& operator=(coroutine&& other);
 
-    template <typename Tm>
-    bool wait_for(Tm t);
-    template <typename Tm>
-    bool wait_until(Tm expire);
-    void wait();
-    void join();
-    void detach();
-    bool valid() const;
+    template <typename T>
+    bool wait_for(const T& t);
+    template <typename T>
+    bool      wait_until(const T& expire);
+    void      wait();
+    void      join();
+    void      detach();
+    bool      valid() const;
+    static long long get_id();
+    bool      joinable() const;
 
     template <typename Func, typename... Args>
     coroutine(Func func, Args&&... args);
@@ -178,6 +180,6 @@ public:
     void unlock_shared();
 };
 
-void      yield_coroutine();
-long long get_coroutine_id();
+void yield_coroutine();
+
 }
