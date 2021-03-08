@@ -770,7 +770,8 @@ inline bool co_shared_mutex::try_lock_shared()
     {
         return false;
     }
-    if (writer__ != nullptr || reader__.contains(ctx)){
+    if (writer__ != nullptr || reader__.contains(ctx))
+    {
         mu__.unlock();
         return false;
     }
@@ -785,7 +786,7 @@ inline void co_shared_mutex::unlock_shared()
     while (true)
     {
         mu__.lock();
-        if(!reader__.contains(ctx))
+        if (!reader__.contains(ctx))
         {
             mu__.unlock();
             yield_coroutine();
@@ -795,6 +796,201 @@ inline void co_shared_mutex::unlock_shared()
         mu__.unlock();
         return;
     }
+}
+
+inline void co_recursive_mutex::lock()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    while (true)
+    {
+        mu__.lock();
+        if (owner__ != nullptr && owner__ != ctx)
+        {
+            mu__.unlock();
+            yield_coroutine();
+            continue;
+        }
+        owner__ = ctx;
+        ++count__;
+        mu__.unlock();
+        return;
+    }
+}
+
+inline void co_recursive_mutex::unlock()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    while (true)
+    {
+        mu__.lock();
+        if (owner__ != ctx)
+        {
+            mu__.unlock();
+            yield_coroutine();
+            continue;
+        }
+        --count__;
+        if (count__ == 0)
+        {
+            owner__ = nullptr;
+        }
+        mu__.unlock();
+        return;
+    }
+}
+
+inline bool co_recursive_mutex::try_lock()
+{
+    auto ctx = get_co_env()->get_current_coroutine();
+    if (!mu__.try_lock())
+    {
+        return false;
+    }
+    if (owner__ != nullptr && owner__ != ctx)
+    {
+        mu__.unlock();
+        return false;
+    }
+    owner__ = ctx;
+    ++count__;
+    mu__.unlock();
+    return true;
+}
+
+inline void co_timed_mutex::lock()
+{
+    mu__.lock();
+}
+
+inline bool co_timed_mutex::try_lock()
+{
+    return mu__.try_lock();
+}
+
+template <typename T>
+inline bool co_timed_mutex::try_lock_for(const T& t)
+{
+    return try_lock_until(std::chrono::system_clock::now() + t);
+}
+
+template <typename T>
+inline bool co_timed_mutex::try_lock_until(const T& t)
+{
+    while (std::chrono::system_clock::now() < t)
+    {
+        if (mu__.try_lock())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline void co_timed_mutex::unlock()
+{
+    mu__.unlock();
+}
+
+inline void co_recursive_timed_mutex::lock()
+{
+    mu__.lock();
+}
+
+inline bool co_recursive_timed_mutex::try_lock()
+{
+    return mu__.try_lock();
+}
+
+template <typename T>
+bool co_recursive_timed_mutex::try_lock_for(const T& t)
+{
+    return try_lock_until(std::chrono::system_clock::now() + t);
+}
+
+template <typename T>
+inline bool co_recursive_timed_mutex::try_lock_until(const T& t)
+{
+    while (std::chrono::system_clock::now() < t)
+    {
+        if (mu__.try_lock())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline void co_recursive_timed_mutex::unlock()
+{
+    mu__.unlock();
+}
+
+inline void co_shared_timed_mutex::lock()
+{
+    mu__.lock();
+}
+
+inline bool co_shared_timed_mutex::try_lock()
+{
+    return mu__.try_lock();
+}
+
+template <typename T>
+inline bool co_shared_timed_mutex::try_lock_for(const T& t)
+{
+    return try_lock_until(std::chrono::system_clock::now() + t);
+}
+
+template <typename T>
+inline bool co_shared_timed_mutex::try_lock_until(const T& t)
+{
+    while (std::chrono::system_clock::now() < t)
+    {
+        if (mu__.try_lock())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline void co_shared_timed_mutex::unlock()
+{
+    mu__.unlock();
+}
+
+inline void co_shared_timed_mutex::lock_shared()
+{
+    mu__.lock_shared();
+}
+
+inline bool co_shared_timed_mutex::try_lock_shared()
+{
+    return mu__.try_lock_shared();
+}
+
+template <typename T>
+bool co_shared_timed_mutex::try_lock_shared_for(const T& t)
+{
+    return try_lock_shared_until(std::chrono::system_clock::now() + t);
+}
+
+template <typename T>
+bool co_shared_timed_mutex::try_lock_shared_until(const T& t)
+{
+    while (std::chrono::system_clock::now() < t)
+    {
+        if (mu__.try_lock_shared())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline void co_shared_timed_mutex::unlock_shared()
+{
+    mu__.unlock_shared();
 }
 
 }
