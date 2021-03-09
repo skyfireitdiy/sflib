@@ -1,7 +1,6 @@
 #pragma once
 
 #include "sf_stdc++.h"
-#include <time.h>
 
 namespace skyfire
 {
@@ -54,11 +53,12 @@ public:
     template <typename T>
     static void sleep_until(const T& t);
 
+    static void yield_coroutine();
+
     template <typename Func, typename... Args>
     coroutine(Func func, Args&&... args);
     template <typename Func, typename... Args>
     coroutine(size_t default_stack_size, Func func, Args&&... args);
-    coroutine(co_ctx* ctx);
     ~coroutine();
 };
 
@@ -185,7 +185,5 @@ public:
     bool try_lock_shared_until(const T& t);
     void unlock_shared();
 };
-
-void yield_coroutine();
 
 }
