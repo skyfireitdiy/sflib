@@ -61,17 +61,11 @@ class co_ctx final
     std::function<void()> entry__;
     bool                  detached__;
     mutable std::mutex    mu_detached__;
+    bool                  shared_stack__;
+    std::vector<char>     saved_stack__;
 
 public:
-    co_ctx(std::function<void()> entry, const coroutine_attr& attr)
-        : stack_size__(attr.stack_size)
-        , entry__(entry)
-    {
-        if (stack_size__ != 0)
-        {
-            stack_data__ = new char[stack_size__];
-        }
-    }
+    co_ctx(std::function<void()> entry, const coroutine_attr& attr);
 
     std::function<void()> get_entry() const;
     ~co_ctx();
@@ -85,6 +79,9 @@ public:
     const void* get_reg_buf() const;
     void        set_detached();
     bool        detached() const;
+    bool        shared_stack() const;
+    void        save_stack(char* sp);
+    void        restore_stack(void* sp);
 };
 
 class co_env final
@@ -99,9 +96,11 @@ private:
     std::atomic<bool>    need_exit__ { false };
     std::atomic<bool>    blocked__ { false };
     std::atomic<bool>    used__ { false };
+    char*                shared_stack__;
 
 public:
     co_env();
+    ~co_env();
     void append_co(co_ctx* ctx);
     template <typename T>
     void                 append_co(T begin, T end);
@@ -118,6 +117,8 @@ public:
     bool                 has_sched() const;
     void                 reset_sched();
     std::vector<co_ctx*> surrender_co();
+    char*                get_shared_stack() const;
+    char*                get_shared_stack_bp() const;
 };
 
 inline bool co_env::if_need_exit() const
@@ -325,6 +326,13 @@ inline void co_env::yield_coroutine()
     {
         return;
     }
+
+    char c;
+    if (curr_co->shared_stack())
+    {
+        curr_co->save_stack(&c);
+    }
+
     current_co__ = ctx;
     if (curr_co->get_state() == co_state::running)
     {
@@ -332,6 +340,31 @@ inline void co_env::yield_coroutine()
     }
     ctx->set_state(co_state::running);
     co_ctx_swap(curr_co->get_reg_buf(), ctx->get_reg_buf());
+
+    if (curr_co->shared_stack())
+    {
+        curr_co->restore_stack(&c);
+    }
+}
+
+inline void co_ctx::save_stack(char* sp)
+{
+    saved_stack__.assign(sp, get_co_env()->get_shared_stack_bp());
+}
+
+inline void co_ctx::restore_stack(void* sp)
+{
+    memcpy(sp, saved_stack__.data(), saved_stack__.size());
+}
+
+inline char* co_env::get_shared_stack() const
+{
+    return shared_stack__;
+}
+
+inline char* co_env::get_shared_stack_bp() const
+{
+    return shared_stack__ + default_co_stack_size;
 }
 
 inline void coroutine::yield_coroutine()
@@ -412,9 +445,15 @@ inline co_ctx* co_env::choose_co()
 
 inline co_env::co_env()
 {
-    current_co__ = new co_ctx(nullptr, coroutine_attr { 0, false });
-    main_co__    = current_co__;
+    shared_stack__ = new char[default_co_stack_size];
+    current_co__   = new co_ctx(nullptr, coroutine_attr { 0, false });
+    main_co__      = current_co__;
     current_co__->set_state(co_state::running);
+}
+
+inline co_env::~co_env()
+{
+    delete[] shared_stack__;
 }
 
 template <typename T>
@@ -535,11 +574,16 @@ inline void co_manager::reassign_co__()
     }
 }
 
+inline bool co_ctx::shared_stack() const
+{
+    return shared_stack__;
+}
+
 inline std::vector<co_ctx*> co_env::surrender_co()
 {
     std::lock_guard<std::mutex> lck(mu_co_set__);
     auto                        iter = std::remove_if(co_set__.begin(), co_set__.end(), [this](auto& p) {
-        return p != current_co__;
+        return p != current_co__ && !p->shared_stack();
     });
     auto                        ret  = std::vector<co_ctx*>(iter, co_set__.end());
     co_set__.erase(iter, co_set__.end());
@@ -611,6 +655,22 @@ inline bool co_ctx::detached() const
     return detached__;
 }
 
+inline co_ctx::co_ctx(std::function<void()> entry, const coroutine_attr& attr)
+    : stack_size__(attr.stack_size)
+    , entry__(entry)
+    , shared_stack__(attr.shared_stack)
+{
+    if (stack_size__ != 0 && !shared_stack__)
+    {
+        stack_data__ = new char[stack_size__];
+    }
+    if (attr.shared_stack)
+    {
+        stack_size__ = default_co_stack_size;
+        stack_data__ = get_co_env()->get_shared_stack();
+    }
+}
+
 inline coroutine::~coroutine()
 {
     if (ctx__ == nullptr)
@@ -625,7 +685,7 @@ inline coroutine::~coroutine()
 
 inline co_ctx::~co_ctx()
 {
-    if (stack_data__ != nullptr)
+    if (stack_data__ != nullptr && !shared_stack__)
     {
         delete[] stack_data__;
     }
