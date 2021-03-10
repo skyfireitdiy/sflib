@@ -63,11 +63,11 @@ class co_ctx final
     mutable std::mutex    mu_detached__;
 
 public:
-    co_ctx(std::function<void()> entry, size_t ss = default_co_stack_size)
-        : stack_size__(ss)
+    co_ctx(std::function<void()> entry, const coroutine_attr& attr)
+        : stack_size__(attr.stack_size)
         , entry__(entry)
     {
-        if (ss != 0)
+        if (stack_size__ != 0)
         {
             stack_data__ = new char[stack_size__];
         }
@@ -108,7 +108,7 @@ public:
     co_ctx*              choose_co();
     void                 release_curr_co();
     co_ctx*              get_current_coroutine() const;
-    co_ctx*              create_coroutine(size_t default_stack_size, std::function<void()> func);
+    co_ctx*              create_coroutine(const coroutine_attr& attr, std::function<void()> func);
     void                 yield_coroutine();
     bool                 if_need_exit() const;
     void                 set_exit_flag();
@@ -235,9 +235,9 @@ inline std::once_flag& get_co_once_flag()
     return flag;
 }
 
-inline co_ctx* co_env::create_coroutine(size_t default_stack_size, std::function<void()> func)
+inline co_ctx* co_env::create_coroutine(const coroutine_attr& attr, std::function<void()> func)
 {
-    auto new_co = new co_ctx(func, default_stack_size);
+    auto new_co = new co_ctx(func, attr);
     append_co(new_co);
     return new_co;
 }
@@ -250,13 +250,13 @@ inline std::function<void()> co_ctx::get_entry() const
 template <typename Func, typename... Args>
 coroutine::coroutine(Func func, Args&&... args)
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(default_co_stack_size, std::bind(func, std::forward<Args>(args)...));
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(coroutine_attr {}, std::bind(func, std::forward<Args>(args)...));
 }
 
 template <typename Func, typename... Args>
-coroutine::coroutine(size_t default_stack_size, Func func, Args&&... args)
+coroutine::coroutine(const coroutine_attr& attr, Func func, Args&&... args)
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(default_stack_size, std::bind(func, std::forward<Args>(args)...));
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr, std::bind(func, std::forward<Args>(args)...));
 }
 
 inline void co_ctx_swap(const void*, const void*)
@@ -412,7 +412,7 @@ inline co_ctx* co_env::choose_co()
 
 inline co_env::co_env()
 {
-    current_co__ = new co_ctx(nullptr, 0);
+    current_co__ = new co_ctx(nullptr, coroutine_attr { 0, false });
     main_co__    = current_co__;
     current_co__->set_state(co_state::running);
 }

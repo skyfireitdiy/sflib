@@ -21,6 +21,12 @@ enum class co_state
     finished
 };
 
+struct coroutine_attr
+{
+    size_t stack_size   = default_co_stack_size;
+    bool   shared_stack = false;
+};
+
 class coroutine final
 {
 private:
@@ -58,7 +64,7 @@ public:
     template <typename Func, typename... Args>
     coroutine(Func func, Args&&... args);
     template <typename Func, typename... Args>
-    coroutine(size_t default_stack_size, Func func, Args&&... args);
+    coroutine(const coroutine_attr &attr, Func func, Args&&... args);
     ~coroutine();
 };
 
