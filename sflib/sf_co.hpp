@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sf_co.h"
+#include "sf_logger.hpp"
 
 namespace skyfire
 {
@@ -27,6 +28,8 @@ constexpr int co_rspindex = 13;
 constexpr int co_rdiindex = 7;
 
 static void __co_func__(co_ctx*);
+static void __co_save_stack__();
+inline void co_ctx_swap(const void*, const void*);
 co_env*     get_co_env();
 
 class co_manager final
@@ -71,6 +74,7 @@ public:
     ~co_ctx();
 
     co_state    get_state() const;
+    void        init();
     void        set_state(co_state state);
     void        set_reg_ret(const void* value);
     void        set_reg_rdi(const void* value);
@@ -80,8 +84,9 @@ public:
     void        set_detached();
     bool        detached() const;
     bool        shared_stack() const;
-    void        save_stack(char* sp);
-    void        restore_stack(void* sp);
+    void        save_stack();
+    void        restore_stack();
+    void        set_curr_sp(char* sp);
 };
 
 class co_env final
@@ -97,6 +102,9 @@ private:
     std::atomic<bool>    blocked__ { false };
     std::atomic<bool>    used__ { false };
     char*                shared_stack__;
+    co_ctx*              next_co__;
+    co_ctx*              prev_co__;
+    co_ctx*              save_co__;
 
 public:
     co_env();
@@ -106,7 +114,8 @@ public:
     void                 append_co(T begin, T end);
     co_ctx*              choose_co();
     void                 release_curr_co();
-    co_ctx*              get_current_coroutine() const;
+    co_ctx*              get_curr_co() const;
+    void                 set_curr_co(co_ctx* ctx);
     co_ctx*              create_coroutine(const coroutine_attr& attr, std::function<void()> func);
     void                 yield_coroutine();
     bool                 if_need_exit() const;
@@ -119,11 +128,40 @@ public:
     std::vector<co_ctx*> surrender_co();
     char*                get_shared_stack() const;
     char*                get_shared_stack_bp() const;
+    co_ctx*              get_prev_co() const;
+    co_ctx*              get_next_co() const;
 };
 
 inline bool co_env::if_need_exit() const
 {
     return need_exit__;
+}
+
+inline void __co_save_stack__()
+{
+    for (;;)
+    {
+        auto prev = get_co_env()->get_prev_co();
+        if (prev->shared_stack())
+        {
+            prev->save_stack();
+        }
+        auto next = get_co_env()->get_next_co();
+        if (next->shared_stack())
+        {
+            next->restore_stack();
+        }
+        auto curr = get_co_env()->get_curr_co();
+        curr->set_state(co_state::suspended);
+        next->set_state(co_state::running);
+        get_co_env()->set_curr_co(next);
+        co_ctx_swap(curr->get_reg_buf(), next->get_reg_buf());
+    }
+}
+
+inline void co_env::set_curr_co(co_ctx* ctx)
+{
+    current_co__ = ctx;
 }
 
 inline void co_env::set_exit_flag()
@@ -311,50 +349,53 @@ inline void co_env::yield_coroutine()
 {
     auto ctx = choose_co();
 
-    if (ctx->get_state() == co_state::ready || ctx->get_state() == co_state::finished)
-    {
-        ctx->set_reg_ret(reinterpret_cast<void*>(&__co_func__));
-        ctx->set_reg_rdi(reinterpret_cast<void*>(ctx));
-        const void* sp  = reinterpret_cast<const char*>(ctx->get_stack_bp()) - sizeof(void*);
-        sp              = reinterpret_cast<char*>((unsigned long)sp & -16LL);
-        void** ret_addr = (void**)(sp);
-        *ret_addr       = reinterpret_cast<void*>(&__co_func__);
-        ctx->set_reg_rsp(reinterpret_cast<const char*>(sp) - sizeof(void*) * 2);
-    }
-    auto curr_co = get_current_coroutine();
+    auto curr_co = get_curr_co();
     if (curr_co == ctx)
     {
         return;
     }
 
-    char c;
-    if (curr_co->shared_stack())
-    {
-        curr_co->save_stack(&c);
-    }
-
-    current_co__ = ctx;
     if (curr_co->get_state() == co_state::running)
     {
         curr_co->set_state(co_state::suspended);
     }
-    ctx->set_state(co_state::running);
-    co_ctx_swap(curr_co->get_reg_buf(), ctx->get_reg_buf());
 
-    if (curr_co->shared_stack())
+    if (curr_co->shared_stack() || ctx->shared_stack())
     {
-        curr_co->restore_stack(&c);
+        prev_co__    = curr_co;
+        next_co__    = ctx;
+        current_co__ = save_co__;
+        save_co__->set_state(co_state::running);
+        co_ctx_swap(curr_co->get_reg_buf(), save_co__->get_reg_buf());
+    }
+    else
+    {
+        current_co__ = ctx;
+        ctx->set_state(co_state::running);
+        co_ctx_swap(curr_co->get_reg_buf(), ctx->get_reg_buf());
     }
 }
 
-inline void co_ctx::save_stack(char* sp)
+inline void co_ctx::save_stack()
 {
-    saved_stack__.assign(sp, get_co_env()->get_shared_stack_bp());
+    sf_debug("save shared stack", regs__[co_rspindex], get_co_env()->get_shared_stack_bp() - (char*)regs__[co_rspindex]);
+    saved_stack__.assign((char*)regs__[co_rspindex], get_co_env()->get_shared_stack_bp());
 }
 
-inline void co_ctx::restore_stack(void* sp)
+inline void co_ctx::restore_stack()
 {
-    memcpy(sp, saved_stack__.data(), saved_stack__.size());
+    sf_debug("restore shared stack", (void*)regs__[co_rspindex], saved_stack__.size());
+    memcpy(stack_data__ + default_co_stack_size - saved_stack__.size(), saved_stack__.data(), saved_stack__.size());
+}
+
+inline co_ctx* co_env::get_prev_co() const
+{
+    return prev_co__;
+}
+
+inline co_ctx* co_env::get_next_co() const
+{
+    return next_co__;
 }
 
 inline char* co_env::get_shared_stack() const
@@ -374,7 +415,7 @@ inline void coroutine::yield_coroutine()
 
 inline long long coroutine::get_id()
 {
-    return static_cast<long long>(reinterpret_cast<long>(get_co_env()->get_current_coroutine()));
+    return static_cast<long long>(reinterpret_cast<long>(get_co_env()->get_curr_co()));
 }
 
 inline bool coroutine::joinable() const
@@ -406,7 +447,7 @@ inline static void __co_func__(co_ctx* ctx)
     coroutine::yield_coroutine();
 }
 
-inline co_ctx* co_env::get_current_coroutine() const
+inline co_ctx* co_env::get_curr_co() const
 {
     return current_co__;
 }
@@ -448,6 +489,7 @@ inline co_env::co_env()
     shared_stack__ = new char[default_co_stack_size];
     current_co__   = new co_ctx(nullptr, coroutine_attr { 0, false });
     main_co__      = current_co__;
+    save_co__      = new co_ctx(__co_save_stack__, coroutine_attr { default_co_stack_size, false });
     current_co__->set_state(co_state::running);
 }
 
@@ -655,6 +697,21 @@ inline bool co_ctx::detached() const
     return detached__;
 }
 
+inline void co_ctx::init()
+{
+    set_reg_ret(reinterpret_cast<void*>(&__co_func__));
+    set_reg_rdi(reinterpret_cast<void*>(this));
+    const void* sp  = reinterpret_cast<const char*>(get_stack_bp()) - sizeof(void*);
+    sp              = reinterpret_cast<char*>((unsigned long)sp & -16LL);
+    void** ret_addr = (void**)(sp);
+    *ret_addr       = reinterpret_cast<void*>(&__co_func__);
+    set_reg_rsp(reinterpret_cast<const char*>(sp) - sizeof(void*) * 2);
+    if (shared_stack__)
+    {
+        save_stack();
+    }
+}
+
 inline co_ctx::co_ctx(std::function<void()> entry, const coroutine_attr& attr)
     : stack_size__(attr.stack_size)
     , entry__(entry)
@@ -664,10 +721,14 @@ inline co_ctx::co_ctx(std::function<void()> entry, const coroutine_attr& attr)
     {
         stack_data__ = new char[stack_size__];
     }
-    if (attr.shared_stack)
+    if (shared_stack__)
     {
         stack_size__ = default_co_stack_size;
         stack_data__ = get_co_env()->get_shared_stack();
+    }
+    if (stack_size__ != 0 && entry != nullptr)
+    {
+        init();
     }
 }
 
@@ -731,7 +792,7 @@ void coroutine::sleep_until(const T& t)
 
 inline void co_mutex::lock()
 {
-    auto    ctx  = get_co_env()->get_current_coroutine();
+    auto    ctx  = get_co_env()->get_curr_co();
     co_ctx* null = nullptr;
     while (!owner__.compare_exchange_strong(null, ctx))
     {
@@ -742,26 +803,26 @@ inline void co_mutex::lock()
 
 inline void co_mutex::unlock()
 {
-    auto    ctx  = get_co_env()->get_current_coroutine();
+    auto    ctx  = get_co_env()->get_curr_co();
     co_ctx* null = nullptr;
     while (!owner__.compare_exchange_strong(ctx, null))
     {
         coroutine::yield_coroutine();
-        ctx = get_co_env()->get_current_coroutine();
+        ctx = get_co_env()->get_curr_co();
     }
     coroutine::yield_coroutine();
 }
 
 inline bool co_mutex::try_lock()
 {
-    auto    ctx  = get_co_env()->get_current_coroutine();
+    auto    ctx  = get_co_env()->get_curr_co();
     co_ctx* null = nullptr;
     return owner__.compare_exchange_strong(null, ctx);
 }
 
 inline void co_shared_mutex::lock()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     while (true)
     {
         mu__.lock();
@@ -779,7 +840,7 @@ inline void co_shared_mutex::lock()
 
 inline bool co_shared_mutex::try_lock()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     if (!mu__.try_lock())
     {
         return false;
@@ -796,7 +857,7 @@ inline bool co_shared_mutex::try_lock()
 
 inline void co_shared_mutex::unlock()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     while (true)
     {
         mu__.lock();
@@ -814,7 +875,7 @@ inline void co_shared_mutex::unlock()
 
 inline void co_shared_mutex::lock_shared()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     while (true)
     {
         mu__.lock();
@@ -832,7 +893,7 @@ inline void co_shared_mutex::lock_shared()
 
 inline bool co_shared_mutex::try_lock_shared()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     if (!mu__.try_lock())
     {
         return false;
@@ -849,7 +910,7 @@ inline bool co_shared_mutex::try_lock_shared()
 
 inline void co_shared_mutex::unlock_shared()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     while (true)
     {
         mu__.lock();
@@ -868,7 +929,7 @@ inline void co_shared_mutex::unlock_shared()
 
 inline void co_recursive_mutex::lock()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     while (true)
     {
         mu__.lock();
@@ -887,7 +948,7 @@ inline void co_recursive_mutex::lock()
 
 inline void co_recursive_mutex::unlock()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     while (true)
     {
         mu__.lock();
@@ -910,7 +971,7 @@ inline void co_recursive_mutex::unlock()
 
 inline bool co_recursive_mutex::try_lock()
 {
-    auto ctx = get_co_env()->get_current_coroutine();
+    auto ctx = get_co_env()->get_curr_co();
     if (!mu__.try_lock())
     {
         return false;
