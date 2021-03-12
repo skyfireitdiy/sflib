@@ -23,8 +23,9 @@ enum class co_state
 
 struct coroutine_attr
 {
-    size_t stack_size   = default_co_stack_size;
-    bool   shared_stack = false;
+    size_t      stack_size   = default_co_stack_size;
+    bool        shared_stack = false;
+    std::string name         = "unamed";
 };
 
 class coroutine final
@@ -45,13 +46,14 @@ public:
     template <typename T>
     bool wait_for(const T& t);
     template <typename T>
-    bool             wait_until(const T& expire);
-    void             wait();
-    void             join();
-    void             detach();
-    bool             valid() const;
-    static long long get_id();
-    bool             joinable() const;
+    bool               wait_until(const T& expire);
+    void               wait();
+    void               join();
+    void               detach();
+    bool               valid() const;
+    static long long   get_id();
+    static std::string get_name();
+    bool               joinable() const;
 
     template <typename T>
     static void sleep_for(const T& t);
@@ -64,7 +66,7 @@ public:
     template <typename Func, typename... Args>
     coroutine(Func func, Args&&... args);
     template <typename Func, typename... Args>
-    coroutine(const coroutine_attr &attr, Func func, Args&&... args);
+    coroutine(const coroutine_attr& attr, Func func, Args&&... args);
     ~coroutine();
 };
 

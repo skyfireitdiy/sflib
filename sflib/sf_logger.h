@@ -24,6 +24,8 @@ struct logger_info_t
     std::string thread_id; // 线程号
     std::string func;      // 函数名称
     std::string msg;       // 消息
+    std::string co_name;   // 协程名称
+    std::string co_id;     // 协程id
 };
 SF_JSONIFY(logger_info_t, level, time, line, file, thread_id, func, msg);
 inline std::unordered_map<int, std::string> logger_level_str__ {
@@ -34,7 +36,7 @@ inline std::unordered_map<int, std::string> logger_level_str__ {
     { SF_FATAL_LEVEL, "FATAL" },
 };
 constexpr char default_log_format[]
-    = "{level} {time} {thread} {file}:{line} {func} --> {msg}\n";
+    = "{level} {time} T:{thread} C:{co_name}({co_id}) {file}:{line} {func} --> {msg}\n";
 class logger
 {
 public:

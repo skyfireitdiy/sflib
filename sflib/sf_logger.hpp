@@ -4,6 +4,7 @@
 #include "sf_json.hpp"
 #include "sf_logger.h"
 #include "sf_thread_pool.hpp"
+#include "sf_co.hpp"
 namespace skyfire
 {
 inline std::unordered_map<int, std::vector<color>> log_color_map = {
@@ -117,6 +118,9 @@ inline void logger::logout(int level, const std::string& file,
     log_info.thread_id = so.str();
     log_info.time      = make_time_str();
     log_info.func      = func;
+    log_info.co_id     = std::to_string(coroutine::get_id());
+    log_info.co_name   = coroutine::get_name();
+
     std::ostringstream oss;
     logout__(oss, log_info, dt);
 }
@@ -215,6 +219,8 @@ inline void logger::logout(const int level, const std::string& file,
     log_info.thread_id = so.str();
     log_info.time      = make_time_str();
     log_info.func      = func;
+    log_info.co_id     = std::to_string(coroutine::get_id());
+    log_info.co_name   = coroutine::get_name();
     std::ostringstream oss;
     logout__(oss, log_info, dt...);
 }
@@ -278,6 +284,9 @@ inline std::string logger::format(std::string          format_str,
     replace(format_str, "{file}", log_info.file);
     replace(format_str, "{level}", logger_level_str__[log_info.level]);
     replace(format_str, "{msg}", log_info.msg);
+    replace(format_str, "{co_id}", log_info.co_id);
+    replace(format_str, "{co_name}", log_info.co_name);
+
     return colored ? color_string(format_str, log_color_map[log_info.level]) : format_str;
 }
 } // namespace skyfire

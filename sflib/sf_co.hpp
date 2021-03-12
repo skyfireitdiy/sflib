@@ -1,7 +1,6 @@
 #pragma once
 
 #include "sf_co.h"
-#include "sf_logger.hpp"
 
 namespace skyfire
 {
@@ -26,6 +25,7 @@ namespace skyfire
 constexpr int co_retindex = 9;
 constexpr int co_rspindex = 13;
 constexpr int co_rdiindex = 7;
+constexpr int co_rbpindex = 6;
 
 static void __co_func__(co_ctx*);
 static void __co_save_stack__();
@@ -66,6 +66,7 @@ class co_ctx final
     mutable std::mutex    mu_detached__;
     bool                  shared_stack__;
     std::vector<char>     saved_stack__;
+    std::string           name__;
 
 public:
     co_ctx(std::function<void()> entry, const coroutine_attr& attr);
@@ -79,6 +80,7 @@ public:
     void        set_reg_ret(const void* value);
     void        set_reg_rdi(const void* value);
     void        set_reg_rsp(const void* value);
+    void        set_reg_rbp(const void* value);
     const void* get_stack_bp() const;
     const void* get_reg_buf() const;
     void        set_detached();
@@ -87,6 +89,8 @@ public:
     void        save_stack();
     void        restore_stack();
     void        set_curr_sp(char* sp);
+    std::string get_name() const;
+    long long   get_id() const;
 };
 
 class co_env final
@@ -378,14 +382,25 @@ inline void co_env::yield_coroutine()
 
 inline void co_ctx::save_stack()
 {
-    sf_debug("save shared stack", regs__[co_rspindex], get_co_env()->get_shared_stack_bp() - (char*)regs__[co_rspindex]);
-    saved_stack__.assign((char*)regs__[co_rspindex], get_co_env()->get_shared_stack_bp());
+    if (state__ != co_state::finished)
+    {
+        saved_stack__.assign((char*)regs__[co_rspindex], stack_data__ + stack_size__);
+    }
 }
 
 inline void co_ctx::restore_stack()
 {
-    sf_debug("restore shared stack", (void*)regs__[co_rspindex], saved_stack__.size());
     memcpy(stack_data__ + default_co_stack_size - saved_stack__.size(), saved_stack__.data(), saved_stack__.size());
+}
+
+inline std::string co_ctx::get_name() const
+{
+    return name__;
+}
+
+inline std::string coroutine::get_name()
+{
+    return get_co_env()->get_curr_co()->get_name();
 }
 
 inline co_ctx* co_env::get_prev_co() const
@@ -396,6 +411,11 @@ inline co_ctx* co_env::get_prev_co() const
 inline co_ctx* co_env::get_next_co() const
 {
     return next_co__;
+}
+
+inline long long co_ctx::get_id() const
+{
+    return reinterpret_cast<long>(this);
 }
 
 inline char* co_env::get_shared_stack() const
@@ -415,7 +435,7 @@ inline void coroutine::yield_coroutine()
 
 inline long long coroutine::get_id()
 {
-    return static_cast<long long>(reinterpret_cast<long>(get_co_env()->get_curr_co()));
+    return get_co_env()->get_curr_co()->get_id();
 }
 
 inline bool coroutine::joinable() const
@@ -487,9 +507,10 @@ inline co_ctx* co_env::choose_co()
 inline co_env::co_env()
 {
     shared_stack__ = new char[default_co_stack_size];
-    current_co__   = new co_ctx(nullptr, coroutine_attr { 0, false });
-    main_co__      = current_co__;
-    save_co__      = new co_ctx(__co_save_stack__, coroutine_attr { default_co_stack_size, false });
+    printf("shared stack: 0x%p  bp:0x%p\n", get_shared_stack(), get_shared_stack_bp());
+    current_co__ = new co_ctx(nullptr, coroutine_attr { 0, false, "__main__" });
+    main_co__    = current_co__;
+    save_co__    = new co_ctx(__co_save_stack__, coroutine_attr { default_co_stack_size, false, "__co_save__" });
     current_co__->set_state(co_state::running);
 }
 
@@ -541,6 +562,11 @@ inline void co_ctx::set_reg_rdi(const void* value)
 inline void co_ctx::set_reg_rsp(const void* value)
 {
     regs__[co_rspindex] = value;
+}
+
+inline void co_ctx::set_reg_rbp(const void* value)
+{
+    regs__[co_rbpindex] = value;
 }
 
 inline const void* co_ctx::get_stack_bp() const
@@ -701,6 +727,7 @@ inline void co_ctx::init()
 {
     set_reg_ret(reinterpret_cast<void*>(&__co_func__));
     set_reg_rdi(reinterpret_cast<void*>(this));
+    set_reg_rbp(const_cast<void*>(get_stack_bp()));
     const void* sp  = reinterpret_cast<const char*>(get_stack_bp()) - sizeof(void*);
     sp              = reinterpret_cast<char*>((unsigned long)sp & -16LL);
     void** ret_addr = (void**)(sp);
@@ -716,6 +743,7 @@ inline co_ctx::co_ctx(std::function<void()> entry, const coroutine_attr& attr)
     : stack_size__(attr.stack_size)
     , entry__(entry)
     , shared_stack__(attr.shared_stack)
+    , name__(attr.name)
 {
     if (stack_size__ != 0 && !shared_stack__)
     {
