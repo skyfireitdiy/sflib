@@ -29,7 +29,8 @@ constexpr int co_rbpindex = 6;
 
 static void __co_func__(co_ctx*);
 static void __co_save_stack__();
-inline void co_ctx_swap(const void*, const void*);
+static void __swap_regs__(const void*, const void*);
+static void __switch_co__(co_ctx* curr, co_ctx* next);
 co_env*     get_co_env();
 
 class co_manager final
@@ -156,10 +157,8 @@ inline void __co_save_stack__()
             next->restore_stack();
         }
         auto curr = get_co_env()->get_curr_co();
-        curr->set_state(co_state::suspended);
-        next->set_state(co_state::running);
         get_co_env()->set_curr_co(next);
-        co_ctx_swap(curr->get_reg_buf(), next->get_reg_buf());
+        __switch_co__(curr, next);
     }
 }
 
@@ -302,7 +301,17 @@ coroutine::coroutine(const coroutine_attr& attr, Func func, Args&&... args)
     ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr, std::bind(func, std::forward<Args>(args)...));
 }
 
-inline void co_ctx_swap(const void*, const void*)
+inline void __switch_co__(co_ctx* curr, co_ctx* next)
+{
+    if (curr->get_state() == co_state::running)
+    {
+        curr->set_state(co_state::suspended);
+    }
+    next->set_state(co_state::running);
+    __swap_regs__(curr->get_reg_buf(), next->get_reg_buf());
+}
+
+inline void __swap_regs__(const void*, const void*)
 {
     __asm(
         "popq %rbp\n\t"
@@ -359,25 +368,17 @@ inline void co_env::yield_coroutine()
         return;
     }
 
-    if (curr_co->get_state() == co_state::running)
-    {
-        curr_co->set_state(co_state::suspended);
-    }
-
     if (curr_co->shared_stack() || ctx->shared_stack())
     {
         prev_co__    = curr_co;
         next_co__    = ctx;
         current_co__ = save_co__;
-        save_co__->set_state(co_state::running);
-        co_ctx_swap(curr_co->get_reg_buf(), save_co__->get_reg_buf());
     }
     else
     {
         current_co__ = ctx;
-        ctx->set_state(co_state::running);
-        co_ctx_swap(curr_co->get_reg_buf(), ctx->get_reg_buf());
     }
+    __switch_co__(curr_co, current_co__);
 }
 
 inline void co_ctx::save_stack()
