@@ -13,6 +13,12 @@ class co_ctx;
 class co_env;
 class co_manager;
 
+template <typename Function, typename... Args>
+concept ReturnVoid = std::is_same_v<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>, void>;
+
+template <typename Function, typename... Args>
+concept ReturnNotVoid = !std::is_same_v<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>, void>;
+
 enum class co_state
 {
     ready,
@@ -28,13 +34,15 @@ struct coroutine_attr
     std::string name         = "unamed";
 };
 
+template <typename Func, typename... Args>
 class coroutine final
 {
 private:
-    co_ctx* ctx__;
-    bool    detached__ = false;
-    bool    joined__   = false;
-    bool    invalid__  = false;
+    co_ctx*                                                                       ctx__;
+    bool                                                                          detached__ = false;
+    bool                                                                          joined__   = false;
+    bool                                                                          invalid__  = false;
+    std::promise<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>> promise__;
 
     coroutine(const coroutine& ctx)             = delete;
     coroutine& operator==(const coroutine& ctx) = delete;
@@ -46,29 +54,61 @@ public:
     template <typename T>
     bool wait_for(const T& t);
     template <typename T>
-    bool               wait_until(const T& expire);
-    void               wait();
-    void               join();
-    void               detach();
-    bool               valid() const;
-    static long long   get_id();
-    static std::string get_name();
-    bool               joinable() const;
+    bool wait_until(const T& expire);
+    void wait();
+    void join();
+    void detach();
+    bool valid() const;
+    bool joinable() const;
 
-    template <typename T>
-    static void sleep_for(const T& t);
+    coroutine(Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>;
+    coroutine(const coroutine_attr& attr, Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>;
 
-    template <typename T>
-    static void sleep_until(const T& t);
+    coroutine(Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>;
+    coroutine(const coroutine_attr& attr, Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>;
 
-    static void yield_coroutine();
-
-    template <typename Func, typename... Args>
-    coroutine(Func func, Args&&... args);
-    template <typename Func, typename... Args>
-    coroutine(const coroutine_attr& attr, Func func, Args&&... args);
     ~coroutine();
 };
+
+namespace co
+{
+    long long   get_id();
+    std::string get_name();
+
+    template <typename T>
+    void sleep_for(const T& t);
+
+    template <typename T>
+    void sleep_until(const T& t);
+
+    void yield_coroutine();
+};
+
+template <typename Func, typename... Args>
+requires ReturnVoid<Func, Args...>
+coroutine(Func&&, Args&&...) -> coroutine<Func, Args...>;
+
+template <typename Func, typename... Args>
+requires ReturnVoid<Func, Args...>
+coroutine(const coroutine_attr&, Func&&, Args&&...) -> coroutine<Func, Args...>;
+
+template <typename Func, typename... Args>
+requires ReturnNotVoid<Func, Args...>
+coroutine(Func&&, Args&&...) -> coroutine<Func, Args...>;
+
+template <typename Func, typename... Args>
+requires ReturnNotVoid<Func, Args...>
+coroutine(const coroutine_attr&, Func&&, Args&&...) -> coroutine<Func, Args...>;
+
+// template <typename Function, typename... Args>
+// requires ReturnNotVoid<Function, Args...>
+// std::future<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>>
+// co_async(Function&& f, Args&&... args);
+
+// template <typename Function, typename... Args>
+// requires ReturnVoid<Function, Args...>
+// std::future<void>
+// co_async(Function&& f, Args&&... args);
 
 class co_mutex final
 {

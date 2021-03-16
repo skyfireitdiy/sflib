@@ -227,7 +227,7 @@ inline co_env* co_manager::add_env()
         pro.set_value(env);
         while (!env->if_need_exit())
         {
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
         }
         get_co_manager()->remove_env(env);
     }).detach();
@@ -290,15 +290,37 @@ inline std::function<void()> co_ctx::get_entry() const
 }
 
 template <typename Func, typename... Args>
-coroutine::coroutine(Func func, Args&&... args)
+coroutine<Func, Args...>::coroutine(Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(coroutine_attr {}, std::bind(func, std::forward<Args>(args)...));
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(coroutine_attr {}, [this, &func, &args...]() {
+        std::forward<Func>(func)(std::forward<Args>(args)...);
+        promise__.set_value();
+    });
 }
 
 template <typename Func, typename... Args>
-coroutine::coroutine(const coroutine_attr& attr, Func func, Args&&... args)
+coroutine<Func, Args...>::coroutine(Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr, std::bind(func, std::forward<Args>(args)...));
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(coroutine_attr {}, [this, &func, &args...]() {
+        promise__.set_value(std::forward<Func>(func)(std::forward<Args>(args)...));
+    });
+}
+
+template <typename Func, typename... Args>
+coroutine<Func, Args...>::coroutine(const coroutine_attr& attr, Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>
+{
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr, [this, &func, &args...]() {
+        promise__.set_value(std::forward<Func>(func)(std::forward<Args>(args)...));
+    });
+}
+
+template <typename Func, typename... Args>
+coroutine<Func, Args...>::coroutine(const coroutine_attr& attr, Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
+{
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr, [this, &func, &args...]() {
+        std::forward<Func>(func)(std::forward<Args>(args)...);
+        promise__.set_value();
+    });
 }
 
 inline void __switch_co__(co_ctx* curr, co_ctx* next)
@@ -350,11 +372,12 @@ inline void __swap_regs__(const void*, const void*)
         "ret\n\t");
 }
 
-inline void coroutine::wait()
+template <typename Func, typename... Args>
+inline void coroutine<Func, Args...>::wait()
 {
     while (ctx__->get_state() != co_state::finished)
     {
-        yield_coroutine();
+        co::yield_coroutine();
     }
 }
 
@@ -399,7 +422,7 @@ inline std::string co_ctx::get_name() const
     return name__;
 }
 
-inline std::string coroutine::get_name()
+inline std::string co::get_name()
 {
     return get_co_env()->get_curr_co()->get_name();
 }
@@ -429,17 +452,18 @@ inline char* co_env::get_shared_stack_bp() const
     return shared_stack__ + default_co_stack_size;
 }
 
-inline void coroutine::yield_coroutine()
+inline void co::yield_coroutine()
 {
     get_co_env()->yield_coroutine();
 }
 
-inline long long coroutine::get_id()
+inline long long co::get_id()
 {
     return get_co_env()->get_curr_co()->get_id();
 }
 
-inline bool coroutine::joinable() const
+template <typename Func, typename... Args>
+inline bool coroutine<Func, Args...>::joinable() const
 {
     return !(joined__ || detached__);
 }
@@ -465,7 +489,7 @@ inline static void __co_func__(co_ctx* ctx)
     {
         delete ctx;
     }
-    coroutine::yield_coroutine();
+    co::yield_coroutine();
 }
 
 inline co_ctx* co_env::get_curr_co() const
@@ -508,7 +532,7 @@ inline co_ctx* co_env::choose_co()
 inline co_env::co_env()
 {
     shared_stack__ = new char[default_co_stack_size];
-    printf("shared stack: 0x%p  bp:0x%p\n", get_shared_stack(), get_shared_stack_bp());
+    // printf("shared stack: 0x%p  bp:0x%p\n", get_shared_stack(), get_shared_stack_bp());
     current_co__ = new co_ctx(nullptr, coroutine_attr { 0, false, "__main__" });
     main_co__    = current_co__;
     save_co__    = new co_ctx(__co_save_stack__, coroutine_attr { default_co_stack_size, false, "__co_save__" });
@@ -520,14 +544,16 @@ inline co_env::~co_env()
     delete[] shared_stack__;
 }
 
+template <typename Func, typename... Args>
 template <typename T>
-bool coroutine::wait_for(const T& t)
+bool coroutine<Func, Args...>::wait_for(const T& t)
 {
     return wait_until(std::chrono::system_clock::now() + t);
 }
 
+template <typename Func, typename... Args>
 template <typename T>
-bool coroutine::wait_until(const T& expire)
+bool coroutine<Func, Args...>::wait_until(const T& expire)
 {
     while (ctx__->get_state() != co_state::finished)
     {
@@ -535,7 +561,7 @@ bool coroutine::wait_until(const T& expire)
         {
             return false;
         }
-        yield_coroutine();
+        co::yield_coroutine();
     }
     return true;
 }
@@ -669,7 +695,8 @@ inline co_manager::co_manager()
     monitor_future__ = std::async(&co_manager::monitor_thread__, this);
 }
 
-inline void coroutine::join()
+template <typename Func, typename... Args>
+inline void coroutine<Func, Args...>::join()
 {
     if (detached__)
     {
@@ -685,7 +712,8 @@ inline void coroutine::join()
     invalid__ = true;
 }
 
-inline void coroutine::detach()
+template <typename Func, typename... Args>
+inline void coroutine<Func, Args...>::detach()
 {
     if (detached__)
     {
@@ -707,7 +735,8 @@ inline void coroutine::detach()
     }
 }
 
-inline bool coroutine::valid() const
+template <typename Func, typename... Args>
+inline bool coroutine<Func, Args...>::valid() const
 {
     return !invalid__;
 }
@@ -761,7 +790,8 @@ inline co_ctx::co_ctx(std::function<void()> entry, const coroutine_attr& attr)
     }
 }
 
-inline coroutine::~coroutine()
+template <typename Func, typename... Args>
+inline coroutine<Func, Args...>::~coroutine()
 {
     if (ctx__ == nullptr)
     {
@@ -781,7 +811,8 @@ inline co_ctx::~co_ctx()
     }
 }
 
-inline coroutine::coroutine(coroutine&& other)
+template <typename Func, typename... Args>
+inline coroutine<Func, Args...>::coroutine(coroutine<Func, Args...>&& other)
     : ctx__(other.ctx__)
     , detached__(other.detached__)
     , joined__(other.joined__)
@@ -791,7 +822,8 @@ inline coroutine::coroutine(coroutine&& other)
     other.invalid__ = true;
 }
 
-inline coroutine& coroutine::operator=(coroutine&& other)
+template <typename Func, typename... Args>
+inline coroutine<Func, Args...>& coroutine<Func, Args...>::operator=(coroutine<Func, Args...>&& other)
 {
     ctx__      = other.ctx__;
     detached__ = other.detached__;
@@ -805,17 +837,17 @@ inline coroutine& coroutine::operator=(coroutine&& other)
 }
 
 template <typename T>
-void coroutine::sleep_for(const T& t)
+void co::sleep_for(const T& t)
 {
-    sleep_until(std::chrono::system_clock::now() + t);
+    co::sleep_until(std::chrono::system_clock::now() + t);
 }
 
 template <typename T>
-void coroutine::sleep_until(const T& t)
+void co::sleep_until(const T& t)
 {
     while (std::chrono::system_clock::now() < t)
     {
-        yield_coroutine();
+        co::yield_coroutine();
     }
 }
 
@@ -825,7 +857,7 @@ inline void co_mutex::lock()
     co_ctx* null = nullptr;
     while (!owner__.compare_exchange_strong(null, ctx))
     {
-        coroutine::yield_coroutine();
+        co::yield_coroutine();
         null = nullptr;
     }
 }
@@ -836,10 +868,10 @@ inline void co_mutex::unlock()
     co_ctx* null = nullptr;
     while (!owner__.compare_exchange_strong(ctx, null))
     {
-        coroutine::yield_coroutine();
+        co::yield_coroutine();
         ctx = get_co_env()->get_curr_co();
     }
-    coroutine::yield_coroutine();
+    co::yield_coroutine();
 }
 
 inline bool co_mutex::try_lock()
@@ -858,7 +890,7 @@ inline void co_shared_mutex::lock()
         if (writer__ != nullptr || !reader__.empty())
         {
             mu__.unlock();
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
             continue;
         }
         writer__ = ctx;
@@ -897,9 +929,9 @@ inline void co_shared_mutex::unlock()
             return;
         }
         mu__.unlock();
-        coroutine::yield_coroutine();
+        co::yield_coroutine();
     }
-    coroutine::yield_coroutine();
+    co::yield_coroutine();
 }
 
 inline void co_shared_mutex::lock_shared()
@@ -911,7 +943,7 @@ inline void co_shared_mutex::lock_shared()
         if (writer__ != nullptr || reader__.contains(ctx))
         {
             mu__.unlock();
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
             continue;
         }
         reader__.insert(ctx);
@@ -946,14 +978,14 @@ inline void co_shared_mutex::unlock_shared()
         if (!reader__.contains(ctx))
         {
             mu__.unlock();
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
             continue;
         }
         reader__.erase(ctx);
         mu__.unlock();
         return;
     }
-    coroutine::yield_coroutine();
+    co::yield_coroutine();
 }
 
 inline void co_recursive_mutex::lock()
@@ -965,7 +997,7 @@ inline void co_recursive_mutex::lock()
         if (owner__ != nullptr && owner__ != ctx)
         {
             mu__.unlock();
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
             continue;
         }
         owner__ = ctx;
@@ -984,7 +1016,7 @@ inline void co_recursive_mutex::unlock()
         if (owner__ != ctx)
         {
             mu__.unlock();
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
             continue;
         }
         --count__;
@@ -995,7 +1027,7 @@ inline void co_recursive_mutex::unlock()
         mu__.unlock();
         return;
     }
-    coroutine::yield_coroutine();
+    co::yield_coroutine();
 }
 
 inline bool co_recursive_mutex::try_lock()
@@ -1150,6 +1182,20 @@ bool co_shared_timed_mutex::try_lock_shared_until(const T& t)
 inline void co_shared_timed_mutex::unlock_shared()
 {
     mu__.unlock_shared();
+}
+
+template <typename Function, typename... Args>
+requires ReturnNotVoid<Function, Args...>
+    std::future<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>>
+    co_async(Function&& f, Args&&... args)
+{
+}
+
+template <typename Function, typename... Args>
+requires ReturnVoid<Function, Args...>
+    std::future<void>
+    co_async(Function&& f, Args&&... args)
+{
 }
 
 }

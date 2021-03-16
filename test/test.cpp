@@ -692,20 +692,20 @@ int main()
         for (int i = 0; i < 1000; ++i)
         {
             std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << coroutine::get_name() << " " << n << "+" << i;
+            cout << "thread:" << this_thread::get_id() << " coroutine:" << co::get_name() << " " << n << "+" << i;
             n += i;
             cout << "=" << n << endl;
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
         }
     });
     auto co2 = coroutine(attr2, [&n, &mu] {
         for (int i = 0; i < 1000; ++i)
         {
             std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << coroutine::get_name() << " " << n << "+" << i;
+            cout << "thread:" << this_thread::get_id() << " coroutine:" << co::get_name() << " " << n << "+" << i;
             n += i;
             cout << "=" << n << endl;
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
         }
     });
 
@@ -713,10 +713,10 @@ int main()
         for (int i = 0; i < 1000; ++i)
         {
             std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << coroutine::get_name() << " " << n << "+" << i;
+            cout << "thread:" << this_thread::get_id() << " coroutine:" << co::get_name() << " " << n << "+" << i;
             n += i;
             cout << "=" << n << endl;
-            coroutine::yield_coroutine();
+            co::yield_coroutine();
         }
     });
     co1.wait();
