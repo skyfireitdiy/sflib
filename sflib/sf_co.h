@@ -42,6 +42,7 @@ private:
     bool                                                                          detached__ = false;
     bool                                                                          joined__   = false;
     bool                                                                          invalid__  = false;
+    // todo 需要替换为 co_promise
     std::promise<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>> promise__;
 
     coroutine(const coroutine& ctx)             = delete;
@@ -100,20 +101,48 @@ template <typename Func, typename... Args>
 requires ReturnNotVoid<Func, Args...>
 coroutine(const coroutine_attr&, Func&&, Args&&...) -> coroutine<Func, Args...>;
 
+
+template <typename T>
+concept VoidType = std::is_same_v<T, void>;
+
+template <typename T>
+concept NotVoidType = !std::is_same_v<T, void>;
+
+// todo 实现
 template <typename T>
 class co_future
 {
 };
 
-// template <typename Function, typename... Args>
-// requires ReturnNotVoid<Function, Args...>
-// std::future<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>>
-// co_async(Function&& f, Args&&... args);
 
-// template <typename Function, typename... Args>
-// requires ReturnVoid<Function, Args...>
-// std::future<void>
-// co_async(Function&& f, Args&&... args);
+
+// todo 实现
+template <typename T>
+class co_promise
+{
+private:
+    std::any data__;
+    std::atomic<bool> has_value__;
+
+
+public:
+    co_future<T> get_future();
+    void         set_value(const T& value) requires NotVoidType<T>;
+    void         set_value(T&& value) requires NotVoidType<T>;
+    void         set_value(T& value) requires NotVoidType<T>;
+    void         set_value() requires VoidType<T>;
+    void         set_value_at_coroutine_exit(const T& value) requires NotVoidType<T>;
+    void         set_value_at_coroutine_exit(T&& value) requires NotVoidType<T>;
+    void         set_value_at_coroutine_exit(T& value) requires NotVoidType<T>;
+    void         set_value_at_coroutine_exit() requires VoidType<T>;
+    void         set_exception(std::exception_ptr p);
+    void         set_exception_at_coroutine_exit(std::exception_ptr p);
+};
+
+template <typename Function, typename... Args>
+co_future<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>>
+co_async(Function&& f, Args&&... args);
+
 
 class co_mutex final
 {
