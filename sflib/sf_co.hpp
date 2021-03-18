@@ -227,7 +227,7 @@ inline co_env* co_manager::add_env()
         pro.set_value(env);
         while (!env->if_need_exit())
         {
-            co::yield_coroutine();
+            this_coroutine::yield_coroutine();
         }
         get_co_manager()->remove_env(env);
     }).detach();
@@ -377,7 +377,7 @@ inline void coroutine<Func, Args...>::wait()
 {
     while (ctx__->get_state() != co_state::finished)
     {
-        co::yield_coroutine();
+        this_coroutine::yield_coroutine();
     }
 }
 
@@ -422,7 +422,7 @@ inline std::string co_ctx::get_name() const
     return name__;
 }
 
-inline std::string co::get_name()
+inline std::string this_coroutine::get_name()
 {
     return get_co_env()->get_curr_co()->get_name();
 }
@@ -452,12 +452,12 @@ inline char* co_env::get_shared_stack_bp() const
     return shared_stack__ + default_co_stack_size;
 }
 
-inline void co::yield_coroutine()
+inline void this_coroutine::yield_coroutine()
 {
     get_co_env()->yield_coroutine();
 }
 
-inline long long co::get_id()
+inline long long this_coroutine::get_id()
 {
     return get_co_env()->get_curr_co()->get_id();
 }
@@ -489,7 +489,7 @@ inline static void __co_func__(co_ctx* ctx)
     {
         delete ctx;
     }
-    co::yield_coroutine();
+    this_coroutine::yield_coroutine();
 }
 
 inline co_ctx* co_env::get_curr_co() const
@@ -561,7 +561,7 @@ bool coroutine<Func, Args...>::wait_until(const T& expire)
         {
             return false;
         }
-        co::yield_coroutine();
+        this_coroutine::yield_coroutine();
     }
     return true;
 }
@@ -837,17 +837,17 @@ inline coroutine<Func, Args...>& coroutine<Func, Args...>::operator=(coroutine<F
 }
 
 template <typename T>
-void co::sleep_for(const T& t)
+void this_coroutine::sleep_for(const T& t)
 {
-    co::sleep_until(std::chrono::system_clock::now() + t);
+    this_coroutine::sleep_until(std::chrono::system_clock::now() + t);
 }
 
 template <typename T>
-void co::sleep_until(const T& t)
+void this_coroutine::sleep_until(const T& t)
 {
     while (std::chrono::system_clock::now() < t)
     {
-        co::yield_coroutine();
+        this_coroutine::yield_coroutine();
     }
 }
 
@@ -857,7 +857,7 @@ inline void co_mutex::lock()
     co_ctx* null = nullptr;
     while (!owner__.compare_exchange_strong(null, ctx))
     {
-        co::yield_coroutine();
+        this_coroutine::yield_coroutine();
         null = nullptr;
     }
 }
@@ -868,10 +868,10 @@ inline void co_mutex::unlock()
     co_ctx* null = nullptr;
     while (!owner__.compare_exchange_strong(ctx, null))
     {
-        co::yield_coroutine();
+        this_coroutine::yield_coroutine();
         ctx = get_co_env()->get_curr_co();
     }
-    co::yield_coroutine();
+    this_coroutine::yield_coroutine();
 }
 
 inline bool co_mutex::try_lock()
@@ -890,7 +890,7 @@ inline void co_shared_mutex::lock()
         if (writer__ != nullptr || !reader__.empty())
         {
             mu__.unlock();
-            co::yield_coroutine();
+            this_coroutine::yield_coroutine();
             continue;
         }
         writer__ = ctx;
@@ -929,9 +929,9 @@ inline void co_shared_mutex::unlock()
             return;
         }
         mu__.unlock();
-        co::yield_coroutine();
+        this_coroutine::yield_coroutine();
     }
-    co::yield_coroutine();
+    this_coroutine::yield_coroutine();
 }
 
 inline void co_shared_mutex::lock_shared()
@@ -943,7 +943,7 @@ inline void co_shared_mutex::lock_shared()
         if (writer__ != nullptr || reader__.contains(ctx))
         {
             mu__.unlock();
-            co::yield_coroutine();
+            this_coroutine::yield_coroutine();
             continue;
         }
         reader__.insert(ctx);
@@ -978,14 +978,14 @@ inline void co_shared_mutex::unlock_shared()
         if (!reader__.contains(ctx))
         {
             mu__.unlock();
-            co::yield_coroutine();
+            this_coroutine::yield_coroutine();
             continue;
         }
         reader__.erase(ctx);
         mu__.unlock();
         return;
     }
-    co::yield_coroutine();
+    this_coroutine::yield_coroutine();
 }
 
 inline void co_recursive_mutex::lock()
@@ -997,7 +997,7 @@ inline void co_recursive_mutex::lock()
         if (owner__ != nullptr && owner__ != ctx)
         {
             mu__.unlock();
-            co::yield_coroutine();
+            this_coroutine::yield_coroutine();
             continue;
         }
         owner__ = ctx;
@@ -1016,7 +1016,7 @@ inline void co_recursive_mutex::unlock()
         if (owner__ != ctx)
         {
             mu__.unlock();
-            co::yield_coroutine();
+            this_coroutine::yield_coroutine();
             continue;
         }
         --count__;
@@ -1027,7 +1027,7 @@ inline void co_recursive_mutex::unlock()
         mu__.unlock();
         return;
     }
-    co::yield_coroutine();
+    this_coroutine::yield_coroutine();
 }
 
 inline bool co_recursive_mutex::try_lock()

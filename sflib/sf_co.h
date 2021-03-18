@@ -70,7 +70,7 @@ public:
     ~coroutine();
 };
 
-namespace co
+namespace this_coroutine
 {
     long long   get_id();
     std::string get_name();
@@ -99,6 +99,11 @@ coroutine(Func&&, Args&&...) -> coroutine<Func, Args...>;
 template <typename Func, typename... Args>
 requires ReturnNotVoid<Func, Args...>
 coroutine(const coroutine_attr&, Func&&, Args&&...) -> coroutine<Func, Args...>;
+
+template <typename T>
+class co_future
+{
+};
 
 // template <typename Function, typename... Args>
 // requires ReturnNotVoid<Function, Args...>
