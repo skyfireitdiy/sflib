@@ -38,10 +38,10 @@ template <typename Func, typename... Args>
 class coroutine final
 {
 private:
-    co_ctx*                                                                       ctx__;
-    bool                                                                          detached__ = false;
-    bool                                                                          joined__   = false;
-    bool                                                                          invalid__  = false;
+    co_ctx* ctx__;
+    bool    detached__ = false;
+    bool    joined__   = false;
+    bool    invalid__  = false;
     // todo 需要替换为 co_promise
     std::promise<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>> promise__;
 
@@ -101,29 +101,40 @@ template <typename Func, typename... Args>
 requires ReturnNotVoid<Func, Args...>
 coroutine(const coroutine_attr&, Func&&, Args&&...) -> coroutine<Func, Args...>;
 
-
 template <typename T>
 concept VoidType = std::is_same_v<T, void>;
 
 template <typename T>
 concept NotVoidType = !std::is_same_v<T, void>;
 
+enum class co_future_status
+{
+    deferred,
+    ready,
+    timeout
+};
+
 // todo 实现
 template <typename T>
 class co_future
 {
+public:
+    T    get();
+    bool valid();
+    void wait() const;
+    template <typename Tm>
+    co_future_status wait_for(const Tm& tm);
+    template <typename Tm>
+    co_future_status wait_until(const Tm& tm);
 };
-
-
 
 // todo 实现
 template <typename T>
 class co_promise
 {
 private:
-    std::any data__;
+    std::any          data__;
     std::atomic<bool> has_value__;
-
 
 public:
     co_future<T> get_future();
@@ -142,7 +153,6 @@ public:
 template <typename Function, typename... Args>
 co_future<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>>
 co_async(Function&& f, Args&&... args);
-
 
 class co_mutex final
 {
