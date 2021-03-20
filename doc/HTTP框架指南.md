@@ -155,9 +155,9 @@ curl -v http://localhost:8080/main.cpp
 < Set-Cookie:_SESSION_ID=E4B04384-554C-9938-FA5D-F50871964385;Path=/;HttpOnly;
 < 
 // main.cpp
-#include "sf_http_router.hpp"
-#include "sf_http_server.hpp"
-#include "sf_http_static_router.hpp"
+#include "http_router.hpp"
+#include "http_server.hpp"
+#include "http_static_router.hpp"
 using namespace std;
 using namespace skyfire;
 int main()
