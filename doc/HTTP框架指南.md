@@ -14,8 +14,7 @@ http_server依赖zlib和openssl，编译器版本要求gcc 9.1及以上。
 编写服务器代码：
 ```cpp
 // main.cpp
-#include "sf_http_server.hpp"
-#include "sf_http_router.hpp"
+#include <sflib>
 using namespace std;
 using namespace skyfire;
 int main(){
@@ -83,9 +82,7 @@ hello world
 http_part_router 用于对路由进行分层，同时有拦截的功能。
 ```cpp
 // main.cpp
-#include "sf_http_part_router.hpp"
-#include "sf_http_router.hpp"
-#include "sf_http_server.hpp"
+#include <sflib>
 using namespace std;
 using namespace skyfire;
 int main()
@@ -118,9 +115,7 @@ http_part_router 和 http_server 一样有 add_router 接口，且参数保持�
 使用静态路由可以将本地路径下的文件供浏览器（客户端）访问：
 ```cpp
 // main.cpp
-#include "sf_http_router.hpp"
-#include "sf_http_server.hpp"
-#include "sf_http_static_router.hpp"
+#include <sflib>
 using namespace std;
 using namespace skyfire;
 int main()
@@ -181,8 +176,7 @@ int main()
 http_server 支持 websocket 协议，如下：
 ```cpp
 // main.cpp
-#include "sf_http_server.hpp"
-#include "sf_websocket_router.hpp"
+#include <sflib>
 using namespace std;
 using namespace skyfire;
 int main()
@@ -214,8 +208,7 @@ connected (press CTRL+C to quit)
 示例代码如下：
 ```cpp
 // main.cpp
-#include "sf_http_server.hpp"
-#include "sf_websocket_router.hpp"
+#include <sflib>
 using namespace std;
 using namespace skyfire;
 int main()
