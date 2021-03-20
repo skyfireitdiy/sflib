@@ -22,4 +22,17 @@ namespace this_coroutine
 
     void yield_coroutine();
 };
+
+template <typename T>
+concept VoidType = std::is_same_v<T, void>;
+
+template <typename T>
+concept NotVoidType = !std::is_same_v<T, void>;
+
+template <typename Function, typename... Args>
+concept ReturnVoid = std::is_same_v<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>, void>;
+
+template <typename Function, typename... Args>
+concept ReturnNotVoid = !std::is_same_v<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>, void>;
+
 }

@@ -68,3 +68,5 @@
 #include "../src/sf_type.hpp"
 #include "../src/sf_http_server.hpp"
 #include "../src/sf_tcp_nat_traversal_utils.hpp"
+#include "../src/sf_co_promise.hpp"
+#include "../src/sf_co_future.hpp"
