@@ -1,5 +1,5 @@
 
-add_includedirs("../")
+add_includedirs("../include")
 set_languages("c++20")
 add_links("pthread", "rt")
 add_cxxflags("-g", "-Wall", "-Werror", "-g")

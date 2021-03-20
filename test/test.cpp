@@ -1,15 +1,6 @@
 
 #if 0
-#include <sf_argv>
-#include <sf_cache>
-#include <sf_chan>
-#include <sf_co>
-#include <sf_data_buffer>
-#include <sf_event_waiter>
-#include <sf_http_client_request>
-#include <sf_http_utils>
-#include <sf_tcp_client>
-#include <sf_test>
+#include <sflib>
 using namespace skyfire;
 using namespace std;
 sf_test(dns, test_parse_client_req_url)
@@ -644,28 +635,6 @@ sf_test(cache, mismatch_type_test)
 }
 
 
-sf_test(co, co_wait)
-{
-    int  n  = 0;
-    co_mutex mu;
-    auto     co = coroutine([&n, &mu] {
-        for (int i = 0; i < 10; ++i)
-        {
-            std::lock_guard<co_mutex> lck(mu);
-            n += i;
-            yield_coroutine();
-        }
-    });
-    for (int i = 0; i < 10; ++i)
-    {
-        std::lock_guard<co_mutex> lck(mu);
-        n += i;
-        yield_coroutine();
-    }
-    co.wait();
-    test_p_eq(n, 90);
-}
-
 int main()
 {
     run_test(16);
@@ -675,7 +644,7 @@ int main()
 
 #define SF_DEBUG
 
-#include <sf_co>
+#include <sflib>
 
 using namespace skyfire;
 using namespace std;

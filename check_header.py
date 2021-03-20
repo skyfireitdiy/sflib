@@ -6,7 +6,7 @@ check_dir = "sflib"
 tmp_file = "__check_tmp.cpp"
 tmp_obj = "__check_tmp.o"
 
-cmd = "clang++ -std=c++2a -pipe -Wall -Werror -c -I%s %s -o %s" % (check_dir, tmp_file, tmp_obj)
+cmd = "include-what-you-use -std=c++2a -pipe -Wall -Werror -c -I%s %s -o %s" % (check_dir, tmp_file, tmp_obj)
 
 def check_self_satisfaction(filename):
     print("check self satisfaction:", file, "...")
@@ -18,6 +18,8 @@ if __name__ == "__main__":
     print("cmd:", cmd)
     files = os.listdir(check_dir)
     for f in files:
+        if not f.endswith('hpp'):
+            continue
         file = os.path.join(check_dir, f)
         check_self_satisfaction(file)
     os.remove(tmp_file)
