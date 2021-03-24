@@ -4,12 +4,14 @@
 #include "co_utils.h"
 namespace skyfire
 {
-bool co_future_base::valid() const
+template <typename T>
+bool co_future<T>::valid() const
 {
     return valid__;
 }
 
-void co_future_base::wait() const
+template <typename T>
+void co_future<T>::wait() const
 {
     while (!has_value__)
     {
@@ -17,17 +19,23 @@ void co_future_base::wait() const
     }
 }
 
+template <typename T>
 template <typename Tm>
-bool co_future_base::wait_for(const Tm& tm)
+bool co_future<T>::wait_for(const Tm& tm)
 {
     return wait_until(std::chrono::system_clock::now() + tm);
 }
 
+template <typename T>
 template <typename Tm>
-bool co_future_base::wait_until(const Tm& tm)
+bool co_future<T>::wait_until(const Tm& tm)
 {
     while (std::chrono::system_clock::now() < tm)
     {
+        if (has_exp__)
+        {
+            throw exp__;
+        }
         if (has_value__)
         {
             return true;

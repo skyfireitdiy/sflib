@@ -1,9 +1,10 @@
 #pragma once
 
 #include "co_ctx.h"
-#include "co_mutex.h"
-#include "stdc++.h"
 #include "co_future.h"
+#include "co_mutex.h"
+#include "co_promise.h"
+#include "stdc++.h"
 
 namespace skyfire
 {
@@ -17,7 +18,7 @@ private:
     bool    joined__   = false;
     bool    invalid__  = false;
     // todo 需要替换为 co_promise
-    std::promise<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>> promise__;
+    co_promise<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>> promise__;
 
     coroutine(const coroutine& ctx)             = delete;
     coroutine& operator==(const coroutine& ctx) = delete;
