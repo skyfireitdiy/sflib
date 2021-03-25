@@ -68,5 +68,3 @@
 #include "../src/type.hpp"
 #include "../src/http_server.hpp"
 #include "../src/tcp_nat_traversal_utils.hpp"
-#include "../src/co_promise.hpp"
-#include "../src/co_future.hpp"

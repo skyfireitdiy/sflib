@@ -1,5 +1,5 @@
 
-#if 0
+#if 1
 #include <sflib>
 using namespace skyfire;
 using namespace std;
@@ -634,6 +634,51 @@ sf_test(cache, mismatch_type_test)
     test_np_eq(cache.data<int>("name"), nullptr);
 }
 
+sf_test(coroutine, normal)
+{
+    int      n = 0;
+    co_mutex mu;
+
+    auto co1 = coroutine({ co_attr::set_name("co1") }, [&n, &mu] {
+        for (int i = 0; i < 1000; ++i)
+        {
+            std::lock_guard<co_mutex> lck(mu);
+            n += i;
+            this_coroutine::yield_coroutine();
+        }
+    });
+    auto co2 = coroutine({ co_attr::set_name("co2") }, [&n, &mu] {
+        for (int i = 0; i < 1000; ++i)
+        {
+            std::lock_guard<co_mutex> lck(mu);
+            n += i;
+            this_coroutine::yield_coroutine();
+        }
+    });
+
+    auto co3 = coroutine({ co_attr::set_name("co3") }, [&n, &mu] {
+        for (int i = 0; i < 1000; ++i)
+        {
+            std::lock_guard<co_mutex> lck(mu);
+            n += i;
+            this_coroutine::yield_coroutine();
+        }
+    });
+    co1.wait();
+    co2.wait();
+    co3.wait();
+
+    test_p_eq(n, 1498500);
+}
+
+sf_test(coroutine, get)
+{
+    auto co = coroutine({ co_attr::set_name("co") }, []() {
+        return 10;
+    });
+    auto t  = co.get();
+    test_p_eq(t, 10);
+}
 
 int main()
 {

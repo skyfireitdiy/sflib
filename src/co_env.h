@@ -1,5 +1,6 @@
 #pragma once
 
+#include "co_attr.h"
 #include "co_ctx.h"
 
 namespace skyfire
@@ -32,7 +33,7 @@ public:
     void                 release_curr_co();
     co_ctx*              get_curr_co() const;
     void                 set_curr_co(co_ctx* ctx);
-    co_ctx*              create_coroutine(const coroutine_attr& attr, std::function<void()> func);
+    co_ctx*              create_coroutine(const co_attr_config& attr, std::function<void()> func);
     void                 yield_coroutine();
     bool                 if_need_exit() const;
     void                 set_exit_flag();

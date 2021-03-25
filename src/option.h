@@ -5,8 +5,14 @@ class option
 {
 public:
     using OptionFuncType = std::function<void(TargetType&)>;
+    template <typename T>
+    static auto make_option(T func)
+    {
+        return make_option_impl__(std::function(func));
+    }
+
     template <typename... Args>
-    static std::function<OptionFuncType(Args...)> make_option(std::function<void(TargetType&, Args...)> func)
+    static std::function<OptionFuncType(Args...)> make_option_impl__(std::function<void(TargetType&, Args...)> func)
     {
         return [func](Args... args) -> OptionFuncType {
             return [func, args...](TargetType& target) {

@@ -112,7 +112,7 @@ inline void co_ctx::init()
     }
 }
 
-inline co_ctx::co_ctx(std::function<void()> entry, const coroutine_attr& attr)
+inline co_ctx::co_ctx(std::function<void()> entry, const co_attr_config& attr)
     : stack_size__(attr.stack_size)
     , entry__(entry)
     , shared_stack__(attr.shared_stack)

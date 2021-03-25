@@ -1,16 +1,14 @@
 #pragma once
+#include "co_attr.h"
 #include "stdc++.h"
 
 namespace skyfire
 {
 
-constexpr int default_co_stack_size = 1024 * 1024 * 2;
-
 constexpr int co_retindex = 9;
 constexpr int co_rspindex = 13;
 constexpr int co_rdiindex = 7;
 constexpr int co_rbpindex = 6;
-
 
 //-------------
 // 64 bit
@@ -29,20 +27,12 @@ constexpr int co_rbpindex = 6;
 //    | regs[12]: rbx |
 // hig | regs[13]: rsp |
 
-
 enum class co_state
 {
     ready,
     running,
     suspended,
     finished
-};
-
-struct coroutine_attr
-{
-    size_t      stack_size   = default_co_stack_size;
-    bool        shared_stack = false;
-    std::string name         = "unamed";
 };
 
 class co_ctx final
@@ -59,7 +49,7 @@ class co_ctx final
     std::string           name__;
 
 public:
-    co_ctx(std::function<void()> entry, const coroutine_attr& attr);
+    co_ctx(std::function<void()> entry, const co_attr_config& attr);
 
     std::function<void()> get_entry() const;
     ~co_ctx();

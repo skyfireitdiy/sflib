@@ -74,26 +74,26 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
 #define sf_test_global_env(...) skyfire::test_base__::set_global_env(__VA_ARGS__)
 #define MAKE_TEST_VAR_NAME_WRAP(a, b) a##b
 #define MAKE_TEST_VAR_NAME(a, b) MAKE_TEST_VAR_NAME_WRAP(a, b)
-#define sf_test(cls, name, ...)                                                                               \
-    void                     name(skyfire::test_data_t__&);                                                   \
-    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                                    \
-        []() { skyfire::test_base__(__FILE__,                                                                 \
-                                    __LINE__,                                                                 \
-                                    #name,                                                                    \
-                                    std::function(name),                                                      \
-                                    #cls,                                                                     \
+#define sf_test(cls, name, ...)                                                                                         \
+    void                     __test__##name(skyfire::test_data_t__&);                                                   \
+    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                                              \
+        []() { skyfire::test_base__(__FILE__,                                                                           \
+                                    __LINE__,                                                                           \
+                                    #name,                                                                              \
+                                    std::function(__test__##name),                                                      \
+                                    #cls,                                                                               \
                                     ##__VA_ARGS__); }); \
-    void name(skyfire::test_data_t__& __result__)
-#define sf_test_p(cls, name, type, ...)                                                                       \
-    void                     name(skyfire::test_data_t__&, const type&);                                      \
-    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                                    \
-        []() { skyfire::test_base__(__FILE__,                                                                 \
-                                    __LINE__,                                                                 \
-                                    #name,                                                                    \
-                                    std::function(name),                                                      \
-                                    #cls,                                                                     \
+    void __test__##name(skyfire::test_data_t__& __result__)
+#define sf_test_p(cls, name, type, ...)                                                                                   \
+    void                     __test__p_##name(skyfire::test_data_t__&, const type&);                                      \
+    skyfire::object_meta_run MAKE_TEST_VAR_NAME(__SF_TEST_VAR_, __LINE__)(                                                \
+        []() { skyfire::test_base__(__FILE__,                                                                             \
+                                    __LINE__,                                                                             \
+                                    #name,                                                                                \
+                                    std::function(__test__p_##name),                                                      \
+                                    #cls,                                                                                 \
                                     ##__VA_ARGS__); }); \
-    void name(skyfire::test_data_t__& __result__, const type& test_param)
+    void __test__p_##name(skyfire::test_data_t__& __result__, const type& test_param)
 #define test_assert(exp)                                                                                 \
     if (!(exp))                                                                                          \
     {                                                                                                    \

@@ -1,15 +1,12 @@
 #pragma once
 
+#include "co_env.h"
+#include "co_manager.h"
+#include "co_utils.h"
 #include "coroutine.h"
 #include "error.h"
-#include "co_env.h"
-#include "co_utils.h"
-#include "co_manager.h"
 namespace skyfire
 {
-
-
-
 
 inline std::once_flag& get_co_once_flag()
 {
@@ -17,45 +14,45 @@ inline std::once_flag& get_co_once_flag()
     return flag;
 }
 
-
-
-
 template <typename Func, typename... Args>
 coroutine<Func, Args...>::coroutine(Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(coroutine_attr {}, [this, &func, &args...]() {
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [&func, &args...]() {
         std::forward<Func>(func)(std::forward<Args>(args)...);
-        promise__.set_value();
     });
 }
 
 template <typename Func, typename... Args>
 coroutine<Func, Args...>::coroutine(Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(coroutine_attr {}, [this, &func, &args...]() {
-        promise__.set_value(std::forward<Func>(func)(std::forward<Args>(args)...));
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [this, &func, &args...]() {
+        result__ = std::forward<Func>(func)(std::forward<Args>(args)...);
     });
 }
 
 template <typename Func, typename... Args>
-coroutine<Func, Args...>::coroutine(const coroutine_attr& attr, Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>
+coroutine<Func, Args...>::coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr, [this, &func, &args...]() {
-        promise__.set_value(std::forward<Func>(func)(std::forward<Args>(args)...));
+    for (auto& f : attr_config)
+    {
+        f(attr__);
+    }
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [this, &func, &args...]() {
+        result__ = std::forward<Func>(func)(std::forward<Args>(args)...);
     });
 }
 
 template <typename Func, typename... Args>
-coroutine<Func, Args...>::coroutine(const coroutine_attr& attr, Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
+coroutine<Func, Args...>::coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr, [this, &func, &args...]() {
+    for (auto& f : attr_config)
+    {
+        f(attr__);
+    }
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [&func, &args...]() {
         std::forward<Func>(func)(std::forward<Args>(args)...);
-        promise__.set_value();
     });
 }
-
-
-
 
 template <typename Func, typename... Args>
 inline void coroutine<Func, Args...>::wait()
@@ -66,18 +63,11 @@ inline void coroutine<Func, Args...>::wait()
     }
 }
 
-
-
-
-
-
 template <typename Func, typename... Args>
 inline bool coroutine<Func, Args...>::joinable() const
 {
     return !(joined__ || detached__);
 }
-
-
 
 template <typename Func, typename... Args>
 template <typename T>
@@ -100,7 +90,6 @@ bool coroutine<Func, Args...>::wait_until(const T& expire)
     }
     return true;
 }
-
 
 template <typename Func, typename... Args>
 inline void coroutine<Func, Args...>::join()
@@ -148,7 +137,6 @@ inline bool coroutine<Func, Args...>::valid() const
     return !invalid__;
 }
 
-
 template <typename Func, typename... Args>
 inline coroutine<Func, Args...>::~coroutine()
 {
@@ -161,8 +149,6 @@ inline coroutine<Func, Args...>::~coroutine()
         detach();
     }
 }
-
-
 
 template <typename Func, typename... Args>
 inline coroutine<Func, Args...>::coroutine(coroutine<Func, Args...>&& other)
@@ -189,21 +175,17 @@ inline coroutine<Func, Args...>& coroutine<Func, Args...>::operator=(coroutine<F
     return *this;
 }
 
-
-template <typename Function, typename... Args>
-requires ReturnNotVoid<Function, Args...>
-    std::future<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>>
-    co_async(Function&& f, Args&&... args)
+template <typename Func, typename... Args>
+std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> coroutine<Func, Args...>::get() requires ReturnNotVoid<Func, Args...>
 {
+    wait();
+    return std::any_cast<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>>(result__);
 }
 
-template <typename Function, typename... Args>
-requires ReturnVoid<Function, Args...>
-    std::future<void>
-    co_async(Function&& f, Args&&... args)
+template <typename Func, typename... Args>
+std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> coroutine<Func, Args...>::get() requires ReturnVoid<Func, Args...>
 {
+    wait();
 }
-
-
 
 }

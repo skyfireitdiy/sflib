@@ -37,7 +37,7 @@ inline void co_env::reset_sched()
     sched__ = false;
 }
 
-inline co_ctx* co_env::create_coroutine(const coroutine_attr& attr, std::function<void()> func)
+inline co_ctx* co_env::create_coroutine(const co_attr_config& attr, std::function<void()> func)
 {
     auto new_co = new co_ctx(func, attr);
     append_co(new_co);
@@ -141,9 +141,9 @@ inline co_env::co_env()
 {
     shared_stack__ = new char[default_co_stack_size];
     // printf("shared stack: 0x%p  bp:0x%p\n", get_shared_stack(), get_shared_stack_bp());
-    current_co__ = new co_ctx(nullptr, coroutine_attr { 0, false, "__main__" });
+    current_co__ = new co_ctx(nullptr, co_attr_config { 0, false, "__main__" });
     main_co__    = current_co__;
-    save_co__    = new co_ctx(__co_save_stack__, coroutine_attr { default_co_stack_size, false, "__co_save__" });
+    save_co__    = new co_ctx(__co_save_stack__, co_attr_config { default_co_stack_size, false, "__co_save__" });
     current_co__->set_state(co_state::running);
 }
 
