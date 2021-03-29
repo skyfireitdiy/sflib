@@ -125,6 +125,7 @@ sf_test(chan, test_read_from_closed_chan)
     test_assert(!ret);
 }
 
+#ifdef TEST_DNS
 sf_test(dns, test_resolve_dns)
 {
     auto ret = skyfire::resolve_dns("www.baidu.com");
@@ -145,6 +146,8 @@ sf_test(dns, test_connect_host)
     ret = client->connect_to_server("14.215.177.38", 80);
     test_assert(!ret);
 }
+#endif
+
 std::mutex              mu;
 std::condition_variable cv;
 sf_test(tcp, test_server)

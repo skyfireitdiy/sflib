@@ -294,7 +294,7 @@ inline argv_result_t argparser::parse_argv(int argc, const char** argv, bool ski
 {
     return parse_argv(std::vector<std::string>({ argv, argv + argc }), skip0);
 }
-inline void prepare_parser__(std::shared_ptr<argparser>& parser)
+inline void argparser::prepare_parser__(std::shared_ptr<argparser>& parser)
 {
     if (parser->sub_parsers_.empty())
     {
@@ -316,7 +316,7 @@ inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args,
     json                     curr = ret;
     curr.convert_to_object();
     auto parser = shared_from_this();
-    prepare_parser__(parser);
+    argparser::prepare_parser__(parser);
     // NOTE 首先处理默认参数
     for (auto& p : none_position_arg__)
     {

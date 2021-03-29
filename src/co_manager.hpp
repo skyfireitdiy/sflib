@@ -34,8 +34,7 @@ inline co_env* co_manager::add_env()
     std::thread([&pro, this]() {
         auto env = get_co_env();
         {
-            std::lock_guard<std::mutex> lck(mu_co_env_set__);
-            co_env_set__.insert(env);
+            append_env_to_set(env);
         }
         pro.set_value(env);
         while (!env->if_need_exit())
@@ -47,6 +46,12 @@ inline co_env* co_manager::add_env()
 
     auto env = pro.get_future().get();
     return env;
+}
+
+inline void co_manager::append_env_to_set(co_env* env)
+{
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
+    co_env_set__.insert(env);
 }
 
 inline co_env* co_manager::get_best_env()

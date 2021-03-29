@@ -188,4 +188,18 @@ std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> coroutine<Func, 
     wait();
 }
 
+template <typename Func, typename... Args>
+void coroutine<Func, Args...>::manage_this_thread()
+{
+    auto env = get_co_env();
+    {
+        get_co_manager()->append_env_to_set(env);
+    }
+    while (!env->if_need_exit())
+    {
+        this_coroutine::yield_coroutine();
+    }
+    get_co_manager()->remove_env(env);
+}
+
 }

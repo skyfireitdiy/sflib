@@ -53,7 +53,7 @@ inline void __swap_regs__(const void*, const void*)
         "ret\n\t");
 }
 
-inline  void __co_func__(co_ctx* ctx)
+inline void __co_func__(co_ctx* ctx)
 {
     ctx->get_entry()();
     get_co_env()->release_curr_co();
@@ -84,13 +84,10 @@ inline void __co_save_stack__()
     }
 }
 
-
-
 inline std::string this_coroutine::get_name()
 {
     return get_co_env()->get_curr_co()->get_name();
 }
-
 
 inline void this_coroutine::yield_coroutine()
 {
@@ -101,7 +98,6 @@ inline long long this_coroutine::get_id()
 {
     return get_co_env()->get_curr_co()->get_id();
 }
-
 
 template <typename T>
 void this_coroutine::sleep_for(const T& t)

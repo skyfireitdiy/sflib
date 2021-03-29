@@ -1,7 +1,7 @@
 #pragma once
 
-#include "co_mutex.h"
 #include "co_ctx.h"
+#include "co_mutex.h"
 
 namespace skyfire
 {

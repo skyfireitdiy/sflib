@@ -1,10 +1,10 @@
 
 #pragma once
+#include "co_utils.h"
 #include "color.h"
 #include "json.h"
 #include "logger.h"
 #include "thread_pool.h"
-#include "co_utils.h"
 namespace skyfire
 {
 inline std::unordered_map<int, std::vector<color>> log_color_map = {

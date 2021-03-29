@@ -20,7 +20,7 @@ enum error_code
     // NAT穿透错误
     err_nat_traversal_err = 0x00000006,
     // 结束
-    err_finished          = 0x00000007,
+    err_finished = 0x00000007,
     // 解析错误
     err_parse = 0x00000008,
     // 不支持的类型
@@ -43,7 +43,7 @@ enum error_code
     err_stream = 0x00000012,
     // 已存在
     err_exist = 0x00000013,
-    
+
 };
 class exception : public std::exception
 {

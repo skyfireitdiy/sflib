@@ -61,6 +61,7 @@ private:
     std::string                                                 help_;
     argv_result_t                                               parse_argv__(const std::vector<std::string>& argv);
     argparser(const std::string& help = "");
+    void prepare_parser__(std::shared_ptr<argparser>& parser);
 
 public:
     static std::shared_ptr<argparser> make_parser(
@@ -76,6 +77,5 @@ public:
                                  std::shared_ptr<argparser> sub_parser);
     argv_result_t parse_argv(int argc, const char** argv, bool skip0 = true);
     argv_result_t parse_argv(const std::vector<std::string>& args, bool skip0 = true);
-    friend void   prepare_parser__(std::shared_ptr<argparser>& parser);
 };
 } // namespace skyfire

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "co_ctx.h"
-#include "co_utils.h"
 #include "co_env.h"
+#include "co_utils.h"
 
 namespace skyfire
 {
@@ -24,19 +24,15 @@ inline void co_ctx::restore_stack()
     memcpy(stack_data__ + default_co_stack_size - saved_stack__.size(), saved_stack__.data(), saved_stack__.size());
 }
 
-
 inline std::string co_ctx::get_name() const
 {
     return name__;
 }
 
-
 inline long long co_ctx::get_id() const
 {
     return reinterpret_cast<long>(this);
 }
-
-
 
 inline co_state co_ctx::get_state() const
 {
@@ -82,7 +78,6 @@ inline bool co_ctx::shared_stack() const
 {
     return shared_stack__;
 }
-
 
 inline void co_ctx::set_detached()
 {

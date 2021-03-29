@@ -37,6 +37,7 @@ public:
     void detach();
     bool valid() const;
     bool joinable() const;
+    void manage_this_thread();
 
     std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> get() requires ReturnNotVoid<Func, Args...>;
 

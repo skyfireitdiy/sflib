@@ -1,8 +1,8 @@
 #pragma once
 
-#include "stdc++.h"
 #include "nocopy.h"
 #include "reader.h"
+#include "stdc++.h"
 #include "utils.h"
 
 namespace skyfire

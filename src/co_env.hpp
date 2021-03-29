@@ -1,8 +1,8 @@
 #pragma once
 
 #include "co_env.h"
-#include "co_utils.h"
 #include "co_manager.h"
+#include "co_utils.h"
 
 namespace skyfire
 {

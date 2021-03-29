@@ -8,7 +8,10 @@
 #include "writer.h"
 namespace skyfire
 {
-class data_buffer : public reader, public writer, public make_instance_t<data_buffer>, public std::enable_shared_from_this<data_buffer>
+class data_buffer : public reader,
+                    public writer,
+                    public make_instance_t<data_buffer>,
+                    public std::enable_shared_from_this<data_buffer>
 {
 private:
     byte_array              data__;

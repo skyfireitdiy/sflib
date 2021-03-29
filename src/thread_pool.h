@@ -10,15 +10,15 @@ public:
     explicit thread_pool(size_t thread_count = std::thread::hardware_concurrency());
     ~thread_pool();
     template <typename Func, typename... Args>
-    std::future<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>>   add_task(Func func, Args&&... args);
-    void   pause();
-    void   resume();
-    void   add_thread(size_t thread_num = 1);
-    size_t thread_count() const;
-    size_t busy_thread_count() const;
-    void   clear_thread();
-    void   clear_task();
-    void   wait_all_task_finished();
+    std::future<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>> add_task(Func func, Args&&... args);
+    void                                                                         pause();
+    void                                                                         resume();
+    void                                                                         add_thread(size_t thread_num = 1);
+    size_t                                                                       thread_count() const;
+    size_t                                                                       busy_thread_count() const;
+    void                                                                         clear_thread();
+    void                                                                         clear_task();
+    void                                                                         wait_all_task_finished();
 
 private:
     std::atomic<size_t>                       thread_count__ { 0 };

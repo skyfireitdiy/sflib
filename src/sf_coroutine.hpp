@@ -1,24 +1,18 @@
 #pragma once
 
+#include "co_env.h"
+#include "co_manager.h"
+#include "co_utils.h"
 #include "coroutine.h"
 #include "error.h"
-#include "co_env.h"
-#include "co_utils.h"
-#include "co_manager.h"
 namespace skyfire
 {
-
-
-
 
 inline std::once_flag& get_co_once_flag()
 {
     static std::once_flag flag;
     return flag;
 }
-
-
-
 
 template <typename Func, typename... Args>
 coroutine<Func, Args...>::coroutine(Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
@@ -54,9 +48,6 @@ coroutine<Func, Args...>::coroutine(const coroutine_attr& attr, Func&& func, Arg
     });
 }
 
-
-
-
 template <typename Func, typename... Args>
 inline void coroutine<Func, Args...>::wait()
 {
@@ -66,18 +57,11 @@ inline void coroutine<Func, Args...>::wait()
     }
 }
 
-
-
-
-
-
 template <typename Func, typename... Args>
 inline bool coroutine<Func, Args...>::joinable() const
 {
     return !(joined__ || detached__);
 }
-
-
 
 template <typename Func, typename... Args>
 template <typename T>
@@ -100,7 +84,6 @@ bool coroutine<Func, Args...>::wait_until(const T& expire)
     }
     return true;
 }
-
 
 template <typename Func, typename... Args>
 inline void coroutine<Func, Args...>::join()
@@ -148,7 +131,6 @@ inline bool coroutine<Func, Args...>::valid() const
     return !invalid__;
 }
 
-
 template <typename Func, typename... Args>
 inline coroutine<Func, Args...>::~coroutine()
 {
@@ -161,8 +143,6 @@ inline coroutine<Func, Args...>::~coroutine()
         detach();
     }
 }
-
-
 
 template <typename Func, typename... Args>
 inline coroutine<Func, Args...>::coroutine(coroutine<Func, Args...>&& other)
@@ -189,7 +169,6 @@ inline coroutine<Func, Args...>& coroutine<Func, Args...>::operator=(coroutine<F
     return *this;
 }
 
-
 template <typename Function, typename... Args>
 requires ReturnNotVoid<Function, Args...>
     std::future<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>>
@@ -203,7 +182,5 @@ requires ReturnVoid<Function, Args...>
     co_async(Function&& f, Args&&... args)
 {
 }
-
-
 
 }
