@@ -60,7 +60,7 @@ private:
     std::pair<std::string, std::string>                         prefix__ { "-", "--" };
     std::string                                                 help__;
 
-    static bool gen_json_name__(argv_opt_t& opt) ;
+    static bool gen_json_name__(argv_opt_t& opt);
 
     argv_result_t parse_argv__(const std::vector<std::string>& argv);
     argparser(const std::string& help = "");
@@ -78,8 +78,7 @@ private:
 
     void prepare_none_position_arg__(json& ret);
 
-    bool parse_none_position_arg__(json& ret, const std::string& p, std::shared_ptr<argv_opt_t>& last_opt);
-
+    bool parse_none_position_arg__(json& ret, const std::string& p, std::shared_ptr<argv_opt_t>& switch_opt);
 
 public:
     static std::shared_ptr<argparser> make_parser(
