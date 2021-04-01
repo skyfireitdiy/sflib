@@ -136,4 +136,21 @@ inline co_ctx::~co_ctx()
     }
 }
 
+inline void co_ctx::set_wait_cond()
+{
+    wait_cond__ = true;
+}
+
+inline void co_ctx::unset_wait_cond() 
+{
+    wait_cond__ = false;
+}
+
+inline void co_ctx::wait_cond()
+{
+    while(wait_cond__){
+        this_coroutine::yield_coroutine();
+    }
+}
+
 }

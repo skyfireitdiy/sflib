@@ -47,6 +47,7 @@ class co_ctx final
     bool                  shared_stack__;
     std::vector<char>     saved_stack__;
     std::string           name__;
+    std::atomic<bool>     wait_cond__ { false };
 
 public:
     co_ctx(std::function<void()> entry, const co_attr_config& attr);
@@ -71,6 +72,9 @@ public:
     void        set_curr_sp(char* sp);
     std::string get_name() const;
     long long   get_id() const;
+    void        set_wait_cond();
+    void unset_wait_cond();
+    void        wait_cond();
 };
 
 }
