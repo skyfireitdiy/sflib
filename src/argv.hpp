@@ -32,6 +32,60 @@ inline bool argparser::add_argument(const std::string&                          
     }
     return add_argument(opt);
 }
+
+inline bool argparser::check_json_name_duplicate__(const std::string& json_name) const
+{
+    for (const argv_opt_t& p : position_arg__)
+    {
+        if (json_name == p.json_name)
+        {
+            return true;
+        }
+    }
+    for (const argv_opt_t& p : none_position_arg__)
+    {
+        if (json_name == p.json_name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline bool argparser::check_no_position_arg_short_or_long_name_duplicate__(const std::string& name) const
+{
+    for (auto& p : none_position_arg__)
+    {
+        if (p.short_name == name || p.long_name == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+inline bool argparser::short_name_matched__(const std::string& short_name) const
+{
+    return string_start_with(short_name, prefix_.first);
+}
+
+inline bool argparser::long_name_matched__(const std::string& long_name) const
+{
+    return string_start_with(long_name, prefix_.second);
+}
+
+inline bool argparser::check_position_arg_long_name_duplicate__(const std::string& name) const
+{
+    for (auto& p : position_arg__)
+    {
+        if (p.long_name == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 inline bool argparser::add_argument(argv_opt_t opt)
 {
     if (opt.json_name.empty())
@@ -46,56 +100,29 @@ inline bool argparser::add_argument(argv_opt_t opt)
     {
         return false;
     }
-    for (argv_opt_t& p : none_position_arg__)
+    if (check_json_name_duplicate__(opt.json_name))
     {
-        if (opt.json_name == p.json_name)
+        return false;
+    }
+    if (short_name_matched__(opt.short_name) && long_name_matched__(opt.long_name))
+    {
+        if (check_no_position_arg_short_or_long_name_duplicate__(opt.short_name) || check_no_position_arg_short_or_long_name_duplicate__(opt.long_name))
         {
             return false;
-        }
-    }
-    for (argv_opt_t& p : position_arg_)
-    {
-        if (opt.json_name == p.json_name)
-        {
-            return false;
-        }
-    }
-    if (string_start_with(opt.short_name, prefix_.first) && string_start_with(opt.long_name, prefix_.second))
-    {
-        for (argv_opt_t& p : none_position_arg__)
-        {
-            if (p.short_name == opt.short_name)
-            {
-                return false;
-            }
-            else if (p.long_name == opt.short_name)
-            {
-                return false;
-            }
-            else if (p.short_name == opt.long_name)
-            {
-                return false;
-            }
-            else if (p.long_name == opt.long_name)
-            {
-                return false;
-            }
         }
         none_position_arg__.push_back(opt);
     }
     else
     {
-        for (argv_opt_t& p : position_arg_)
+        if (check_position_arg_long_name_duplicate__(opt.long_name))
         {
-            if (p.long_name == opt.long_name)
-            {
-                return false;
-            }
+            return false;
         }
-        position_arg_.push_back(opt);
+        position_arg__.push_back(opt);
     }
     return true;
 }
+
 inline argv_result_t argparser::parse_argv__(
     const std::vector<std::string>& argv)
 {
@@ -159,7 +186,7 @@ inline argv_result_t argparser::parse_argv__(
             {
                 continue;
             }
-            if (pos >= position_arg_.size())
+            if (pos >= position_arg__.size())
             {
                 return {
                     sf_error { { err_parse,
@@ -169,7 +196,7 @@ inline argv_result_t argparser::parse_argv__(
             }
             auto d   = json();
             last_opt = std::shared_ptr<argv_opt_t>(
-                new argv_opt_t(position_arg_[pos]));
+                new argv_opt_t(position_arg__[pos]));
             ++pos;
             switch (last_opt->type)
             {
@@ -274,7 +301,7 @@ inline argv_result_t argparser::parse_argv__(
             }
         }
     }
-    for (auto& p : position_arg_)
+    for (auto& p : position_arg__)
     {
         if (p.required)
         {
@@ -302,12 +329,12 @@ inline void argparser::prepare_parser__(std::shared_ptr<argparser>& parser)
     }
     for (auto& p : parser->sub_parsers_)
     {
-        p.second->position_arg_.insert(p.second->position_arg_.end(), parser->position_arg_.begin(), parser->position_arg_.end());
+        p.second->position_arg__.insert(p.second->position_arg__.end(), parser->position_arg__.begin(), parser->position_arg__.end());
         p.second->none_position_arg__.insert(p.second->none_position_arg__.end(), parser->none_position_arg__.begin(), parser->none_position_arg__.end());
         prepare_parser__(p.second);
     }
     parser->none_position_arg__.clear();
-    parser->position_arg_.clear();
+    parser->position_arg__.clear();
 }
 inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args, bool skip0)
 {

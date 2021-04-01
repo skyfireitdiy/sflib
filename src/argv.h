@@ -55,13 +55,22 @@ class argparser : public std::enable_shared_from_this<argparser>
 {
 private:
     std::unordered_map<std::string, std::shared_ptr<argparser>> sub_parsers_;
-    std::vector<argv_opt_t>                                     position_arg_;
+    std::vector<argv_opt_t>                                     position_arg__;
     std::vector<argv_opt_t>                                     none_position_arg__;
     std::pair<std::string, std::string>                         prefix_ { "-", "--" };
     std::string                                                 help_;
     argv_result_t                                               parse_argv__(const std::vector<std::string>& argv);
     argparser(const std::string& help = "");
     void prepare_parser__(std::shared_ptr<argparser>& parser);
+
+    bool check_json_name_duplicate__(const std::string& json_name) const;
+    bool check_no_position_arg_short_or_long_name_duplicate__(const std::string& name) const;
+    bool check_position_arg_long_name_duplicate__(const std::string& name) const;
+    
+
+    bool short_name_matched__(const std::string& short_name) const;
+    bool long_name_matched__(const std::string& long_name) const;
+
 
 public:
     static std::shared_ptr<argparser> make_parser(
