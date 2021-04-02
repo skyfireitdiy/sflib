@@ -140,7 +140,7 @@ inline bool argparser::add_argument(argv_opt_t opt)
     return add_position_arg__(opt);
 }
 
-inline void argparser::prepare_none_position_arg__(json& ret)
+inline void argparser::init_none_position_arg_value__(json& ret)
 {
     for (auto& p : none_position_arg__)
     {
@@ -194,6 +194,28 @@ inline bool argparser::parse_none_position_arg__(json& ret, const std::string& p
     return false;
 }
 
+inline argv_result_t argparser::parse_argv_value__(const std::string& p, const argv_opt_t& position_opt)
+{
+    auto d = json();
+    switch (position_opt.type)
+    {
+    case json_type::string:
+    case json_type::array:
+        return { sf_error {}, json(p) };
+    case json_type::boolean:
+        return { sf_error {}, json(!(p == "0" || p == "false")) };
+
+        break;
+    case json_type::number:
+        return { sf_error {}, json(string_to_long_double(p)) };
+        break;
+    default:
+        return argv_result_t {
+            sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(position_opt.type)) } }, json {}
+        };
+    }
+}
+
 inline argv_result_t argparser::parse_argv__(
     const std::vector<std::string>& argv)
 {
@@ -202,16 +224,19 @@ inline argv_result_t argparser::parse_argv__(
     std::shared_ptr<argv_opt_t> switch_opt;
     size_t                      pos = 0;
 
-    prepare_none_position_arg__(ret);
+    init_none_position_arg_value__(ret);
 
     for (const std::string& p : argv)
     {
+        if (parse_none_position_arg__(ret, p, switch_opt))
+        {
+            continue;
+        }
+
+        argv_opt_t position_opt;
+
         if (!switch_opt)
         {
-            if (parse_none_position_arg__(ret, p, switch_opt))
-            {
-                continue;
-            }
             if (pos >= position_arg__.size())
             {
                 return {
@@ -220,97 +245,31 @@ inline argv_result_t argparser::parse_argv__(
                     json()
                 };
             }
-            auto d            = json();
-            auto position_opt = std::shared_ptr<argv_opt_t>(
-                new argv_opt_t(position_arg__[pos]));
+            position_opt = position_arg__[pos];
             ++pos;
-            switch (position_opt->type)
+        }
+        else
+        {
+            position_opt = *switch_opt;
+            switch_opt = nullptr;
+        }
+
+        auto postion_arg_result = parse_argv_value__(p, position_opt);
+
+        if (sf_error(postion_arg_result))
+        {
+            if (position_opt.type == json_type::array)
             {
-            case json_type::string:
-                d                            = p;
-                ret[position_opt->json_name] = d;
-
-                break;
-            case json_type::array:
-                d = p;
-                ret[position_opt->json_name].append(json(p));
-                break;
-            case json_type::boolean:
-                d                            = !(p == "0" || p == "false");
-                ret[position_opt->json_name] = d;
-
-                break;
-            case json_type::number:
-                d                            = string_to_long_double(p);
-                ret[position_opt->json_name] = d;
-
-                break;
-            default:
-                return argv_result_t {
-                    sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(position_opt->type)) } }, json {}
-                };
+                ret[position_opt.json_name].append(postion_arg_result);
+            }
+            else
+            {
+                ret[position_opt.json_name] = json(postion_arg_result);
             }
         }
         else
         {
-            auto d = json();
-            if (switch_opt->type == json_type::array)
-            {
-                auto find_flag = false;
-                for (const argv_opt_t& nopt : none_position_arg__)
-                {
-                    if (nopt.long_name == p || nopt.short_name == p)
-                    {
-                        find_flag = true;
-                        if (nopt.action == argv_action::store_true)
-                        {
-                            ret[nopt.json_name] = true;
-                            break;
-                        }
-                        else if (nopt.action == argv_action::store_false)
-                        {
-                            ret[nopt.json_name] = false;
-                            break;
-                        }
-                        else if (nopt.action == argv_action::count)
-                        {
-                            ret[nopt.json_name] = static_cast<int>(ret[nopt.json_name]) + 1;
-                            break;
-                        }
-                        switch_opt = std::shared_ptr<argv_opt_t>(
-                            new argv_opt_t(nopt));
-                        break;
-                    }
-                }
-                if (find_flag)
-                {
-                    continue;
-                }
-            }
-            switch (switch_opt->type)
-            {
-            case json_type::string:
-                d                          = p;
-                ret[switch_opt->json_name] = d;
-                switch_opt                 = nullptr;
-                break;
-            case json_type::array:
-                d = p;
-                ret[switch_opt->json_name].append(d);
-                break;
-            case json_type::boolean:
-                d                          = !(p == "0" || p == "false");
-                ret[switch_opt->json_name] = d;
-                switch_opt                 = nullptr;
-                break;
-            case json_type::number:
-                d                          = string_to_long_double(p);
-                ret[switch_opt->json_name] = d;
-                switch_opt                 = nullptr;
-                break;
-            default:
-                return argv_result_t { sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(switch_opt->type)) } }, json {} };
-            }
+            return postion_arg_result;
         }
     }
     for (auto& p : none_position_arg__)

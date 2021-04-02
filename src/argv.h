@@ -76,9 +76,11 @@ private:
     bool add_none_position_arg__(const argv_opt_t& opt);
     bool add_position_arg__(const argv_opt_t& opt);
 
-    void prepare_none_position_arg__(json& ret);
+    void init_none_position_arg_value__(json& ret);
 
     bool parse_none_position_arg__(json& ret, const std::string& p, std::shared_ptr<argv_opt_t>& switch_opt);
+
+    argv_result_t parse_argv_value__(const std::string& p, const argv_opt_t& position_opt);
 
 public:
     static std::shared_ptr<argparser> make_parser(
