@@ -5,22 +5,26 @@
 #include "utils.h"
 namespace skyfire
 {
+
 inline argparser::argparser(
     const std::string& help)
     : help__(help)
 {
 }
+
 inline std::shared_ptr<argparser> argparser::make_parser(
     const std::string& help)
 {
     return std::shared_ptr<argparser>(new argparser(help));
 }
+
 inline void argparser::add_sub_parser(
     const std::string&                  name,
     std::shared_ptr<skyfire::argparser> sub_parser)
 {
     sub_parsers__[name] = sub_parser;
 }
+
 inline bool argparser::add_argument(const std::string&                               long_name,
                                     std::initializer_list<argv_opt_option_func_type> options)
 {
@@ -140,8 +144,9 @@ inline bool argparser::add_argument(argv_opt_t opt)
     return add_position_arg__(opt);
 }
 
-inline void argparser::init_none_position_arg_value__(json& ret)
+inline json argparser::init_none_position_arg_value__()
 {
+    json ret;
     for (auto& p : none_position_arg__)
     {
         if (p.type == json_type::array)
@@ -165,6 +170,7 @@ inline void argparser::init_none_position_arg_value__(json& ret)
             ret[p.json_name] = false;
         }
     }
+    return ret;
 }
 
 inline bool argparser::parse_none_position_arg__(json& ret, const std::string& p, std::shared_ptr<argv_opt_t>& switch_opt)
@@ -194,10 +200,10 @@ inline bool argparser::parse_none_position_arg__(json& ret, const std::string& p
     return false;
 }
 
-inline argv_result_t argparser::parse_argv_value__(const std::string& p, const argv_opt_t& position_opt)
+inline argv_result_t argparser::parse_argv_value__(const std::string& p, const argv_opt_t& current_opt)
 {
     auto d = json();
-    switch (position_opt.type)
+    switch (current_opt.type)
     {
     case json_type::string:
     case json_type::array:
@@ -211,78 +217,21 @@ inline argv_result_t argparser::parse_argv_value__(const std::string& p, const a
         break;
     default:
         return argv_result_t {
-            sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(position_opt.type)) } }, json {}
+            sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(current_opt.type)) } }, json {}
         };
     }
 }
 
-inline argv_result_t argparser::parse_argv__(
-    const std::vector<std::string>& argv)
+inline sf_error argparser::check_required_arg__(const json& js) const
 {
-    json ret;
-    ret.convert_to_object();
-    std::shared_ptr<argv_opt_t> switch_opt;
-    size_t                      pos = 0;
-
-    init_none_position_arg_value__(ret);
-
-    for (const std::string& p : argv)
-    {
-        if (parse_none_position_arg__(ret, p, switch_opt))
-        {
-            continue;
-        }
-
-        argv_opt_t position_opt;
-
-        if (!switch_opt)
-        {
-            if (pos >= position_arg__.size())
-            {
-                return {
-                    sf_error { { err_parse,
-                                 "too many postion argv" } },
-                    json()
-                };
-            }
-            position_opt = position_arg__[pos];
-            ++pos;
-        }
-        else
-        {
-            position_opt = *switch_opt;
-            switch_opt = nullptr;
-        }
-
-        auto postion_arg_result = parse_argv_value__(p, position_opt);
-
-        if (sf_error(postion_arg_result))
-        {
-            if (position_opt.type == json_type::array)
-            {
-                ret[position_opt.json_name].append(postion_arg_result);
-            }
-            else
-            {
-                ret[position_opt.json_name] = json(postion_arg_result);
-            }
-        }
-        else
-        {
-            return postion_arg_result;
-        }
-    }
     for (auto& p : none_position_arg__)
     {
         if (p.required)
         {
-            if (!ret.has(p.json_name))
+            if (!js.has(p.json_name))
             {
-                return {
-                    sf_error { { err_not_enough,
-                                 p.short_name + "/" + p.long_name + " is required" } },
-                    json()
-                };
+                return sf_error { { err_not_enough,
+                                    p.short_name + "/" + p.long_name + " is required" } };
             }
         }
     }
@@ -290,22 +239,87 @@ inline argv_result_t argparser::parse_argv__(
     {
         if (p.required)
         {
-            if (!ret.has(p.json_name))
+            if (!js.has(p.json_name))
             {
-                return {
-                    sf_error { { err_not_enough,
-                                 p.short_name + "/" + p.long_name + " is required" } },
-                    json()
-                };
+                return sf_error { { err_not_enough,
+                                    p.short_name + "/" + p.long_name + " is required" } };
             }
         }
     }
-    return { sf_error { { err_ok, "" } }, ret };
+    return sf_error {};
 }
+
+inline argv_result_t argparser::parse_argv__(
+    const std::vector<std::string>& argv)
+{
+    std::shared_ptr<argv_opt_t> switch_opt;
+    size_t                      position_pos = 0;
+
+    auto ret = init_none_position_arg_value__();
+
+    for (const std::string& p : argv)
+    {
+        if (!switch_opt)
+        {
+            if (parse_none_position_arg__(ret, p, switch_opt))
+            {
+                continue;
+            }
+        }
+
+        argv_opt_t current_opt;
+
+        if (!switch_opt)
+        {
+            if (position_pos >= position_arg__.size())
+            {
+                return {
+                    sf_error { { err_parse,
+                                 "too many postion argv" } },
+                    json()
+                };
+            }
+            current_opt = position_arg__[position_pos];
+            ++position_pos;
+        }
+        else
+        {
+            current_opt = *switch_opt;
+            switch_opt  = nullptr;
+        }
+
+        auto postion_arg_result = parse_argv_value__(p, current_opt);
+
+        if (sf_error(postion_arg_result))
+        {
+            if (current_opt.type == json_type::array)
+            {
+                ret[current_opt.json_name].append(postion_arg_result);
+            }
+            else
+            {
+                ret[current_opt.json_name] = json(postion_arg_result);
+            }
+        }
+        else
+        {
+            return postion_arg_result;
+        }
+    }
+
+    auto required_check_err = check_required_arg__(ret);
+    if (!required_check_err)
+    {
+        return { required_check_err, json() };
+    }
+    return { sf_error {}, ret };
+}
+
 inline argv_result_t argparser::parse_argv(int argc, const char** argv, bool skip0)
 {
     return parse_argv(std::vector<std::string>({ argv, argv + argc }), skip0);
 }
+
 inline void argparser::prepare_parser__(std::shared_ptr<argparser>& parser)
 {
     if (parser->sub_parsers__.empty())
@@ -321,70 +335,57 @@ inline void argparser::prepare_parser__(std::shared_ptr<argparser>& parser)
     parser->none_position_arg__.clear();
     parser->position_arg__.clear();
 }
+
 inline argv_result_t argparser::parse_argv(const std::vector<std::string>& args, bool skip0)
 {
     std::vector<std::string> data({ args.begin() + skip0, args.end() });
-    json                     ret;
-    json                     curr = ret;
-    curr.convert_to_object();
+
     auto parser = shared_from_this();
     argparser::prepare_parser__(parser);
-    // NOTE 首先处理默认参数
-    for (auto& p : none_position_arg__)
-    {
-        if (p.type == json_type::array)
-        {
-            ret[p.json_name].convert_to_array();
-        }
-        if (!p.default_value.is_null())
-        {
-            ret[p.json_name] = p.default_value;
-        }
-        if (p.action == argv_action::count)
-        {
-            ret[p.json_name] = 0;
-        }
-        if (p.action == argv_action::store_false)
-        {
-            ret[p.json_name] = true;
-        }
-        if (p.action == argv_action::store_true)
-        {
-            ret[p.json_name] = false;
-        }
-    }
+
+    auto ret  = init_none_position_arg_value__();
+    json curr = ret;
+    curr.convert_to_object();
+
     for (size_t i = 0; i < data.size(); ++i)
     {
-        bool find_flag = false;
-        for (auto& p : parser->sub_parsers__)
-        {
-            if (p.first == data[i])
-            {
-                find_flag     = true;
-                curr[p.first] = json();
-                curr.copy(curr[p.first]);
-                curr.convert_to_object();
-                parser = p.second;
-                break;
-            }
-        }
-        if (!find_flag)
+        if (!match_sub_parser__(data[i], parser))
         {
             auto result = parser->parse_argv__({ data.begin() + i, data.end() });
-            if (sf_error(result).exp().code() != err_ok)
+            if (!sf_error(result))
             {
                 return result;
             }
             curr.join(json(result));
-            return { sf_error { { err_ok, "" } }, ret };
+            return { sf_error {}, ret };
+        }
+        else
+        {
+            curr[data[i]] = json();
+            curr.copy(curr[data[i]]);
+            curr.convert_to_object();
         }
     }
-    return { sf_error { { err_ok, "" } }, ret };
+    return { sf_error {}, ret };
 }
-bool argparser::add_argument(std::string short_name, std::string long_name,
-                             json_type type, bool required,
-                             json default_value, std::string json_name,
-                             argv_action action)
+
+inline bool argparser::match_sub_parser__(const std::string& value, std::shared_ptr<argparser>& parser)
+{
+    for (auto& p : parser->sub_parsers__)
+    {
+        if (p.first == value)
+        {
+            parser = p.second;
+            return true;
+        }
+    }
+    return false;
+}
+
+inline bool argparser::add_argument(std::string short_name, std::string long_name,
+                                    json_type type, bool required,
+                                    json default_value, std::string json_name,
+                                    argv_action action)
 {
     argv_opt_t opt;
     opt.short_name    = short_name;

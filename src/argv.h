@@ -76,11 +76,15 @@ private:
     bool add_none_position_arg__(const argv_opt_t& opt);
     bool add_position_arg__(const argv_opt_t& opt);
 
-    void init_none_position_arg_value__(json& ret);
+    json init_none_position_arg_value__();
 
     bool parse_none_position_arg__(json& ret, const std::string& p, std::shared_ptr<argv_opt_t>& switch_opt);
 
     argv_result_t parse_argv_value__(const std::string& p, const argv_opt_t& position_opt);
+
+    sf_error check_required_arg__(const json& js) const;
+
+    bool match_sub_parser__(const std::string& value, std::shared_ptr<argparser>& parser);
 
 public:
     static std::shared_ptr<argparser> make_parser(
