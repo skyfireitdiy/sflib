@@ -3,6 +3,12 @@
 #include <sflib>
 using namespace skyfire;
 using namespace std;
+
+int main()
+{
+    run_test(16);
+}
+
 sf_test(dns, test_parse_client_req_url)
 {
     std::string agreement, host, resource;
@@ -268,6 +274,46 @@ struct test_argv_param
     std::vector<std::string> args;
     json                     result;
 };
+
+sf_test(argv, make_parser)
+{
+    test_assert(argparser::make_parser("") != nullptr);
+}
+
+sf_test(argv, check_none_position_json_name_duplicate)
+{
+    auto parser = argparser::make_parser("");
+    parser->add_argument("--append", { argv::json_name("append") });
+    test_assert(!parser->add_argument("--append", { argv::json_name("append") }));
+}
+
+sf_test(argv, check_position_json_name_duplicate)
+{
+    auto parser = argparser::make_parser("");
+    parser->add_argument("append", { argv::json_name("append") });
+    test_assert(!parser->add_argument("--append", { argv::json_name("append") }));
+}
+
+sf_test(argv, check_none_position_arg_short_or_long_name_duplicate_short)
+{
+    auto parser = argparser::make_parser("");
+    parser->add_argument("--append", { argv::short_name("-a") });
+    test_assert(!parser->add_argument("--batch", { argv::short_name("-a") }));
+}
+
+sf_test(argv, check_none_position_arg_short_or_long_name_duplicate_long)
+{
+    auto parser = argparser::make_parser("");
+    parser->add_argument("--append", { argv::short_name("-b") });
+    test_assert(!parser->add_argument("--append", { argv::short_name("-a") }));
+}
+
+sf_test(argv, gen_json_name)
+{
+    auto parser = argparser::make_parser("");
+    test_assert(!parser->add_argument("", ""));
+}
+
 sf_test_p(argv, test_parser_none_postion, test_argv_param, {
                                                                {
                                                                    { "-t", "hello" },
@@ -683,65 +729,6 @@ sf_test(coroutine, get)
     test_p_eq(t, 10);
 }
 
-int main()
-{
-    run_test(16);
-}
-
 #else
-
-#define SF_DEBUG
-
-#include <sflib>
-
-using namespace skyfire;
-using namespace std;
-
-int main()
-{
-    int            n = 0;
-    co_mutex       mu;
-    coroutine_attr attr1 { default_co_stack_size, false, "co1" };
-    coroutine_attr attr2 { 0, true, "co2" };
-    coroutine_attr attr3 { 0, true, "co2" };
-
-    auto co1 = coroutine(attr1, [&n, &mu] {
-        for (int i = 0; i < 1000; ++i)
-        {
-            std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << this_coroutine::get_name() << " " << n << "+" << i;
-            n += i;
-            cout << "=" << n << endl;
-            this_coroutine::yield_coroutine();
-        }
-    });
-    auto co2 = coroutine(attr2, [&n, &mu] {
-        for (int i = 0; i < 1000; ++i)
-        {
-            std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << this_coroutine::get_name() << " " << n << "+" << i;
-            n += i;
-            cout << "=" << n << endl;
-            this_coroutine::yield_coroutine();
-        }
-    });
-
-    auto co3 = coroutine(attr3, [&n, &mu] {
-        for (int i = 0; i < 1000; ++i)
-        {
-            std::lock_guard<co_mutex> lck(mu);
-            cout << "thread:" << this_thread::get_id() << " coroutine:" << this_coroutine::get_name() << " " << n << "+" << i;
-            n += i;
-            cout << "=" << n << endl;
-            this_coroutine::yield_coroutine();
-        }
-    });
-    co1.wait();
-    co2.wait();
-    co3.wait();
-
-    std::cout << n << endl;
-    return 0;
-}
 
 #endif
