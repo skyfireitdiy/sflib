@@ -2,7 +2,9 @@
 
 #include "co_ctx.h"
 #include "co_mutex.h"
+#include "co_utils.h"
 #include "stdc++.h"
+
 
 namespace skyfire
 {
@@ -18,16 +20,17 @@ private:
 
 public:
     void wait(std::unique_lock<co_mutex>& lck);
-    void wait(std::unique_lock<co_mutex>& lck, std::function<bool()> cond);
+    template <ReturnBool Cond>
+    void wait(std::unique_lock<co_mutex>& lck, Cond cond);
     template <typename T>
     bool wait_for(std::unique_lock<co_mutex>& lck, const T& tm);
-    template <typename T>
-    bool wait_for(std::unique_lock<co_mutex>& lck, const T& tm, std::function<bool()> cond);
+    template <typename T, ReturnBool Cond>
+    bool wait_for(std::unique_lock<co_mutex>& lck, const T& tm, Cond cond);
 
     template <typename T>
     bool wait_until(std::unique_lock<co_mutex>& lck, const T& expire);
-    template <typename T>
-    bool wait_until(std::unique_lock<co_mutex>& lck, const T& expire, std::function<bool()> cond);
+    template <typename T, ReturnBool Cond>
+    bool wait_until(std::unique_lock<co_mutex>& lck, const T& expire, Cond cond);
 
     void notify_one();
     void notify_all();

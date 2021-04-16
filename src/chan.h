@@ -1,37 +1,36 @@
 
 #pragma once
+#include "co_condition_variable.h"
+#include "co_mutex.h"
 #include "error.h"
 #include "logger.hpp"
 #include "nocopy.h"
+#include "stdc++.h"
 #include "utils.h"
-#include <atomic>
-#include <condition_variable>
-#include <exception>
-#include <mutex>
-#include <queue>
+
 namespace skyfire
 {
 template <typename T>
 class chan : public make_instance_t<chan<T>, nocopy<>>
 {
 private:
-    std::queue<T>           data__;
-    size_t                  max_size__;
-    std::atomic_bool        closed__ { false };
-    std::mutex              mu__;
-    std::condition_variable cond__;
-    T                       buf__;
-    std::atomic_bool        has_value__ { false };
-    std::condition_variable cond_pop__;
-    std::condition_variable cond_push_prepare__;
-    std::condition_variable cond_pop_finish__;
+    std::queue<T>         data__;
+    size_t                max_size__;
+    std::atomic_bool      closed__ { false };
+    co_mutex              mu__;
+    co_condition_variable cond__;
+    T                     buf__;
+    std::atomic_bool      has_value__ { false };
+    co_condition_variable cond_pop__;
+    co_condition_variable cond_push_prepare__;
+    co_condition_variable cond_pop_finish__;
 
 public:
     explicit chan(size_t buffer_size = 0);
     void            close();
     friend sf_error operator>>(chan<T>& ch, T& d)
     {
-        std::unique_lock<std::mutex> lck(ch.mu__);
+        std::unique_lock<co_mutex> lck(ch.mu__);
         if (ch.closed__)
         {
             return sf_error { exception(err_chan_close, "channel already closed") };
@@ -40,7 +39,7 @@ public:
         {
             if (ch.data__.empty())
             {
-                ch.cond__.wait(lck, [&ch]() { return ch.data__.size() > 0 || ch.closed__; });
+                ch.cond__.wait(lck, std::function<bool()>([&ch]() { return ch.data__.size() > 0 || ch.closed__; }));
                 if (ch.closed__)
                 {
                     throw exception(err_chan_close, "channel already closed");
@@ -61,7 +60,7 @@ public:
     }
     friend sf_error operator>>(T d, chan<T>& ch)
     {
-        std::unique_lock<std::mutex> lck(ch.mu__);
+        std::unique_lock<co_mutex> lck(ch.mu__);
         if (ch.closed__)
         {
             return sf_error(exception(err_chan_close, "channel already closed"));
@@ -70,7 +69,7 @@ public:
         {
             if (ch.data__.size() == ch.max_size__)
             {
-                ch.cond__.wait(lck, [&ch]() { return ch.data__.size() < ch.max_size__ || ch.closed__; });
+                ch.cond__.wait(lck, std::function<bool()>([&ch]() { return ch.data__.size() < ch.max_size__ || ch.closed__; }));
                 if (ch.closed__)
                 {
                     throw exception(err_chan_close, "channel already closed");

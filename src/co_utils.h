@@ -35,4 +35,7 @@ concept ReturnVoid = std::is_same_v<std::invoke_result_t<std::decay_t<Function>,
 template <typename Function, typename... Args>
 concept ReturnNotVoid = !std::is_same_v<std::invoke_result_t<std::decay_t<Function>, std::decay_t<Args>...>, void>;
 
+template <typename Func>
+concept ReturnBool = std::is_same_v<std::invoke_result_t<std::decay_t<Func>>, bool>;
+
 }

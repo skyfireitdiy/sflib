@@ -11,7 +11,7 @@ chan<T>::chan(size_t buffer_size)
 template <typename T>
 void chan<T>::close()
 {
-    std::unique_lock<std::mutex> lck(mu__);
+    std::unique_lock<co_mutex> lck(mu__);
     closed__ = true;
     // FIXME deque没有clear成员了？
     // data__.clear();

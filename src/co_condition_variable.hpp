@@ -28,7 +28,8 @@ inline void co_condition_variable::wait(std::unique_lock<co_mutex>& lck)
     lck.lock();
 }
 
-inline void co_condition_variable::wait(std::unique_lock<co_mutex>& lck, std::function<bool()> cond)
+template <ReturnBool Cond>
+inline void co_condition_variable::wait(std::unique_lock<co_mutex>& lck, Cond cond)
 {
     lck.unlock();
     auto current_co = get_co_env()->get_curr_co();
@@ -51,14 +52,14 @@ bool co_condition_variable::wait_until(std::unique_lock<co_mutex>& lck, const T&
     return wait_until(lck, tm, [] { return false; });
 }
 
-template <typename T>
-bool co_condition_variable::wait_for(std::unique_lock<co_mutex>& lck, const T& tm, std::function<bool()> cond)
+template <typename T, ReturnBool Cond>
+bool co_condition_variable::wait_for(std::unique_lock<co_mutex>& lck, const T& tm, Cond cond)
 {
     return wait_until(lck, std::chrono::system_clock::now() + tm, cond);
 }
 
-template <typename T>
-bool co_condition_variable::wait_until(std::unique_lock<co_mutex>& lck, const T& tm, std::function<bool()> cond)
+template <typename T, ReturnBool Cond>
+bool co_condition_variable::wait_until(std::unique_lock<co_mutex>& lck, const T& tm, Cond cond)
 {
     lck.unlock();
     auto current_co = get_co_env()->get_curr_co();
@@ -68,6 +69,25 @@ bool co_condition_variable::wait_until(std::unique_lock<co_mutex>& lck, const T&
     erase_wait_co__(current_co);
     lck.lock();
     return ret;
+}
+
+void co_condition_variable::notify_one()
+{
+    std::lock_guard<co_mutex> lock(mu_waited_co__);
+    if (waited_co__.empty())
+    {
+        return;
+    }
+    (*waited_co__.begin())->unset_wait_cond();
+}
+
+void co_condition_variable::notify_all()
+{
+    std::lock_guard<co_mutex> lock(mu_waited_co__);
+    for (auto& co : waited_co__)
+    {
+        co->unset_wait_cond();
+    }
 }
 
 }

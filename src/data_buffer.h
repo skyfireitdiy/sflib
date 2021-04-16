@@ -1,4 +1,5 @@
 #pragma once
+#include "co_mutex.h"
 #include "error.h"
 #include "multi_value.h"
 #include "reader.h"
@@ -6,6 +7,7 @@
 #include "type.h"
 #include "utils.h"
 #include "writer.h"
+
 namespace skyfire
 {
 class data_buffer : public reader,
@@ -17,7 +19,7 @@ private:
     byte_array              data__;
     std::shared_ptr<reader> reader__ = nullptr;
     std::shared_ptr<writer> writer__ = nullptr;
-    mutable std::mutex      mutex__;
+    mutable co_mutex        mutex__;
 
 public:
     data_buffer() = default;
