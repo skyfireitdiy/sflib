@@ -141,16 +141,59 @@ inline void co_ctx::set_wait_cond()
     wait_cond__ = true;
 }
 
-inline void co_ctx::unset_wait_cond() 
+inline void co_ctx::unset_wait_cond()
 {
     wait_cond__ = false;
 }
 
 inline void co_ctx::wait_cond()
 {
-    while(wait_cond__){
+    while (wait_cond__)
+    {
         this_coroutine::yield_coroutine();
     }
+}
+
+inline void co_ctx::wait_cond(std::function<bool()> cond)
+{
+    if (cond())
+    {
+        wait_cond__ = false;
+        return;
+    }
+    while (wait_cond__)
+    {
+        if (cond())
+        {
+            wait_cond__ = false;
+            return;
+        }
+        this_coroutine::yield_coroutine();
+    }
+}
+
+template <typename T>
+bool co_ctx::wait_cond_until(const T& tm, std::function<bool()> cond)
+{
+    if (cond())
+    {
+        wait_cond__ = false;
+        return true;
+    }
+    while (wait_cond__)
+    {
+        if (cond())
+        {
+            return true;
+        }
+        if (std::chrono::system_clock::now() < tm)
+        {
+            this_coroutine::yield_coroutine();
+        }
+        wait_cond__ = false;
+        return false;
+    }
+    return true;
 }
 
 }

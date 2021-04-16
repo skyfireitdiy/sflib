@@ -73,8 +73,11 @@ public:
     std::string get_name() const;
     long long   get_id() const;
     void        set_wait_cond();
-    void unset_wait_cond();
+    void        unset_wait_cond();
     void        wait_cond();
+    void        wait_cond(std::function<bool()> cond);
+    template <typename T>
+    bool wait_cond_until(const T& tm, std::function<bool()> cond);
 };
 
 }
