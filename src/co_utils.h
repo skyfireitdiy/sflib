@@ -1,9 +1,23 @@
 #pragma once
 
 #include "co_ctx.h"
+#include <arpa/inet.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <sys/epoll.h>
+#include <sys/resource.h>
+#include <sys/socket.h>
+#include <sys/sysinfo.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 namespace skyfire
 {
+
+int co_epoll_wait(int __epfd, epoll_event* __events,
+                  int __maxevents, int __timeout);
+
 void __switch_co__(co_ctx* curr, co_ctx* next);
 void __co_func__(co_ctx*);
 void __co_save_stack__();

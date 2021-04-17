@@ -1,6 +1,7 @@
 #pragma once
 
 #include "co_utils.h"
+#include "logger.h"
 
 namespace skyfire
 {
@@ -114,6 +115,41 @@ void this_coroutine::sleep_until(const T& t)
     {
         this_coroutine::yield_coroutine();
     }
+}
+
+inline int co_epoll_wait(int __epfd, epoll_event* __events,
+                         int __maxevents, int __timeout)
+{
+    auto until = std::chrono::system_clock::now();
+    if (__timeout >= 0)
+    {
+        until += std::chrono::milliseconds(__timeout);
+    }
+    int wait_fds = 0;
+    sf_debug("start epoll_wait");
+    do
+    {
+        if ((wait_fds = ::epoll_wait(__epfd, __events, __maxevents, 0)) == -1)
+        {
+            if (errno == EINTR)
+            {
+                this_coroutine::yield_coroutine();
+                continue;
+            }
+            sf_debug("wait error");
+            return -1;
+        }
+        if (wait_fds == 0)
+        {
+            this_coroutine::yield_coroutine();
+        }
+        else
+        {
+            return wait_fds;
+        }
+    } while (__timeout >= 0 ? std::chrono::system_clock::now() < until : true);
+    sf_debug("timeout");
+    return 0;
 }
 
 }

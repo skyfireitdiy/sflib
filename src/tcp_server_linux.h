@@ -1,10 +1,12 @@
 
 #pragma once
+#include "co_mutex.h"
 #include "coroutine.h"
 #include "json.hpp"
 #include "logger.hpp"
 #include "nocopy.h"
 #include "object.hpp"
+#include "stdc++.h"
 #include "tcp_server_interface.h"
 #include "tcp_utils.hpp"
 #include "type.hpp"
@@ -12,9 +14,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <memory>
 #include <netinet/in.h>
-#include <string>
 #include <sys/epoll.h>
 #include <sys/resource.h>
 #include <sys/socket.h>
@@ -35,7 +35,7 @@ struct epoll_context_t
     int                                             epoll_fd {};
     int                                             pipe__[2];
     epoll_event                                     pipe_event__ {};
-    std::shared_mutex                               mu_epoll_context__;
+    co_shared_mutex                                 mu_epoll_context__;
     std::unordered_map<SOCKET, sock_data_context_t> sock_context__ {};
 };
 class tcp_server
@@ -47,7 +47,7 @@ private:
     SOCKET                        listen_fd__;
     std::vector<coroutine>        coroutine_vec__;
     std::vector<epoll_context_t*> context_pool__;
-    mutable std::shared_mutex     mu_context_pool__;
+    mutable co_shared_mutex       mu_context_pool__;
     void                          work_routine__(bool listen_thread = false, SOCKET listen_fd = -1);
     bool                          in_dispatch__(SOCKET fd);
     bool                          handle_accept__();

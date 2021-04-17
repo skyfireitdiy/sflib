@@ -85,15 +85,15 @@ inline void co_manager::remove_env(co_env* env)
 
 inline void co_manager::monitor_thread__()
 {
-    while (!need_exit__)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        if (need_exit__)
-        {
-            break;
-        }
-        reassign_co__();
-    }
+    // while (!need_exit__)
+    // {
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    //     if (need_exit__)
+    //     {
+    //         break;
+    //     }
+    //     reassign_co__();
+    // }
 }
 
 inline void co_manager::reassign_co__()

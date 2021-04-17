@@ -13,8 +13,7 @@ namespace skyfire
 class tcp_server_interface : public nocopy<object>
 {
     sf_singal(new_connection, SOCKET);
-    sf_singal(data_coming, SOCKET, const pkg_header_t&,
-              const byte_array&);
+    sf_singal(data_coming, SOCKET, const pkg_header_t&, const byte_array&);
     sf_singal(raw_data_coming, SOCKET, const byte_array&);
     sf_singal(closed, SOCKET);
     sf_singal(write_finished, SOCKET);
@@ -27,18 +26,15 @@ private:
 
 protected:
     void after_raw_recv_filter__(SOCKET sock, byte_array& data);
-    void after_recv_filter__(SOCKET sock, pkg_header_t& header,
-                             byte_array& data);
+    void after_recv_filter__(SOCKET sock, pkg_header_t& header, byte_array& data);
     void before_raw_send_filter__(SOCKET sock, byte_array& data);
-    void before_send_filter__(SOCKET sock, pkg_header_t& header,
-                              byte_array& data);
+    void before_send_filter__(SOCKET sock, pkg_header_t& header, byte_array& data);
     void new_connection_filter__(SOCKET sock);
     void listen_sock_filter__(SOCKET sock);
     void disconnect_sock_filter__(SOCKET sock);
 
 public:
-    void add_server_socket_filter(
-        std::shared_ptr<server_socket_filter>&& filter);
+    void             add_server_socket_filter(std::shared_ptr<server_socket_filter>&& filter);
     virtual SOCKET   raw_socket()                                        = 0;
     virtual bool     listen(const std::string& ip, unsigned short port)  = 0;
     virtual void     close()                                             = 0;
