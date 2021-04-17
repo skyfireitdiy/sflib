@@ -128,12 +128,12 @@ inline logger::logger()
 {
     add_level_stream(SF_DEBUG_LEVEL, &std::cout);
 #ifdef SF_ASYNC_LOG
-    log_thread__ = std::make_shared(std::thread, [this]() {
+    log_coroutine__ = std::make_shared<coroutine>(std::function([this]() {
         while (true)
         {
             std::deque<logger_info_t> tmp_info;
             {
-                std::unique_lock<std::mutex> lck(deque_mu__);
+                std::unique_lock<co_mutex> lck(deque_mu__);
                 cond_pop__.wait(lck,
                                 [&] { return !log_deque__.empty() || !run__; });
                 tmp_info = std::move(log_deque__);
@@ -160,15 +160,15 @@ inline logger::logger()
             }
         }
         std::cout << "thread exit" << std::endl;
-    });
+    }));
 #endif
 }
 inline logger::~logger()
 {
-    if (log_thread__)
+    if (log_coroutine__)
     {
         stop_logger();
-        log_thread__->join();
+        log_coroutine__->join();
     }
 }
 template <typename T, typename... U>
@@ -187,7 +187,7 @@ inline void logger::logout__(std::ostringstream& oss,
     log_info.msg = oss.str();
 #ifdef SF_ASYNC_LOG
     {
-        std::lock_guard<std::mutex> lck(deque_mu__);
+        std::lock_guard<co_mutex> lck(deque_mu__);
         log_deque__.push_back(log_info);
     }
     cond_pop__.notify_one();
@@ -239,7 +239,7 @@ inline void logger::logout__(std::ostringstream& oss,
     log_info.msg = oss.str();
 #ifdef SF_ASYNC_LOG
     {
-        std::lock_guard<std::mutex> lck(deque_mu__);
+        std::lock_guard<co_mutex> lck(deque_mu__);
         log_deque__.push_back(log_info);
     }
     cond_pop__.notify_one();

@@ -8,9 +8,9 @@ namespace skyfire
 template <typename T>
 check_point<T>::~check_point()
 {
-    parent__.data__[point_name__][std::this_thread::get_id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(
-                                                                     std::chrono::high_resolution_clock::now() - clock__)
-                                                                     .count();
+    parent__.data__[point_name__][this_coroutine::get_id()] += std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                                                   std::chrono::high_resolution_clock::now() - clock__)
+                                                                   .count();
 }
 
 template <typename T>

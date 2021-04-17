@@ -17,6 +17,6 @@ public:
 
 private:
     std::atomic<bool> running__ { false };
-    std::thread::id   current_timer_thread__;
+    long long         current_timer_thread__;
 };
 } // namespace skyfire

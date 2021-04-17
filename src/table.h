@@ -8,7 +8,7 @@ struct table_result_t
 {
     error_code  ec;
     std::string err_string;
-                operator bool() const { return ec == err_ok; }
+    operator bool() const { return ec == err_ok; }
 };
 enum class table_align
 {
@@ -36,7 +36,7 @@ private:
     std::function<std::string(size_t, size_t, std::string)>                             proxy_callback__;
     std::vector<table_column_config_t>                                                  table_config__;
     mutable std::unordered_map<size_t, std::unordered_map<size_t, table_item_config_t>> item_config__;
-    // mutable std::mutex mu__;
+
 public:
     table(int col_size);
     table_result_t add_row(const std::vector<std::string>& data);

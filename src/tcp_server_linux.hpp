@@ -98,7 +98,7 @@ inline void tcp_server::close()
     ::close(listen_fd__);
     {
         std::unique_lock<std::shared_mutex>
-             lck(mu_context_pool__);
+            lck(mu_context_pool__);
         char buf = '0';
         for (auto& p : context_pool__)
         {
@@ -108,11 +108,11 @@ inline void tcp_server::close()
             }
         }
     }
-    for (auto& p : thread_vec__)
+    for (auto& p : coroutine_vec__)
     {
         p.join();
     }
-    thread_vec__.clear();
+    coroutine_vec__.clear();
 }
 inline bool tcp_server::listen(const std::string& ip, unsigned short port)
 {
@@ -151,19 +151,17 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
     {
         return false;
     }
-    thread_vec__.emplace_back(
-        std::thread(&tcp_server::work_thread__, this, true, listen_fd__));
+    coroutine_vec__.emplace_back(std::function([this] { work_routine__(true, listen_fd__); }));
     if (config__.manage_clients)
     {
         for (size_t i = 0; i < config__.thread_count; ++i)
         {
-            thread_vec__.emplace_back(std::thread(&tcp_server::work_thread__,
-                                                  this, true, listen_fd__));
+            coroutine_vec__.emplace_back(std::function([this] { work_routine__(true, listen_fd__); }));
         }
     }
     return true;
 }
-inline void tcp_server::work_thread__(bool listen_thread, SOCKET listen_fd)
+inline void tcp_server::work_routine__(bool listen_thread, SOCKET listen_fd)
 {
     // FIXME 增加一个pipe，用于退出唤醒
     sf_debug("start thread");

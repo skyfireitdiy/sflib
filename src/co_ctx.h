@@ -37,17 +37,18 @@ enum class co_state
 
 class co_ctx final
 {
-    const void*           regs__[14]   = {};
-    co_state              state__      = co_state::ready;
-    char*                 stack_data__ = nullptr;
-    size_t                stack_size__;
-    std::function<void()> entry__;
-    bool                  detached__;
-    mutable std::mutex    mu_detached__;
-    bool                  shared_stack__;
-    std::vector<char>     saved_stack__;
-    std::string           name__;
-    std::atomic<bool>     wait_cond__ { false };
+    const void*                               regs__[14]   = {};
+    co_state                                  state__      = co_state::ready;
+    char*                                     stack_data__ = nullptr;
+    size_t                                    stack_size__;
+    std::function<void()>                     entry__;
+    bool                                      detached__;
+    mutable std::mutex                        mu_detached__;
+    bool                                      shared_stack__;
+    std::vector<char>                         saved_stack__;
+    std::string                               name__;
+    std::atomic<bool>                         wait_cond__ { false };
+    std::unordered_map<std::string, std::any> co_data__;
 
 public:
     co_ctx(std::function<void()> entry, const co_attr_config& attr);
@@ -78,6 +79,8 @@ public:
     void        wait_cond(std::function<bool()> cond);
     template <typename T>
     bool wait_cond_until(const T& tm, std::function<bool()> cond);
+    template <typename T, typename... Args>
+    std::shared_ptr<T> get_co_data(const std::string& name, Args&&... args);
 };
 
 }

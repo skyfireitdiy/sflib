@@ -1,5 +1,4 @@
-
-#if 1
+#if 0
 #include <sflib>
 using namespace skyfire;
 using namespace std;
@@ -54,22 +53,22 @@ sf_test(chan, test_chan_order)
     auto             ch = chan<int>::make_instance();
     std::vector<int> data;
     std::vector<int> result { 1, 2, 3, 4, 5 };
-    auto             th1 = std::thread([&ch] {
+    auto             th1 = coroutine(std::function([&ch] {
         for (int i = 0; i < 5; ++i)
         {
             (i + 1) >> ch;
         }
-    });
-    auto             th2 = std::thread([&data, &ch] {
+    }));
+    auto             th2 = coroutine(std::function([&data, &ch] {
         for (int i = 0; i < 5; ++i)
         {
             int t = 100;
-            ch >> t;
             data.push_back(t);
         }
-    });
+    }));
     th1.join();
     th2.join();
+    cout << __LINE__ << ":" << ch.get() << endl;
     test_np_eq(data, result);
 }
 
@@ -78,13 +77,13 @@ sf_test(chan, test_chan_order_with_buffer)
     auto             ch = chan<int>::make_instance(5);
     std::vector<int> data;
     std::vector<int> result { 1, 2, 3, 4, 5 };
-    auto             th1 = std::thread([&ch] {
+    auto             th1 = coroutine([&ch] {
         for (int i = 0; i < 5; ++i)
         {
             (i + 1) >> ch;
         }
     });
-    auto             th2 = std::thread([&data, &ch] {
+    auto             th2 = coroutine([&data, &ch] {
         for (int i = 0; i < 5; ++i)
         {
             int t = 100;
@@ -154,8 +153,8 @@ sf_test(dns, test_connect_host)
 }
 #endif
 
-std::mutex              mu;
-std::condition_variable cv;
+co_mutex              mu;
+co_condition_variable cv;
 sf_test(tcp, test_server)
 {
     auto               server = skyfire::tcp_server::make_instance(skyfire::tcp::raw(true));
@@ -192,7 +191,7 @@ sf_test(tcp, test_client)
             lp.quit();
         },
         false);
-    std::unique_lock<std::mutex> lck(mu);
+    std::unique_lock<co_mutex> lck(mu);
     cv.wait(lck);
     client->connect_to_server("127.0.0.1", 9300);
     client->send(skyfire::to_byte_array("hello world"s));
@@ -519,7 +518,7 @@ class test_object : public skyfire::object
 sf_test(waiter, none_param_event_waiter_test)
 {
     test_object t;
-    std::thread([&t]() {
+    coroutine([&t]() {
         std::this_thread::sleep_for(std::chrono::seconds(5));
         t.s1();
     }).detach();
@@ -529,7 +528,7 @@ sf_test(waiter, none_param_event_waiter_test)
 sf_test(waiter, many_param_event_waiter_test)
 {
     test_object t;
-    std::thread([&t]() {
+    coroutine([&t]() {
         std::this_thread::sleep_for(std::chrono::seconds(5));
         t.s2(5, 6.5, 504.2);
     }).detach();
@@ -725,10 +724,30 @@ sf_test(coroutine, get)
     auto co = coroutine({ co_attr::set_name("co") }, []() {
         return 10;
     });
-    auto t  = co.get();
+    auto t  = co.get<int>();
     test_p_eq(t, 10);
 }
 
 #else
+#include <iostream>
+#include <sflib>
+
+using namespace std;
+using namespace skyfire;
+
+void co_func()
+{
+    for (int i = 0; i < 10; ++i)
+    {
+        std::cout << i << std::endl;
+        this_coroutine::yield_coroutine();
+    }
+}
+
+int main()
+{
+    coroutine co(&co_func);
+    co.detach();
+}
 
 #endif

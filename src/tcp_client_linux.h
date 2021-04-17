@@ -19,7 +19,7 @@ private:
     bool inited__ = false;
     bool raw__    = false;
     int  sock__   = -1;
-    void recv_thread__();
+    void recv_routine__();
 
 public:
     tcp_client(bool raw = false); // NOLINT(google-explicit-constructor)

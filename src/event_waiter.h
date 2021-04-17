@@ -1,10 +1,12 @@
 
 #pragma once
+#include "co_condition_variable.h"
+#include "co_mutex.h"
 #include "meta.hpp"
 #include "nocopy.h"
 #include "object.hpp"
-#include <condition_variable>
-#include <mutex>
+#include "stdc++.h"
+
 #define sf_wait(obj, name)                                                         \
     {                                                                              \
         auto p_waiter = skyfire::make_waiter((obj)->__##name##_signal_func_vec__); \
@@ -18,8 +20,8 @@ template <typename... ARGS>
 class __event_waiter__ : public nocopy<>
 {
 private:
-    std::mutex              mu_cond__;
-    std::condition_variable cond__;
+    co_mutex              mu_cond__;
+    co_condition_variable cond__;
 
 public:
     auto make_quit_func__();

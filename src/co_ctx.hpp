@@ -196,4 +196,14 @@ bool co_ctx::wait_cond_until(const T& tm, std::function<bool()> cond)
     return true;
 }
 
+template <typename T, typename... Args>
+std::shared_ptr<T> co_ctx::get_co_data(const std::string& name, Args&&... args)
+{
+    if (!co_data__.contains(name))
+    {
+        co_data__[name] = std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+    }
+    return std::any_cast<std::shared_ptr<T>>(co_data__[name]);
+}
+
 }

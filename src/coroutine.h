@@ -3,13 +3,12 @@
 #include "co_attr.h"
 #include "co_ctx.h"
 #include "co_mutex.h"
+#include "co_utils.h"
 #include "stdc++.h"
-#include <initializer_list>
 
 namespace skyfire
 {
 
-template <typename Func, typename... Args>
 class coroutine final
 {
 private:
@@ -31,41 +30,25 @@ public:
     template <typename T>
     bool wait_for(const T& t);
     template <typename T>
-    bool wait_until(const T& expire);
-    void wait();
-    void join();
-    void detach();
-    bool valid() const;
-    bool joinable() const;
-    void manage_this_thread();
+    bool        wait_until(const T& expire);
+    void        wait();
+    void        join();
+    void        detach();
+    bool        valid() const;
+    bool        joinable() const;
+    void        manage_this_thread();
+    long long   get_id() const;
+    std::string get_name() const;
 
-    std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> get() requires ReturnNotVoid<Func, Args...>;
+    template <typename T = void>
+    T get();
 
-    std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> get() requires ReturnVoid<Func, Args...>;
-
-    coroutine(Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>;
-    coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>;
-
-    coroutine(Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>;
-    coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>;
+    template <typename Func, typename... Args>
+    coroutine(Func&& func, Args&&... args);
+    template <typename Func, typename... Args>
+    coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args);
 
     ~coroutine();
 };
-
-template <typename Func, typename... Args>
-requires ReturnVoid<Func, Args...>
-coroutine(Func&&, Args&&...) -> coroutine<Func, Args...>;
-
-template <typename Func, typename... Args>
-requires ReturnVoid<Func, Args...>
-coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&&, Args&&...) -> coroutine<Func, Args...>;
-
-template <typename Func, typename... Args>
-requires ReturnNotVoid<Func, Args...>
-coroutine(Func&&, Args&&...) -> coroutine<Func, Args...>;
-
-template <typename Func, typename... Args>
-requires ReturnNotVoid<Func, Args...>
-coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&&, Args&&...) -> coroutine<Func, Args...>;
 
 }

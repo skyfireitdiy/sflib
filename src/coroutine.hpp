@@ -15,47 +15,33 @@ inline std::once_flag& get_co_once_flag()
 }
 
 template <typename Func, typename... Args>
-coroutine<Func, Args...>::coroutine(Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
+coroutine::coroutine(Func&& func, Args&&... args)
+    : coroutine({}, func, args...)
 {
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [&func, &args...]() {
-        std::forward<Func>(func)(std::forward<Args>(args)...);
-    });
 }
 
 template <typename Func, typename... Args>
-coroutine<Func, Args...>::coroutine(Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>
-{
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [this, &func, &args...]() {
-        result__ = std::forward<Func>(func)(std::forward<Args>(args)...);
-    });
-}
-
-template <typename Func, typename... Args>
-coroutine<Func, Args...>::coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args) requires ReturnNotVoid<Func, Args...>
+coroutine::coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args)
 {
     for (auto& f : attr_config)
     {
         f(attr__);
     }
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [this, &func, &args...]() {
-        result__ = std::forward<Func>(func)(std::forward<Args>(args)...);
-    });
+    ctx__ = get_co_manager()->get_best_env()->create_coroutine(
+        attr__,
+        [... args = std::forward<Args>(args), func = std::forward<Func>(func), this]() mutable {
+            if constexpr (std::is_same_v<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>, void>)
+            {
+                std::forward<Func>(func)(std::forward<Args>(args)...);
+            }
+            else
+            {
+                result__ = std::forward<Func>(func)(std::forward<Args>(args)...);
+            }
+        });
 }
 
-template <typename Func, typename... Args>
-coroutine<Func, Args...>::coroutine(const std::initializer_list<co_attr_option_type>& attr_config, Func&& func, Args&&... args) requires ReturnVoid<Func, Args...>
-{
-    for (auto& f : attr_config)
-    {
-        f(attr__);
-    }
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(attr__, [&func, &args...]() {
-        std::forward<Func>(func)(std::forward<Args>(args)...);
-    });
-}
-
-template <typename Func, typename... Args>
-inline void coroutine<Func, Args...>::wait()
+inline void coroutine::wait()
 {
     while (ctx__->get_state() != co_state::finished)
     {
@@ -63,22 +49,19 @@ inline void coroutine<Func, Args...>::wait()
     }
 }
 
-template <typename Func, typename... Args>
-inline bool coroutine<Func, Args...>::joinable() const
+inline bool coroutine::joinable() const
 {
     return !(joined__ || detached__);
 }
 
-template <typename Func, typename... Args>
 template <typename T>
-bool coroutine<Func, Args...>::wait_for(const T& t)
+bool coroutine::wait_for(const T& t)
 {
     return wait_until(std::chrono::system_clock::now() + t);
 }
 
-template <typename Func, typename... Args>
 template <typename T>
-bool coroutine<Func, Args...>::wait_until(const T& expire)
+bool coroutine::wait_until(const T& expire)
 {
     while (ctx__->get_state() != co_state::finished)
     {
@@ -91,8 +74,7 @@ bool coroutine<Func, Args...>::wait_until(const T& expire)
     return true;
 }
 
-template <typename Func, typename... Args>
-inline void coroutine<Func, Args...>::join()
+inline void coroutine::join()
 {
     if (detached__)
     {
@@ -108,8 +90,7 @@ inline void coroutine<Func, Args...>::join()
     invalid__ = true;
 }
 
-template <typename Func, typename... Args>
-inline void coroutine<Func, Args...>::detach()
+inline void coroutine::detach()
 {
     if (detached__)
     {
@@ -131,14 +112,12 @@ inline void coroutine<Func, Args...>::detach()
     }
 }
 
-template <typename Func, typename... Args>
-inline bool coroutine<Func, Args...>::valid() const
+inline bool coroutine::valid() const
 {
     return !invalid__;
 }
 
-template <typename Func, typename... Args>
-inline coroutine<Func, Args...>::~coroutine()
+inline coroutine::~coroutine()
 {
     if (ctx__ == nullptr)
     {
@@ -150,8 +129,7 @@ inline coroutine<Func, Args...>::~coroutine()
     }
 }
 
-template <typename Func, typename... Args>
-inline coroutine<Func, Args...>::coroutine(coroutine<Func, Args...>&& other)
+inline coroutine::coroutine(coroutine&& other)
     : ctx__(other.ctx__)
     , detached__(other.detached__)
     , joined__(other.joined__)
@@ -161,8 +139,7 @@ inline coroutine<Func, Args...>::coroutine(coroutine<Func, Args...>&& other)
     other.invalid__ = true;
 }
 
-template <typename Func, typename... Args>
-inline coroutine<Func, Args...>& coroutine<Func, Args...>::operator=(coroutine<Func, Args...>&& other)
+inline coroutine& coroutine::operator=(coroutine&& other)
 {
     ctx__      = other.ctx__;
     detached__ = other.detached__;
@@ -175,21 +152,17 @@ inline coroutine<Func, Args...>& coroutine<Func, Args...>::operator=(coroutine<F
     return *this;
 }
 
-template <typename Func, typename... Args>
-std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> coroutine<Func, Args...>::get() requires ReturnNotVoid<Func, Args...>
+template <typename T>
+T coroutine::get()
 {
     wait();
-    return std::any_cast<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>>(result__);
+    if constexpr (!std::is_same_v<T, void>)
+    {
+        return std::any_cast<T>(result__);
+    }
 }
 
-template <typename Func, typename... Args>
-std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...> coroutine<Func, Args...>::get() requires ReturnVoid<Func, Args...>
-{
-    wait();
-}
-
-template <typename Func, typename... Args>
-void coroutine<Func, Args...>::manage_this_thread()
+inline void coroutine::manage_this_thread()
 {
     auto env = get_co_env();
     {
@@ -200,6 +173,16 @@ void coroutine<Func, Args...>::manage_this_thread()
         this_coroutine::yield_coroutine();
     }
     get_co_manager()->remove_env(env);
+}
+
+inline long long coroutine::get_id() const
+{
+    return ctx__->get_id();
+}
+
+inline std::string coroutine::get_name() const
+{
+    return ctx__->get_name();
 }
 
 }

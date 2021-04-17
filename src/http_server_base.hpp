@@ -1,6 +1,7 @@
 
 #pragma once
 #include "cache.h"
+#include "coroutine.h"
 #include "eventloop.h"
 #include "finally.h"
 #include "http_content_type.h"
@@ -11,11 +12,11 @@
 #include "logger.h"
 #include "object.h"
 #include "random.h"
+#include "stdc++.h"
 #include "tcp_server.h"
 #include "timer.h"
 #include "websocket_utils.h"
-#include <memory>
-#include <utility>
+
 using namespace std::string_literals;
 namespace skyfire
 {
@@ -806,7 +807,7 @@ inline bool http_server_base::start()
         return false;
     }
     sf_debug("listen succeed!", config__.port);
-    std::thread([this] { event_loop__.exec(); }).join();
+    coroutine(std::function([this] { event_loop__.exec(); })).join();
     return true;
 }
 template <typename T>

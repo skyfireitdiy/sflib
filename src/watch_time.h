@@ -13,7 +13,7 @@ public:
 
 protected:
     std::string to_string();
-    std::unordered_map<T, std::unordered_map<std::thread::id, long long>>
+    std::unordered_map<T, std::unordered_map<long long, long long>>
         data__;
     friend class check_point<T>;
 };

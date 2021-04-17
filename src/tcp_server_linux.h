@@ -1,5 +1,6 @@
 
 #pragma once
+#include "coroutine.h"
 #include "json.hpp"
 #include "logger.hpp"
 #include "nocopy.h"
@@ -20,6 +21,7 @@
 #include <sys/sysinfo.h>
 #include <sys/types.h>
 #include <unistd.h>
+
 namespace skyfire
 {
 struct sock_data_context_t
@@ -43,10 +45,10 @@ private:
     std::atomic<bool>             closed__ = false;
     tcp_server_opt_t              config__;
     SOCKET                        listen_fd__;
-    std::vector<std::thread>      thread_vec__;
+    std::vector<coroutine>        coroutine_vec__;
     std::vector<epoll_context_t*> context_pool__;
     mutable std::shared_mutex     mu_context_pool__;
-    void                          work_thread__(bool listen_thread = false, SOCKET listen_fd = -1);
+    void                          work_routine__(bool listen_thread = false, SOCKET listen_fd = -1);
     bool                          in_dispatch__(SOCKET fd);
     bool                          handle_accept__();
     void                          handle_read__(const epoll_event& ev);

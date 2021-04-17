@@ -34,6 +34,7 @@ private:
     co_shared_mutex& operator=(co_shared_mutex&&) = delete;
 
 public:
+    co_shared_mutex() = default;
     void lock();
     bool try_lock();
     void unlock();
@@ -56,6 +57,7 @@ private:
     size_t   count__ { 0 };
 
 public:
+    co_recursive_mutex() = default;
     void lock();
     void unlock();
     bool try_lock();
@@ -72,6 +74,7 @@ private:
     co_mutex mu__;
 
 public:
+    co_timed_mutex() = default;
     void lock();
     bool try_lock();
     template <typename T>
@@ -92,6 +95,7 @@ private:
     co_recursive_mutex mu__;
 
 public:
+    co_recursive_timed_mutex() = default;
     void lock();
     bool try_lock();
     template <typename T>
@@ -112,6 +116,8 @@ private:
     co_shared_mutex mu__;
 
 public:
+    co_shared_timed_mutex() = default;
+
     void lock();
     bool try_lock();
     template <typename T>

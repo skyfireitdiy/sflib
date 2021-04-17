@@ -6,11 +6,11 @@
 namespace skyfire
 {
 template <typename _VectorType, typename _FuncType>
-int object::__bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
+int object::__bind_helper__(co_recursive_mutex& mu, _VectorType& vec,
                             _FuncType func, bool single_thread)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu);
-    int                                   bind_id = random::instance()->rand_int(0, INT_MAX);
+    std::lock_guard<co_recursive_mutex> lck(mu);
+    int                                 bind_id = random::instance()->rand_int(0, INT_MAX);
     while (std::find_if(vec.begin(), vec.end(), [=](auto p) {
                return std::get<2>(p) == bind_id;
            })
@@ -28,10 +28,10 @@ inline object::~object()
     });
 }
 template <typename _VectorType>
-void object::__unbind_helper__(std::recursive_mutex& mu,
+void object::__unbind_helper__(co_recursive_mutex& mu,
                                _VectorType& vec, int bind_id)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu);
+    std::lock_guard<co_recursive_mutex> lck(mu);
     vec.erase(std::remove_if(vec.begin(), vec.end(),
                              [=](auto p) { return std::get<2>(p) == bind_id; }),
               vec.end());
