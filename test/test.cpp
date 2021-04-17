@@ -1,4 +1,4 @@
-#if 0
+#if 1
 #include <sflib>
 using namespace skyfire;
 using namespace std;
@@ -98,12 +98,12 @@ sf_test(chan, test_chan_order_with_buffer)
 
 sf_test(chan, test_write_to_closed_chan)
 {
-    auto   ch  = chan<int>::make_instance(5);
-    auto   ret = true;
-    thread th1([ch]() {
+    auto      ch  = chan<int>::make_instance(5);
+    auto      ret = true;
+    coroutine th1([ch]() {
         ch->close();
     });
-    thread th2([ch, &ret]() {
+    coroutine th2([ch, &ret]() {
         this_thread::sleep_for(chrono::seconds(3));
         ret = 5 >> ch;
     });
@@ -114,14 +114,14 @@ sf_test(chan, test_write_to_closed_chan)
 
 sf_test(chan, test_read_from_closed_chan)
 {
-    auto   ch  = chan<int>::make_instance(5);
-    auto   ret = true;
-    thread th1([ch, &ret]() {
+    auto      ch  = chan<int>::make_instance(5);
+    auto      ret = true;
+    coroutine th1([ch, &ret]() {
         this_thread::sleep_for(chrono::seconds(3));
         int t;
         ret = ch >> t;
     });
-    thread th2([ch]() {
+    coroutine th2([ch]() {
         5 >> ch;
         ch->close();
     });
@@ -515,23 +515,26 @@ class test_object : public skyfire::object
     sf_singal(s1);
     sf_singal(s2, int, float, double);
 };
+
 sf_test(waiter, none_param_event_waiter_test)
 {
     test_object t;
-    coroutine([&t]() {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+    coroutine   co([&t]() {
+        this_coroutine::sleep_for(std::chrono::seconds(5));
+        std::cout << std::this_thread::get_id() << " call s1" << std::endl;
         t.s1();
-    }).detach();
+    });
+    sf_debug("begin wait");
     sf_wait(&t, s1);
 }
 
 sf_test(waiter, many_param_event_waiter_test)
 {
     test_object t;
-    coroutine([&t]() {
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+    coroutine   co([&t]() {
+        this_coroutine::sleep_for(std::chrono::seconds(5));
         t.s2(5, 6.5, 504.2);
-    }).detach();
+    });
     sf_wait(&t, s2);
 }
 
@@ -747,7 +750,6 @@ void co_func()
 int main()
 {
     coroutine co(&co_func);
-    co.detach();
 }
 
 #endif

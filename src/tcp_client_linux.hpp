@@ -30,10 +30,10 @@ inline tcp_client::tcp_client(bool raw)
 }
 inline tcp_client::tcp_client(SOCKET sock, bool raw)
 {
-    sock__   = sock;
-    inited__ = true;
-    raw__    = raw;
-    coroutine(std::function([this] { recv_routine__(); })).detach();
+    sock__    = sock;
+    inited__  = true;
+    raw__     = raw;
+    loop_co__ = std::make_unique<coroutine>([this] { recv_routine__(); });
 }
 inline SOCKET tcp_client::raw_socket() { return sock__; }
 inline bool   tcp_client::bind(const std::string& ip, unsigned short port)
@@ -67,7 +67,7 @@ inline sf_error tcp_client::connect_to_server(const std::string& host,
         {
             continue;
         }
-        coroutine(std::function([this] { recv_routine__(); })).detach();
+        loop_co__ = std::make_unique<coroutine>([this] { recv_routine__(); });
         return sf_error {};
     }
     return sf_error { err_connect, "Connect failed" };

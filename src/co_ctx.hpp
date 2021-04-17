@@ -79,18 +79,6 @@ inline bool co_ctx::shared_stack() const
     return shared_stack__;
 }
 
-inline void co_ctx::set_detached()
-{
-    std::lock_guard<std::mutex> lck(mu_detached__);
-    detached__ = true;
-}
-
-inline bool co_ctx::detached() const
-{
-    std::lock_guard<std::mutex> lck(mu_detached__);
-    return detached__;
-}
-
 inline void co_ctx::init()
 {
     set_reg_ret(reinterpret_cast<void*>(&__co_func__));

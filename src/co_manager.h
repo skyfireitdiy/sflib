@@ -22,7 +22,7 @@ public:
     co_env* add_env();
     co_env* get_best_env();
     void    remove_env(co_env* env);
-    void    append_env_to_set(co_env *env);
+    void    append_env_to_set(co_env* env);
     bool    need_destroy_co_thread() const;
     ~co_manager();
 };

@@ -1,10 +1,12 @@
 
 #pragma once
+#include "co_utils.h"
 #include "define.h"
 #include "finally.h"
 #include "net_utils.h"
 #include "tcp_server_interface.h"
 #include "tcp_server_linux.h"
+
 namespace skyfire
 {
 template <typename... Args>
@@ -163,7 +165,6 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
 }
 inline void tcp_server::work_routine__(bool listen_thread, SOCKET listen_fd)
 {
-    // FIXME 增加一个pipe，用于退出唤醒
     sf_debug("start thread");
     auto& epoll_data    = epoll_data__();
     epoll_data.epoll_fd = epoll_create(max_tcp_connection);
@@ -540,7 +541,6 @@ inline void tcp_server::handle_write__(const epoll_event& ev)
 }
 inline epoll_context_t& tcp_server::epoll_data__() const
 {
-    thread_local static epoll_context_t d;
-    return d;
+    return this_coroutine::co_local<epoll_context_t>("d");
 }
 } // namespace skyfire

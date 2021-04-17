@@ -229,7 +229,6 @@ inline void logger::stop_logger()
     run__ = false;
     cond__.notify_all();
 }
-inline auto g_logger = logger::instance();
 #ifdef QT_CORE_LIB
 inline void logger::logout__(std::ostringstream& oss,
                              logger_info_t&      log_info,

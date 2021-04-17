@@ -143,7 +143,9 @@ inline co_env::co_env()
     // printf("shared stack: 0x%p  bp:0x%p\n", get_shared_stack(), get_shared_stack_bp());
     current_co__ = new co_ctx(nullptr, co_attr_config { 0, false, "__main__" });
     main_co__    = current_co__;
-    save_co__    = new co_ctx(__co_save_stack__, co_attr_config { default_co_stack_size, false, "__co_save__" });
+    // 防止主协程有业务逻辑但是无法被调度
+    append_co(main_co__);
+    save_co__ = new co_ctx(__co_save_stack__, co_attr_config { default_co_stack_size, false, "__co_save__" });
     current_co__->set_state(co_state::running);
 }
 

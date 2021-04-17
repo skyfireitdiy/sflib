@@ -21,6 +21,9 @@ namespace this_coroutine
     void sleep_until(const T& t);
 
     void yield_coroutine();
+
+    template <typename T, typename... Args>
+    T& co_local(const std::string& name, Args&&... args);
 };
 
 template <typename T>

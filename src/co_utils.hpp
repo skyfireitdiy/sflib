@@ -57,10 +57,6 @@ inline void __co_func__(co_ctx* ctx)
 {
     ctx->get_entry()();
     get_co_env()->release_curr_co();
-    if (ctx->detached())
-    {
-        delete ctx;
-    }
     this_coroutine::yield_coroutine();
 }
 
@@ -87,6 +83,12 @@ inline void __co_save_stack__()
 inline std::string this_coroutine::get_name()
 {
     return get_co_env()->get_curr_co()->get_name();
+}
+
+template <typename T, typename... Args>
+T& this_coroutine::co_local(const std::string& name, Args&&... args)
+{
+    return *get_co_env()->get_curr_co()->get_co_data<T>(name, std::forward<Args>(args)...);
 }
 
 inline void this_coroutine::yield_coroutine()

@@ -51,7 +51,7 @@ inline void coroutine::wait()
 
 inline bool coroutine::joinable() const
 {
-    return !(joined__ || detached__);
+    return !(joined__);
 }
 
 template <typename T>
@@ -76,10 +76,6 @@ bool coroutine::wait_until(const T& expire)
 
 inline void coroutine::join()
 {
-    if (detached__)
-    {
-        throw std::runtime_error("already detached");
-    }
     if (joined__)
     {
         throw std::runtime_error("already joined");
@@ -88,28 +84,6 @@ inline void coroutine::join()
     wait();
     delete ctx__;
     invalid__ = true;
-}
-
-inline void coroutine::detach()
-{
-    if (detached__)
-    {
-        throw std::runtime_error("already detached");
-    }
-    if (joined__)
-    {
-        throw std::runtime_error("already joined");
-    }
-    detached__ = true;
-    invalid__  = true;
-    if (ctx__->get_state() == co_state::finished)
-    {
-        delete ctx__;
-    }
-    else
-    {
-        ctx__->set_detached();
-    }
 }
 
 inline bool coroutine::valid() const
@@ -123,15 +97,14 @@ inline coroutine::~coroutine()
     {
         return;
     }
-    if (!joined__ && !detached__)
+    if (!joined__)
     {
-        detach();
+        join();
     }
 }
 
 inline coroutine::coroutine(coroutine&& other)
     : ctx__(other.ctx__)
-    , detached__(other.detached__)
     , joined__(other.joined__)
     , invalid__(other.invalid__)
 {
@@ -141,10 +114,9 @@ inline coroutine::coroutine(coroutine&& other)
 
 inline coroutine& coroutine::operator=(coroutine&& other)
 {
-    ctx__      = other.ctx__;
-    detached__ = other.detached__;
-    joined__   = other.joined__;
-    invalid__  = other.invalid__;
+    ctx__     = other.ctx__;
+    joined__  = other.joined__;
+    invalid__ = other.invalid__;
 
     other.ctx__     = nullptr;
     other.invalid__ = true;

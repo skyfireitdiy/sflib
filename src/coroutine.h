@@ -13,9 +13,8 @@ class coroutine final
 {
 private:
     co_ctx*        ctx__;
-    bool           detached__ = false;
-    bool           joined__   = false;
-    bool           invalid__  = false;
+    bool           joined__  = false;
+    bool           invalid__ = false;
     co_attr_config attr__;
     std::any       result__;
     // todo 需要替换为 co_promise
@@ -33,7 +32,6 @@ public:
     bool        wait_until(const T& expire);
     void        wait();
     void        join();
-    void        detach();
     bool        valid() const;
     bool        joinable() const;
     void        manage_this_thread();

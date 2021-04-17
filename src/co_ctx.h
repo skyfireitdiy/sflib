@@ -42,8 +42,6 @@ class co_ctx final
     char*                                     stack_data__ = nullptr;
     size_t                                    stack_size__;
     std::function<void()>                     entry__;
-    bool                                      detached__;
-    mutable std::mutex                        mu_detached__;
     bool                                      shared_stack__;
     std::vector<char>                         saved_stack__;
     std::string                               name__;
@@ -65,8 +63,6 @@ public:
     void        set_reg_rbp(const void* value);
     const void* get_stack_bp() const;
     const void* get_reg_buf() const;
-    void        set_detached();
-    bool        detached() const;
     bool        shared_stack() const;
     void        save_stack();
     void        restore_stack();

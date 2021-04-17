@@ -96,6 +96,7 @@ private:
     void logout__(std::ostringstream& oss, logger_info_t& log_info,
                   const T& tmp);
 };
+inline auto g_logger = logger::instance();
 #ifdef SF_DEBUG
 #define sf_debug(...)                                                      \
     skyfire::g_logger->logout(skyfire::SF_DEBUG_LEVEL, __FILE__, __LINE__, \

@@ -47,6 +47,7 @@ public:
     char*                get_shared_stack_bp() const;
     co_ctx*              get_prev_co() const;
     co_ctx*              get_next_co() const;
+    std::vector<co_ctx*> detached_co();
 };
 
 co_env* get_co_env();
