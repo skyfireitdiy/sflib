@@ -11,23 +11,27 @@ inline co_manager* get_co_manager()
     return &manager;
 }
 
+inline void co_manager::remove_current_env()
+{
+    std::unique_lock<std::mutex> lck(mu_env_need_clean__);
+    env_need_clean__.push_back(get_co_env());
+    cond_env_need_clean__.notify_one();
+}
+
 inline co_manager::~co_manager()
 {
     std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
     need_exit__ = true;
+
+    // 唤醒清理线程，让他正常退出
+    cond_env_need_clean__.notify_one();
+
     // exit_env 会删除co_env_set__中的元素
     auto backup = co_env_set__;
     for (auto& env : backup)
     {
-        exit_env(env.first);
+        remove_env__(env.first);
     }
-}
-
-inline void co_manager::exit_env(co_env* env)
-{
-    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
-    env->set_exit_flag();
-    remove_env(env);
 }
 
 inline co_env* co_manager::add_env()
@@ -82,23 +86,42 @@ inline co_env* co_manager::get_best_env()
     return best == nullptr ? add_env() : best;
 }
 
-inline void co_manager::remove_env(co_env* env)
+inline void co_manager::remove_env__(co_env* env)
 {
     std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+    env->set_exit_flag();
     co_env_set__.erase(env);
+}
+
+inline void co_manager::clean_env_thread__()
+{
+    while (need_exit__)
+    {
+        std::unique_lock<std::mutex> lck(mu_env_need_clean__);
+        cond_env_need_clean__.wait(lck);
+        if (!need_exit__)
+        {
+            return;
+        }
+        for (auto& p : env_need_clean__)
+        {
+            remove_env__(p);
+        }
+        env_need_clean__.clear();
+    }
 }
 
 inline void co_manager::monitor_thread__()
 {
-    // while (!need_exit__)
-    // {
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    //     if (need_exit__)
-    //     {
-    //         break;
-    //     }
-    //     reassign_co__();
-    // }
+    while (!need_exit__)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if (need_exit__)
+        {
+            break;
+        }
+        reassign_co__();
+    }
 }
 
 inline void co_manager::reassign_co__()
@@ -154,7 +177,7 @@ inline bool co_manager::need_destroy_co_thread() const
 
 inline co_manager::co_manager()
 {
-    monitor_future__ = std::async(&co_manager::monitor_thread__, this);
+    background_task_future__.emplace_back(std::async(&co_manager::monitor_thread__, this));
+    background_task_future__.emplace_back(std::async(&co_manager::clean_env_thread__, this));
 }
-
 }

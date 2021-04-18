@@ -128,10 +128,7 @@ inline co_ctx* co_env::choose_co()
     {
         if (get_co_manager()->need_destroy_co_thread() && used__)
         {
-            // FIXME 创建一个线程回收env，后面专门创建一个线程做这个 并且 env 可以使用资源池
-            std::thread([this] {
-                get_co_manager()->exit_env(this);
-            }).detach();
+            get_co_manager()->remove_current_env();
         }
         return main_co__;
     }
