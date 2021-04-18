@@ -34,7 +34,6 @@ public:
     void        join();
     bool        valid() const;
     bool        joinable() const;
-    void        manage_this_thread();
     long long   get_id() const;
     std::string get_name() const;
 

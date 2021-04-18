@@ -95,6 +95,7 @@ inline void tcp_server::close(SOCKET sock)
 }
 inline void tcp_server::close()
 {
+    sf_debug("tcp server close");
     closed__ = true;
     ::shutdown(listen_fd__, SHUT_RDWR);
     ::close(listen_fd__);
@@ -107,6 +108,10 @@ inline void tcp_server::close()
             if (::write(p->pipe__[1], &buf, 1) != 1)
             {
                 sf_debug("write pipe failed");
+            }
+            else
+            {
+                sf_debug("close", p);
             }
         }
     }
@@ -239,10 +244,10 @@ inline void tcp_server::work_routine__(bool listen_thread, SOCKET listen_fd)
                 sf_debug("new connection detected");
                 if (!handle_accept__())
                 {
-                    sf_debug("accpet error");
+                    sf_debug("accept error");
                     listen_err = true;
                 }
-                sf_debug("accpet finish");
+                sf_debug("accept finish");
             }
             else if (evs[i].events & EPOLLIN)
             {

@@ -27,18 +27,22 @@ coroutine::coroutine(const std::initializer_list<co_attr_option_type>& attr_conf
     {
         f(attr__);
     }
-    ctx__ = get_co_manager()->get_best_env()->create_coroutine(
-        attr__,
-        [... args = std::forward<Args>(args), func = std::forward<Func>(func), this]() mutable {
-            if constexpr (std::is_same_v<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>, void>)
-            {
+    if constexpr (std::is_same_v<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>, void>)
+    {
+        ctx__ = get_co_manager()->get_best_env()->create_coroutine(
+            attr__,
+            [... args = std::forward<Args>(args), func = std::forward<Func>(func)]() mutable {
                 std::forward<Func>(func)(std::forward<Args>(args)...);
-            }
-            else
-            {
+            });
+    }
+    else
+    {
+        ctx__ = get_co_manager()->get_best_env()->create_coroutine(
+            attr__,
+            [... args = std::forward<Args>(args), func = std::forward<Func>(func), this]() mutable {
                 result__ = std::forward<Func>(func)(std::forward<Args>(args)...);
-            }
-        });
+            });
+    }
 }
 
 inline void coroutine::wait()
@@ -80,10 +84,10 @@ inline void coroutine::join()
     {
         throw std::runtime_error("already joined");
     }
-    joined__ = true;
+    joined__  = true;
+    invalid__ = true;
     wait();
     delete ctx__;
-    invalid__ = true;
 }
 
 inline bool coroutine::valid() const
@@ -132,19 +136,6 @@ T coroutine::get()
     {
         return std::any_cast<T>(result__);
     }
-}
-
-inline void coroutine::manage_this_thread()
-{
-    auto env = get_co_env();
-    {
-        get_co_manager()->append_env_to_set(env);
-    }
-    while (!env->if_need_exit())
-    {
-        this_coroutine::yield_coroutine();
-    }
-    get_co_manager()->remove_env(env);
 }
 
 inline long long coroutine::get_id() const

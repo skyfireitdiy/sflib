@@ -9,19 +9,19 @@ namespace skyfire
 class co_env final
 {
 private:
-    std::vector<co_ctx*> co_set__;
-    std::mutex           mu_co_set__;
-    int                  curr_co_index__ = 0;
-    co_ctx*              current_co__    = nullptr;
-    co_ctx*              main_co__       = nullptr;
-    std::atomic<bool>    sched__ { false };
-    std::atomic<bool>    need_exit__ { false };
-    std::atomic<bool>    blocked__ { false };
-    std::atomic<bool>    used__ { false };
-    char*                shared_stack__;
-    co_ctx*              next_co__;
-    co_ctx*              prev_co__;
-    co_ctx*              save_co__;
+    std::vector<co_ctx*>         co_set__;
+    mutable std::recursive_mutex mu_co_set__;
+    int                          curr_co_index__ = 0;
+    co_ctx*                      current_co__    = nullptr;
+    co_ctx*                      main_co__       = nullptr;
+    std::atomic<bool>            sched__ { false };
+    std::atomic<bool>            need_exit__ { false };
+    std::atomic<bool>            blocked__ { false };
+    std::atomic<bool>            used__ { false };
+    char*                        shared_stack__;
+    co_ctx*                      next_co__;
+    co_ctx*                      prev_co__;
+    co_ctx*                      save_co__;
 
 public:
     co_env();

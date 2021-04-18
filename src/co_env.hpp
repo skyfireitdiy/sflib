@@ -24,6 +24,7 @@ inline bool co_env::if_blocked() const
 
 inline size_t co_env::co_size() const
 {
+    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
     return co_set__.size();
 }
 
@@ -89,14 +90,14 @@ inline char* co_env::get_shared_stack_bp() const
 
 inline void co_env::append_co(co_ctx* ctx)
 {
-    std::lock_guard<std::mutex> lck_co(mu_co_set__);
+    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
     co_set__.push_back(ctx);
 }
 
 template <typename T>
 void co_env::append_co(T begin, T end)
 {
-    std::lock_guard<std::mutex> lck_co(mu_co_set__);
+    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
     co_set__.insert(co_set__.end(), begin, end);
 }
 
@@ -107,7 +108,8 @@ inline co_ctx* co_env::get_curr_co() const
 
 inline void co_env::release_curr_co()
 {
-    std::lock_guard<std::mutex> lck(mu_co_set__);
+    sf_debug("release co");
+    std::lock_guard<std::recursive_mutex> lck(mu_co_set__);
     for (auto iter = co_set__.begin(); iter != co_set__.end(); ++iter)
     {
         if (*iter == current_co__)
@@ -121,12 +123,15 @@ inline void co_env::release_curr_co()
 
 inline co_ctx* co_env::choose_co()
 {
-    std::lock_guard<std::mutex> lck_co(mu_co_set__);
+    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
     if (co_set__.empty())
     {
         if (get_co_manager()->need_destroy_co_thread() && used__)
         {
-            need_exit__ = true;
+            // FIXME 创建一个线程回收env，后面专门创建一个线程做这个 并且 env 可以使用资源池
+            std::thread([this] {
+                get_co_manager()->exit_env(this);
+            }).detach();
         }
         return main_co__;
     }
@@ -151,7 +156,24 @@ inline co_env::co_env()
 
 inline co_env::~co_env()
 {
+    // while (true)
+    // {
+    //     std::unique_lock<std::recursive_mutex> lck(mu_co_set__);
+    //     if (!co_set__.empty())
+    //     {
+    //         lck.unlock();
+    //         this_coroutine::yield_coroutine();
+    //     }
+    //     else
+    //     {
+    //         lck.unlock();
+    //         break;
+    //     }
+    // }
+    std::cout << "co_env::~co_env" << std::endl;
     delete[] shared_stack__;
+    delete save_co__;
+    delete main_co__;
 }
 
 inline void co_env::set_blocked()
@@ -161,12 +183,14 @@ inline void co_env::set_blocked()
 
 inline std::vector<co_ctx*> co_env::surrender_co()
 {
-    std::lock_guard<std::mutex> lck(mu_co_set__);
-    auto                        iter = std::remove_if(co_set__.begin(), co_set__.end(), [this](auto& p) {
-        return p != current_co__ && !p->shared_stack();
+    sf_debug("surrender co");
+    std::lock_guard<std::recursive_mutex> lck(mu_co_set__);
+    auto                                  iter = std::remove_if(co_set__.begin(), co_set__.end(), [this](auto& p) {
+        return p != current_co__ && !p->shared_stack() && p != main_co__;
     });
-    auto                        ret  = std::vector<co_ctx*>(iter, co_set__.end());
+    auto                                  ret  = std::vector<co_ctx*>(iter, co_set__.end());
     co_set__.erase(iter, co_set__.end());
+    sf_debug("surrender co", ret.size(), "left", co_set__.size());
     return ret;
 }
 

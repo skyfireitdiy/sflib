@@ -187,6 +187,7 @@ bool co_ctx::wait_cond_until(const T& tm, std::function<bool()> cond)
 template <typename T, typename... Args>
 std::shared_ptr<T> co_ctx::get_co_data(const std::string& name, Args&&... args)
 {
+    std::lock_guard<std::recursive_mutex> lck(mu_co_data__);
     if (!co_data__.contains(name))
     {
         co_data__[name] = std::shared_ptr<T>(new T(std::forward<Args>(args)...));

@@ -1,4 +1,4 @@
-#if 1
+#if 0
 #include <sflib>
 using namespace skyfire;
 using namespace std;
@@ -747,18 +747,25 @@ sf_test(tcp, test_client)
 using namespace std;
 using namespace skyfire;
 
-void co_func()
+void co_func(int n)
 {
+    std::vector<coroutine> cov;
     for (int i = 0; i < 10; ++i)
     {
+        if (n < 3)
+        {
+            cov.emplace_back(&co_func, n + 1);
+        }
         std::cout << i << std::endl;
+        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
         this_coroutine::yield_coroutine();
     }
 }
 
 int main()
 {
-    coroutine co(&co_func);
+    coroutine co(&co_func, 0);
+    return 0;
 }
 
 #endif

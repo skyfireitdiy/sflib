@@ -13,45 +13,50 @@ inline co_manager* get_co_manager()
 
 inline co_manager::~co_manager()
 {
-    std::lock_guard<std::mutex> lck(mu_co_env_set__);
+    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
     need_exit__ = true;
-    for (auto& env : co_env_set__)
+    // exit_env 会删除co_env_set__中的元素
+    auto backup = co_env_set__;
+    for (auto& env : backup)
     {
-        env->set_exit_flag();
+        exit_env(env.first);
     }
-    co_env_set__.clear();
 }
 
-inline std::unordered_set<co_env*> co_manager::get_co_env_set() const
+inline void co_manager::exit_env(co_env* env)
 {
-    std::lock_guard<std::mutex> lck(mu_co_env_set__);
-    return co_env_set__;
+    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+    env->set_exit_flag();
+    remove_env(env);
 }
 
 inline co_env* co_manager::add_env()
 {
-    std::promise<co_env*> pro;
-    std::thread([&pro, this]() {
+    // 注意，调用此函数的时候不能给mu_env_set__加锁
+    std::promise<co_env*>                            env_pointer_pro;
+    std::promise<std::shared_ptr<std::future<void>>> env_thread_pro;
+
+    env_thread_pro.set_value(std::shared_ptr<std::future<void>>(new std::future<void>(std::async([&env_pointer_pro, &env_thread_pro, this]() {
         auto env = get_co_env();
         {
-            append_env_to_set(env);
+            append_env_to_set(env, env_thread_pro.get_future().get());
         }
-        pro.set_value(env);
+        env_pointer_pro.set_value(env);
         while (!env->if_need_exit())
         {
             this_coroutine::yield_coroutine();
         }
-        get_co_manager()->remove_env(env);
-    }).detach();
+        sf_debug("env exit");
+    }))));
 
-    auto env = pro.get_future().get();
+    auto env = env_pointer_pro.get_future().get();
     return env;
 }
 
-inline void co_manager::append_env_to_set(co_env* env)
+inline void co_manager::append_env_to_set(co_env* env, std::shared_ptr<std::future<void>> th)
 {
-    std::lock_guard<std::mutex> lck(mu_co_env_set__);
-    co_env_set__.insert(env);
+    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+    co_env_set__.insert({ env, th });
 }
 
 inline co_env* co_manager::get_best_env()
@@ -62,14 +67,14 @@ inline co_env* co_manager::get_best_env()
     }
     co_env* best = nullptr;
     {
-        std::lock_guard<std::mutex> lck(mu_co_env_set__);
+        std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
         for (auto& env : co_env_set__)
         {
-            if (!env->if_blocked() && !env->if_need_exit())
+            if (!env.first->if_blocked() && !env.first->if_need_exit())
             {
-                if (best == nullptr || (best->co_size() > env->co_size()))
+                if (best == nullptr || (best->co_size() > env.first->co_size()))
                 {
-                    best = env;
+                    best = env.first;
                 }
             }
         }
@@ -79,7 +84,7 @@ inline co_env* co_manager::get_best_env()
 
 inline void co_manager::remove_env(co_env* env)
 {
-    std::lock_guard<std::mutex> lck(mu_co_env_set__);
+    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
     co_env_set__.erase(env);
 }
 
@@ -103,21 +108,21 @@ inline void co_manager::reassign_co__()
     std::vector<co_env*> normal_env;
 
     {
-        std::lock_guard<std::mutex> lck(mu_co_env_set__);
+        std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
         normal_env.reserve(co_env_set__.size());
         std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env](auto& env) {
-            if (env->has_sched())
+            if (env.first->has_sched())
             {
                 // 记录正常的协程
-                normal_env.push_back(env);
+                normal_env.push_back(env.first);
             }
             else
             {
-                auto blocked_co = env->surrender_co();
+                auto blocked_co = env.first->surrender_co();
                 need_move_co.insert(need_move_co.end(), blocked_co.begin(), blocked_co.end());
-                env->set_blocked();
+                env.first->set_blocked();
             }
-            env->reset_sched();
+            env.first->reset_sched();
         });
     }
 
@@ -143,6 +148,7 @@ inline void co_manager::reassign_co__()
 
 inline bool co_manager::need_destroy_co_thread() const
 {
+    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
     return co_env_set__.size() > base_co_thread_count__;
 }
 

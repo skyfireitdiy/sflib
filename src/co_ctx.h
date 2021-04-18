@@ -46,6 +46,7 @@ class co_ctx final
     std::vector<char>                         saved_stack__;
     std::string                               name__;
     std::atomic<bool>                         wait_cond__ { false };
+    std::recursive_mutex                      mu_co_data__;
     std::unordered_map<std::string, std::any> co_data__;
 
 public:
