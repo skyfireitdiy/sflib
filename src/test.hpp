@@ -8,9 +8,9 @@
 #include "utils.h"
 namespace skyfire
 {
-inline co_mutex& get_test_output_mu__()
+inline std::mutex& get_test_output_mu__()
 {
-    static co_mutex mu;
+    static std::mutex mu;
     return mu;
 }
 inline std::vector<test_data_t__>& get_test_data__()

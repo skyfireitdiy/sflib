@@ -198,8 +198,8 @@ inline bool co_env::if_need_exit() const
 
 inline co_env* get_co_env()
 {
-    thread_local static co_env env;
-    return &env;
+    thread_local static co_env* env = new co_env;
+    return env;
 }
 
 }

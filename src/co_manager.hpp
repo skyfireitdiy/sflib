@@ -7,8 +7,8 @@ namespace skyfire
 
 inline co_manager* get_co_manager()
 {
-    static co_manager manager;
-    return &manager;
+    static auto manager = new co_manager;
+    return manager;
 }
 
 inline void co_manager::remove_current_env()
@@ -91,6 +91,7 @@ inline void co_manager::remove_env__(co_env* env)
     std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
     env->set_exit_flag();
     co_env_set__.erase(env);
+    delete env;
 }
 
 inline void co_manager::clean_env_thread__()
@@ -113,15 +114,15 @@ inline void co_manager::clean_env_thread__()
 
 inline void co_manager::monitor_thread__()
 {
-    while (!need_exit__)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        if (need_exit__)
-        {
-            break;
-        }
-        reassign_co__();
-    }
+    // while (!need_exit__)
+    // {
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    //     if (need_exit__)
+    //     {
+    //         break;
+    //     }
+    //     reassign_co__();
+    // }
 }
 
 inline void co_manager::reassign_co__()
