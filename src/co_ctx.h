@@ -5,28 +5,6 @@
 namespace skyfire
 {
 
-constexpr int co_retindex = 9;
-constexpr int co_rspindex = 13;
-constexpr int co_rdiindex = 7;
-constexpr int co_rbpindex = 6;
-
-//-------------
-// 64 bit
-// low | regs[0]: r15 |
-//    | regs[1]: r14 |
-//    | regs[2]: r13 |
-//    | regs[3]: r12 |
-//    | regs[4]: r9  |
-//    | regs[5]: r8  |
-//    | regs[6]: rbp |
-//    | regs[7]: rdi |
-//    | regs[8]: rsi |
-//    | regs[9]: ret |  //ret func addr
-//    | regs[10]: rdx |
-//    | regs[11]: rcx |
-//    | regs[12]: rbx |
-// hig | regs[13]: rsp |
-
 enum class co_state
 {
     ready,
@@ -37,7 +15,7 @@ enum class co_state
 
 class co_ctx final
 {
-    const void*                               regs__[14]   = {};
+    const void*                               regs__[36]   = {};
     co_state                                  state__      = co_state::ready;
     char*                                     stack_data__ = nullptr;
     size_t                                    stack_size__;

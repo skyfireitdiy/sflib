@@ -12,6 +12,11 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+constexpr int co_retindex = 9;
+constexpr int co_rspindex = 13;
+constexpr int co_rdiindex = 7;
+constexpr int co_rbpindex = 6;
+
 namespace skyfire
 {
 

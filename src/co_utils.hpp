@@ -15,6 +15,23 @@ inline void __switch_co__(co_ctx* curr, co_ctx* next)
     __swap_regs__(curr->get_reg_buf(), next->get_reg_buf());
 }
 
+//-------------
+// 64 bit
+// low | regs[0]: r15 |
+//    | regs[1]: r14 |
+//    | regs[2]: r13 |
+//    | regs[3]: r12 |
+//    | regs[4]: r9  |
+//    | regs[5]: r8  |
+//    | regs[6]: rbp |
+//    | regs[7]: rdi |
+//    | regs[8]: rsi |
+//    | regs[9]: ret |  //ret func addr
+//    | regs[10]: rdx |
+//    | regs[11]: rcx |
+//    | regs[12]: rbx |
+// hig | regs[13]: rsp |
+
 inline void __swap_regs__(const void*, const void*)
 {
     __asm(
