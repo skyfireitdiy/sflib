@@ -15,59 +15,67 @@ inline void __switch_co__(co_ctx* curr, co_ctx* next)
     __swap_regs__(curr->get_reg_buf(), next->get_reg_buf());
 }
 
-//-------------
-// 64 bit
-// low | regs[0]: r15 |
-//    | regs[1]: r14 |
-//    | regs[2]: r13 |
-//    | regs[3]: r12 |
-//    | regs[4]: r9  |
-//    | regs[5]: r8  |
-//    | regs[6]: rbp |
-//    | regs[7]: rdi |
-//    | regs[8]: rsi |
-//    | regs[9]: ret |  //ret func addr
-//    | regs[10]: rdx |
-//    | regs[11]: rcx |
-//    | regs[12]: rbx |
-// hig | regs[13]: rsp |
+/*| 64 bit
+ *|--------------------------------------------------|
+ *| low  | regs[0]: r15                 |  0         |            
+ *|      | regs[1]: r14                 |  8         |            
+ *|      | regs[2]: r13                 |  16        |               
+ *|      | regs[3]: r12                 |  24        |           
+ *|      | regs[4]: r9                  |  32        |           
+ *|      | regs[5]: r8                  |  40        |           
+ *|      | regs[6]: rbp                 |  48        |           
+ *|      | regs[7]: rdi                 |  56        |           
+ *|      | regs[8]: rsi                 |  64        |           
+ *|      | regs[9]: rip(ret)            |  72        |           
+ *|      | regs[10]: rdx                |  80        |           
+ *|      | regs[11]: rcx                |  88        |           
+ *|      | regs[12]: rbx                |  96        |           
+ *|      | regs[13]: rsp                |  104       |          
+ *| high | regs[14]: fc_mxcsr|fc_x87_cw |  112/116   |          
+ *|--------------------------------------------------|
+ */
 
 inline void __swap_regs__(const void*, const void*)
 {
     __asm(
         "popq %rbp\n\t"
         "leaq (%rsp),%rax\n\t"
-        "movq %rax, 104(%rdi)\n\t"
-        "movq %rbx, 96(%rdi)\n\t"
-        "movq %rcx, 88(%rdi)\n\t"
-        "movq %rdx, 80(%rdi)\n\t"
-        "movq 0(%rax), %rax\n\t"
-        "movq %rax, 72(%rdi) \n\t"
-        "movq %rsi, 64(%rdi)\n\t"
-        "movq %rdi, 56(%rdi)\n\t"
-        "movq %rbp, 48(%rdi)\n\t"
-        "movq %r8, 40(%rdi)\n\t"
-        "movq %r9, 32(%rdi)\n\t"
-        "movq %r12, 24(%rdi)\n\t"
-        "movq %r13, 16(%rdi)\n\t"
-        "movq %r14, 8(%rdi)\n\t"
-        "movq %r15, (%rdi)\n\t"
-        "xorq %rax, %rax\n\t"
-        "movq 48(%rsi), %rbp\n\t"
-        "movq 104(%rsi), %rsp\n\t"
-        "movq (%rsi), %r15\n\t"
-        "movq 8(%rsi), %r14\n\t"
-        "movq 16(%rsi), %r13\n\t"
-        "movq 24(%rsi), %r12\n\t"
-        "movq 32(%rsi), %r9\n\t"
-        "movq 40(%rsi), %r8\n\t"
-        "movq 56(%rsi), %rdi\n\t"
-        "movq 80(%rsi), %rdx\n\t"
-        "movq 88(%rsi), %rcx\n\t"
-        "movq 96(%rsi), %rbx\n\t"
-        "leaq 8(%rsp), %rsp\n\t"
-        "pushq 72(%rsi)\n\t"
-        "movq 64(%rsi), %rsi\n\t"
+        "fnstcw     116(%rdi)\n\t"
+        "stmxcsr    112(%rdi)\n\t"
+        "movq       %rax, 104(%rdi)\n\t"
+        "movq       %rbx, 96(%rdi)\n\t"
+        "movq       %rcx, 88(%rdi)\n\t"
+        "movq       %rdx, 80(%rdi)\n\t"
+        "movq       0(%rax), %rax\n\t"
+        "movq       %rax, 72(%rdi) \n\t"
+        "movq       %rsi, 64(%rdi)\n\t"
+        "movq       %rdi, 56(%rdi)\n\t"
+        "movq       %rbp, 48(%rdi)\n\t"
+        "movq       %r8, 40(%rdi)\n\t"
+        "movq       %r9, 32(%rdi)\n\t"
+        "movq       %r12, 24(%rdi)\n\t"
+        "movq       %r13, 16(%rdi)\n\t"
+        "movq       %r14, 8(%rdi)\n\t"
+        "movq       %r15, (%rdi)\n\t"
+
+        "xorq       %rax, %rax\n\t"
+        "movq       48(%rsi), %rbp\n\t"
+        "movq       104(%rsi), %rsp\n\t"
+        "movq       (%rsi), %r15\n\t"
+        "movq       8(%rsi), %r14\n\t"
+        "movq       16(%rsi), %r13\n\t"
+        "movq       24(%rsi), %r12\n\t"
+        "movq       32(%rsi), %r9\n\t"
+        "movq       40(%rsi), %r8\n\t"
+        "movq       56(%rsi), %rdi\n\t"
+        "movq       80(%rsi), %rdx\n\t"
+        "movq       88(%rsi), %rcx\n\t"
+        "movq       96(%rsi), %rbx\n\t"
+        "ldmxcsr    112(%rsi)\n\t"
+        "fldcw      116(%rsi)\n\t"
+        "leaq       8(%rsp), %rsp\n\t"
+        "pushq      72(%rsi)\n\t"
+        "movq       64(%rsi), %rsi\n\t"
         "ret\n\t");
 }
 
