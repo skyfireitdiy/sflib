@@ -15,7 +15,7 @@ enum class co_state
 
 class co_ctx final
 {
-    const void*                               regs__[14]   = {};
+    const void*                               regs__[9]    = {};
     co_state                                  state__      = co_state::ready;
     char*                                     stack_data__ = nullptr;
     size_t                                    stack_size__;

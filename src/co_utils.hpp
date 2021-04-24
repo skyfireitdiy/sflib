@@ -16,67 +16,52 @@ inline void __switch_co__(co_ctx* curr, co_ctx* next)
 }
 
 /*| 64 bit
- *|--------------------------------------------------|
+ *|-------------------------------------------------|
  *| low  | regs[0]: r15                 |  0         |            
  *|      | regs[1]: r14                 |  8         |            
  *|      | regs[2]: r13                 |  16        |               
- *|      | regs[3]: r12                 |  24        |           
- *|      | regs[4]: r9                  |  32        |           
- *|      | regs[5]: r8                  |  40        |           
- *|      | regs[6]: rbp                 |  48        |           
- *|      | regs[7]: rdi                 |  56        |           
- *|      | regs[8]: rsi                 |  64        |           
- *|      | regs[9]: rip(ret)            |  72        |           
- *|      | regs[10]: rdx                |  80        |           
- *|      | regs[11]: rcx                |  88        |           
- *|      | regs[12]: rbx                |  96        |           
- *|      | regs[13]: rsp                |  104       |          
- *| high | regs[14]: fc_mxcsr|fc_x87_cw |  112/116   |          
- *|--------------------------------------------------|
+ *|      | regs[3]: r12                 |  24        |         
+ *|      | regs[4]: rbp                 |  32        |        
+ *|      | regs[5]: rip(ret)            |  40        |         
+ *|      | regs[6]: rbx                 |  48        |           
+ *|      | regs[7]: rsp                 |  56        |
+ *|      | regs[8]: rdi                 |  64        |       
+ *| high | regs[9]: fc_mxcsr|fc_x87_cw |  72/76     |          
+ *|-------------------------------------------------|
  */
 
 inline void __swap_regs__(const void*, const void*)
 {
     __asm(
-        "popq %rbp\n\t"
-        "leaq (%rsp),%rax\n\t"
-        "fnstcw     116(%rdi)\n\t"
-        "stmxcsr    112(%rdi)\n\t"
-        "movq       %rax, 104(%rdi)\n\t"
-        "movq       %rbx, 96(%rdi)\n\t"
-        "movq       %rcx, 88(%rdi)\n\t"
-        "movq       %rdx, 80(%rdi)\n\t"
-        "movq       0(%rax), %rax\n\t"
-        "movq       %rax, 72(%rdi) \n\t"
-        "movq       %rsi, 64(%rdi)\n\t"
-        "movq       %rdi, 56(%rdi)\n\t"
-        "movq       %rbp, 48(%rdi)\n\t"
-        "movq       %r8, 40(%rdi)\n\t"
-        "movq       %r9, 32(%rdi)\n\t"
-        "movq       %r12, 24(%rdi)\n\t"
-        "movq       %r13, 16(%rdi)\n\t"
-        "movq       %r14, 8(%rdi)\n\t"
-        "movq       %r15, (%rdi)\n\t"
+        "popq %rbp\n"
 
-        "xorq       %rax, %rax\n\t"
-        "movq       48(%rsi), %rbp\n\t"
-        "movq       104(%rsi), %rsp\n\t"
-        "movq       (%rsi), %r15\n\t"
-        "movq       8(%rsi), %r14\n\t"
-        "movq       16(%rsi), %r13\n\t"
-        "movq       24(%rsi), %r12\n\t"
-        "movq       32(%rsi), %r9\n\t"
-        "movq       40(%rsi), %r8\n\t"
-        "movq       56(%rsi), %rdi\n\t"
-        "movq       80(%rsi), %rdx\n\t"
-        "movq       88(%rsi), %rcx\n\t"
-        "movq       96(%rsi), %rbx\n\t"
-        "ldmxcsr    112(%rsi)\n\t"
-        "fldcw      116(%rsi)\n\t"
-        "leaq       8(%rsp), %rsp\n\t"
-        "pushq      72(%rsi)\n\t"
-        "movq       64(%rsi), %rsi\n\t"
-        "ret\n\t");
+        "movq %r15, (%rdi)\n"
+        "movq %r14, 8(%rdi)\n"
+        "movq %r13, 16(%rdi)\n"
+        "movq %r12, 24(%rdi)\n"
+        "movq %rbp, 32(%rdi)\n"
+        "movq 0(%rsp), %rax\n"
+        "movq %rax, 40(%rdi)\n"
+        "movq %rbx, 48(%rdi)\n"
+        "movq %rsp, 56(%rdi)\n"
+        "movq %rdi, 64(%rdi)\n"
+        "stmxcsr    72(%rdi)\n"
+        "fnstcw     76(%rdi)\n"
+
+        "fldcw      76(%rsi)\n"
+        "ldmxcsr    72(%rsi)\n"
+        "movq 64(%rsi), %rdi\n"
+        "movq 56(%rsi), %rsp\n"
+        "movq 48(%rsi), %rbx\n"
+        "movq 40(%rsi), %rax\n"
+        "movq %rax, 0(%rsp)\n"
+        "movq 32(%rsi), %rbp\n"
+        "movq 24(%rsi), %r12\n"
+        "movq 16(%rsi), %r11\n"
+        "movq 8(%rsi), %r10\n"
+        "movq (%rsi), %r9\n"
+
+        "pushq %rbp\n");
 }
 
 inline void __co_func__(co_ctx* ctx)

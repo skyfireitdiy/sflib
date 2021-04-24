@@ -153,20 +153,20 @@ inline co_env::co_env()
 
 inline co_env::~co_env()
 {
-    // while (true)
-    // {
-    //     std::unique_lock<std::recursive_mutex> lck(mu_co_set__);
-    //     if (!co_set__.empty())
-    //     {
-    //         lck.unlock();
-    //         this_coroutine::yield_coroutine();
-    //     }
-    //     else
-    //     {
-    //         lck.unlock();
-    //         break;
-    //     }
-    // }
+    while (true)
+    {
+        std::unique_lock<std::recursive_mutex> lck(mu_co_set__);
+        if (!co_set__.empty())
+        {
+            lck.unlock();
+            this_coroutine::yield_coroutine();
+        }
+        else
+        {
+            lck.unlock();
+            break;
+        }
+    }
     std::cout << "co_env::~co_env" << std::endl;
     delete[] shared_stack__;
     delete save_co__;
