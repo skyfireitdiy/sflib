@@ -747,24 +747,18 @@ sf_test(coroutine, get)
 using namespace std;
 using namespace skyfire;
 
-void co_func(int n)
+void func2()
 {
-    std::vector<coroutine> cov;
-    for (int i = 0; i < 20; ++i)
-    {
-        if (n < 3)
-        {
-            cov.emplace_back(&co_func, n + 1);
-        }
-        std::cout << i << std::endl;
-        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        this_coroutine::yield_coroutine();
-    }
+}
+
+void func1()
+{
+    coroutine co(&func2);
 }
 
 int main()
 {
-    coroutine co(&co_func, 0);
+    coroutine co(&func1);
     co.join();
     std::cout << "finished" << std::endl;
 }

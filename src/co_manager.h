@@ -8,7 +8,7 @@ class co_manager final
 {
     std::unordered_map<co_env*, std::shared_ptr<std::future<void>>> co_env_set__;
     mutable std::recursive_mutex                                    mu_co_env_set__;
-    size_t                                                          base_co_thread_count__ = std::thread::hardware_concurrency() * 2;
+    size_t                                                          base_co_thread_count__ = 1; // std::thread::hardware_concurrency() * 2;
     bool                                                            need_exit__            = false;
     std::list<std::future<void>>                                    background_task_future__;
 

@@ -115,6 +115,7 @@ inline void co_env::release_curr_co()
         if (*iter == current_co__)
         {
             co_set__.erase(iter);
+            std::cout << *iter << " finished" << std::endl;
             current_co__->set_state(co_state::finished);
             break;
         }
