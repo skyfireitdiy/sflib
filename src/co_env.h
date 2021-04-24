@@ -14,7 +14,7 @@ private:
     int                          curr_co_index__ = 0;
     co_ctx*                      current_co__    = nullptr;
     co_ctx*                      main_co__       = nullptr;
-    std::atomic<bool>            sched__ { false };
+    std::atomic<bool>            sched__ { true };
     std::atomic<bool>            need_exit__ { false };
     std::atomic<bool>            blocked__ { false };
     std::atomic<bool>            used__ { false };

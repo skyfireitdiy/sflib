@@ -101,10 +101,10 @@ inline coroutine::~coroutine()
     {
         return;
     }
-    if (!joined__)
-    {
-        join();
-    }
+    // if (!joined__)
+    // {
+    //     join();
+    // }
 }
 
 inline coroutine::coroutine(coroutine&& other)

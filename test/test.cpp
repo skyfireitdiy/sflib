@@ -749,15 +749,21 @@ using namespace skyfire;
 
 void func2()
 {
+    std::cout << "func2 co:" << get_co_env()->get_curr_co() << std::endl;
+    std::cout << "func2" << std::endl;
 }
 
 void func1()
 {
-    coroutine co(&func2);
+    std::cout << "func1 co:" << get_co_env()->get_curr_co() << std::endl;
+    coroutine co2(&func2);
+    std::cout << "func1" << std::endl;
+    co2.join();
 }
 
 int main()
 {
+    std::cout << "main co:" << get_co_env()->get_curr_co() << std::endl;
     coroutine co(&func1);
     co.join();
     std::cout << "finished" << std::endl;

@@ -7,8 +7,8 @@ namespace skyfire
 
 inline co_manager* get_co_manager()
 {
-    static auto manager = new co_manager;
-    return manager;
+    static co_manager manager;
+    return &manager;
 }
 
 inline void co_manager::remove_current_env()
@@ -20,18 +20,26 @@ inline void co_manager::remove_current_env()
 
 inline co_manager::~co_manager()
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
     need_exit__ = true;
-
-    // 唤醒清理线程，让他正常退出
-    cond_env_need_clean__.notify_one();
+    {
+        std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+        for (auto& env : co_env_set__)
+        {
+            env.first->set_exit_flag();
+        }
+    }
 
     // exit_env 会删除co_env_set__中的元素
     auto backup = co_env_set__;
-    for (auto& env : backup)
+
     {
-        remove_env__(env.first);
+        std::unique_lock<std::mutex> lck(mu_env_need_clean__);
+        for (auto& env : backup)
+        {
+            env_need_clean__.push_back(env.first);
+        }
     }
+    cond_env_need_clean__.notify_one();
 }
 
 inline co_env* co_manager::add_env()
@@ -90,17 +98,20 @@ inline void co_manager::remove_env__(co_env* env)
 {
     std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
     env->set_exit_flag();
-    co_env_set__.erase(env);
-    delete env;
+    if (co_env_set__.contains(env))
+    {
+        co_env_set__.erase(env);
+        delete env;
+    }
 }
 
 inline void co_manager::clean_env_thread__()
 {
-    while (need_exit__)
+    while (!need_exit__)
     {
         std::unique_lock<std::mutex> lck(mu_env_need_clean__);
         cond_env_need_clean__.wait(lck);
-        if (!need_exit__)
+        if (need_exit__)
         {
             return;
         }
@@ -173,7 +184,7 @@ inline void co_manager::reassign_co__()
 inline bool co_manager::need_destroy_co_thread() const
 {
     std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
-    return co_env_set__.size() > base_co_thread_count__;
+    return co_env_set__.size() > base_co_thread_count__ || need_exit__;
 }
 
 inline co_manager::co_manager()

@@ -108,14 +108,13 @@ inline co_ctx* co_env::get_curr_co() const
 
 inline void co_env::release_curr_co()
 {
-    sf_debug("release co");
+    sf_debug("release co", current_co__);
     std::lock_guard<std::recursive_mutex> lck(mu_co_set__);
     for (auto iter = co_set__.begin(); iter != co_set__.end(); ++iter)
     {
         if (*iter == current_co__)
         {
             co_set__.erase(iter);
-            std::cout << *iter << " finished" << std::endl;
             current_co__->set_state(co_state::finished);
             break;
         }
@@ -157,7 +156,7 @@ inline co_env::~co_env()
     while (true)
     {
         std::unique_lock<std::recursive_mutex> lck(mu_co_set__);
-        if (!co_set__.empty())
+        if (co_set__.size() > 1) // main_co__
         {
             lck.unlock();
             this_coroutine::yield_coroutine();
