@@ -1,4 +1,4 @@
-#if 0
+#if 1
 #include <sflib>
 using namespace skyfire;
 using namespace std;
@@ -530,7 +530,7 @@ sf_test(waiter, none_param_event_waiter_test)
     test_object t;
     coroutine   co([&t]() {
         this_coroutine::sleep_for(std::chrono::seconds(5));
-        std::cout << std::this_thread::get_id() << " call s1" << std::endl;
+        sf_debug(" call s1");
         t.s1();
     });
     sf_debug("begin wait");

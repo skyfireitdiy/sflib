@@ -60,7 +60,6 @@ inline void __co_func__(co_ctx* ctx)
 {
     ctx->get_entry()();
     get_co_env()->release_curr_co();
-    this_coroutine::yield_coroutine();
 }
 
 inline void __co_save_stack__()

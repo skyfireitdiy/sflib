@@ -24,7 +24,7 @@ inline bool co_env::if_blocked() const
 
 inline size_t co_env::co_size() const
 {
-    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
+    // std::lock_guard<std::mutex> lck_co(mu_co_set__);
     return co_set__.size();
 }
 
@@ -53,6 +53,12 @@ inline void co_env::yield_coroutine()
     if (curr_co == ctx)
     {
         return;
+    }
+
+    // 当前加入就绪队列
+    {
+        std::lock_guard<std::mutex> lck(mu_co_set__);
+        co_set__.push_back(curr_co);
     }
 
     if (curr_co->shared_stack() || ctx->shared_stack())
@@ -90,14 +96,14 @@ inline char* co_env::get_shared_stack_bp() const
 
 inline void co_env::append_co(co_ctx* ctx)
 {
-    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
+    std::lock_guard<std::mutex> lck_co(mu_co_set__);
     co_set__.push_back(ctx);
 }
 
 template <typename T>
 void co_env::append_co(T begin, T end)
 {
-    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
+    std::lock_guard<std::mutex> lck_co(mu_co_set__);
     co_set__.insert(co_set__.end(), begin, end);
 }
 
@@ -108,22 +114,16 @@ inline co_ctx* co_env::get_curr_co() const
 
 inline void co_env::release_curr_co()
 {
-    sf_debug("release co", current_co__);
-    std::lock_guard<std::recursive_mutex> lck(mu_co_set__);
-    for (auto iter = co_set__.begin(); iter != co_set__.end(); ++iter)
-    {
-        if (*iter == current_co__)
-        {
-            co_set__.erase(iter);
-            current_co__->set_state(co_state::finished);
-            break;
-        }
-    }
+    auto next = choose_co();
+    current_co__->set_state(co_state::finished);
+    auto curr    = current_co__;
+    current_co__ = next;
+    __switch_co__(curr, next);
 }
 
 inline co_ctx* co_env::choose_co()
 {
-    std::lock_guard<std::recursive_mutex> lck_co(mu_co_set__);
+    std::lock_guard<std::mutex> lck_co(mu_co_set__);
     if (co_set__.empty())
     {
         if (get_co_manager()->need_destroy_co_thread() && used__)
@@ -135,12 +135,9 @@ inline co_ctx* co_env::choose_co()
     used__    = true;
     blocked__ = false;
     sched__   = true;
-    // if (current_co__ != main_co__)
-    // {
-    //     return main_co__;
-    // }
-    curr_co_index__ = (curr_co_index__ + 1) % co_set__.size();
-    return co_set__[curr_co_index__];
+    auto ret  = co_set__.front();
+    co_set__.pop_front();
+    return ret;
 }
 
 inline co_env::co_env()
@@ -148,9 +145,7 @@ inline co_env::co_env()
     shared_stack__ = new char[default_co_stack_size];
     current_co__   = new co_ctx(nullptr, co_attr_config { 0, false, "__main__" });
     main_co__      = current_co__;
-    // 防止主协程有业务逻辑但是无法被调度
-    append_co(main_co__);
-    save_co__ = new co_ctx(__co_save_stack__, co_attr_config { default_co_stack_size, false, "__co_save__" });
+    save_co__      = new co_ctx(__co_save_stack__, co_attr_config { default_co_stack_size, false, "__co_save__" });
     current_co__->set_state(co_state::running);
 }
 
@@ -158,7 +153,7 @@ inline co_env::~co_env()
 {
     while (true)
     {
-        std::unique_lock<std::recursive_mutex> lck(mu_co_set__);
+        std::unique_lock<std::mutex> lck(mu_co_set__);
         if (co_set__.size() > 1)
         {
             lck.unlock();
@@ -181,17 +176,10 @@ inline void co_env::set_blocked()
     blocked__ = true;
 }
 
-inline std::vector<co_ctx*> co_env::surrender_co()
+inline std::deque<co_ctx*> co_env::surrender_co()
 {
-    sf_debug("surrender co");
-    std::lock_guard<std::recursive_mutex> lck(mu_co_set__);
-    auto                                  iter = std::remove_if(co_set__.begin(), co_set__.end(), [this](auto& p) {
-        return p != current_co__ && !p->shared_stack() && p != main_co__;
-    });
-    auto                                  ret  = std::vector<co_ctx*>(iter, co_set__.end());
-    co_set__.erase(iter, co_set__.end());
-    sf_debug("surrender co", ret.size(), "left", co_set__.size());
-    return ret;
+    std::lock_guard<std::mutex> lck(mu_co_set__);
+    return std::move(co_set__);
 }
 
 inline bool co_env::if_need_exit() const

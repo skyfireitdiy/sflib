@@ -13,8 +13,10 @@ inline co_manager* get_co_manager()
 
 inline void co_manager::remove_current_env()
 {
-    std::unique_lock<std::mutex> lck(mu_env_need_clean__);
-    env_need_clean__.push_back(get_co_env());
+    {
+        std::unique_lock<std::mutex> lck(mu_env_need_clean__);
+        env_need_clean__.push_back(get_co_env());
+    }
     cond_env_need_clean__.notify_one();
 }
 
@@ -22,7 +24,7 @@ inline co_manager::~co_manager()
 {
     need_exit__ = true;
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+        std::lock_guard<std::mutex> lck(mu_co_env_set__);
         for (auto& env : co_env_set__)
         {
             env.first->set_exit_flag();
@@ -67,7 +69,7 @@ inline co_env* co_manager::add_env()
 
 inline void co_manager::append_env_to_set(co_env* env, std::shared_ptr<std::future<void>> th)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
     co_env_set__.insert({ env, th });
 }
 
@@ -79,7 +81,7 @@ inline co_env* co_manager::get_best_env()
     }
     co_env* best = nullptr;
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+        std::lock_guard<std::mutex> lck(mu_co_env_set__);
         for (auto& env : co_env_set__)
         {
             if (!env.first->if_blocked() && !env.first->if_need_exit())
@@ -96,7 +98,7 @@ inline co_env* co_manager::get_best_env()
 
 inline void co_manager::remove_env__(co_env* env)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+    std::lock_guard<std::mutex> lck(mu_co_env_set__);
     env->set_exit_flag();
     if (co_env_set__.contains(env))
     {
@@ -109,31 +111,34 @@ inline void co_manager::clean_env_thread__()
 {
     while (!need_exit__)
     {
-        std::unique_lock<std::mutex> lck(mu_env_need_clean__);
-        cond_env_need_clean__.wait(lck);
-        if (need_exit__)
+        std::deque<co_env*> env_need_clean_backup__;
         {
-            return;
+            std::unique_lock<std::mutex> lck(mu_env_need_clean__);
+            cond_env_need_clean__.wait(lck);
+            if (need_exit__)
+            {
+                return;
+            }
+            env_need_clean_backup__ = std::move(env_need_clean__);
         }
-        for (auto& p : env_need_clean__)
+        for (auto& p : env_need_clean_backup__)
         {
             remove_env__(p);
         }
-        env_need_clean__.clear();
     }
 }
 
 inline void co_manager::monitor_thread__()
 {
-    // while (!need_exit__)
-    // {
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    //     if (need_exit__)
-    //     {
-    //         break;
-    //     }
-    //     reassign_co__();
-    // }
+    while (!need_exit__)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if (need_exit__)
+        {
+            break;
+        }
+        // reassign_co__();
+    }
 }
 
 inline void co_manager::reassign_co__()
@@ -143,7 +148,7 @@ inline void co_manager::reassign_co__()
     std::vector<co_env*> normal_env;
 
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+        std::lock_guard<std::mutex> lck(mu_co_env_set__);
         normal_env.reserve(co_env_set__.size());
         std::for_each(co_env_set__.begin(), co_env_set__.end(), [&need_move_co, &normal_env](auto& env) {
             if (env.first->has_sched())
@@ -183,7 +188,7 @@ inline void co_manager::reassign_co__()
 
 inline bool co_manager::need_destroy_co_thread() const
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_co_env_set__);
+    // std::lock_guard<std::mutex> lck(mu_co_env_set__);
     return co_env_set__.size() > base_co_thread_count__ || need_exit__;
 }
 

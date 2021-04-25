@@ -9,19 +9,18 @@ namespace skyfire
 class co_env final
 {
 private:
-    std::vector<co_ctx*>         co_set__;
-    mutable std::recursive_mutex mu_co_set__;
-    int                          curr_co_index__ = 0;
-    co_ctx*                      current_co__    = nullptr;
-    co_ctx*                      main_co__       = nullptr;
-    std::atomic<bool>            sched__ { true };
-    std::atomic<bool>            need_exit__ { false };
-    std::atomic<bool>            blocked__ { false };
-    std::atomic<bool>            used__ { false };
-    char*                        shared_stack__;
-    co_ctx*                      next_co__;
-    co_ctx*                      prev_co__;
-    co_ctx*                      save_co__;
+    std::deque<co_ctx*> co_set__;
+    mutable std::mutex  mu_co_set__;
+    co_ctx*             current_co__ = nullptr;
+    co_ctx*             main_co__    = nullptr;
+    std::atomic<bool>   sched__ { true };
+    std::atomic<bool>   need_exit__ { false };
+    std::atomic<bool>   blocked__ { false };
+    std::atomic<bool>   used__ { false };
+    char*               shared_stack__;
+    co_ctx*             next_co__;
+    co_ctx*             prev_co__;
+    co_ctx*             save_co__;
 
 public:
     co_env();
@@ -42,7 +41,7 @@ public:
     size_t               co_size() const;
     bool                 has_sched() const;
     void                 reset_sched();
-    std::vector<co_ctx*> surrender_co();
+    std::deque<co_ctx*>  surrender_co();
     char*                get_shared_stack() const;
     char*                get_shared_stack_bp() const;
     co_ctx*              get_prev_co() const;
