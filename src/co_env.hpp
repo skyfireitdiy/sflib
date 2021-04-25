@@ -132,9 +132,13 @@ inline co_ctx* co_env::choose_co()
         }
         return main_co__;
     }
-    used__          = true;
-    blocked__       = false;
-    sched__         = true;
+    used__    = true;
+    blocked__ = false;
+    sched__   = true;
+    // if (current_co__ != main_co__)
+    // {
+    //     return main_co__;
+    // }
     curr_co_index__ = (curr_co_index__ + 1) % co_set__.size();
     return co_set__[curr_co_index__];
 }
@@ -142,9 +146,8 @@ inline co_ctx* co_env::choose_co()
 inline co_env::co_env()
 {
     shared_stack__ = new char[default_co_stack_size];
-    // printf("shared stack: 0x%p  bp:0x%p\n", get_shared_stack(), get_shared_stack_bp());
-    current_co__ = new co_ctx(nullptr, co_attr_config { 0, false, "__main__" });
-    main_co__    = current_co__;
+    current_co__   = new co_ctx(nullptr, co_attr_config { 0, false, "__main__" });
+    main_co__      = current_co__;
     // 防止主协程有业务逻辑但是无法被调度
     append_co(main_co__);
     save_co__ = new co_ctx(__co_save_stack__, co_attr_config { default_co_stack_size, false, "__co_save__" });
@@ -156,7 +159,7 @@ inline co_env::~co_env()
     while (true)
     {
         std::unique_lock<std::recursive_mutex> lck(mu_co_set__);
-        if (co_set__.size() > 1) // main_co__
+        if (co_set__.size() > 1)
         {
             lck.unlock();
             this_coroutine::yield_coroutine();

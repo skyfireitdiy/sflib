@@ -756,15 +756,15 @@ void func2()
 void func1()
 {
     std::cout << "func1 co:" << get_co_env()->get_curr_co() << std::endl;
-    coroutine co2(&func2);
+    coroutine co({ co_attr::set_name("co2") }, &func2);
     std::cout << "func1" << std::endl;
-    co2.join();
+    co.join();
 }
 
 int main()
 {
     std::cout << "main co:" << get_co_env()->get_curr_co() << std::endl;
-    coroutine co(&func1);
+    coroutine co({ co_attr::set_name("co1") }, &func1);
     co.join();
     std::cout << "finished" << std::endl;
 }

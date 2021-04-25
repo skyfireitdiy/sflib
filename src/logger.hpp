@@ -109,16 +109,19 @@ template <typename T>
 inline void logger::logout(int level, const std::string& file,
                            int line, const std::string& func, const T& dt)
 {
-    std::ostringstream so;
-    so << std::this_thread::get_id();
+    std::ostringstream thread_so;
+    thread_so << "0x" << std::hex << std::this_thread::get_id();
+    std::ostringstream co_so;
+    co_so << "0x" << std::hex << this_coroutine::get_id();
+
     logger_info_t log_info;
     log_info.level     = level;
     log_info.file      = file;
     log_info.line      = line;
-    log_info.thread_id = so.str();
+    log_info.thread_id = thread_so.str();
     log_info.time      = make_time_str();
     log_info.func      = func;
-    log_info.co_id     = std::to_string(this_coroutine::get_id());
+    log_info.co_id     = co_so.str();
     log_info.co_name   = this_coroutine::get_name();
 
     std::ostringstream oss;
@@ -210,16 +213,18 @@ inline void logger::logout(const int level, const std::string& file,
                            const int line, const std::string& func,
                            const T&... dt)
 {
-    std::ostringstream so;
-    so << std::this_thread::get_id();
+    std::ostringstream thread_so;
+    thread_so << "0x" << std::hex << std::this_thread::get_id();
+    std::ostringstream co_so;
+    co_so << "0x" << std::hex << this_coroutine::get_id();
     logger_info_t log_info;
     log_info.level     = level;
     log_info.file      = file;
     log_info.line      = line;
-    log_info.thread_id = so.str();
+    log_info.thread_id = thread_so.str();
     log_info.time      = make_time_str();
     log_info.func      = func;
-    log_info.co_id     = std::to_string(this_coroutine::get_id());
+    log_info.co_id     = co_so.str();
     log_info.co_name   = this_coroutine::get_name();
     std::ostringstream oss;
     logout__(oss, log_info, dt...);

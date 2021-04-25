@@ -32,36 +32,28 @@ inline void __switch_co__(co_ctx* curr, co_ctx* next)
 
 inline void __swap_regs__(const void*, const void*)
 {
-    __asm(
-        "popq %rbp\n"
-
-        "movq %r15, (%rdi)\n"
-        "movq %r14, 8(%rdi)\n"
-        "movq %r13, 16(%rdi)\n"
-        "movq %r12, 24(%rdi)\n"
-        "movq %rbp, 32(%rdi)\n"
-        "movq 0(%rsp), %rax\n"
-        "movq %rax, 40(%rdi)\n"
-        "movq %rbx, 48(%rdi)\n"
-        "movq %rsp, 56(%rdi)\n"
-        "movq %rdi, 64(%rdi)\n"
-        "stmxcsr    72(%rdi)\n"
-        "fnstcw     76(%rdi)\n"
-
-        "fldcw      76(%rsi)\n"
-        "ldmxcsr    72(%rsi)\n"
-        "movq 64(%rsi), %rdi\n"
-        "movq 56(%rsi), %rsp\n"
-        "movq 48(%rsi), %rbx\n"
-        "movq 40(%rsi), %rax\n"
-        "movq %rax, 0(%rsp)\n"
-        "movq 32(%rsi), %rbp\n"
-        "movq 24(%rsi), %r12\n"
-        "movq 16(%rsi), %r11\n"
-        "movq 8(%rsi), %r10\n"
-        "movq (%rsi), %r9\n"
-
-        "pushq %rbp\n");
+    __asm("popq %rbp\n");
+    __asm("movq %r15, (%rdi)\n");
+    __asm("movq %r14, 8(%rdi)\n");
+    __asm("movq %r13, 16(%rdi)\n");
+    __asm("movq %r12, 24(%rdi)\n");
+    __asm("movq %rbp, 32(%rdi)\n");
+    __asm("movq 0(%rsp), %rax\n");
+    __asm("movq %rax, 40(%rdi)\n");
+    __asm("movq %rbx, 48(%rdi)\n");
+    __asm("movq %rsp, 56(%rdi)\n");
+    __asm("movq %rdi, 64(%rdi)\n");
+    __asm("movq 64(%rsi), %rdi\n");
+    __asm("movq 56(%rsi), %rsp\n");
+    __asm("movq 48(%rsi), %rbx\n");
+    __asm("movq 40(%rsi), %rax\n");
+    __asm("movq %rax, 0(%rsp)\n");
+    __asm("movq 32(%rsi), %rbp\n");
+    __asm("movq 24(%rsi), %r12\n");
+    __asm("movq 16(%rsi), %r11\n");
+    __asm("movq 8(%rsi), %r10\n");
+    __asm("movq (%rsi), %r9\n");
+    __asm("pushq %rbp\n");
 }
 
 inline void __co_func__(co_ctx* ctx)
