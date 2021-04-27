@@ -3,6 +3,8 @@
 #include "co_utils.h"
 #include "logger.h"
 
+#define __co_memory_barrier__() __asm volatile("" :: \
+                                                   : "memory")
 namespace skyfire
 {
 inline void __switch_co__(co_ctx* curr, co_ctx* next)
@@ -12,7 +14,9 @@ inline void __switch_co__(co_ctx* curr, co_ctx* next)
         curr->set_state(co_state::suspended);
     }
     next->set_state(co_state::running);
+    __co_memory_barrier__();
     __swap_regs__(curr->get_reg_buf(), next->get_reg_buf());
+    __co_memory_barrier__();
 }
 
 /*| 64 bit

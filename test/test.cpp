@@ -62,7 +62,8 @@ sf_test(chan, test_chan_order)
     auto             th2 = coroutine(std::function([&data, &ch] {
         for (int i = 0; i < 5; ++i)
         {
-            int t = 100;
+            int t;
+            ch >> t;
             data.push_back(t);
         }
     }));
@@ -86,7 +87,7 @@ sf_test(chan, test_chan_order_with_buffer)
     auto             th2 = coroutine([&data, &ch] {
         for (int i = 0; i < 5; ++i)
         {
-            int t = 100;
+            int t;
             ch >> t;
             data.push_back(t);
         }
@@ -104,7 +105,7 @@ sf_test(chan, test_write_to_closed_chan)
         ch->close();
     });
     coroutine th2([ch, &ret]() {
-        this_thread::sleep_for(chrono::seconds(3));
+        this_thread::sleep_for(chrono::seconds(1));
         ret = 5 >> ch;
     });
     th1.join();
@@ -117,7 +118,7 @@ sf_test(chan, test_read_from_closed_chan)
     auto      ch  = chan<int>::make_instance(5);
     auto      ret = true;
     coroutine th1([ch, &ret]() {
-        this_thread::sleep_for(chrono::seconds(3));
+        this_thread::sleep_for(chrono::seconds(1));
         int t;
         ret = ch >> t;
     });
@@ -197,6 +198,7 @@ sf_test(tcp, test_client)
     sf_debug("start wait");
     cv.wait(lck);
     sf_debug("wait end, connect");
+    this_coroutine::sleep_for(std::chrono::seconds(1));
     if (!client->connect_to_server("127.0.0.1", 9300))
     {
         sf_debug("connect error");
@@ -529,7 +531,7 @@ sf_test(waiter, none_param_event_waiter_test)
 {
     test_object t;
     coroutine   co([&t]() {
-        this_coroutine::sleep_for(std::chrono::seconds(5));
+        this_coroutine::sleep_for(std::chrono::seconds(1));
         sf_debug(" call s1");
         t.s1();
     });
@@ -541,7 +543,7 @@ sf_test(waiter, many_param_event_waiter_test)
 {
     test_object t;
     coroutine   co([&t]() {
-        this_coroutine::sleep_for(std::chrono::seconds(5));
+        this_coroutine::sleep_for(std::chrono::seconds(1));
         t.s2(5, 6.5, 504.2);
     });
     sf_wait(&t, s2);
