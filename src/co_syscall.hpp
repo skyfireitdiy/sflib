@@ -5,7 +5,7 @@
 namespace skyfire
 {
 
-inline int co_socket(int domain, int type, int protocol)
+int co_socket(int domain, int type, int protocol)
 {
     int sock = socket(domain, type, protocol);
     if (sock == -1)
@@ -20,7 +20,7 @@ inline int co_socket(int domain, int type, int protocol)
     return sock;
 }
 
-inline bool set_fd_nonblock(int fd)
+bool set_fd_nonblock(int fd)
 {
     int flag = fcntl(fd, F_GETFL, NULL);
     if (flag < 0)

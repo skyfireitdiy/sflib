@@ -8,46 +8,6 @@ int main()
     run_test(16);
 }
 
-sf_test(dns, test_parse_client_req_url)
-{
-    std::string agreement, host, resource;
-    short       port;
-    skyfire::parse_client_req_url("http://www.baidu.com", agreement, host, port, resource);
-    test_str_eq(agreement, "http");
-    test_str_eq(host, "www.baidu.com");
-    test_str_eq(resource, "/");
-    test_num_eq(port, 80);
-    skyfire::parse_client_req_url("http://www.baidu.com:8080/hello/world", agreement, host, port, resource);
-    test_str_eq(agreement, "http");
-    test_str_eq(host, "www.baidu.com");
-    test_num_eq(port, 8080);
-    test_str_eq(resource, "/hello/world");
-    skyfire::parse_client_req_url("//www.baidu.com:8080/hello/world", agreement, host, port, resource);
-    test_str_eq(agreement, "http");
-    test_str_eq(host, "www.baidu.com");
-    test_num_eq(port, 8080);
-    test_str_eq(resource, "/hello/world");
-    skyfire::parse_client_req_url("/www.baidu.com:8080/hello/world", agreement, host, port, resource);
-    test_str_eq(agreement, "http");
-    test_str_eq(host, "/www.baidu.com");
-    test_num_eq(port, 8080);
-    test_str_eq(resource, "/hello/world");
-    skyfire::parse_client_req_url("https://www.baidu.com:8080/hello/world", agreement, host, port, resource);
-    test_str_eq(agreement, "https");
-    test_str_eq(host, "www.baidu.com");
-    test_num_eq(port, 8080);
-    test_str_eq(resource, "/hello/world");
-}
-
-sf_test(http_client, test_build_request_header_to_string)
-{
-    auto req = skyfire::http_client_request::make_instance();
-    req->add_header("Host", "www.baidu.com")->set_url("http://www.baidu.com")->set_method("POST")->set_body(skyfire::to_byte_array("hello world"));
-    // TODO 完善用例
-
-    test_np_eq(req->to_byte_array(), to_byte_array("POST / HTTP/1.1\r\nHost:www.baidu.com\r\n\r\nhello world"));
-}
-
 sf_test(chan, test_chan_order)
 {
     auto             ch = chan<int>::make_instance();
@@ -129,84 +89,6 @@ sf_test(chan, test_read_from_closed_chan)
     th1.join();
     th2.join();
     test_assert(!ret);
-}
-
-#ifdef TEST_DNS
-sf_test(dns, test_resolve_dns)
-{
-    auto ret = skyfire::resolve_dns("www.baidu.com");
-    test_assert(skyfire::sf_error(ret));
-    bool ok = false;
-    for (auto ip : std::vector<std::string>(ret))
-    {
-        ok = true;
-    }
-    test_assert(ok);
-}
-
-sf_test(dns, test_connect_host)
-{
-    auto client = skyfire::tcp_client::make_instance();
-    auto ret    = client->connect_to_server("www.baidu.com", 80);
-    test_assert(ret);
-    ret = client->connect_to_server("14.215.177.38", 80);
-    test_assert(!ret);
-}
-#endif
-
-co_mutex              mu;
-co_condition_variable cv;
-sf_test(tcp, test_server)
-{
-    auto               server = skyfire::tcp_server::make_instance(skyfire::tcp::raw(true));
-    skyfire::eventloop lp;
-    bool               connected = false;
-    byte_array         data;
-    sf_bind(
-        server, new_connection, [&connected](SOCKET sock) {
-            connected = true;
-        },
-        false);
-    sf_bind(
-        server, raw_data_coming, [&server, &lp, &data](SOCKET sock, skyfire::byte_array d) {
-            sf_debug("data comming");
-            data = d;
-            server->close(sock);
-            server->close();
-            lp.quit();
-        },
-        false);
-    auto listened = server->listen("127.0.0.1", 9300);
-    cv.notify_one();
-    lp.exec();
-    test_assert(connected && listened);
-    test_p_eq(skyfire::to_string(data), "hello world"s);
-}
-
-sf_test(tcp, test_client)
-{
-    sf_debug("start test client");
-    using namespace std;
-    auto               client = skyfire::tcp_client::make_instance();
-    skyfire::eventloop lp;
-    sf_bind(
-        client, closed, [&lp]() {
-            lp.quit();
-        },
-        false);
-    std::unique_lock<co_mutex> lck(mu);
-    sf_debug("start wait");
-    cv.wait(lck);
-    sf_debug("wait end, connect");
-    this_coroutine::sleep_for(std::chrono::seconds(1));
-    if (!client->connect_to_server("127.0.0.1", 9300))
-    {
-        sf_debug("connect error");
-        return;
-    }
-    sf_debug("connect success");
-    client->send(skyfire::to_byte_array("hello world"s));
-    lp.exec();
 }
 
 sf_test(finally, test_finally_order)
