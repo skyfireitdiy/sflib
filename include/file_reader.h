@@ -5,7 +5,6 @@
 #include "utils.h"
 #include <bits/stdc++.h>
 
-
 namespace skyfire
 {
 class file_reader : public make_instance_t<file_reader, nocopy<reader>>

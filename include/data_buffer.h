@@ -8,7 +8,6 @@
 #include "writer.h"
 #include <bits/stdc++.h>
 
-
 namespace skyfire
 {
 class data_buffer : public reader,
