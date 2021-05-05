@@ -105,14 +105,6 @@ private:
     template <typename T, typename... U>
     void logout__(std::ostringstream& oss, logger_info_t& log_info,
                   const T& tmp, const U&... tmp2);
-#ifdef QT_CORE_LIB
-    template <typename... U>
-    void logout__(std::ostringstream& oss, logger_info_t& log_info,
-                  const QString& tmp, const U&... tmp2);
-    // template<>
-    void logout__(std::ostringstream& oss, logger_info_t& log_info,
-                  const QString& tmp);
-#endif
     template <typename T>
     void logout__(std::ostringstream& oss, logger_info_t& log_info,
                   const T& tmp);
