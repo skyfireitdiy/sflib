@@ -631,26 +631,17 @@ sf_test(coroutine, get)
 using namespace std;
 using namespace skyfire;
 
-void func2()
-{
-    std::cout << "func2 co:" << get_co_env()->get_curr_co() << std::endl;
-    std::cout << "func2" << std::endl;
-}
-
-void func1()
-{
-    std::cout << "func1 co:" << get_co_env()->get_curr_co() << std::endl;
-    coroutine co({ co_attr::set_name("co2") }, &func2);
-    std::cout << "func1" << std::endl;
-    co.join();
-}
-
 int main()
 {
-    std::cout << "main co:" << get_co_env()->get_curr_co() << std::endl;
-    coroutine co({ co_attr::set_name("co1") }, &func1);
-    co.join();
-    std::cout << "finished" << std::endl;
+    for (int i = 0; i < 500; ++i)
+    {
+        coroutine co(
+            { co_attr::set_name("co" + std::to_string(i)) }, [](int i) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                std::cout << this_coroutine::get_name() << " finished" << std::endl;
+            },
+            i);
+    }
 }
 
 #endif

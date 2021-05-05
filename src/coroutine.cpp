@@ -49,10 +49,10 @@ coroutine::~coroutine()
     {
         return;
     }
-    // if (!joined__)
-    // {
-    //     join();
-    // }
+    if (!joined__)
+    {
+        get_co_manager()->detached_co(ctx__);
+    }
 }
 
 coroutine::coroutine(coroutine&& other)

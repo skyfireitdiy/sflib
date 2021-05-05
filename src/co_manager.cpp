@@ -22,18 +22,17 @@ void co_manager::remove_current_env()
 
 co_manager::~co_manager()
 {
-    need_exit__ = true;
-    {
-        std::lock_guard<std::mutex> lck(mu_co_env_set__);
-        for (auto& env : co_env_set__)
-        {
-            env.first->set_exit_flag();
-        }
-    }
+    // 停止监控线程
+    need_monitor_exit__ = true;
+    fu_monitor_thread__.wait();
 
-    // exit_env 会删除co_env_set__中的元素
+    // 删除所有co
+    need_detach_exit__ = true;
+    cond_detached_co__.notify_one();
+    fu_detach_thread__.wait();
+
+    // 删除所有环境
     auto backup = co_env_set__;
-
     {
         std::unique_lock<std::mutex> lck(mu_env_need_clean__);
         for (auto& env : backup)
@@ -41,7 +40,16 @@ co_manager::~co_manager()
             env_need_clean__.push_back(env.first);
         }
     }
+    need_env_exit__ = true;
+    {
+        std::lock_guard<std::mutex> lck(mu_co_env_set__);
+        for (auto& env : co_env_set__)
+        {
+            env.first->set_exit_flag();
+        }
+    }
     cond_env_need_clean__.notify_one();
+    fu_clean_env_thread__.wait();
 }
 
 co_env* co_manager::add_env()
@@ -56,7 +64,7 @@ co_env* co_manager::add_env()
             append_env_to_set(env, env_thread_pro.get_future().get());
         }
         env_pointer_pro.set_value(env);
-        while (!env->if_need_exit())
+        while (!env->if_need_exit() || env->co_size() != 0)
         {
             this_coroutine::yield_coroutine();
         }
@@ -102,22 +110,21 @@ void co_manager::remove_env__(co_env* env)
     env->set_exit_flag();
     if (co_env_set__.contains(env))
     {
-        co_env_set__.erase(env);
+        co_env_set__.erase(env); // 会等待env线程退出
         delete env;
     }
 }
 
 void co_manager::clean_env_thread__()
 {
-    while (!need_exit__)
+    while (!need_env_exit__)
     {
         std::deque<co_env*> env_need_clean_backup__;
         {
             std::unique_lock<std::mutex> lck(mu_env_need_clean__);
-            cond_env_need_clean__.wait(lck);
-            if (need_exit__)
+            if (env_need_clean__.empty())
             {
-                return;
+                cond_env_need_clean__.wait(lck);
             }
             env_need_clean_backup__ = std::move(env_need_clean__);
         }
@@ -130,20 +137,19 @@ void co_manager::clean_env_thread__()
 
 void co_manager::monitor_thread__()
 {
-    while (!need_exit__)
+    while (!need_monitor_exit__)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        if (need_exit__)
+        if (need_monitor_exit__)
         {
             break;
         }
-        // reassign_co__();
+        reassign_co__();
     }
 }
 
 void co_manager::reassign_co__()
 {
-
     std::list<co_ctx*>   need_move_co;
     std::vector<co_env*> normal_env;
 
@@ -189,12 +195,45 @@ void co_manager::reassign_co__()
 bool co_manager::need_destroy_co_thread() const
 {
     // std::lock_guard<std::mutex> lck(mu_co_env_set__);
-    return co_env_set__.size() > base_co_thread_count__ || need_exit__;
+    return co_env_set__.size() > base_co_thread_count__ || need_env_exit__;
 }
 
 co_manager::co_manager()
 {
-    background_task_future__.emplace_back(std::async(&co_manager::monitor_thread__, this));
-    background_task_future__.emplace_back(std::async(&co_manager::clean_env_thread__, this));
+    fu_monitor_thread__   = std::async(&co_manager::monitor_thread__, this);
+    fu_clean_env_thread__ = std::async(&co_manager::clean_env_thread__, this);
+    fu_detach_thread__    = std::async(&co_manager::detach_thread__, this);
+}
+
+void co_manager::detached_co(co_ctx* ctx)
+{
+    std::lock_guard<std::mutex> lck(mu_detached_co__);
+    detached_co__.push_back(ctx);
+    cond_detached_co__.notify_one();
+}
+
+void co_manager::detach_thread__()
+{
+    while (!need_detach_exit__)
+    {
+        std::deque<co_ctx*> detach_co_backup;
+        {
+            std::unique_lock<std::mutex> lck(mu_detached_co__);
+            if (detached_co__.empty())
+            {
+                cond_detached_co__.wait(lck);
+            }
+            detach_co_backup = std::move(detached_co__);
+        }
+        for (auto& p : detach_co_backup)
+        {
+            while (p->get_state() != co_state::finished)
+            {
+                // FIXME 换用更好的办法
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+            delete p;
+        }
+    }
 }
 }

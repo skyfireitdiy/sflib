@@ -142,20 +142,6 @@ co_env::co_env()
 
 co_env::~co_env()
 {
-    while (true)
-    {
-        std::unique_lock<std::mutex> lck(mu_co_set__);
-        if (co_set__.size() > 1)
-        {
-            lck.unlock();
-            get_co_env()->yield_coroutine();
-        }
-        else
-        {
-            lck.unlock();
-            break;
-        }
-    }
     std::cout << "co_env::~co_env" << std::endl;
     delete[] shared_stack__;
     delete save_co__;
@@ -170,7 +156,12 @@ void co_env::set_blocked()
 std::deque<co_ctx*> co_env::surrender_co()
 {
     std::lock_guard<std::mutex> lck(mu_co_set__);
-    return std::move(co_set__);
+    auto                        end = std::remove_if(co_set__.begin(), co_set__.end(), [this](co_ctx* ctx) {
+        return !ctx->shared_stack() && ctx != main_co__ && ctx != current_co__;
+    });
+    auto                        ret = std::deque<co_ctx*>(end, co_set__.end());
+    co_set__.erase(end, co_set__.end());
+    return ret;
 }
 
 bool co_env::if_need_exit() const
