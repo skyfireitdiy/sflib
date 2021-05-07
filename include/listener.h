@@ -1,15 +1,20 @@
 #pragma once
 
 #include "connector.h"
-#include "object.h"
+#include "error.h"
+#include "net_type.h"
+#include "utils.h"
 
 namespace skyfire
 {
-class listener
+class listener : public make_instance_t<listener>
 {
+private:
+    sock_type sock_type__;
+
 public:
-    virtual bool                       listen(const std::string& address) = 0;
-    virtual std::shared_ptr<connector> accept()                           = 0;
-    virtual void                       close()                            = 0;
+    sf_error                   listen(const std::string& address);
+    std::shared_ptr<connector> accept();
+    void                       close();
 };
 }

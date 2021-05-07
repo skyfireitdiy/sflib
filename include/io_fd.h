@@ -8,11 +8,10 @@ namespace skyfire
 class io_fd : public reader, public writer, public make_instance_t<io_fd>
 {
 private:
-    int                   fd__;
-    sf_error              err__;
-    bool                  readable__;
-    bool                  writeable__;
-    std::weak_ptr<object> parent__;
+    int      fd__;
+    sf_error err__;
+
+protected:
     io_fd(int fd);
 
 public:
