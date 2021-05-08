@@ -111,7 +111,6 @@ void co_manager::remove_env__(co_env* env)
     if (co_env_set__.contains(env))
     {
         co_env_set__.erase(env); // 会等待env线程退出
-        delete env;
     }
 }
 
