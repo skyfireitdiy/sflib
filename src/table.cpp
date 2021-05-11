@@ -189,7 +189,7 @@ std::string full_string(const std::string& str, table_align align, int space_cou
     case table_align::align_right:
         return sf_string::repeat(" ", space_count) + str;
     default:
-        throw exception(err_unsupport_type, "unsupport type:" + std::to_string(static_cast<int>(align)));
+        throw exception(err_unsupported_type, "unsupport type:" + std::to_string(static_cast<int>(align)));
         break;
     }
 }

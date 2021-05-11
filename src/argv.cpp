@@ -216,7 +216,7 @@ argv_result_t argparser::parse_argv_value__(const std::string& p, const argv_opt
         break;
     default:
         return argv_result_t {
-            sf_error { { err_unsupport_type, "unsupport:" + std::to_string(static_cast<int>(current_opt.type)) } }, json {}
+            sf_error { { err_unsupported_type, "unsupport:" + std::to_string(static_cast<int>(current_opt.type)) } }, json {}
         };
     }
 }

@@ -624,6 +624,42 @@ sf_test(coroutine, get)
     test_p_eq(t, 10);
 }
 
+sf_test(parse_net_addr, normal_addr)
+{
+    sock_addr result = parse_net_addr("tcp:127.0.0.1:8888");
+    test_np_eq(result.type, sock_type::tcp);
+    test_p_eq(result.host, "127.0.0.1");
+    test_p_eq(result.port, 8888);
+}
+
+sf_test(parse_net_addr, addr_without_port)
+{
+    sock_addr result = parse_net_addr("tcp:127.0.0.1:");
+    test_np_eq(result.type, sock_type::tcp);
+    test_p_eq(result.host, "127.0.0.1");
+    test_p_eq(result.port, 0);
+}
+
+sf_test(parse_net_addr, addr_without_host)
+{
+    sock_addr result = parse_net_addr("tcp::8888");
+    test_np_eq(result.type, sock_type::tcp);
+    test_p_eq(result.host, "");
+    test_p_eq(result.port, 8888);
+}
+
+sf_test(parse_net_addr, addr_without_type)
+{
+    sf_error result = parse_net_addr(":127.0.0.1:8888");
+    test_np_eq(result, false);
+}
+
+sf_test(parse_net_addr, addr_with_unsupported_type)
+{
+    sf_error result = parse_net_addr("aax:127.0.0.1:8888");
+    test_np_eq(result, false);
+}
+
 #else
 #include <iostream>
 #include <sflib>

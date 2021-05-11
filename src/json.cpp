@@ -689,7 +689,7 @@ bool json::operator==(const json& other) const
         return static_cast<std::string>(*this) == static_cast<std::string>(other);
     }
     default:
-        throw exception(err_unsupport_type, "unsupport type:" + std::to_string(static_cast<int>(value__->type)));
+        throw exception(err_unsupported_type, "unsupport type:" + std::to_string(static_cast<int>(value__->type)));
     }
 }
 } // namespace skyfire

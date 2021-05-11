@@ -24,7 +24,7 @@ enum error_code
     // 解析错误
     err_parse = 0x00000008,
     // 不支持的类型
-    err_unsupport_type = 0x00000009,
+    err_unsupported_type = 0x00000009,
     // 缺少必要参数
     err_not_enough = 0x0000000a,
     // 列数量不匹配
