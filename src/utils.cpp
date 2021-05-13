@@ -31,7 +31,7 @@ std::string string_trim(const std::string& str)
     }
     return { str.begin() + begin, str.begin() + end };
 }
-std::string to_lower_string(std::string str)
+std::string string_to_lower(std::string str)
 {
     for (auto& p : str)
         p = static_cast<char>(tolower(p));
@@ -44,12 +44,12 @@ std::string get_path_ext(const std::string& path)
         return "";
     return std::string(path.begin() + pos + 1, path.end());
 }
-bool equal_nocase_string(const std::string& str1,
+bool string_equal_nocase(const std::string& str1,
                          const std::string& str2)
 {
-    return to_lower_string(str1) == to_lower_string(str2);
+    return string_to_lower(str1) == string_to_lower(str2);
 }
-std::vector<std::string> split_string(std::string        str,
+std::vector<std::string> string_split(std::string        str,
                                       const std::string& split_str)
 {
     std::vector<std::string> ret;
@@ -98,7 +98,7 @@ void string_replace(std::string& str, const std::string& from,
         start_pos += to.length();
     }
 }
-std::string long_double_to_string(const long double& num)
+std::string string_from_long_double(const long double& num)
 {
     auto buffer = std::to_string(num);
     if (buffer.length() > 7)
@@ -158,7 +158,7 @@ std::string safe_path(std::string danger_path)
                    std::string(1, std::filesystem::path::preferred_separator), "");
     return danger_path;
 }
-std::string convert_ns_to_readable(long long time)
+std::string string_from_time_ns(long long time)
 {
     std::ostringstream so;
     auto               old = so.flags();

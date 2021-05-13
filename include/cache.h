@@ -8,7 +8,7 @@
 namespace skyfire
 {
 class cache
-    : public make_instance_t<cache, nocopy<empty_class>>
+    : public instance_maker<cache, nocopy<empty_class>>
 {
 private:
     struct cache_data_t

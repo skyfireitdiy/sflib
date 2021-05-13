@@ -142,7 +142,6 @@ co_env::co_env()
 
 co_env::~co_env()
 {
-    std::cout << "co_env::~co_env" << std::endl;
     delete[] shared_stack__;
     delete save_co__;
     delete main_co__;

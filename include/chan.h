@@ -11,7 +11,7 @@
 namespace skyfire
 {
 template <typename T>
-class chan : public make_instance_t<chan<T>, nocopy<>>
+class chan : public instance_maker<chan<T>, nocopy<>>
 {
 private:
     std::queue<T>         data__;

@@ -5,7 +5,7 @@
 #include "writer.h"
 namespace skyfire
 {
-class io_fd : public reader, public writer, public make_instance_t<io_fd>
+class io_fd : public reader, public writer, public instance_maker<io_fd>
 {
 private:
     int      fd__;

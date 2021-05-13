@@ -7,7 +7,7 @@
 
 namespace skyfire
 {
-class file_reader : public make_instance_t<file_reader, nocopy<reader>>
+class file_reader : public instance_maker<file_reader, nocopy<reader>>
 {
 private:
     file_reader(const std::string& filename);

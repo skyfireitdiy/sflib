@@ -6,7 +6,7 @@ namespace skyfire
 {
 sock_addr_result parse_net_addr(const std::string& addr)
 {
-    auto result = split_string(addr, ":");
+    auto result = string_split(addr, ":");
     if (result.size() != 3) // 协议、host、端口
     {
         return { sf_error { { err_parse, "parse error:" + addr } }, {} };

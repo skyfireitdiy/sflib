@@ -51,7 +51,7 @@ public:
     virtual ~object();
 
 protected:
-    object_msg_queue* __p_msg_queue__ = object_msg_queue::instance();
+    std::shared_ptr<object_msg_queue> __p_msg_queue__ = object_msg_queue::instance();
 };
 
 // impl

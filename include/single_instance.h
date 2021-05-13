@@ -3,14 +3,14 @@
 #include "empty_class.h"
 #include <bits/stdc++.h>
 
-#define SF_SINGLE_TON(ClassName)                            \
-    ClassName(const ClassName&) = delete;                   \
-    ClassName(ClassName&&)      = delete;                   \
-    ClassName&        operator=(const ClassName&) = delete; \
-    static ClassName* instance()                            \
-    {                                                       \
-        static ClassName instance__;                        \
-        return &instance__;                                 \
+#define SF_SINGLE_TON(ClassName)                                            \
+    ClassName(const ClassName&)               = delete;                     \
+    ClassName(ClassName&&)                    = delete;                     \
+    ClassName&                        operator=(const ClassName&) = delete; \
+    static std::shared_ptr<ClassName> instance()                            \
+    {                                                                       \
+        static std::shared_ptr<ClassName> instance__(new ClassName);        \
+        return instance__;                                                  \
     }
 
 namespace skyfire

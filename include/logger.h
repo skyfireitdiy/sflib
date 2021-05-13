@@ -83,6 +83,8 @@ public:
     static std::string format(std::string          format_str,
                               const logger_info_t& log_info, bool color);
 
+    ~logger();
+
 private:
     struct log_attr
     {
@@ -101,7 +103,6 @@ private:
     bool                       check_key_can_use__(int key);
     int                        make_random_logger_id__();
     logger();
-    ~logger();
     template <typename T, typename... U>
     void logout__(std::ostringstream& oss, logger_info_t& log_info,
                   const T& tmp, const U&... tmp2);

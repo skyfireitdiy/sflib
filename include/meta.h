@@ -4,64 +4,64 @@
 namespace skyfire
 {
 template <class T>
-struct check_param_reference;
+struct is_param_reference;
 template <class T, class... U>
-struct check_param_reference<std::function<T(U...)>> final
+struct is_param_reference<std::function<T(U...)>> final
 {
     static constexpr bool value = std::disjunction<std::is_reference<U>...>::value;
     // static constexpr bool value = (std::is_reference<U>::value || ... ||
     // false);
 };
 template <typename T>
-struct check_param_reference final
+struct is_param_reference final
 {
-    static constexpr bool value = check_param_reference<decltype(
+    static constexpr bool value = is_param_reference<decltype(
         std::function(std::declval<T>()))>::value;
     // static constexpr bool value = (std::is_reference<V>::value || ... ||
     // false);
 };
 template <class T>
-struct check_param_pointer;
+struct is_param_pointer;
 template <class T, class... U>
-struct check_param_pointer<std::function<T(U...)>> final
+struct is_param_pointer<std::function<T(U...)>> final
 {
     static constexpr bool value = std::disjunction<std::is_pointer<U>...>::value;
     // static constexpr bool value = (std::is_pointer<U>::value || ... ||
     // false);
 };
 template <typename T>
-struct check_param_pointer final
+struct is_param_pointer final
 {
-    static constexpr bool value = check_param_pointer<decltype(
+    static constexpr bool value = is_param_pointer<decltype(
         std::function(std::declval<T>()))>::value;
     // static constexpr bool value = (std::is_pointer<V>::value || ... ||
     // false);
 };
 template <class T>
-struct check_return_reference final
+struct is_return_reference final
 {
 };
 template <class T, class... U>
-struct check_return_reference<std::function<T(U...)>> final
+struct is_return_reference<std::function<T(U...)>> final
 {
     static constexpr bool value = std::is_reference<T>::value;
 };
 template <template <typename> class T, typename U, typename... V>
-struct check_return_reference<T<U(V...)>> final
+struct is_return_reference<T<U(V...)>> final
 {
     static constexpr bool value = std::is_reference<U>::value;
 };
 template <class T>
-struct check_return_pointer final
+struct is_return_pointer final
 {
 };
 template <class T, class... U>
-struct check_return_pointer<std::function<T(U...)>> final
+struct is_return_pointer<std::function<T(U...)>> final
 {
     static constexpr bool value = std::is_pointer<T>::value;
 };
 template <template <typename> class T, typename U, typename... V>
-struct check_return_pointer<T<U(V...)>> final
+struct is_return_pointer<T<U(V...)>> final
 {
     static constexpr bool value = std::is_pointer<U>::value;
 };

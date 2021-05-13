@@ -216,7 +216,7 @@ int run_test(int thread_count, bool flashing)
     });
     all_result_tb.set_header({ "thread count", "cost", "pass", "failed" });
     all_result_tb.add_row({ std::to_string(thread_count),
-                            string_trim(convert_ns_to_readable(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_time).count())), std::to_string(count_pass), std::to_string(count_failed) });
+                            string_trim(string_from_time_ns(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now() - start_time).count())), std::to_string(count_pass), std::to_string(count_failed) });
     std::cout << "Statistical results:" << std::endl
               << all_result_tb.to_string() << std::endl;
     return ret;

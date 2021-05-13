@@ -193,7 +193,7 @@ json::json(T number)
     : json()
 {
     value__->type  = json_type::number;
-    value__->value = long_double_to_string(number);
+    value__->value = string_from_long_double(number);
 }
 template <typename T>
 json to_json_helper__(const std::string& key, const T& value)
@@ -310,7 +310,7 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
     template <>                                                   \
     inline json to_json(const container<char>& value)             \
     {                                                             \
-        return json(char_container_to_hex_string(value));         \
+        return json(string_hex_from_char_container(value));       \
     }                                                             \
     template <typename T>                                         \
     void from_json(const json& js, container<T>& value)           \
@@ -329,7 +329,7 @@ std::enable_if_t<N == sizeof...(ARGS), void> from_json_tuple_helper__(
     {                                                             \
         std::string tmp;                                          \
         from_json(js, tmp);                                       \
-        hex_string_to_char_container(tmp, value);                 \
+        string_hex_to_char_container(tmp, value);                 \
     }
 #define SF_ASSOCIATED_CONTAINER_JSON_IMPL(container)                 \
     template <typename K, typename V>                                \

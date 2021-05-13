@@ -76,7 +76,7 @@ std::string watch_time<T>::to_string()
         {
             so << std::setw(30) << p.first << std::setw(6) << "|"
                << std::setw(12) << q.first << std::setw(6) << "|"
-               << convert_ns_to_readable(q.second) << std::endl;
+               << string_from_time_ns(q.second) << std::endl;
         }
     }
     so << "--------------------------------------------------------------------"

@@ -5,7 +5,7 @@
 
 namespace skyfire
 {
-class thread_pool : public make_instance_t<thread_pool>
+class thread_pool : public instance_maker<thread_pool>
 {
 public:
     explicit thread_pool(size_t thread_count = std::thread::hardware_concurrency());
