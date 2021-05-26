@@ -21,7 +21,6 @@
 #include "include/finally.h"
 #include "include/io_fd.h"
 #include "include/json.h"
-#include "include/json_utils.h"
 #include "include/lex.h"
 #include "include/logger.h"
 #include "include/meta.h"
