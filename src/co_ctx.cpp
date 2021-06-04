@@ -1,6 +1,7 @@
 
 #include "co_ctx.h"
 #include "co_env.h"
+#include "co_manager.h"
 
 #define __co_memory_barrier__() __asm volatile("" :: \
                                                    : "memory")
@@ -43,6 +44,7 @@ co_state co_ctx::get_state() const
 void co_ctx::set_state(co_state state)
 {
     state__ = state;
+    get_co_manager()->one_co_finished();
 }
 
 void co_ctx::set_reg_ret(const void* value)

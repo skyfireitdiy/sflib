@@ -30,6 +30,9 @@ class co_manager final
     std::mutex              mu_detached_co__;
     std::condition_variable cond_detached_co__;
 
+    std::mutex              mu_co_finished__;
+    std::condition_variable cond_co_finished__;
+
     void clean_env_thread__();
     void monitor_thread__();
     void detach_thread__();
@@ -46,6 +49,7 @@ public:
     bool need_destroy_co_thread() const;
     void remove_current_env();
     void detached_co(co_ctx* ctx);
+    void one_co_finished();
     ~co_manager();
 };
 

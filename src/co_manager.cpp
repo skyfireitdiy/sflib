@@ -224,15 +224,28 @@ void co_manager::detach_thread__()
             }
             detach_co_backup = std::move(detached_co__);
         }
-        for (auto& p : detach_co_backup)
+        while (!detach_co_backup.empty())
         {
-            while (p->get_state() != co_state::finished)
+            for (int i = detach_co_backup.size() - 1; i >= 0; --i)
             {
-                // FIXME 换用更好的办法
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                if (detach_co_backup[i]->get_state() == co_state::finished)
+                {
+                    delete detach_co_backup[i];
+                    detach_co_backup.erase(detach_co_backup.begin() + i);
+                }
             }
-            delete p;
+            // TODO 需要考虑并发问题
+            if (!detach_co_backup.empty())
+            {
+                std::unique_lock<std::mutex> lock(mu_co_finished__);
+                cond_detached_co__.wait(lock);
+            }
         }
     }
+}
+
+void co_manager::one_co_finished()
+{
+    cond_detached_co__.notify_one();
 }
 }
