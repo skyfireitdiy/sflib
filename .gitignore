@@ -3,3 +3,4 @@ build
 .ipynb_checkpoints
 .xmake
 compile_commands.json
+.clangd

@@ -108,7 +108,7 @@ logger::logger()
 {
     add_level_stream(SF_DEBUG_LEVEL, &std::cout);
 #ifdef SF_ASYNC_LOG
-    log_coroutine__ = std::make_shared<coroutine>(std::function([this]() {
+    log_routine__ = std::make_shared<coroutine>(std::function([this]() {
         while (true)
         {
             std::deque<logger_info_t> tmp_info;
@@ -145,10 +145,10 @@ logger::logger()
 }
 logger::~logger()
 {
-    if (log_coroutine__)
+    if (log_routine__)
     {
         stop_logger();
-        log_coroutine__->join();
+        log_routine__->join();
     }
 }
 void logger::stop_logger()
@@ -175,8 +175,10 @@ std::string logger::format(std::string          format_str,
     replace(format_str, "{file}", log_info.file);
     replace(format_str, "{level}", logger_level_str__[log_info.level]);
     replace(format_str, "{msg}", log_info.msg);
+#ifdef SF_COROUTINE
     replace(format_str, "{co_id}", log_info.co_id);
     replace(format_str, "{co_name}", log_info.co_name);
+#endif
 
     return colored ? color_string(format_str, log_color_map[log_info.level]) : format_str;
 }

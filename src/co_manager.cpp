@@ -1,5 +1,6 @@
 
 #include "co_manager.h"
+#include "coroutine.h"
 #include "logger.h"
 
 namespace skyfire

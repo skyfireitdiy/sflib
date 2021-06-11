@@ -5,7 +5,10 @@
 #include <QString>
 #endif
 #include "co_mutex.h"
+#ifdef SF_COROUTINE
+#include "co_condition_variable.h"
 #include "coroutine.h"
+#endif
 #include "json.h"
 #include "random.h"
 #include "single_instance.h"
@@ -48,8 +51,10 @@ struct logger_info_t
     std::string thread_id; // 线程号
     std::string func;      // 函数名称
     std::string msg;       // 消息
-    std::string co_name;   // 协程名称
-    std::string co_id;     // 协程id
+#ifdef SF_COROUTINE
+    std::string co_name; // 协程名称
+    std::string co_id;   // 协程id
+#endif
 };
 SF_JSONIFY(logger_info_t, level, time, line, file, thread_id, func, msg);
 inline std::unordered_map<int, std::string> logger_level_str__ {
@@ -59,8 +64,15 @@ inline std::unordered_map<int, std::string> logger_level_str__ {
     { SF_ERROR_LEVEL, "ERROR" },
     { SF_FATAL_LEVEL, "FATAL" },
 };
+
+#ifdef SF_COROUTINE
 constexpr char default_log_format[]
     = "{level} {time} T:{thread} C:{co_name}({co_id}) {file}:{line} {func} --> {msg}\n";
+#else
+constexpr char default_log_format[]
+    = "{level} {time} T:{thread} {file}:{line} {func} --> {msg}\n";
+#endif
+
 class logger
 {
 public:
@@ -92,16 +104,25 @@ private:
         bool                                            colored = true;
     };
     std::deque<logger_info_t> log_deque__;
-    std::condition_variable   cond__;
-    co_mutex                  deque_mu__;
+#ifdef SF_COROUTINE
+    co_condition_variable cond__;
+    co_mutex              deque_mu__;
+#else
+    std::condition_variable                cond__;
+    std::mutex                             deque_mu__;
+#endif
     std::unordered_map<
         int, std::unordered_map<int, log_attr>>
         logger_func_set__;
-    std::atomic<bool>          run__ { true };
-    std::recursive_mutex       func_set_mutex__;
-    std::shared_ptr<coroutine> log_coroutine__ = nullptr;
-    bool                       check_key_can_use__(int key);
-    int                        make_random_logger_id__();
+    std::atomic<bool>    run__ { true };
+    std::recursive_mutex func_set_mutex__;
+#ifdef SF_COROUTINE
+    std::shared_ptr<coroutine> log_routine__ = nullptr;
+#else
+    std::shared_ptr<std::thread>           log_routine__ = nullptr;
+#endif
+    bool check_key_can_use__(int key);
+    int  make_random_logger_id__();
     logger();
     template <typename T, typename... U>
     void logout__(std::ostringstream& oss, logger_info_t& log_info,
@@ -120,8 +141,11 @@ void logger::logout(int level, const std::string& file,
 {
     std::ostringstream thread_so;
     thread_so << "0x" << std::hex << std::this_thread::get_id();
+
+#ifdef SF_COROUTINE
     std::ostringstream co_so;
     co_so << "0x" << std::hex << this_coroutine::get_id();
+#endif
 
     logger_info_t log_info;
     log_info.level     = level;
@@ -130,8 +154,10 @@ void logger::logout(int level, const std::string& file,
     log_info.thread_id = thread_so.str();
     log_info.time      = make_time_str();
     log_info.func      = func;
-    log_info.co_id     = co_so.str();
-    log_info.co_name   = this_coroutine::get_name();
+#ifdef SF_COROUTINE
+    log_info.co_id   = co_so.str();
+    log_info.co_name = this_coroutine::get_name();
+#endif
 
     std::ostringstream oss;
     logout__(oss, log_info, dt);
@@ -178,8 +204,10 @@ void logger::logout(const int level, const std::string& file,
 {
     std::ostringstream thread_so;
     thread_so << "0x" << std::hex << std::this_thread::get_id();
+#ifdef SF_COROUTINE
     std::ostringstream co_so;
     co_so << "0x" << std::hex << this_coroutine::get_id();
+#endif
     logger_info_t log_info;
     log_info.level     = level;
     log_info.file      = file;
@@ -187,8 +215,10 @@ void logger::logout(const int level, const std::string& file,
     log_info.thread_id = thread_so.str();
     log_info.time      = make_time_str();
     log_info.func      = func;
-    log_info.co_id     = co_so.str();
-    log_info.co_name   = this_coroutine::get_name();
+#ifdef SF_COROUTINE
+    log_info.co_id   = co_so.str();
+    log_info.co_name = this_coroutine::get_name();
+#endif
     std::ostringstream oss;
     logout__(oss, log_info, dt...);
 }
