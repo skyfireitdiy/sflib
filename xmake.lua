@@ -1,0 +1,16 @@
+add_includedirs("include/sflib", "src/sflib", "include/")
+set_languages("c++20")
+add_cxxflags("-fconcepts")
+add_cxxflags("-g", "-Wall", "-Werror")
+-- add_defines("SF_ASYNC_LOG")
+add_defines("SF_DEBUG")
+
+target("sf")
+set_kind("static")
+add_files("src/**/*.cpp")
+
+target("test")
+set_kind("binary")
+add_files("test/test.cpp")
+add_deps("sf")
+add_links("pthread", "rt", "crypto", "z")

@@ -1,5 +1,5 @@
-#if 1
-#include <sflib>
+
+#include <sflib.h>
 using namespace skyfire;
 using namespace std;
 
@@ -613,34 +613,3 @@ sf_test(cache, mismatch_type_test)
     cache.set_data("name", std::string("zhangsan"));
     test_np_eq(cache.data<int>("name"), nullptr);
 }
-
-#else
-#include <iostream>
-#include <sflib>
-
-using namespace std;
-using namespace skyfire;
-
-void func2()
-{
-    std::cout << "func2 std::thread:" << get_thread_env()->get_curr_co() << std::endl;
-    std::cout << "func2" << std::endl;
-}
-
-void func1()
-{
-    std::cout << "func1 std::thread:" << get_thread_env()->get_curr_co() << std::endl;
-    std::thread std::thread({ co_attr::set_name("co2") }, &func2);
-    std::cout << "func1" << std::endl;
-    std::thread.join();
-}
-
-int main()
-{
-    std::cout << "main std::thread:" << get_thread_env()->get_curr_co() << std::endl;
-    std::thread std::thread({ co_attr::set_name("co1") }, &func1);
-    std::thread.join();
-    std::cout << "finished" << std::endl;
-}
-
-#endif
