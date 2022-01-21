@@ -67,7 +67,7 @@ inline bool http_router::run_route(const http_server_request& req,
 {
     {
 
-        std::unique_lock<std::recursive_mutex> lck(methods_mu__);
+        std::unique_lock lck(methods_mu__);
         using namespace std::literals;
         if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s))
         {

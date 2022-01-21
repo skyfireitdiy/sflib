@@ -82,7 +82,7 @@ inline rpc_server::rpc_server()
         rpc_server::tcp_server__, new_connection,
         [this](SOCKET sock) {
             {
-                std::unique_lock<std::shared_mutex> lck(mu_client_list__);
+                std::unique_lock lck(mu_client_list__);
                 client_list__.insert(sock);
             }
             client_connected(sock);
@@ -92,7 +92,7 @@ inline rpc_server::rpc_server()
         rpc_server::tcp_server__, closed,
         [this](SOCKET sock) {
             {
-                std::unique_lock<std::shared_mutex> lck(mu_client_list__);
+                std::unique_lock lck(mu_client_list__);
                 client_list__.erase(sock);
             }
             client_disconnected(sock);

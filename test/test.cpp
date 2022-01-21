@@ -71,8 +71,8 @@ sf_test(dns, test_connect_host)
 }
 #endif
 
-co_mutex              mu;
-co_condition_variable cv;
+std::mutex              mu;
+std::condition_variable cv;
 sf_test(tcp, test_server)
 {
     auto               server = skyfire::tcp_server::make_instance(skyfire::tcp::raw(true));
@@ -110,11 +110,11 @@ sf_test(tcp, test_client)
             lp.quit();
         },
         false);
-    std::unique_lock<co_mutex> lck(mu);
+    std::unique_lock lck(mu);
 
     cv.wait(lck);
 
-    this_co::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     if (!client->connect_to_server("127.0.0.1", 9300))
     {
 
@@ -446,23 +446,25 @@ class test_object : public skyfire::object
 sf_test(waiter, none_param_event_waiter_test)
 {
     test_object t;
-    co          co([&t]() {
-        this_co::sleep_for(std::chrono::seconds(1));
+    std::thread thread([&t]() {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
         t.s1();
     });
 
     sf_wait(&t, s1);
+    thread.join();
 }
 
 sf_test(waiter, many_param_event_waiter_test)
 {
     test_object t;
-    co          co([&t]() {
-        this_co::sleep_for(std::chrono::seconds(1));
+    std::thread thread([&t]() {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         t.s2(5, 6.5, 504.2);
     });
     sf_wait(&t, s2);
+    thread.join();
 }
 
 sf_test(multi_value, test_multi_value)
@@ -621,23 +623,23 @@ using namespace skyfire;
 
 void func2()
 {
-    std::cout << "func2 co:" << get_co_env()->get_curr_co() << std::endl;
+    std::cout << "func2 std::thread:" << get_thread_env()->get_curr_co() << std::endl;
     std::cout << "func2" << std::endl;
 }
 
 void func1()
 {
-    std::cout << "func1 co:" << get_co_env()->get_curr_co() << std::endl;
-    co co({ co_attr::set_name("co2") }, &func2);
+    std::cout << "func1 std::thread:" << get_thread_env()->get_curr_co() << std::endl;
+    std::thread std::thread({ co_attr::set_name("co2") }, &func2);
     std::cout << "func1" << std::endl;
-    co.join();
+    std::thread.join();
 }
 
 int main()
 {
-    std::cout << "main co:" << get_co_env()->get_curr_co() << std::endl;
-    co co({ co_attr::set_name("co1") }, &func1);
-    co.join();
+    std::cout << "main std::thread:" << get_thread_env()->get_curr_co() << std::endl;
+    std::thread std::thread({ co_attr::set_name("co1") }, &func1);
+    std::thread.join();
     std::cout << "finished" << std::endl;
 }
 

@@ -20,18 +20,18 @@ inline epoll_context_t* tcp_server::find_context__(SOCKET sock) const
 {
     auto& epoll_data = epoll_data__();
     {
-        std::shared_lock<co_shared_mutex> lck(epoll_data.mu_epoll_context__);
+        std::shared_lock lck(epoll_data.mu_epoll_context__);
         if (epoll_data.sock_context__.count(sock) != 0)
         {
             return &epoll_data;
         }
     }
     {
-        std::shared_lock<co_shared_mutex> lck(mu_context_pool__);
+        std::shared_lock lck(mu_context_pool__);
         for (auto& p : context_pool__)
         {
             {
-                std::shared_lock<co_shared_mutex> lck(p->mu_epoll_context__);
+                std::shared_lock lck(p->mu_epoll_context__);
                 if (p->sock_context__.count(sock) != 0)
                 {
                     return p;
@@ -51,9 +51,9 @@ inline bool tcp_server::send(int sock, const byte_array& data)
 
         return false;
     }
-    std::shared_lock<co_shared_mutex> lck(psock_context_data__->mu_epoll_context__);
-    auto&                             sock_context__ = psock_context_data__->sock_context__;
-    auto                              send_data      = data;
+    std::shared_lock lck(psock_context_data__->mu_epoll_context__);
+    auto&            sock_context__ = psock_context_data__->sock_context__;
+    auto             send_data      = data;
     lck.unlock();
     before_raw_send_filter__(sock, send_data);
     lck.lock();
@@ -71,9 +71,9 @@ inline bool tcp_server::send(int sock, int type, const byte_array& data)
 
         return false;
     }
-    std::shared_lock<co_shared_mutex> lck(psock_context_data__->mu_epoll_context__);
-    auto&                             sock_context__ = psock_context_data__->sock_context__;
-    pkg_header_t                      header {};
+    std::shared_lock lck(psock_context_data__->mu_epoll_context__);
+    auto&            sock_context__ = psock_context_data__->sock_context__;
+    pkg_header_t     header {};
     header.type   = htonl(type);
     header.length = htonl(data.size());
     make_header_checksum(header);
@@ -101,7 +101,7 @@ inline void tcp_server::close()
     ::shutdown(listen_fd__, SHUT_RDWR);
     ::close(listen_fd__);
     {
-        std::unique_lock<co_shared_mutex>
+        std::unique_lock
              lck(mu_context_pool__);
         char buf = '0';
         for (auto& p : context_pool__)
@@ -116,7 +116,7 @@ inline void tcp_server::close()
     }
     for (auto& p : co_vec__)
     {
-        p->wait<void>();
+        p->join();
     }
     co_vec__.clear();
 }
@@ -157,12 +157,12 @@ inline bool tcp_server::listen(const std::string& ip, unsigned short port)
     {
         return false;
     }
-    co_vec__.emplace_back(std::make_unique<co>(std::function<void()>([this] { work_routine__(true, listen_fd__); })));
+    co_vec__.emplace_back(std::make_unique<std::thread>(std::function<void()>([this] { work_routine__(true, listen_fd__); })));
     if (config__.manage_clients)
     {
         for (size_t i = 0; i < config__.thread_count; ++i)
         {
-            co_vec__.emplace_back(std::make_unique<co>(std::function<void()>([this] { work_routine__(true, listen_fd__); })));
+            co_vec__.emplace_back(std::make_unique<std::thread>(std::function<void()>([this] { work_routine__(true, listen_fd__); })));
         }
     }
     return true;
@@ -174,7 +174,7 @@ inline void tcp_server::work_routine__(bool listen_thread, SOCKET listen_fd)
     epoll_data.epoll_fd = epoll_create(max_tcp_connection);
     auto pipe_ret       = pipe(epoll_data.pipe__);
     sf_finally([this, &epoll_data] {
-        std::unique_lock<co_shared_mutex>
+        std::unique_lock
             lck(mu_context_pool__);
         context_pool__.erase(std::remove(context_pool__.begin(), context_pool__.end(), &epoll_data), context_pool__.end());
     });
@@ -210,7 +210,7 @@ inline void tcp_server::work_routine__(bool listen_thread, SOCKET listen_fd)
         }
     }
     {
-        std::unique_lock<co_shared_mutex>
+        std::unique_lock
             lck(mu_context_pool__);
         context_pool__.push_back(&epoll_data);
     }
@@ -408,7 +408,7 @@ inline void tcp_server::handle_read__(const epoll_event& ev)
         }
         else
         {
-            std::shared_lock<co_shared_mutex> lck(epoll_data.mu_epoll_context__);
+            std::shared_lock lck(epoll_data.mu_epoll_context__);
             sock_context__[ev.data.fd].data_buffer_in.insert(
                 sock_context__[ev.data.fd].data_buffer_in.end(),
                 recv_buf.begin(), recv_buf.end());
@@ -461,7 +461,7 @@ inline void tcp_server::handle_write__(const epoll_event& ev)
     auto&  sock_context__ = epoll_data.sock_context__;
     SOCKET fd             = ev.data.fd;
     {
-        std::shared_lock<co_shared_mutex> lck(epoll_data.mu_epoll_context__);
+        std::shared_lock lck(epoll_data.mu_epoll_context__);
         if (sock_context__[fd].data_buffer_out.empty())
         {
 
@@ -472,7 +472,7 @@ inline void tcp_server::handle_write__(const epoll_event& ev)
     {
         byte_array p;
         {
-            std::shared_lock<co_shared_mutex> lck(epoll_data.mu_epoll_context__);
+            std::shared_lock lck(epoll_data.mu_epoll_context__);
             if (sock_context__[fd].data_buffer_out.empty())
             {
                 lck.unlock();
@@ -517,7 +517,7 @@ inline void tcp_server::handle_write__(const epoll_event& ev)
         }
         else
         {
-            std::shared_lock<co_shared_mutex> lck(epoll_data.mu_epoll_context__);
+            std::shared_lock lck(epoll_data.mu_epoll_context__);
             if (n == 0)
             {
                 sock_context__[fd].data_buffer_out.pop_front();
@@ -533,8 +533,11 @@ inline void tcp_server::handle_write__(const epoll_event& ev)
         }
     }
 }
+
+inline thread_local epoll_context_t __epoll_context__;
+
 inline epoll_context_t& tcp_server::epoll_data__() const
 {
-    return CoLocal("d", epoll_context_t);
+    return __epoll_context__;
 }
 } // namespace skyfire

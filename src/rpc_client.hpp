@@ -135,7 +135,7 @@ rpc_ret_t rpc_client::call(const std::string& func_id,
     {
         bool wait_ret {};
         {
-            std::unique_lock<co_mutex> lck(rpc_data__[call_id]->back_mu);
+            std::unique_lock lck(rpc_data__[call_id]->back_mu);
             wait_ret = rpc_data__[call_id]->back_cond.wait_for(
                 lck, std::chrono::milliseconds(rpc_timeout__),
                 [&]() -> bool { return rpc_data__[call_id]->back_finished; });

@@ -1,7 +1,6 @@
 
 #pragma once
-#include "cocpp/sync/co_condition_variable.h"
-#include "cocpp/sync/co_mutex.h"
+
 #include "meta.hpp"
 #include "nocopy.h"
 #include "object.hpp"
@@ -20,8 +19,8 @@ template <typename... ARGS>
 class __event_waiter__ : public nocopy<>
 {
 private:
-    co_mutex              mu_cond__;
-    co_condition_variable cond__;
+    std::mutex              mu_cond__;
+    std::condition_variable cond__;
 
 public:
     auto make_quit_func__();

@@ -1,5 +1,5 @@
 #pragma once
-#include "cocpp/sync/co_mutex.h"
+
 #include "error.h"
 #include "multi_value.h"
 #include "reader.h"
@@ -19,7 +19,7 @@ private:
     byte_array              data__;
     std::shared_ptr<reader> reader__ = nullptr;
     std::shared_ptr<writer> writer__ = nullptr;
-    mutable cocpp::co_mutex mutex__;
+    mutable std::mutex      mutex__;
 
 public:
     data_buffer() = default;

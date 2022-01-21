@@ -39,7 +39,7 @@ bool msg_queue<T>::empty() const { return data__.empty(); }
 template <typename T>
 void msg_queue<T>::wait_new_msg()
 {
-    std::unique_lock<co_mutex> lck(mu_data_op__);
+    std::unique_lock lck(mu_data_op__);
     wait_cond__.wait(lck);
 }
 template <typename T>
@@ -51,7 +51,7 @@ std::list<T> msg_queue<T>::take_all_msg()
 template <typename T>
 void msg_queue<T>::wait_msg()
 {
-    std::unique_lock<co_mutex> lck(mu_data_op__);
+    std::unique_lock lck(mu_data_op__);
     wait_cond__.wait(lck, [this]() -> bool { return !data__.empty(); });
 }
 template <typename T>

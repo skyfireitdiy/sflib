@@ -1,7 +1,6 @@
 
 #pragma once
-#include "cocpp/sync/co_condition_variable.h"
-#include "cocpp/sync/co_mutex.h"
+
 #include "json.h"
 #include "nocopy.h"
 #include "stdc++.h"
@@ -15,8 +14,8 @@ struct rpc_context_t
 {
     pkg_header_t                           header;
     byte_array                             data;
-    co_mutex                               back_mu;
-    co_condition_variable                  back_cond;
+    std::mutex                             back_mu;
+    std::condition_variable                back_cond;
     std::atomic<bool>                      back_finished;
     bool                                   is_async;
     std::function<void(const byte_array&)> async_callback;

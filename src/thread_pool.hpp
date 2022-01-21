@@ -19,7 +19,7 @@ inline void thread_pool::thread_run__(thread_pool* this__)
         while ((!this__->is_exit__) && (this__->is_pause__ || this__->task_deque__.empty()))
         {
             ++this__->busy_thread_num__;
-            std::unique_lock<std::mutex> lck_cv(this__->mu_thread__cv__);
+            std::unique_lock lck_cv(this__->mu_thread__cv__);
             this__->thread_cv__.wait(lck_cv);
             --this__->busy_thread_num__;
         }
@@ -64,7 +64,7 @@ inline void thread_pool::wait_all_task_finished()
 {
     while (!task_deque__.empty())
     {
-        std::unique_lock<std::mutex> lck_cv(mu_wait_finish__);
+        std::unique_lock lck_cv(mu_wait_finish__);
         wait_finish_cv__.wait(lck_cv);
     }
 }

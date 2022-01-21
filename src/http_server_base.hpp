@@ -1,7 +1,7 @@
 
 #pragma once
 #include "cache.h"
-#include "cocpp/interface/co.h"
+
 #include "eventloop.h"
 #include "finally.h"
 #include "http_content_type.h"
@@ -128,8 +128,8 @@ inline void http_server_base::raw_data_coming__(SOCKET            sock,
             return;
         }
     }
-    std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
-    http_server_request                    request(request_context__[sock].buffer, sock);
+    std::unique_lock    lck(mu_request_context__);
+    http_server_request request(request_context__[sock].buffer, sock);
     if (request.is_valid())
     {
         request_context__[sock].new_req = true;
@@ -178,7 +178,7 @@ inline void http_server_base::build_websocket_context_data__(
     SOCKET sock, const http_server_request& request)
 {
     // NOTE 删除记录，防止超时检测线程关闭连接
-    std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+    std::unique_lock lck(mu_request_context__);
     request_context__.erase(sock);
     lck.unlock();
     websocket_context_t ws_data;
@@ -209,8 +209,8 @@ inline void http_server_base::build_boundary_context_data(
 {
 
     // 初始化boundary数据
-    auto                                   multipart_data = request.multipart_data_context();
-    std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+    auto             multipart_data = request.multipart_data_context();
+    std::unique_lock lck(mu_request_context__);
     request_context__[sock].buffer = append_multipart_data__(multipart_data, request.body());
     lck.unlock();
     if (!multipart_data.multipart.empty() && multipart_data.multipart.back().is_end())
@@ -703,7 +703,7 @@ inline void http_server_base::build_new_request__(SOCKET sock)
 }
 inline void http_server_base::on_socket_closed__(SOCKET sock)
 {
-    std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
+    std::unique_lock lck(mu_request_context__);
     if (request_context__.count(sock) != 0)
     {
         request_context__.erase(sock);
@@ -793,7 +793,7 @@ inline bool http_server_base::start()
         return false;
     }
 
-    co(std::function([this] { event_loop__.exec(); })).wait<void>();
+    std::thread(std::function([this] { event_loop__.exec(); })).join();
     return true;
 }
 template <typename T>

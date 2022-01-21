@@ -6,7 +6,7 @@ namespace skyfire
 template <typename... ARGS>
 void __event_waiter__<ARGS...>::wait__()
 {
-    std::unique_lock<co_mutex> lck(mu_cond__);
+    std::unique_lock lck(mu_cond__);
     cond__.wait(lck);
 }
 template <typename... ARGS>
