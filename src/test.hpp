@@ -1,5 +1,5 @@
 #pragma once
-#include "logger.h"
+
 #include "single_instance.h"
 #include "string.h"
 #include "table.h"

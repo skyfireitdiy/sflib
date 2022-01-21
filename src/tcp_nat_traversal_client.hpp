@@ -30,7 +30,7 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
     // 生成一个自动端口
     const auto auto_port = static_cast<unsigned short>(
         random::instance()->rand_int(1025, 65535));
-    sf_debug("local addr", server_addr.ip, auto_port);
+
     // 绑定
     if (!connect_context_map__[context.connect_id].point_b_client_1->bind(
             server_addr.ip, auto_port))
@@ -44,11 +44,6 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
                     .to_string()));
         return;
     }
-    sf_debug("try connect to A",
-             connect_context_map__[context.connect_id]
-                 .tcp_nat_traversal_context.src_addr.ip,
-             connect_context_map__[context.connect_id]
-                 .tcp_nat_traversal_context.src_addr.port);
     // 尝试连接a的外网ip端口，留下路由信息（一般会失败，但有时会直接成功）
     if (connect_context_map__[context.connect_id]
             .point_b_client_1->connect_to_server(
@@ -58,7 +53,6 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
                     .tcp_nat_traversal_context.src_addr.port))
     {
         // TODO 为了维持操作统一，成功暂时也不做处理
-        sf_debug("connect to source addr");
     }
     // 连接失败，B建立服务器2
     // 第3步：接受端建立socket，发送信息，便于server获取到接受端地址信息，同时监听端口，context有效字段：connect_id、dest_id、src_id、src_addr
@@ -96,7 +90,6 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
     *tmp_bind_id                     = sf_bind(
         connect_context_map__[context.connect_id].point_b_server,
         new_connection, ([this, context, tmp_bind_id](SOCKET sock) {
-            sf_debug("B new connection,NAT conection built");
             std::shared_ptr<tcp_nat_traversal_connection> connection(
                 new tcp_nat_traversal_connection(
                     nullptr,
@@ -108,12 +101,10 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
             sf_unbind(
                 connect_context_map__[context.connect_id].point_b_server,
                 new_connection, *tmp_bind_id);
-            sf_debug("sf_unbind id",
-                     *tmp_bind_id); // NOLINT(bugprone-lambda-function-name)
             connect_context_map__.erase(context.connect_id);
         }),
         true);
-    sf_debug("sf_bind id", *tmp_bind_id);
+
     // 使用客户端2连接至server，便于server获取目的的外网ip端口
     if (!connect_context_map__[context.connect_id]
              .point_b_client_2->connect_to_server(server_addr__.ip,
@@ -129,8 +120,7 @@ inline void tcp_nat_traversal_client::on_new_connect_required__(
         return;
     }
     // 向server发送信息，server获取ip端口（此时已在路由器留下记录）
-    sf_debug("reply server");
-    sf_debug("send", "type_nat_traversal_b_reply_addr");
+
     if (!connect_context_map__[context.connect_id].point_b_client_2->send(
             type_nat_traversal_b_reply_addr,
             to_byte_array(
@@ -178,19 +168,19 @@ inline std::string tcp_nat_traversal_client::connect_to_peer(
         if (!local_addr(tmp_p2p_conn_context.point_a_client_1->raw_socket(),
                         addr))
         {
-            sf_err("get local ip port error");
+
             return "";
         }
         tmp_p2p_conn_context.point_a_server = tcp_server::make_instance();
         // 复用刚才断开的连接1端口号
         if (!tmp_p2p_conn_context.point_a_server->listen(addr.ip, addr.port))
         {
-            sf_err("listen local ip port error", addr.ip, addr.port);
+
             return "";
         }
-        sf_debug("start connect");
+
         // 发起连接请求
-        sf_debug("send", "type_nat_traversal_require_connect_peer");
+
         if (tmp_p2p_conn_context.point_a_client_1->send(
                 type_nat_traversal_require_connect_peer,
                 to_byte_array(
@@ -219,7 +209,7 @@ inline bool tcp_nat_traversal_client::connect_to_server(
     server_addr__.port = port;
     if (client__->connect_to_server(ip, port))
     {
-        sf_debug("send", "type_nat_traversal_reg");
+
         client__->send(type_nat_traversal_reg, byte_array());
         return true;
     }
@@ -243,28 +233,24 @@ inline unsigned long long int tcp_nat_traversal_client::id() const
 inline void tcp_nat_traversal_client::on_client_data_coming__(
     const pkg_header_t& header, const byte_array& data)
 {
-    sf_debug(header.type);
+
     switch (header.type)
     {
     case type_nat_traversal_list:
-        sf_debug("recv", "type_nat_traversal_list", to_string(data));
+
         from_json(json::from_string(to_string(data)), client_list__);
         break;
     case type_nat_traversal_set_id:
-        sf_debug("recv", "type_nat_traversal_set_id", to_string(data));
+
         from_json(json::from_string(to_string(data)), self_id__);
         break;
     case type_nat_traversal_new_connect_required: {
-        sf_debug("recv", "type_nat_traversal_new_connect_required",
-                 to_string(data));
         tcp_nat_traversal_context_t__ context;
         from_json(json::from_string(to_string(data)), context);
         on_new_connect_required__(context);
     }
     break;
     case type_nat_traversal_server_reply_b_addr: {
-        sf_debug("recv", "type_nat_traversal_server_reply_b_addr",
-                 to_string(data));
         tcp_nat_traversal_context_t__ context;
         from_json(json::from_string(to_string(data)), context);
         on_server_reply_b_addr(context);
@@ -283,15 +269,13 @@ inline void tcp_nat_traversal_client::on_server_reply_b_addr(
     if (connect_context_map__.count(context.connect_id) == 0)
     {
         context.error_code = err_not_exist;
-        sf_debug("send", "sf_err_nat_traversal_err",
-                 skyfire::to_json(context).to_string());
         client__->send(err_nat_traversal_err,
                        to_byte_array(skyfire::to_json(context).to_string()));
         return;
     }
     connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
     connect_context_map__[context.connect_id].point_a_client_2          = tcp_client::make_instance(context.raw);
-    sf_debug("connect to B");
+
     if (connect_context_map__[context.connect_id]
             .point_a_client_2->connect_to_server(context.dest_addr.ip,
                                                  context.dest_addr.port))
@@ -301,15 +285,13 @@ inline void tcp_nat_traversal_client::on_server_reply_b_addr(
                 connect_context_map__[context.connect_id].point_a_client_2,
                 nullptr, -1, context.connect_id,
                 tcp_nat_traversal_connection_type::type_client_valid));
-        sf_debug("NAT success");
+
         new_nat_connection(connection, context.connect_id);
         connect_context_map__.erase(context.connect_id);
     }
     else
     {
         context.error_code = err_disconnect;
-        sf_debug("send", "sf_err_nat_traversal_err",
-                 skyfire::to_json(context).to_string());
         client__->send(err_nat_traversal_err,
                        to_byte_array(skyfire::to_json(context).to_string()));
         return;

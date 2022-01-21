@@ -5,17 +5,17 @@ namespace skyfire
 {
 inline void data_buffer::set_data(const byte_array& data)
 {
-    std::lock_guard<co_mutex> lock(mutex__);
+    std::lock_guard lock(mutex__);
     data__ = data;
 }
 inline void data_buffer::clear()
 {
-    std::lock_guard<co_mutex> lock(mutex__);
+    std::lock_guard lock(mutex__);
     data__.clear();
 }
 inline byte_array_result data_buffer::read(size_t max_size)
 {
-    std::lock_guard<co_mutex> lock(mutex__);
+    std::lock_guard lock(mutex__);
     if (data__.empty() && (reader__ == nullptr || !reader__->can_read()))
     {
         return { sf_error { { err_finished, "read finished" } }, byte_array {} };
@@ -45,7 +45,7 @@ inline byte_array_result data_buffer::read(size_t max_size)
 }
 inline sf_error data_buffer::write(const byte_array& data)
 {
-    std::lock_guard<co_mutex> lock(mutex__);
+    std::lock_guard lock(mutex__);
     data__ += data;
     if (writer__ == nullptr || !writer__->can_write())
     {
@@ -60,7 +60,7 @@ inline sf_error data_buffer::write(const byte_array& data)
 }
 inline bool data_buffer::can_read() const
 {
-    std::lock_guard<co_mutex> lock(mutex__);
+    std::lock_guard lock(mutex__);
     if (reader__ != nullptr && reader__->can_read())
     {
         return true;
@@ -73,12 +73,12 @@ inline bool data_buffer::can_write() const
 }
 inline void data_buffer::set_reader(std::shared_ptr<reader> rdr)
 {
-    std::lock_guard<co_mutex> lock(mutex__);
+    std::lock_guard lock(mutex__);
     reader__ = rdr;
 }
 inline void data_buffer::set_writer(std::shared_ptr<writer> wtr)
 {
-    std::lock_guard<co_mutex> lock(mutex__);
+    std::lock_guard lock(mutex__);
     writer__ = wtr;
 }
 inline data_buffer::~data_buffer()

@@ -2,7 +2,7 @@
 #pragma once
 #include "http_server_req_multipart.h"
 #include "http_utils.h"
-#include "logger.h"
+
 namespace skyfire
 {
 inline unsigned char to_hex(const unsigned char x)
@@ -176,7 +176,6 @@ inline void parse_client_req_url(std::string  raw_url,
         else
         {
             // FIXME 支持其他协议？
-            sf_debug("not supported");
         }
         const auto host_end_pos = raw_url.find("/");
         if (host_end_pos != std::string::npos)

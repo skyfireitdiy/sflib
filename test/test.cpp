@@ -48,89 +48,6 @@ sf_test(http_client, test_build_request_header_to_string)
     test_np_eq(req->to_byte_array(), to_byte_array("POST / HTTP/1.1\r\nHost:www.baidu.com\r\n\r\nhello world"));
 }
 
-sf_test(chan, test_chan_order)
-{
-    auto             ch = chan<int>::make_instance();
-    std::vector<int> data;
-    std::vector<int> result { 1, 2, 3, 4, 5 };
-    auto             th1 = coroutine(std::function([&ch] {
-        for (int i = 0; i < 5; ++i)
-        {
-            (i + 1) >> ch;
-        }
-    }));
-    auto             th2 = coroutine(std::function([&data, &ch] {
-        for (int i = 0; i < 5; ++i)
-        {
-            int t;
-            ch >> t;
-            data.push_back(t);
-        }
-    }));
-    th1.join();
-    th2.join();
-    cout << __LINE__ << ":" << ch.get() << endl;
-    test_np_eq(data, result);
-}
-
-sf_test(chan, test_chan_order_with_buffer)
-{
-    auto             ch = chan<int>::make_instance(5);
-    std::vector<int> data;
-    std::vector<int> result { 1, 2, 3, 4, 5 };
-    auto             th1 = coroutine([&ch] {
-        for (int i = 0; i < 5; ++i)
-        {
-            (i + 1) >> ch;
-        }
-    });
-    auto             th2 = coroutine([&data, &ch] {
-        for (int i = 0; i < 5; ++i)
-        {
-            int t;
-            ch >> t;
-            data.push_back(t);
-        }
-    });
-    th1.join();
-    th2.join();
-    test_np_eq(data, result);
-}
-
-sf_test(chan, test_write_to_closed_chan)
-{
-    auto      ch  = chan<int>::make_instance(5);
-    auto      ret = true;
-    coroutine th1([ch]() {
-        ch->close();
-    });
-    coroutine th2([ch, &ret]() {
-        this_thread::sleep_for(chrono::seconds(1));
-        ret = 5 >> ch;
-    });
-    th1.join();
-    th2.join();
-    test_assert(!ret);
-}
-
-sf_test(chan, test_read_from_closed_chan)
-{
-    auto      ch  = chan<int>::make_instance(5);
-    auto      ret = true;
-    coroutine th1([ch, &ret]() {
-        this_thread::sleep_for(chrono::seconds(1));
-        int t;
-        ret = ch >> t;
-    });
-    coroutine th2([ch]() {
-        5 >> ch;
-        ch->close();
-    });
-    th1.join();
-    th2.join();
-    test_assert(!ret);
-}
-
 #ifdef TEST_DNS
 sf_test(dns, test_resolve_dns)
 {
@@ -169,7 +86,6 @@ sf_test(tcp, test_server)
         false);
     sf_bind(
         server, raw_data_coming, [&server, &lp, &data](SOCKET sock, skyfire::byte_array d) {
-            sf_debug("data comming");
             data = d;
             server->close(sock);
             server->close();
@@ -185,7 +101,7 @@ sf_test(tcp, test_server)
 
 sf_test(tcp, test_client)
 {
-    sf_debug("start test client");
+
     using namespace std;
     auto               client = skyfire::tcp_client::make_instance();
     skyfire::eventloop lp;
@@ -195,16 +111,16 @@ sf_test(tcp, test_client)
         },
         false);
     std::unique_lock<co_mutex> lck(mu);
-    sf_debug("start wait");
+
     cv.wait(lck);
-    sf_debug("wait end, connect");
-    this_coroutine::sleep_for(std::chrono::seconds(1));
+
+    this_co::sleep_for(std::chrono::seconds(1));
     if (!client->connect_to_server("127.0.0.1", 9300))
     {
-        sf_debug("connect error");
+
         return;
     }
-    sf_debug("connect success");
+
     client->send(skyfire::to_byte_array("hello world"s));
     lp.exec();
 }
@@ -530,20 +446,20 @@ class test_object : public skyfire::object
 sf_test(waiter, none_param_event_waiter_test)
 {
     test_object t;
-    coroutine   co([&t]() {
-        this_coroutine::sleep_for(std::chrono::seconds(1));
-        sf_debug(" call s1");
+    co          co([&t]() {
+        this_co::sleep_for(std::chrono::seconds(1));
+
         t.s1();
     });
-    sf_debug("begin wait");
+
     sf_wait(&t, s1);
 }
 
 sf_test(waiter, many_param_event_waiter_test)
 {
     test_object t;
-    coroutine   co([&t]() {
-        this_coroutine::sleep_for(std::chrono::seconds(1));
+    co          co([&t]() {
+        this_co::sleep_for(std::chrono::seconds(1));
         t.s2(5, 6.5, 504.2);
     });
     sf_wait(&t, s2);
@@ -696,52 +612,6 @@ sf_test(cache, mismatch_type_test)
     test_np_eq(cache.data<int>("name"), nullptr);
 }
 
-sf_test(coroutine, normal)
-{
-    int      n = 0;
-    co_mutex mu;
-
-    auto co1 = coroutine({ co_attr::set_name("co1") }, [&n, &mu] {
-        for (int i = 0; i < 1000; ++i)
-        {
-            std::lock_guard<co_mutex> lck(mu);
-            n += i;
-            this_coroutine::yield_coroutine();
-        }
-    });
-    auto co2 = coroutine({ co_attr::set_name("co2") }, [&n, &mu] {
-        for (int i = 0; i < 1000; ++i)
-        {
-            std::lock_guard<co_mutex> lck(mu);
-            n += i;
-            this_coroutine::yield_coroutine();
-        }
-    });
-
-    auto co3 = coroutine({ co_attr::set_name("co3") }, [&n, &mu] {
-        for (int i = 0; i < 1000; ++i)
-        {
-            std::lock_guard<co_mutex> lck(mu);
-            n += i;
-            this_coroutine::yield_coroutine();
-        }
-    });
-    co1.wait();
-    co2.wait();
-    co3.wait();
-
-    test_p_eq(n, 1498500);
-}
-
-sf_test(coroutine, get)
-{
-    auto co = coroutine({ co_attr::set_name("co") }, []() {
-        return 10;
-    });
-    auto t  = co.get<int>();
-    test_p_eq(t, 10);
-}
-
 #else
 #include <iostream>
 #include <sflib>
@@ -758,7 +628,7 @@ void func2()
 void func1()
 {
     std::cout << "func1 co:" << get_co_env()->get_curr_co() << std::endl;
-    coroutine co({ co_attr::set_name("co2") }, &func2);
+    co co({ co_attr::set_name("co2") }, &func2);
     std::cout << "func1" << std::endl;
     co.join();
 }
@@ -766,7 +636,7 @@ void func1()
 int main()
 {
     std::cout << "main co:" << get_co_env()->get_curr_co() << std::endl;
-    coroutine co({ co_attr::set_name("co1") }, &func1);
+    co co({ co_attr::set_name("co1") }, &func1);
     co.join();
     std::cout << "finished" << std::endl;
 }

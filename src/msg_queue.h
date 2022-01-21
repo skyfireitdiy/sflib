@@ -1,10 +1,9 @@
 
 #pragma once
-#include "co_condition_variable.h"
-#include "co_mutex.h"
+#include "cocpp/sync/co_condition_variable.h"
+#include "cocpp/sync/co_mutex.h"
 #include "single_instance.hpp"
 #include "stdc++.h"
-
 
 namespace skyfire
 {
@@ -12,9 +11,9 @@ template <typename T>
 class msg_queue
 {
 private:
-    std::list<T>          data__;
-    co_mutex              mu_data_op__;
-    co_condition_variable wait_cond__;
+    std::list<T>                 data__;
+    cocpp::co_mutex              mu_data_op__;
+    cocpp::co_condition_variable wait_cond__;
 
 public:
     void               add_msg(T msg);

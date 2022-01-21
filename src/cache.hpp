@@ -2,7 +2,6 @@
 #pragma once
 #include "cache.h"
 #include "finally.h"
-#include "logger.h"
 #include "nocopy.h"
 #include "utils.h"
 namespace skyfire
@@ -18,7 +17,7 @@ inline cache::cache(int max_count)
 template <typename T>
 std::shared_ptr<T> cache::data(const std::string& key)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_data__);
+    std::lock_guard lck(mu_data__);
     if (data__.contains(key))
     {
         data__[key].timestamp_access = std::chrono::system_clock::now();
@@ -36,8 +35,8 @@ std::shared_ptr<T> cache::data(const std::string& key)
 template <typename T>
 void cache::set_data(const std::string& key, const T& d)
 {
-    cache_data_t                          tmp_cache { std::chrono::system_clock::now(), std::decay_t<T>(d) };
-    std::lock_guard<std::recursive_mutex> lck(mu_data__);
+    cache_data_t    tmp_cache { std::chrono::system_clock::now(), std::decay_t<T>(d) };
+    std::lock_guard lck(mu_data__);
     if (data__.contains(key))
     {
         data__[key] = tmp_cache;

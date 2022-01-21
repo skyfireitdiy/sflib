@@ -1,6 +1,6 @@
 
 #pragma once
-#include "coroutine.h"
+#include "cocpp/interface/co.h"
 #include "nocopy.h"
 #include "object.hpp"
 #include "stdc++.h"
@@ -18,8 +18,8 @@ public:
     bool is_active() const;
 
 private:
-    std::atomic<bool>          running__ { false };
-    long long                  current_timer_thread__;
-    std::unique_ptr<coroutine> loop_co__;
+    std::atomic<bool>   running__ { false };
+    unsigned long long  current_timer_thread__;
+    std::unique_ptr<co> loop_co__;
 };
 } // namespace skyfire

@@ -1,7 +1,7 @@
 
 #pragma once
-#include "co_condition_variable.h"
-#include "co_mutex.h"
+#include "cocpp/sync/co_condition_variable.h"
+#include "cocpp/sync/co_mutex.h"
 #include "json.h"
 #include "nocopy.h"
 #include "stdc++.h"

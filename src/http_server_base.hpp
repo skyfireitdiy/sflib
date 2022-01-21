@@ -1,15 +1,16 @@
 
 #pragma once
 #include "cache.h"
-#include "coroutine.h"
+#include "cocpp/interface/co.h"
 #include "eventloop.h"
 #include "finally.h"
 #include "http_content_type.h"
 #include "http_server_base.h"
 #include "http_server_config.h"
+#include "http_server_req_multipart.hpp"
 #include "http_utils.h"
 #include "json.h"
-#include "logger.h"
+
 #include "object.h"
 #include "random.h"
 #include "stdc++.h"
@@ -83,24 +84,24 @@ inline void http_server_base::add_middleware(std::shared_ptr<http_middleware> m)
 inline void http_server_base::raw_data_coming__(SOCKET            sock,
                                                 const byte_array& data)
 {
-    sf_debug("Socket", sock, "Data size", data.size());
+
     // 过滤websocket消息
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+        std::lock_guard lck(mu_websocket_context__);
         if (websocket_context__.count(sock) != 0)
         {
-            sf_debug("websocket message");
+
             websocket_data_coming__(sock, data);
             return;
         }
     }
     // 普通请求
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_request_context__);
-        // sf_debug("Request",to_string(data));
+        std::lock_guard lck(mu_request_context__);
+        //
         if (request_context__.count(sock) == 0)
         {
-            sf_debug("http connection");
+
             request_context__[sock] = request_context_t();
         }
         request_context__[sock].buffer += data;
@@ -111,17 +112,15 @@ inline void http_server_base::raw_data_coming__(SOCKET            sock,
     }
     // multipart消息
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
+        std::lock_guard lck(mu_multipart_data_context__);
         if (multipart_data_context__.count(sock) != 0)
         {
-            std::lock_guard<std::recursive_mutex> lck2(mu_request_context__);
-            sf_debug("boundary data append",
-                     request_context__[sock].buffer.size());
+            std::lock_guard lck2(mu_request_context__);
             request_context__[sock].buffer = append_multipart_data__(
                 multipart_data_context__[sock], request_context__[sock].buffer);
             if (multipart_data_context__[sock].multipart.back().is_end())
             {
-                sf_debug("boundary data finished");
+
                 http_handler__(sock, http_server_request(multipart_data_context__[sock], sock));
                 multipart_data_context__.erase(sock);
             }
@@ -139,7 +138,7 @@ inline void http_server_base::raw_data_coming__(SOCKET            sock,
         auto req_header = request.header();
         if (request.is_multipart_data())
         {
-            sf_debug("build_boundary_context_data");
+
             build_boundary_context_data(sock, request);
             return;
         }
@@ -158,12 +157,12 @@ inline void http_server_base::raw_data_coming__(SOCKET            sock,
             if (equal_nocase_string(req_header.header_value("Upgrade"),
                                     "websocket"))
             {
-                sf_debug("new websocket request");
+
                 build_websocket_context_data__(sock, request);
             }
             return;
         }
-        sf_debug("new http request");
+
         if (request_callback__)
         {
             http_handler__(sock, request);
@@ -171,7 +170,7 @@ inline void http_server_base::raw_data_coming__(SOCKET            sock,
     }
     else if (request.is_error())
     {
-        sf_debug("invalid request", to_string(request_context__[sock].buffer));
+
         server__->close(sock);
     }
 }
@@ -189,13 +188,13 @@ inline void http_server_base::build_websocket_context_data__(
         http_server_response res(request);
         websocket_request_callback__(request, res);
         res.header().set_header("Content-Length", std::to_string(res.length()));
-        sf_debug("Response", to_string(res.to_package()));
+
         if (!server__->send(sock, res.to_package()))
         {
-            sf_debug("send res error");
+
             return;
         }
-        std::lock_guard<std::recursive_mutex> lck2(mu_websocket_context__);
+        std::lock_guard lck2(mu_websocket_context__);
         websocket_context__.insert({ sock, ws_data });
         websocket_context__[sock].sock   = sock;
         websocket_context__[sock].buffer = byte_array();
@@ -203,13 +202,12 @@ inline void http_server_base::build_websocket_context_data__(
         {
             websocket_open_callback__(sock, ws_data.url);
         }
-        sf_debug("websocket add to context", sock);
     }
 }
 inline void http_server_base::build_boundary_context_data(
     SOCKET sock, const http_server_request& request)
 {
-    sf_debug("is boundary data");
+
     // 初始化boundary数据
     auto                                   multipart_data = request.multipart_data_context();
     std::unique_lock<std::recursive_mutex> lck(mu_request_context__);
@@ -217,24 +215,24 @@ inline void http_server_base::build_boundary_context_data(
     lck.unlock();
     if (!multipart_data.multipart.empty() && multipart_data.multipart.back().is_end())
     {
-        sf_debug("boundary data success one time");
+
         http_handler__(sock, http_server_request(multipart_data, sock));
     }
     else
     {
-        sf_debug("boundary data prepare");
-        std::lock_guard<std::recursive_mutex> lck2(mu_multipart_data_context__);
+
+        std::lock_guard lck2(mu_multipart_data_context__);
         multipart_data_context__[sock] = multipart_data;
     }
 }
 inline void http_server_base::close_request__(SOCKET sock)
 {
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_request_context__);
+        std::lock_guard lck(mu_request_context__);
         request_context__.erase(sock);
     }
     {
-        std::lock_guard<std::recursive_mutex> lck(mu_multipart_data_context__);
+        std::lock_guard lck(mu_multipart_data_context__);
         multipart_data_context__.erase(sock);
     }
 }
@@ -242,10 +240,9 @@ inline void http_server_base::normal_response__(
     SOCKET sock, http_server_response& res) const
 {
     res.header().set_header("Content-Length", std::to_string(res.length()));
-    sf_debug("http body length", res.length());
+
     if (!server__->send(sock, res.to_package()))
     {
-        sf_debug("send res error");
     }
 }
 inline void http_server_base::multipart_response__(SOCKET                sock,
@@ -302,14 +299,14 @@ inline void http_server_base::multipart_response__(SOCKET                sock,
     // 发送header
     if (!server__->send(sock, res.to_header_package()))
     {
-        sf_debug("send res error");
+
         return;
     }
     for (auto i = 0UL; multipart.size() > i; ++i)
     {
         if (!server__->send(sock, to_byte_array(header_vec[i])))
         {
-            sf_debug("send res error");
+
             return;
         }
         if (multipart[i].type == http_multipart_info_t::multipart_info_type::file)
@@ -325,7 +322,7 @@ inline void http_server_base::multipart_response__(SOCKET                sock,
             fi.close();
             if (!server__->send(sock, to_byte_array("\r\n"s)))
             {
-                sf_debug("send res error");
+
                 return;
             }
         }
@@ -333,24 +330,24 @@ inline void http_server_base::multipart_response__(SOCKET                sock,
         {
             if (!server__->send(sock, to_byte_array(header_vec[i])))
             {
-                sf_debug("send res error");
+
                 return;
             }
             if (!server__->send(sock, multipart[i].form_info.body))
             {
-                sf_debug("send res error");
+
                 return;
             }
             if (!server__->send(sock, to_byte_array("\r\n"s)))
             {
-                sf_debug("send res error");
+
                 return;
             }
         }
     }
     if (!server__->send(sock, to_byte_array(end_str)))
     {
-        sf_debug("send res error");
+
         return;
     }
 }
@@ -368,7 +365,7 @@ inline bool http_server_base::check_analysis_multipart_file__(
             }
             catch (fs::filesystem_error& e)
             {
-                sf_debug("get file size failed", e.what());
+
                 return false;
             }
             if (p.file_info.begin >= static_cast<long long>(file_size))
@@ -389,7 +386,6 @@ inline http_server_base::file_etag_t http_server_base::make_etag__(const http_fi
     auto            modify_time = fs::last_write_time(file.filename, sf_error);
     if (sf_error)
     {
-        sf_debug("get file modify time error", file.filename);
     }
     return http_server_base::file_etag_t {
         "W/\"" + std::to_string(modify_time.time_since_epoch().count()) + "-" + std::to_string(file.file_size) + "\"",
@@ -398,7 +394,7 @@ inline http_server_base::file_etag_t http_server_base::make_etag__(const http_fi
 }
 inline void http_server_base::set_file_etag__(http_server_response& res, const file_etag_t& etag) const
 {
-    sf_debug("set etag", etag.etag);
+
     res.header().set_header("Etag", etag.etag);
     res.header().set_header("Last-Modified", etag.last_modify);
 }
@@ -413,14 +409,14 @@ inline void http_server_base::file_response__(SOCKET                sock,
     {
         if (etag.etag == req.header().header_value("If-None-Match") && etag.last_modify == req.header().header_value("If-Modified-Since"))
         {
-            sf_debug("file not modify");
+
             res.set_status(304);
             normal_response__(sock, res);
             return;
         }
     }
     auto file_size = fs::file_size(file.filename);
-    sf_debug("file:", file.filename, file.begin, file.end);
+
     if (file.begin != 0 || (file.end != static_cast<long long>(file_size) && file.end != -1))
     {
         auto& header = res.header();
@@ -451,7 +447,7 @@ inline void http_server_base::file_response__(SOCKET                sock,
                          std::ios_base::binary | std::ios_base::in);
         if (!fi)
         {
-            sf_debug("file not found");
+
             res.set_status(404);
             normal_response__(sock, res);
             return;
@@ -462,7 +458,7 @@ inline void http_server_base::file_response__(SOCKET                sock,
         });
         if (!server__->send(sock, res.to_header_package()))
         {
-            sf_debug("send res error");
+
             return;
         }
         send_response_file_part__(sock, file, fi);
@@ -487,7 +483,7 @@ inline void http_server_base::file_response__(SOCKET                sock,
                              std::ios_base::binary | std::ios_base::in);
             if (!fi)
             {
-                sf_debug("file not found");
+
                 res.set_status(404);
                 normal_response__(sock, res);
                 return;
@@ -498,7 +494,7 @@ inline void http_server_base::file_response__(SOCKET                sock,
             set_file_etag__(res, etag);
             if (!server__->send(sock, res.to_header_package()))
             {
-                sf_debug("send res error");
+
                 return;
             }
             send_response_file_part__(sock, file, fi);
@@ -509,7 +505,7 @@ inline void http_server_base::file_response__(SOCKET                sock,
             auto            modify_time = fs::last_write_time(file.filename, sf_error);
             if (sf_error)
             {
-                sf_debug("get modify time error");
+
                 res.set_status(404);
                 normal_response__(sock, res);
                 return;
@@ -550,7 +546,7 @@ inline void http_server_base::send_response_file_part__(
     auto       curr_read_pos = file.begin;
     while (curr_read_pos < file.end - buffer_size)
     {
-        sf_debug("read file", curr_read_pos, file.end);
+
         fi.read(buffer.data(), buffer_size);
         if (server__->send(sock, buffer))
         {
@@ -558,7 +554,7 @@ inline void http_server_base::send_response_file_part__(
         }
         else
         {
-            sf_debug("not send all data");
+
             return;
         }
     }
@@ -567,7 +563,6 @@ inline void http_server_base::send_response_file_part__(
     buffer.resize(static_cast<unsigned long>(file.end - curr_read_pos));
     if (!server__->send(sock, buffer))
     {
-        sf_debug("not send all data");
     }
 }
 template <typename T>
@@ -577,35 +572,31 @@ bool http_server_base::analysis_websocket_pkg__(SOCKET sock, const T* header,
                                                 byte_array& body, bool& fin,
                                                 int& op_code)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+    std::lock_guard lck(mu_websocket_context__);
     len = get_size(*header);
     if (websocket_context__[sock].buffer.size() - resolve_pos - sizeof(T) < len)
     {
         return false;
     }
-    sf_debug(len, sizeof(T), websocket_context__[sock].buffer.size());
+
     body = byte_array(
         websocket_context__[sock].buffer.begin() + resolve_pos + sizeof(T),
         websocket_context__[sock].buffer.begin() + resolve_pos + sizeof(T) + static_cast<int>(len));
     if (with_mask(*header))
     {
-        sf_debug("mask true",
-                 *reinterpret_cast<const unsigned int*>(header->mask_key));
         decode_websocket_pkg(body, header->mask_key);
     }
     fin     = is_fin(*header);
     op_code = get_op_code(*header);
     resolve_pos += sizeof(T) + static_cast<int>(len);
-    sf_debug("resolve_pos", resolve_pos, "fin", fin, "op", op_code, "body",
-             to_string(body));
     return true;
 }
 inline void http_server_base::websocket_data_coming__(
     const SOCKET sock, const byte_array& data)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+    std::lock_guard lck(mu_websocket_context__);
     websocket_context__[sock].buffer += data;
-    sf_debug("buffer size", websocket_context__[sock].buffer.size());
+
     auto resolve_pos = 0;
     while (websocket_context__[sock].buffer.size() - resolve_pos >= sizeof(websocket_client_data_1_header_t))
     {
@@ -615,7 +606,7 @@ inline void http_server_base::websocket_data_coming__(
         auto       op_code = -1;
         byte_array body;
         auto       len = get_size(*header1);
-        sf_debug("base len", len);
+
         if (len == 126)
         {
             if (websocket_context__[sock].buffer.size() - resolve_pos < sizeof(websocket_client_data_2_header_t))
@@ -652,7 +643,7 @@ inline void http_server_base::websocket_data_coming__(
                 break;
             }
         }
-        sf_debug("op", op_code);
+
         websocket_context__[sock].data_buffer += body;
         if (WEBSOCKET_OP_DISCONNECT_PKG == op_code)
         {
@@ -668,8 +659,6 @@ inline void http_server_base::websocket_data_coming__(
         {
             if (WEBSOCKET_OP_TEXT_PKG == op_code)
             {
-                sf_debug("text data",
-                         to_string(websocket_context__[sock].data_buffer));
                 if (websocket_text_data_callback__)
                 {
                     websocket_text_data_callback__(
@@ -679,8 +668,6 @@ inline void http_server_base::websocket_data_coming__(
             }
             else if (WEBSOCKET_OP_BINARY_PKG == op_code)
             {
-                sf_debug("binary data",
-                         websocket_context__[sock].data_buffer.size());
                 if (websocket_binary_data_callback__)
                 {
                     websocket_binary_data_callback__(
@@ -713,7 +700,6 @@ inline void http_server_base::websocket_data_coming__(
 }
 inline void http_server_base::build_new_request__(SOCKET sock)
 {
-    sf_debug("new connection");
 }
 inline void http_server_base::on_socket_closed__(SOCKET sock)
 {
@@ -725,17 +711,17 @@ inline void http_server_base::on_socket_closed__(SOCKET sock)
     lck.unlock();
     if (websocket_context__.count(sock) != 0)
     {
-        std::lock_guard<std::recursive_mutex> lck2(mu_websocket_context__);
+        std::lock_guard lck2(mu_websocket_context__);
         if (websocket_close_callback__)
         {
             websocket_close_callback__(sock, websocket_context__[sock].url);
         }
         websocket_context__.erase(sock);
     }
-    std::lock_guard<std::recursive_mutex> lck2(mu_multipart_data_context__);
+    std::lock_guard lck2(mu_multipart_data_context__);
     if (multipart_data_context__.count(sock) != 0)
     {
-        std::lock_guard<std::recursive_mutex> lck3(mu_multipart_data_context__);
+        std::lock_guard lck3(mu_multipart_data_context__);
         multipart_data_context__.erase(sock);
     }
 }
@@ -745,7 +731,7 @@ inline http_server_base::http_server_base(
     , file_cache__(cache::make_instance(config.max_cache_count))
     , server__(tcp_server::make_instance(tcp::raw(true), tcp::thread_count(config.thread_count)))
 {
-    sf_info("server config:", to_json(config));
+
     sf_bind(
         server__, raw_data_coming,
         [this](SOCKET sock, const byte_array& data) {
@@ -803,11 +789,11 @@ inline bool http_server_base::start()
 {
     if (!server__->listen(config__.host, config__.port))
     {
-        sf_debug("listen error");
+
         return false;
     }
-    sf_debug("listen succeed!", config__.port);
-    coroutine(std::function([this] { event_loop__.exec(); })).join();
+
+    co(std::function([this] { event_loop__.exec(); })).wait<void>();
     return true;
 }
 template <typename T>
@@ -815,7 +801,6 @@ bool http_server_base::send_websocket_data(SOCKET sock, const T& data)
 {
     if constexpr (std::is_same_v<T, std::string>)
     {
-        sf_debug("send websocket message", data);
     }
     return server__->send(sock, make_server_websocket_data_pkg(data));
 }
@@ -824,7 +809,6 @@ void http_server_base::send_websocket_data(const T& data)
 {
     if constexpr (std::is_same_v<T, std::string>)
     {
-        sf_debug("send websocket message", data);
     }
     for (auto& p : websocket_context__)
     {
@@ -834,7 +818,7 @@ void http_server_base::send_websocket_data(const T& data)
 inline void http_server_base::close_websocket(SOCKET sock)
 {
     server__->close(sock);
-    std::lock_guard<std::recursive_mutex> lck(mu_websocket_context__);
+    std::lock_guard lck(mu_websocket_context__);
     if (websocket_context__.count(sock) != 0)
     {
         websocket_context__.erase(sock);
@@ -865,7 +849,7 @@ inline byte_array http_server_base::append_multipart_data__(
 }
 inline void http_server_base::flush_session__()
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_session__);
+    std::lock_guard lck(mu_session__);
     for (auto& p : session_data__)
     {
         p.second->timeout -= 1;
@@ -875,7 +859,7 @@ inline void http_server_base::flush_session__()
 }
 inline json http_server_base::session(const std::string& session_key)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_session__);
+    std::lock_guard lck(mu_session__);
     if (session_data__.count(session_key) == 0)
     {
         return json();
@@ -886,7 +870,7 @@ inline json http_server_base::session(const std::string& session_key)
 inline void http_server_base::keep_session_alive(
     const std::string& session_key)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_session__);
+    std::lock_guard lck(mu_session__);
     if (session_data__.count(session_key) == 0)
     {
         session_data__[session_key] = std::make_shared<session_data_t>(
@@ -898,7 +882,7 @@ template <typename T>
 void http_server_base::set_session(const std::string& session_key,
                                    const std::string& key, const T& value)
 {
-    std::lock_guard<std::recursive_mutex> lck(mu_session__);
+    std::lock_guard lck(mu_session__);
     keep_session_alive(session_key);
     session_data__[session_key]->data[key] = json(value);
 }

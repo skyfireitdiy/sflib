@@ -11,7 +11,7 @@ void rpc_server::send_back__(const SOCKET sock, const int id_code,
     rpc_res_context_t res;
     res.call_id = id_code;
     res.ret     = skyfire::to_json(data);
-    sf_debug("call ret", skyfire::to_json(res));
+
     tcp_server__->send(sock, rpc_res_type,
                        to_byte_array(skyfire::to_json(res).to_string()));
 }
@@ -26,7 +26,7 @@ inline void rpc_server::on_data_coming__(const SOCKET        sock,
     std::string       id;
     byte_array        param;
     rpc_req_context_t req;
-    sf_debug("call req", to_string(data));
+
     from_json(json::from_string(to_string(data)), req);
     for (auto& p : func_vec__)
     {

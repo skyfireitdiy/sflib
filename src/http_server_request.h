@@ -4,7 +4,6 @@
 #include "http_request_line.h"
 #include "http_server_req_header.h"
 #include "http_utils.h"
-#include "logger.h"
 #include "tcp_server.h"
 #include "type.h"
 #include "utils.h"

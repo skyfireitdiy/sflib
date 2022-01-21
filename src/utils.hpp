@@ -122,6 +122,7 @@ inline long double string_to_long_double(const std::string& str)
 }
 inline std::string tm2string(std::time_t tt, const std::string& fmt)
 {
+    return "";
     tm   tm_d;
     auto ptm = &tm_d;
 #ifdef _MSC_VER

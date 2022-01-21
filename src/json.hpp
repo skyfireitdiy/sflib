@@ -4,9 +4,8 @@
 #include "error.h"
 #include "json.h"
 #include "lex.h"
-#include "logger.h"
 #include "meta.h"
-#include "utils.h"
+#include "utils.hpp"
 #include "yacc.h"
 namespace skyfire
 {

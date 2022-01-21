@@ -1,9 +1,13 @@
 
 #pragma once
-#include "co_mutex.h"
+#include "cocpp/sync/co_mutex.h"
+#include "cocpp/sync/co_recursive_mutex.h"
+
 #include "json.hpp"
 #include "object_msg_queue.hpp"
 #include "stdc++.h"
+
+using namespace cocpp;
 
 #define sf_singal(name, ...)                                                          \
 public:                                                                               \
@@ -13,7 +17,7 @@ public:                                                                         
     template <typename... __SF_OBJECT_ARGS__>                                         \
     void name(__SF_OBJECT_ARGS__&&... args)                                           \
     {                                                                                 \
-        std::lock_guard<co_recursive_mutex> lck(__mu_##name##_signal__);              \
+        std::lock_guard lck(__mu_##name##_signal__);                                  \
         for (auto& p : __##name##_signal_func_vec__)                                  \
         {                                                                             \
             if (std::get<1>(p))                                                       \

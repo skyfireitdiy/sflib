@@ -31,7 +31,7 @@ inline void thread_pool::thread_run__(thread_pool* this__)
             auto                  flag_empty = true;
             std::function<void()> task;
             {
-                std::lock_guard<std::mutex> lck(this__->mu_task_deque__);
+                std::lock_guard lock(this__->mu_task_deque__);
                 if (!this__->task_deque__.empty())
                 {
                     flag_empty = false;
@@ -70,7 +70,7 @@ inline void thread_pool::wait_all_task_finished()
 }
 inline void thread_pool::clear_task()
 {
-    std::lock_guard<std::mutex> lck(mu_task_deque__);
+    std::lock_guard lck(mu_task_deque__);
     task_deque__.clear();
 }
 inline void thread_pool::clear_thread()
@@ -106,7 +106,7 @@ std::future<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>> thr
         std::bind(func, std::forward<Args>(args)...));
     auto fu = task->get_future();
     {
-        std::lock_guard<std::mutex> lck(mu_task_deque__);
+        std::lock_guard lck(mu_task_deque__);
         task_deque__.push_back([=]() { (*task)(); });
     }
     thread_cv__.notify_all();

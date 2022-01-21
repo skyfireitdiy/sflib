@@ -79,7 +79,6 @@ inline byte_array http_client_request::to_byte_array() const
         std::ifstream fi(file_info__.filename);
         if (!fi)
         {
-            sf_err("file open error", file_info__.filename);
             break;
         }
         std::istream_iterator<char> iter(fi), eof;

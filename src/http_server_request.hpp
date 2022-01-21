@@ -4,7 +4,7 @@
 #include "http_server_req_header.h"
 #include "http_server_request.h"
 #include "http_utils.h"
-#include "logger.h"
+
 #include "random.h"
 #include "utils.h"
 namespace skyfire
@@ -49,17 +49,17 @@ inline bool http_server_request::parse_request__()
     std::vector<std::string> header_lines;
     if (!split_request(raw__, request_line, header_lines, body__))
     {
-        sf_debug("split request error");
+
         return false;
     }
     if (!parse_request_line(request_line, request_line__))
     {
-        sf_debug("parse request line error");
+
         return false;
     }
     if (!parse_header(header_lines, header__))
     {
-        sf_debug("parse header error");
+
         return false;
     }
     parse_cookies(header__, cookies__);
@@ -77,14 +77,14 @@ inline bool http_server_request::parse_request__()
                 auto boundary_str_list = split_string(tmp_str, "=");
                 if (boundary_str_list.size() != 2)
                 {
-                    sf_debug("boundary str size error");
+
                     error__ = true;
                     return false;
                 }
                 multipart_data_context__.request_line = request_line__;
                 if (boundary_str_list[1].size() <= 2)
                 {
-                    sf_debug("boundary is too short");
+
                     error__ = true;
                     return false;
                 }
@@ -92,7 +92,7 @@ inline bool http_server_request::parse_request__()
                     boundary_str_list[1].begin() + 2,
                     boundary_str_list[1].end()
                 };
-                sf_debug("boundary_str", multipart_data_context__.boundary_str);
+
                 multipart_data_context__.header = header__.header();
                 return true;
             }
@@ -101,7 +101,7 @@ inline bool http_server_request::parse_request__()
     char* pos;
     if (std::strtoull(content_len.c_str(), &pos, 10) != body__.size())
     {
-        sf_debug("body size error", content_len.c_str(), body__.size());
+
         return false;
     }
     return true;

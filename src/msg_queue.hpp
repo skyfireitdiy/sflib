@@ -6,26 +6,26 @@ namespace skyfire
 template <typename T>
 void msg_queue<T>::add_msg(T msg)
 {
-    std::lock_guard<co_mutex> lck(mu_data_op__);
+    std::lock_guard lck(mu_data_op__);
     data__.emplace_back(msg);
     wait_cond__.notify_one();
 }
 template <typename T>
 void msg_queue<T>::remove_msg(std::function<bool(const T&)> op)
 {
-    std::lock_guard<co_mutex> lck(mu_data_op__);
+    std::lock_guard lck(mu_data_op__);
     data__.remove_if(op);
 }
 template <typename T>
 void msg_queue<T>::clear()
 {
-    std::lock_guard<co_mutex> lck(mu_data_op__);
+    std::lock_guard lck(mu_data_op__);
     data__.clear();
 }
 template <typename T>
 std::shared_ptr<T> msg_queue<T>::take_msg()
 {
-    std::lock_guard<co_mutex> lck(mu_data_op__);
+    std::lock_guard lck(mu_data_op__);
     if (data__.empty())
     {
         return nullptr;
@@ -45,7 +45,7 @@ void msg_queue<T>::wait_new_msg()
 template <typename T>
 std::list<T> msg_queue<T>::take_all_msg()
 {
-    std::lock_guard<co_mutex> lck(mu_data_op__);
+    std::lock_guard lck(mu_data_op__);
     return std::move(data__);
 }
 template <typename T>

@@ -3,7 +3,7 @@
 #include "define.h"
 #include "http_router.hpp"
 #include "http_utils.hpp"
-#include "logger.hpp"
+
 #include "utils.h"
 #include <memory>
 #include <string>

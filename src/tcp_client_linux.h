@@ -1,6 +1,6 @@
 
 #pragma once
-#include "coroutine.h"
+#include "cocpp/interface/co.h"
 #include "error.h"
 #include "stdc++.h"
 #include "tcp_client_interface.h"
@@ -18,11 +18,11 @@ class tcp_client
     : public make_instance_t<tcp_client, tcp_client_interface>
 {
 private:
-    bool                       inited__ = false;
-    bool                       raw__    = false;
-    int                        sock__   = -1;
-    std::unique_ptr<coroutine> loop_co__;
-    void                       recv_routine__();
+    bool                inited__ = false;
+    bool                raw__    = false;
+    int                 sock__   = -1;
+    std::unique_ptr<co> loop_co__;
+    void                recv_routine__();
 
 public:
     tcp_client(bool raw = false); // NOLINT(google-explicit-constructor)

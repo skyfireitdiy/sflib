@@ -1,9 +1,9 @@
 
 #pragma once
-#include "co_mutex.h"
-#include "coroutine.h"
+#include "cocpp/interface/co.h"
+#include "cocpp/sync/co_mutex.h"
+#include "cocpp/sync/co_shared_mutex.h"
 #include "json.hpp"
-#include "logger.hpp"
 #include "nocopy.h"
 #include "object.hpp"
 #include "stdc++.h"
@@ -42,19 +42,19 @@ class tcp_server
     : public make_instance_t<tcp_server, tcp_server_interface>
 {
 private:
-    std::atomic<bool>             closed__ = false;
-    tcp_server_opt_t              config__;
-    SOCKET                        listen_fd__;
-    std::vector<coroutine>        coroutine_vec__;
-    std::vector<epoll_context_t*> context_pool__;
-    mutable co_shared_mutex       mu_context_pool__;
-    void                          work_routine__(bool listen_thread = false, SOCKET listen_fd = -1);
-    bool                          in_dispatch__(SOCKET fd);
-    bool                          handle_accept__();
-    void                          handle_read__(const epoll_event& ev);
-    void                          handle_write__(const epoll_event& ev);
-    epoll_context_t&              epoll_data__() const;
-    epoll_context_t*              find_context__(SOCKET sock) const;
+    std::atomic<bool>                closed__ = false;
+    tcp_server_opt_t                 config__;
+    SOCKET                           listen_fd__;
+    std::vector<std::unique_ptr<co>> co_vec__;
+    std::vector<epoll_context_t*>    context_pool__;
+    mutable co_shared_mutex          mu_context_pool__;
+    void                             work_routine__(bool listen_thread = false, SOCKET listen_fd = -1);
+    bool                             in_dispatch__(SOCKET fd);
+    bool                             handle_accept__();
+    void                             handle_read__(const epoll_event& ev);
+    void                             handle_write__(const epoll_event& ev);
+    epoll_context_t&                 epoll_data__() const;
+    epoll_context_t*                 find_context__(SOCKET sock) const;
 
 public:
     SOCKET raw_socket() override;

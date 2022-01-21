@@ -1,0 +1,3 @@
+[submodule "3rd/cocpp"]
+	path = 3rd/cocpp
+	url = git@github.com:skyfireitdiy/cocpp.git

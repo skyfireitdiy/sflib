@@ -32,7 +32,6 @@ inline http_server::http_server(const http_server_config& config)
     // NOTE 普通http回调函数
     set_request_callback(
         [this](const http_server_request& req, http_server_response& res) {
-            sf_debug("http callback");
             default_request_callback__(req, res);
         });
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +45,6 @@ inline http_server::http_server(const http_server_config& config)
         });
     set_websocket_text_data_callback(
         [this](SOCKET sock, const std::string& url, const std::string& data) {
-            sf_debug("recv", data);
             default_websocket_text_data_callback__(sock, url, data);
         });
     set_websocket_open_callback([this](SOCKET sock, const std::string& url) {

@@ -98,8 +98,8 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
 #define test_assert(exp)                                                                                 \
     if (!(exp))                                                                                          \
     {                                                                                                    \
-        std::lock_guard<std::mutex> lck(skyfire::get_test_output_mu__());                                \
-        std::ostringstream          so;                                                                  \
+        std::lock_guard    lck(skyfire::get_test_output_mu__());                                         \
+        std::ostringstream so;                                                                           \
         so << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << " : `" << #exp << "` return false!"; \
         std::cerr << skyfire::color_string(so.str(), { skyfire::color_fg_red }) << std::endl;            \
         __result__.pass = false;                                                                         \
@@ -110,8 +110,8 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
         auto __b__ = (b);                                                                                 \
         if (__a__ != __b__)                                                                               \
         {                                                                                                 \
-            std::lock_guard<std::mutex> lck(skyfire::get_test_output_mu__());                             \
-            std::ostringstream          so;                                                               \
+            std::lock_guard    lck(skyfire::get_test_output_mu__());                                      \
+            std::ostringstream so;                                                                        \
             so << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " != " << __b__; \
             std::cerr << skyfire::color_string(so.str(), { skyfire::color_fg_red }) << std::endl;         \
             __result__.pass = false;                                                                      \
@@ -123,8 +123,8 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
         auto __b__ = (b);                                                                                 \
         if (__a__ == __b__)                                                                               \
         {                                                                                                 \
-            std::lock_guard<std::mutex> lck(skyfire::get_test_output_mu__());                             \
-            std::ostringstream          so;                                                               \
+            std::lock_guard    lck(skyfire::get_test_output_mu__());                                      \
+            std::ostringstream so;                                                                        \
             so << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": " << __a__ << " == " << __b__; \
             std::cerr << skyfire::color_string(so.str(), { skyfire::color_fg_red }) << std::endl;         \
             __result__.pass = false;                                                                      \
@@ -134,8 +134,8 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
     {                                                                                             \
         if ((a) != (b))                                                                           \
         {                                                                                         \
-            std::lock_guard<std::mutex> lck(skyfire::get_test_output_mu__());                     \
-            std::ostringstream          so;                                                       \
+            std::lock_guard    lck(skyfire::get_test_output_mu__());                              \
+            std::ostringstream so;                                                                \
             so << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` != `" #b "`"; \
             std::cerr << skyfire::color_string(so.str(), { skyfire::color_fg_red }) << std::endl; \
             __result__.pass = false;                                                              \
@@ -145,8 +145,8 @@ void test_set_global_env(std::function<void()> setup, std::function<void()> tear
     {                                                                                                          \
         if ((a) == (b))                                                                                        \
         {                                                                                                      \
-            std::lock_guard<std::mutex> lck(get_test_output_mu__());                                           \
-            std::ostringstream          so;                                                                    \
+            std::lock_guard    lck(get_test_output_mu__());                                                    \
+            std::ostringstream so;                                                                             \
             so << __FILE__ << ":" << __LINE__ << " " << __FUNCTION__ << ": `" #a "` == `" #b "`" << std::endl; \
             std::cerr << skyfire::color_string(so.str(), { skyfire::color_fg_red }) << std::endl;              \
             __result__.pass = false;                                                                           \

@@ -1,7 +1,6 @@
 
 #pragma once
-#include "coroutine.h"
-#include "logger.h"
+#include "cocpp/interface/co.h"
 #include "nocopy.h"
 #include "object.h"
 #include "tcp_client_interface.h"
@@ -33,7 +32,7 @@ inline tcp_client::tcp_client(SOCKET sock, bool raw)
     sock__    = sock;
     inited__  = true;
     raw__     = raw;
-    loop_co__ = std::make_unique<coroutine>([this] { recv_routine__(); });
+    loop_co__ = std::make_unique<co>([this] { recv_routine__(); });
 }
 inline SOCKET tcp_client::raw_socket() { return sock__; }
 inline bool   tcp_client::bind(const std::string& ip, unsigned short port)
@@ -67,7 +66,7 @@ inline sf_error tcp_client::connect_to_server(const std::string& host,
         {
             continue;
         }
-        loop_co__ = std::make_unique<coroutine>([this] { recv_routine__(); });
+        loop_co__ = std::make_unique<co>([this] { recv_routine__(); });
         return sf_error {};
     }
     return sf_error { err_connect, "Connect failed" };
