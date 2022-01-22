@@ -1,4 +1,4 @@
-add_includedirs("include/sflib", "src/sflib", "include/")
+add_includedirs("include/")
 set_languages("c++20")
 add_cxxflags("-fconcepts")
 add_cxxflags("-g", "-Wall", "-Werror")
