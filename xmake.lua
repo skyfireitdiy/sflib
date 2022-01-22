@@ -11,6 +11,7 @@ add_files("src/**/*.cpp")
 
 target("test")
 set_kind("binary")
+add_files("src/**/*.cpp")
 add_files("test/test.cpp")
 add_deps("sf")
 add_links("pthread", "rt", "crypto", "z")
