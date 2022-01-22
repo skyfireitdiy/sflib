@@ -1,6 +1,6 @@
 
-#include "sflib/http_middleware_logger.h"
-#include "sflib/utils.h"
+#include "sflib/http/http_middleware_logger.h"
+#include "sflib/tools/utils.h"
 namespace skyfire
 {
 bool http_middleware_logger::before(const http_server_request& http_server_request, http_server_response& res)

@@ -1,5 +1,5 @@
 
-#include "sflib/tcp_nat_traversal_utils.h"
+#include "sflib/tcp/tcp_nat_traversal_utils.h"
 namespace skyfire
 {
 bool tcp_nat_traversal_connection::send(

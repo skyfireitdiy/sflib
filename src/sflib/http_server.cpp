@@ -1,5 +1,5 @@
 
-#include "sflib/http_server.h"
+#include "sflib/http/http_server.h"
 namespace skyfire
 {
 void http_server::default_request_callback__(

@@ -1,8 +1,8 @@
-#include "sflib/http_server_response.h"
-#include "sflib/http_server_request.h"
-#include "sflib/http_server_res_header.h"
-#include "sflib/http_status.h"
-#include "sflib/json.h"
+#include "sflib/http/http_server_response.h"
+#include "sflib/http/http_server_request.h"
+#include "sflib/http/http_server_res_header.h"
+#include "sflib/http/http_status.h"
+#include "sflib/json/json.h"
 
 namespace skyfire
 {

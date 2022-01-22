@@ -1,7 +1,7 @@
 
-#include "sflib/http_client_req_header.h"
-#include "sflib/http_header.h"
-#include "sflib/utils.h"
+#include "sflib/http/http_client_req_header.h"
+#include "sflib/http/http_header.h"
+#include "sflib/tools/utils.h"
 namespace skyfire
 {
 std::string http_client_req_header::to_string() const

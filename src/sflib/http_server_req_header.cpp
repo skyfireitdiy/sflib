@@ -1,5 +1,5 @@
-#include "sflib/http_server_req_header.h"
-#include "sflib/http_header.h"
+#include "sflib/http/http_server_req_header.h"
+#include "sflib/http/http_header.h"
 
 namespace skyfire
 {

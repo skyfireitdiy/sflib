@@ -1,6 +1,6 @@
 
-#include "sflib/table.h"
-#include "sflib/sf_string.h"
+#include "sflib/table/table.h"
+#include "sflib/tools/sf_string.h"
 
 namespace skyfire
 {

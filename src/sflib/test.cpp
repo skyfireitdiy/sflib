@@ -1,11 +1,10 @@
 
-#include "sflib/test.h"
-#include "sflib/sf_string.h"
-#include "sflib/single_instance.h"
-#include "sflib/table.h"
-#include "sflib/thread_pool.h"
-#include "sflib/utils.h"
-
+#include "sflib/test/test.h"
+#include "sflib/table/table.h"
+#include "sflib/thread_pool/thread_pool.h"
+#include "sflib/tools/sf_string.h"
+#include "sflib/tools/single_instance.h"
+#include "sflib/tools/utils.h"
 
 namespace skyfire
 {

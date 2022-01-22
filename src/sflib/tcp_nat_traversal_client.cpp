@@ -1,6 +1,7 @@
 
-#include "sflib/error.h"
-#include "sflib/tcp_nat_traversal_client.h"
+#include "sflib/tcp/tcp_nat_traversal_client.h"
+#include "sflib/tools/error.h"
+
 namespace skyfire
 {
 void tcp_nat_traversal_client::on_new_connect_required__(

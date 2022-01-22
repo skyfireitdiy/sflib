@@ -1,7 +1,7 @@
 
 
-#include "sflib/http_header.h"
-#include "sflib/http_utils.h"
+#include "sflib/http/http_header.h"
+#include "sflib/http/http_utils.h"
 namespace skyfire
 {
 void                     http_header::clear() { header_data__.clear(); }

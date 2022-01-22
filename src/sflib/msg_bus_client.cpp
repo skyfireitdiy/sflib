@@ -1,6 +1,6 @@
 
-#include "sflib/msg_bus_client.h"
-#include "sflib/msg_bus_utils.h"
+#include "sflib/msg_bus/msg_bus_client.h"
+#include "sflib/msg_bus/msg_bus_utils.h"
 namespace skyfire
 {
 msg_bus_client::msg_bus_client()

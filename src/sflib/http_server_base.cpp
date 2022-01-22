@@ -1,20 +1,21 @@
 
-#include "sflib/http_server_base.h"
-#include "sflib/cache.h"
-#include "sflib/eventloop.h"
-#include "sflib/finally.h"
-#include "sflib/http_content_type.h"
-#include "sflib/http_server_config.h"
-#include "sflib/http_server_req_multipart.h"
-#include "sflib/http_session_id_key.h"
-#include "sflib/http_utils.h"
-#include "sflib/json.h"
-#include "sflib/object.h"
-#include "sflib/random.h"
-#include "sflib/stdc++.h"
-#include "sflib/tcp_server.h"
-#include "sflib/timer.h"
-#include "sflib/websocket_utils.h"
+#include "sflib/http/http_server_base.h"
+#include "sflib/cache/cache.h"
+#include "sflib/core/type.h"
+#include "sflib/http/http_content_type.h"
+#include "sflib/http/http_server_config.h"
+#include "sflib/http/http_server_req_multipart.h"
+#include "sflib/http/http_session_id_key.h"
+#include "sflib/http/http_utils.h"
+#include "sflib/http/websocket_utils.h"
+#include "sflib/json/json.h"
+#include "sflib/object/eventloop.h"
+#include "sflib/object/object.h"
+#include "sflib/object/timer.h"
+
+#include "sflib/tcp/tcp_server.h"
+#include "sflib/tools/finally.h"
+#include "sflib/tools/random.h"
 
 using namespace std::string_literals;
 namespace skyfire
@@ -273,7 +274,7 @@ void http_server_base::multipart_response__(SOCKET                sock,
             {
                 tmp_str += "Content-Type: application/octet-stream\r\n";
             }
-            long long file_size = fs::file_size(p.file_info.filename);
+            long long file_size = std::filesystem::file_size(p.file_info.filename);
             tmp_str += "Content-Range: bytes " + std::to_string(p.file_info.begin) + "-" + std::to_string(p.file_info.end) + "/" + std::to_string(file_size) + "\r\n\r\n";
             header_vec.push_back(tmp_str);
             content_length += tmp_str.length() + (p.file_info.end - p.file_info.begin) + 2; // 添加\r\n
@@ -359,9 +360,9 @@ bool http_server_base::check_analysis_multipart_file__(
             uintmax_t file_size = 0;
             try
             {
-                file_size = fs::file_size(p.file_info.filename);
+                file_size = std::filesystem::file_size(p.file_info.filename);
             }
-            catch (fs::filesystem_error& e)
+            catch (std::filesystem::filesystem_error& e)
             {
 
                 return false;
@@ -381,7 +382,7 @@ bool http_server_base::check_analysis_multipart_file__(
 http_server_base::file_etag_t http_server_base::make_etag__(const http_file_info_t& file) const
 {
     std::error_code sf_error;
-    auto            modify_time = fs::last_write_time(file.filename, sf_error);
+    auto            modify_time = std::filesystem::last_write_time(file.filename, sf_error);
     if (sf_error)
     {
     }
@@ -413,7 +414,7 @@ void http_server_base::file_response__(SOCKET                sock,
             return;
         }
     }
-    auto file_size = fs::file_size(file.filename);
+    auto file_size = std::filesystem::file_size(file.filename);
 
     if (file.begin != 0 || (file.end != static_cast<long long>(file_size) && file.end != -1))
     {
@@ -500,7 +501,7 @@ void http_server_base::file_response__(SOCKET                sock,
         else
         {
             std::error_code sf_error;
-            auto            modify_time = fs::last_write_time(file.filename, sf_error);
+            auto            modify_time = std::filesystem::last_write_time(file.filename, sf_error);
             if (sf_error)
             {
 

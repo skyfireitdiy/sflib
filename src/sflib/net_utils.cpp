@@ -1,5 +1,5 @@
 
-#include "sflib/net_utils.h"
+#include "sflib/tcp/net_utils.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <fcntl.h>

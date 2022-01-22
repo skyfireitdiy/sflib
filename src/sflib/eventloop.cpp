@@ -1,5 +1,5 @@
 
-#include "sflib/eventloop.h"
+#include "sflib/object/eventloop.h"
 namespace skyfire
 {
 void eventloop::quit()

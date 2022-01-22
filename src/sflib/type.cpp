@@ -1,5 +1,5 @@
 
-#include "sflib/type.h"
+#include "sflib/core/type.h"
 namespace skyfire
 {
 std::string to_string(const byte_array& data)

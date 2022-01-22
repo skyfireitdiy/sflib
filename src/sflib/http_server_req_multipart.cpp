@@ -1,11 +1,11 @@
-#include "sflib/http_server_req_multipart.h"
-#include "sflib/http_server_request.h"
+#include "sflib/http/http_server_req_multipart.h"
+#include "sflib/http/http_server_request.h"
 namespace skyfire
 {
 http_server_req_multipart::http_server_req_multipart(const std::string& boundary_str,
                                                      const std::string& tmp_path)
     : boundary_str__(boundary_str)
-    , filename__(fs::path(tmp_path) / random::instance()->uuid_str())
+    , filename__(std::filesystem::path(tmp_path) / random::instance()->uuid_str())
 {
 }
 http_server_req_header http_server_req_multipart::header() const { return header__; }

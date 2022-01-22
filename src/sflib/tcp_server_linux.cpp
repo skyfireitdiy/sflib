@@ -1,9 +1,9 @@
 
-#include "sflib/define.h"
-#include "sflib/finally.h"
-#include "sflib/net_utils.h"
-#include "sflib/tcp_server_interface.h"
-#include "sflib/tcp_server_linux.h"
+#include "sflib/tcp/tcp_server_linux.h"
+#include "sflib/tcp/net_utils.h"
+#include "sflib/tcp/tcp_server_interface.h"
+#include "sflib/tools/define.h"
+#include "sflib/tools/finally.h"
 #include <memory>
 
 namespace skyfire

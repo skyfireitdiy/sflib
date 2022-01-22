@@ -1,9 +1,11 @@
 
-#include "sflib/utils.h"
-#include "sflib/stdc++.h"
-#include "sflib/type.h"
+#include "sflib/tools/utils.h"
+#include "sflib/core/type.h"
+
+#include <filesystem>
 #include <sys/stat.h>
 #include <sys/types.h>
+
 
 namespace skyfire
 {
@@ -155,7 +157,7 @@ bool string_end_with(const std::string& str,
 std::string safe_path(std::string danger_path)
 {
     string_replace(danger_path,
-                   std::string(1, fs::path::preferred_separator), "");
+                   std::string(1, std::filesystem::path::preferred_separator), "");
     return danger_path;
 }
 std::string convert_ns_to_readable(long long time)

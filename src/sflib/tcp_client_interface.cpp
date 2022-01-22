@@ -1,6 +1,7 @@
 
-#include "sflib/net_utils.h"
-#include "sflib/tcp_client_interface.h"
+#include "sflib/tcp/tcp_client_interface.h"
+#include "sflib/tcp/net_utils.h"
+
 namespace skyfire
 {
 bool tcp_client_interface::peer_addr(addr_info_t& addr)

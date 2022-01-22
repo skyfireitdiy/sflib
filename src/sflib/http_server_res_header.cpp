@@ -1,7 +1,7 @@
-#include "sflib/http_server_res_header.h"
-#include "sflib/http_header.h"
-#include "sflib/http_session_id_key.h"
-#include "sflib/http_utils.h"
+#include "sflib/http/http_server_res_header.h"
+#include "sflib/http/http_header.h"
+#include "sflib/http/http_session_id_key.h"
+#include "sflib/http/http_utils.h"
 
 namespace skyfire
 {

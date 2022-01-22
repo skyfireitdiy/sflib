@@ -1,7 +1,7 @@
 
 
-#include "sflib/http_utils.h"
-#include "sflib/http_server_req_multipart.h"
+#include "sflib/http/http_utils.h"
+#include "sflib/http/http_server_req_multipart.h"
 
 namespace skyfire
 {

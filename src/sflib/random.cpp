@@ -1,4 +1,5 @@
-#include "sflib/random.h"
+#include "sflib/tools/random.h"
+#include <climits>
 namespace skyfire
 {
 random::random()

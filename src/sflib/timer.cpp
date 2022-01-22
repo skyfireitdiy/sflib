@@ -1,5 +1,5 @@
 
-#include "sflib/timer.h"
+#include "sflib/object/timer.h"
 
 namespace skyfire
 {

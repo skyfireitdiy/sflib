@@ -1,13 +1,14 @@
 
 
-#include "sflib/http_part_router.h"
-#include "sflib/http_router.h"
-#include "sflib/http_server_request.h"
-#include "sflib/http_server_response.h"
-#include "sflib/router_shared_ptr_compare.h"
-#include "sflib/stdc++.h"
-#include "sflib/utils.h"
+#include "sflib/http/http_part_router.h"
+#include "sflib/http/http_server_request.h"
+#include "sflib/http/http_server_response.h"
+#include "sflib/http/router.h"
+#include "sflib/http/router_shared_ptr_compare.h"
+
+#include "sflib/tools/utils.h"
 #include <utility>
+
 namespace skyfire
 {
 http_part_router::http_part_router(

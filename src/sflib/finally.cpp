@@ -1,6 +1,6 @@
 
-#include "sflib/finally.h"
-#include "sflib/stdc++.h"
+#include "sflib/tools/finally.h"
+
 namespace skyfire
 {
 __finally__::__finally__(std::function<void()> func)

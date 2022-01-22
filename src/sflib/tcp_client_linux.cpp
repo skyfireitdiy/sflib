@@ -1,14 +1,14 @@
 
-#include "sflib/nocopy.h"
-#include "sflib/object.h"
-#include "sflib/tcp_client_interface.h"
-#include "sflib/tcp_client_linux.h"
-#include "sflib/tcp_utils.h"
-#include "sflib/type.h"
+#include "sflib/tcp/tcp_client_linux.h"
+#include "sflib/core/type.h"
+#include "sflib/object/object.h"
+#include "sflib/tcp/tcp_client_interface.h"
+#include "sflib/tcp/tcp_utils.h"
+#include "sflib/tools/nocopy.h"
 
 namespace skyfire
 {
- tcp_client::tcp_client(bool raw)
+tcp_client::tcp_client(bool raw)
 {
     sock__ = socket(AF_INET, SOCK_STREAM, 0);
     if (sock__ == -1)
@@ -25,15 +25,15 @@ namespace skyfire
     inited__ = true;
     raw__    = raw;
 }
- tcp_client::tcp_client(SOCKET sock, bool raw)
+tcp_client::tcp_client(SOCKET sock, bool raw)
 {
     sock__        = sock;
     inited__      = true;
     raw__         = raw;
     loop_thread__ = std::async([this] { recv_routine__(); });
 }
- SOCKET tcp_client::raw_socket() { return sock__; }
- bool   tcp_client::bind(const std::string& ip, unsigned short port)
+SOCKET tcp_client::raw_socket() { return sock__; }
+bool   tcp_client::bind(const std::string& ip, unsigned short port)
 {
     sockaddr_in address {};
     address.sin_family      = AF_INET;
@@ -41,9 +41,9 @@ namespace skyfire
     address.sin_port        = htons(port);
     return -1 != ::bind(sock__, reinterpret_cast<sockaddr*>(&address), sizeof(address));
 }
- tcp_client::~tcp_client() { close(); }
- sf_error tcp_client::connect_to_server(const std::string& host,
-                                              unsigned short     port)
+tcp_client::~tcp_client() { close(); }
+sf_error tcp_client::connect_to_server(const std::string& host,
+                                       unsigned short     port)
 {
     if (!inited__)
         return { err_uninit, "Uninit" };
@@ -69,7 +69,7 @@ namespace skyfire
     }
     return sf_error { err_connect, "Connect failed" };
 }
- bool tcp_client::send(int type, const byte_array& data)
+bool tcp_client::send(int type, const byte_array& data)
 {
     if (!inited__)
         return false;
@@ -82,13 +82,13 @@ namespace skyfire
         return false;
     return ::write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
- bool tcp_client::send(const byte_array& data)
+bool tcp_client::send(const byte_array& data)
 {
     if (!inited__)
         return false;
     return ::write(sock__, data.data(), data.size()) == static_cast<ssize_t>(data.size());
 }
- void tcp_client::close()
+void tcp_client::close()
 {
     if (!inited__)
         return;

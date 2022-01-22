@@ -1,7 +1,8 @@
 
-#include "sflib/stdc++.h"
-#include "sflib/utils.h"
-#include "sflib/websocket_router.h"
+#include "sflib/http/websocket_router.h"
+#include "sflib/http/router.h"
+
+#include "sflib/tools/utils.h"
 #include <memory>
 
 namespace skyfire

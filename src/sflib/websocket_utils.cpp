@@ -1,5 +1,5 @@
 
-#include "sflib/websocket_utils.h"
+#include "sflib/http/websocket_utils.h"
 namespace skyfire
 {
 unsigned long long get_size(

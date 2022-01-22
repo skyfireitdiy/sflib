@@ -1,9 +1,10 @@
 
 
-#include "sflib/http_static_router.h"
-#include "sflib/http_server_req_header.h"
-#include "sflib/stdc++.h"
-#include "sflib/utils.h"
+#include "sflib/http/http_static_router.h"
+#include "sflib/http/http_server_req_header.h"
+#include "sflib/http/router.h"
+
+#include "sflib/tools/utils.h"
 #include <utility>
 
 namespace skyfire
@@ -22,10 +23,10 @@ bool static_router::run_route(const http_server_request& req,
     {
         url = url.substr(1);
     }
-    auto                   abs_path = fs::path(static_path__) / url;
+    auto                   abs_path = std::filesystem::path(static_path__) / url;
     http_server_req_header header;
     byte_array             body_data;
-    if (!fs::exists(abs_path) || fs::is_directory(abs_path))
+    if (!std::filesystem::exists(abs_path) || std::filesystem::is_directory(abs_path))
     {
         return false;
     }
@@ -71,9 +72,9 @@ static_router::static_router(std::string              path,
         uintmax_t file_size = 0;
         try
         {
-            fs::file_size(abs_path);
+            std::filesystem::file_size(abs_path);
         }
-        catch (fs::filesystem_error& e)
+        catch (std::filesystem::filesystem_error& e)
         {
 
             _404_res();

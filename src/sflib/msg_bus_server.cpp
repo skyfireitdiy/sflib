@@ -1,8 +1,8 @@
 
-#include "sflib/msg_bus_server.h"
-#include "sflib/msg_bus_utils.h"
-#include "sflib/tcp_server.h"
-#include "sflib/tcp_server_interface.h"
+#include "sflib/msg_bus/msg_bus_server.h"
+#include "sflib/msg_bus/msg_bus_utils.h"
+#include "sflib/tcp/tcp_server.h"
+#include "sflib/tcp/tcp_server_interface.h"
 namespace skyfire
 {
 void msg_bus_server::on_disconnect__(const SOCKET sock)

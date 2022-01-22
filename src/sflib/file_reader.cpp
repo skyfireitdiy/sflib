@@ -1,5 +1,5 @@
-#include "sflib/file_reader.h"
-#include "sflib/utils.h"
+#include "sflib/io/file_reader.h"
+#include "sflib/tools/utils.h"
 
 namespace skyfire
 {

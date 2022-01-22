@@ -1,8 +1,9 @@
 
-#include "sflib/json.h"
-#include "sflib/object_factory.h"
-#include "sflib/stdc++.h"
-#include "sflib/utils.h"
+#include "sflib/object/object_factory.h"
+#include "sflib/json/json.h"
+
+#include "sflib/tools/utils.h"
+
 namespace skyfire
 {
 bool object_factory::load_config(const std::string& config_str)

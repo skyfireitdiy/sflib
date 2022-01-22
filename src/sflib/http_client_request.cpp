@@ -1,8 +1,8 @@
 
-#include "sflib/http_client_request.h"
-#include "sflib/http_client.h"
-#include "sflib/http_client_req_header.h"
-#include "sflib/http_utils.h"
+#include "sflib/http/http_client_request.h"
+#include "sflib/http/http_client.h"
+#include "sflib/http/http_client_req_header.h"
+#include "sflib/http/http_utils.h"
 
 namespace skyfire
 {
@@ -40,7 +40,7 @@ std::shared_ptr<http_client_request> http_client_request::set_file(const std::st
         filename,
         0,
         -1,
-        fs::file_size(filename)
+        std::filesystem::file_size(filename)
     };
     type__ = http_data_type::file;
     return shared_from_this();

@@ -1,6 +1,6 @@
-#include "sflib/rpc_client.h"
-#include "sflib/json.h"
-#include "sflib/rpc_utils.h"
+#include "sflib/rpc/rpc_client.h"
+#include "sflib/json/json.h"
+#include "sflib/rpc/rpc_utils.h"
 
 namespace skyfire
 {

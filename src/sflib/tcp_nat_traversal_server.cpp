@@ -1,6 +1,6 @@
 
-#include "sflib/tcp_nat_traversal_server.h"
-#include "sflib/error.h"
+#include "sflib/tcp/tcp_nat_traversal_server.h"
+#include "sflib/tools/error.h"
 
 namespace skyfire
 {

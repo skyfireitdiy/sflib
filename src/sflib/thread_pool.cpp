@@ -1,6 +1,6 @@
 
-#include "sflib/thread_pool.h"
-#include "sflib/utils.h"
+#include "sflib/thread_pool/thread_pool.h"
+#include "sflib/tools/utils.h"
 namespace skyfire
 {
 thread_pool::thread_pool(size_t thread_count)
