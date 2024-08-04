@@ -1,8 +1,8 @@
 set_languages("c++20")
 add_cxxflags("-fconcepts")
 add_cxxflags("-g", "-Wall", "-Werror")
-
 kind = "shared"
+add_requires("cryptopp", "zlib")
 
 target("argv")
 set_kind(kind)
@@ -39,6 +39,7 @@ set_kind(kind)
 add_files("src/sflib/http/*.cpp")
 add_headerfiles("include/(sflib/http/*.h)")
 add_includedirs("include/")
+add_packages("cryptopp", "zlib")
 
 target("io")
 set_kind(kind)
@@ -103,12 +104,13 @@ add_includedirs("include/")
 target("sf")
 set_kind(kind)
 add_deps("thread_pool", "table", "tools", "core", "http", "io", "msg_bus",
-         "object", "rpc", "tcp", "test", "compiler", "color_string", "cache",
-         "json", "argv")
+"object", "rpc", "tcp", "test", "compiler", "color_string", "cache",
+"json", "argv")
 
 target("test-case")
 set_kind("binary")
 add_includedirs("include/")
 add_files("test/test.cpp")
 add_deps("sf")
-add_ldflags("-lpthread", "-lrt", "-lcrypto", "-lz")
+add_ldflags("-lpthread", "-lrt")
+add_packages("cryptopp", "zlib")
