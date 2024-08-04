@@ -1,10 +1,9 @@
 
 #include "sflib/core/type.h"
-namespace skyfire
-{
+namespace skyfire {
 std::string to_string(const byte_array& data)
 {
-    return std::string(data.data());
+    return std::string(data.begin(), data.end());
 }
 byte_array operator+(byte_array b1, const byte_array& b2)
 {
@@ -28,7 +27,7 @@ byte_array to_byte_array(const std::string& str)
     return ret;
 }
 bool dump_byte_array(const byte_array& data, const std::string& filename,
-                     bool app)
+    bool app)
 {
     std::ofstream fo(filename, app ? (std::ios::app | std::ios::binary) : (std::ios::trunc | std::ios::out));
     if (!fo)
