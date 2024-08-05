@@ -11,7 +11,7 @@ void yacc::set_rules(const std::vector<yacc_rule> &rules)
 }
 bool yacc::parse(
     const std::vector<lex_result_t> &lex_result,
-    std::vector<std::shared_ptr<yacc_result_t> > &yacc_result) const
+    std::vector<std::shared_ptr<yacc_result_t>> &yacc_result) const
 {
 #if 0
 		for(auto &p:dfa__)
@@ -112,14 +112,14 @@ std::string yacc::state_to_string(
     return ret;
 }
 std::vector<
-    std::pair<std::pair<std::string, std::string>, yacc_state_node_t> >
+    std::pair<std::pair<std::string, std::string>, yacc_state_node_t>>
 yacc::dfa_optimize(
     const std::vector<
         std::pair<std::pair<std::set<yacc_state_node_t>, std::string>,
-                  std::set<yacc_state_node_t> > > &dfa)
+                  std::set<yacc_state_node_t>>> &dfa)
 {
     std::vector<
-        std::pair<std::pair<std::string, std::string>, yacc_state_node_t> >
+        std::pair<std::pair<std::string, std::string>, yacc_state_node_t>>
         ret;
     for (auto &p : dfa)
     {
@@ -137,17 +137,17 @@ yacc::dfa_optimize(
 }
 std::vector<
     std::pair<std::pair<std::set<yacc_state_node_t>, std::string>,
-              std::set<yacc_state_node_t> > >
+              std::set<yacc_state_node_t>>>
 yacc::nfa_to_dfa(
     const std::vector<std::pair<std::pair<yacc_state_node_t, std::string>,
-                                yacc_state_node_t> > &old_machine,
+                                yacc_state_node_t>> &old_machine,
     const std::unordered_set<std::string> &term_words)
 {
     std::vector<
         std::pair<std::pair<std::set<yacc_state_node_t>, std::string>,
-                  std::set<yacc_state_node_t> > >
+                  std::set<yacc_state_node_t>>>
         new_machine;
-    std::vector<std::set<yacc_state_node_t> > state;
+    std::vector<std::set<yacc_state_node_t>> state;
     state.reserve(term_words.size());
     for (auto &p : term_words)
     {
@@ -192,11 +192,11 @@ yacc::nfa_to_dfa(
     return new_machine;
 }
 std::vector<std::pair<std::pair<yacc_state_node_t, std::string>,
-                      yacc_state_node_t> >
+                      yacc_state_node_t>>
 yacc::make_nfa(const std::vector<yacc_rule> &rules)
 {
     std::vector<std::pair<std::pair<yacc_state_node_t, std::string>,
-                          yacc_state_node_t> >
+                          yacc_state_node_t>>
         nfa;
     for (auto rule : rules)
     {
@@ -250,11 +250,11 @@ std::unordered_set<std::string> yacc::make_term_words(
     ret.insert(yacc_end_mark);
     return ret;
 }
-std::vector<std::shared_ptr<yacc_result_t> >
+std::vector<std::shared_ptr<yacc_result_t>>
 yacc::make_yacc_result_from_lex_result(
     const std::vector<lex_result_t> &lex_result)
 {
-    std::vector<std::shared_ptr<yacc_result_t> > ret;
+    std::vector<std::shared_ptr<yacc_result_t>> ret;
     for (auto &p : lex_result)
     {
         auto tmp = std::make_shared<yacc_result_t>();
@@ -265,9 +265,9 @@ yacc::make_yacc_result_from_lex_result(
     return ret;
 }
 bool yacc::self_reduce_one(
-    std::vector<std::shared_ptr<yacc_result_t> > &result,
+    std::vector<std::shared_ptr<yacc_result_t>> &result,
     const std::vector<std::pair<std::pair<std::string, std::string>,
-                                yacc_state_node_t> > &dfa)
+                                yacc_state_node_t>> &dfa)
 {
     if (result.empty())
         return false;
@@ -293,9 +293,9 @@ bool yacc::self_reduce_one(
     return true;
 }
 bool yacc::self_reduce_two(
-    std::vector<std::shared_ptr<yacc_result_t> > &result,
+    std::vector<std::shared_ptr<yacc_result_t>> &result,
     const std::vector<std::pair<std::pair<std::string, std::string>,
-                                yacc_state_node_t> > &dfa,
+                                yacc_state_node_t>> &dfa,
     const std::unordered_set<std::string> &term_words)
 {
     if (result.size() < 2)
@@ -330,10 +330,10 @@ bool yacc::self_reduce_two(
     return true;
 }
 bool yacc::reduce_new_node(
-    std::vector<std::shared_ptr<yacc_result_t> > &result,
+    std::vector<std::shared_ptr<yacc_result_t>> &result,
     const std::shared_ptr<yacc_result_t> &r_node,
     const std::vector<std::pair<std::pair<std::string, std::string>,
-                                yacc_state_node_t> > &dfa,
+                                yacc_state_node_t>> &dfa,
     const std::unordered_set<std::string> &term_words)
 {
     if (result.empty())
@@ -368,10 +368,10 @@ bool yacc::reduce_new_node(
     return true;
 }
 bool yacc::add_new_node(
-    std::vector<std::shared_ptr<yacc_result_t> > &result,
+    std::vector<std::shared_ptr<yacc_result_t>> &result,
     const std::shared_ptr<yacc_result_t> &r_node,
     const std::vector<std::pair<std::pair<std::string, std::string>,
-                                yacc_state_node_t> > &dfa)
+                                yacc_state_node_t>> &dfa)
 {
     auto iter = std::find_if(dfa.begin(), dfa.end(), [&](auto &item) {
         return item.first.first == r_node->id;

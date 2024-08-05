@@ -6,15 +6,15 @@ namespace skyfire
 template <typename... _Types>
 struct type_list
 {
-    using tuple_type          = std::tuple<_Types...>;
+    using tuple_type = std::tuple<_Types...>;
     static constexpr int size = sizeof...(_Types);
 };
 template <typename _Type>
 struct type_list<_Type>
 {
-    using tuple_type          = std::tuple<_Type>;
+    using tuple_type = std::tuple<_Type>;
     static constexpr int size = 1;
-    using type                = _Type;
+    using type = _Type;
 };
 template <typename _Itype, typename _TypeList>
 struct tl_push_front;

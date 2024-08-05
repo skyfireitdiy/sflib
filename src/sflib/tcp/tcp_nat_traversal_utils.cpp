@@ -3,7 +3,7 @@
 namespace skyfire
 {
 bool tcp_nat_traversal_connection::send(
-    const byte_array& data) const
+    const byte_array &data) const
 {
     if (type__ == tcp_nat_traversal_connection_type::type_client_valid)
     {
@@ -12,7 +12,7 @@ bool tcp_nat_traversal_connection::send(
     return server__->send(sock__, data);
 }
 bool tcp_nat_traversal_connection::send(
-    int type, const byte_array& data) const
+    int type, const byte_array &data) const
 {
     if (type__ == tcp_nat_traversal_connection_type::type_client_valid)
     {
@@ -34,29 +34,42 @@ tcp_nat_traversal_connection::tcp_nat_traversal_connection(
     {
         sf_bind(
             client__, data_coming,
-            [this](const pkg_header_t& header, const byte_array& data) {
+            [this](const pkg_header_t &header, const byte_array &data) {
                 data_coming(header, data);
             },
             true);
         sf_bind(
             client__, raw_data_coming,
-            [this](const byte_array& data) { raw_data_coming(data); }, true);
+            [this](const byte_array &data) {
+                raw_data_coming(data);
+            },
+            true);
         sf_bind(
-            client__, closed, [this]() { closed(); }, true);
+            client__, closed, [this]() {
+                closed();
+            },
+            true);
     }
     else
     {
         sf_bind(
             server__, data_coming,
-            [this](SOCKET, const pkg_header_t& header,
-                   const byte_array& data) { data_coming(header, data); },
+            [this](SOCKET, const pkg_header_t &header,
+                   const byte_array &data) {
+                data_coming(header, data);
+            },
             true);
         sf_bind(
             server__, raw_data_coming,
-            [this](SOCKET, const byte_array& data) { raw_data_coming(data); },
+            [this](SOCKET, const byte_array &data) {
+                raw_data_coming(data);
+            },
             true);
         sf_bind(
-            server__, closed, [this](SOCKET) { closed(); }, true);
+            server__, closed, [this](SOCKET) {
+                closed();
+            },
+            true);
     }
 }
 } // namespace skyfire

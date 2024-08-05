@@ -17,8 +17,8 @@ public:
     bool is_active() const;
 
 private:
-    std::atomic<bool>            running__ { false };
-    std::thread::id              current_timer_thread__;
+    std::atomic<bool> running__ {false};
+    std::thread::id current_timer_thread__;
     std::unique_ptr<std::thread> loop_thread__;
 };
 } // namespace skyfire

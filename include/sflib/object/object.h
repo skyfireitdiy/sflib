@@ -13,10 +13,10 @@ public:                                                                         
     std::vector<std::tuple<std::function<void(__VA_ARGS__)>, bool, int>>              \
         __##name##_signal_func_vec__;                                                 \
     template <typename... __SF_OBJECT_ARGS__>                                         \
-    void name(__SF_OBJECT_ARGS__&&... args)                                           \
+    void name(__SF_OBJECT_ARGS__ &&...args)                                           \
     {                                                                                 \
         std::lock_guard lck(__mu_##name##_signal__);                                  \
-        for (auto& p : __##name##_signal_func_vec__)                                  \
+        for (auto &p : __##name##_signal_func_vec__)                                  \
         {                                                                             \
             if (std::get<1>(p))                                                       \
             {                                                                         \
@@ -44,23 +44,23 @@ class object
 {
 public:
     template <typename _VectorType, typename _FuncType>
-    int __bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
+    int __bind_helper__(std::recursive_mutex &mu, _VectorType &vec,
                         _FuncType func, bool single_thread = true);
     template <typename _VectorType>
-    void __unbind_helper__(std::recursive_mutex& mu, _VectorType& vec,
+    void __unbind_helper__(std::recursive_mutex &mu, _VectorType &vec,
                            int bind_id);
     virtual ~object();
 
 protected:
-    object_msg_queue* __p_msg_queue__ = object_msg_queue::instance();
+    object_msg_queue *__p_msg_queue__ = object_msg_queue::instance();
 };
 
 template <typename _VectorType, typename _FuncType>
-int object::__bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
+int object::__bind_helper__(std::recursive_mutex &mu, _VectorType &vec,
                             _FuncType func, bool single_thread)
 {
     std::lock_guard lck(mu);
-    int             bind_id = random::instance()->rand_int(0, INT_MAX);
+    int bind_id = random::instance()->rand_int(0, INT_MAX);
     while (std::find_if(vec.begin(), vec.end(), [=](auto p) {
                return std::get<2>(p) == bind_id;
            })
@@ -73,17 +73,19 @@ int object::__bind_helper__(std::recursive_mutex& mu, _VectorType& vec,
 }
 inline object::~object()
 {
-    __p_msg_queue__->remove_msg([this](std::pair<void*, std::function<void()>> d) -> bool {
+    __p_msg_queue__->remove_msg([this](std::pair<void *, std::function<void()>> d) -> bool {
         return d.first == this;
     });
 }
 template <typename _VectorType>
-void object::__unbind_helper__(std::recursive_mutex& mu,
-                               _VectorType& vec, int bind_id)
+void object::__unbind_helper__(std::recursive_mutex &mu,
+                               _VectorType &vec, int bind_id)
 {
     std::lock_guard lck(mu);
     vec.erase(std::remove_if(vec.begin(), vec.end(),
-                             [=](auto p) { return std::get<2>(p) == bind_id; }),
+                             [=](auto p) {
+                                 return std::get<2>(p) == bind_id;
+                             }),
               vec.end());
 }
 

@@ -4,19 +4,19 @@
 
 namespace skyfire
 {
-bool lex::parse(std::string                content,
-                std::vector<lex_result_t>& result)
+bool lex::parse(std::string content,
+                std::vector<lex_result_t> &result)
 {
     result.clear();
     auto old_len = content.length();
     while (!content.empty())
     {
-        auto         flag = false;
+        auto flag = false;
         lex_result_t tmp_result {};
-        std::smatch  result_sm;
-        for (auto& p : rules__)
+        std::smatch result_sm;
+        for (auto &p : rules__)
         {
-            std::regex  token_regex(p.regex_str);
+            std::regex token_regex(p.regex_str);
             std::smatch sm;
             if (std::regex_search(content, sm, token_regex,
                                   std::regex_constants::match_continuous))
@@ -25,16 +25,16 @@ bool lex::parse(std::string                content,
                 {
                     if (tmp_result.matched_str.length() < static_cast<size_t>(sm[0].length()))
                     {
-                        tmp_result.id          = p.id;
+                        tmp_result.id = p.id;
                         tmp_result.matched_str = sm[0].str();
-                        result_sm              = sm;
+                        result_sm = sm;
                     }
                 }
                 else
                 {
-                    tmp_result.id          = p.id;
+                    tmp_result.id = p.id;
                     tmp_result.matched_str = sm[0].str();
-                    result_sm              = sm;
+                    result_sm = sm;
                 }
                 flag = true;
             }
@@ -52,15 +52,18 @@ bool lex::parse(std::string                content,
     }
     return true;
 }
-void lex::set_rules(const std::vector<lex_rule_t>& rule)
+void lex::set_rules(const std::vector<lex_rule_t> &rule)
 {
     rules__ = rule;
 }
-std::vector<lex_rule_t>         lex::rules() const { return rules__; }
+std::vector<lex_rule_t> lex::rules() const
+{
+    return rules__;
+}
 std::unordered_set<std::string> lex::real_term() const
 {
     std::unordered_set<std::string> ret;
-    for (auto& p : rules__)
+    for (auto &p : rules__)
     {
         ret.insert(p.id);
     }

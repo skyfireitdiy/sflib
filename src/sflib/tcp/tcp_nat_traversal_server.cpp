@@ -13,8 +13,8 @@ void tcp_nat_traversal_server::close()
     server__->close();
     clients__.clear();
 }
-bool tcp_nat_traversal_server::listen(const std::string& ip,
-                                      unsigned short     port)
+bool tcp_nat_traversal_server::listen(const std::string &ip,
+                                      unsigned short port)
 {
     if (running__)
         return false;
@@ -25,28 +25,36 @@ tcp_nat_traversal_server::tcp_nat_traversal_server()
 {
     sf_bind(
         server__, new_connection,
-        [=](SOCKET sock) { on_new_connection__(sock); }, true);
+        [=](SOCKET sock) {
+            on_new_connection__(sock);
+        },
+        true);
     sf_bind(
-        server__, closed, [this](SOCKET sock) { on_disconnect__(sock); }, true);
+        server__, closed, [this](SOCKET sock) {
+            on_disconnect__(sock);
+        },
+        true);
     sf_bind(
         server__, data_coming,
-        [this](SOCKET sock, const pkg_header_t& header,
-               const byte_array& data) { on_msg_coming__(sock, header, data); },
+        [this](SOCKET sock, const pkg_header_t &header,
+               const byte_array &data) {
+            on_msg_coming__(sock, header, data);
+        },
         true);
 }
 void tcp_nat_traversal_server::on_client_require_connect_to_peer_client__(
-    tcp_nat_traversal_context_t__& context) const
+    tcp_nat_traversal_context_t__ &context) const
 {
     // 第1步：server获取发起端信息，提交至接受端，context有效字段：connect_id、dest_id、src_id、src_addr
     context.step = 1;
     // 判断来源是否存在
-    if (clients__.count(static_cast<const int&>(context.src_id)) == 0)
+    if (clients__.count(static_cast<const int &>(context.src_id)) == 0)
     {
 
         return;
     }
     // 判断目的是否存在，如果不存在，通知来源
-    if (clients__.count(static_cast<const int&>(context.dest_id)) == 0)
+    if (clients__.count(static_cast<const int &>(context.dest_id)) == 0)
     {
         context.error_code = err_not_exist;
 
@@ -81,7 +89,7 @@ void tcp_nat_traversal_server::on_client_require_connect_to_peer_client__(
     }
 }
 void tcp_nat_traversal_server::on_msg_coming__(
-    SOCKET sock, const pkg_header_t& header, const byte_array& data)
+    SOCKET sock, const pkg_header_t &header, const byte_array &data)
 {
 
     switch (header.type)
@@ -92,14 +100,16 @@ void tcp_nat_traversal_server::on_msg_coming__(
     case type_nat_traversal_reg:
         on_client_reg__(sock);
         break;
-    case type_nat_traversal_require_connect_peer: {
+    case type_nat_traversal_require_connect_peer:
+    {
 
         tcp_nat_traversal_context_t__ context;
         from_json(json::from_string(to_string(data)), context);
         on_client_require_connect_to_peer_client__(context);
     }
     break;
-    case type_nat_traversal_b_reply_addr: {
+    case type_nat_traversal_b_reply_addr:
+    {
 
         tcp_nat_traversal_context_t__ context;
         from_json(json::from_string(to_string(data)), context);
@@ -111,12 +121,12 @@ void tcp_nat_traversal_server::on_msg_coming__(
     }
 }
 void tcp_nat_traversal_server::on_nat_traversal_b_reply_addr(
-    tcp_nat_traversal_context_t__& context, SOCKET sock) const
+    tcp_nat_traversal_context_t__ &context, SOCKET sock) const
 {
     // 第4步，服务器将目的的监听地址信息发送至来源，context有效字段：connect_id、dest_id、src_id、src_addr、dest_addr
     context.step = 4;
     // 判断目的是否存在，不存在，通知来源
-    if (clients__.count(static_cast<const int&>(context.dest_id)) == 0)
+    if (clients__.count(static_cast<const int &>(context.dest_id)) == 0)
     {
         context.error_code = err_not_exist;
 
@@ -126,7 +136,7 @@ void tcp_nat_traversal_server::on_nat_traversal_b_reply_addr(
         return;
     }
     // 判断来源是否存在，如果不存在，通知回复者
-    if (clients__.count(static_cast<const int&>(context.src_id)) == 0)
+    if (clients__.count(static_cast<const int &>(context.src_id)) == 0)
     {
         context.error_code = err_not_exist;
 
@@ -159,12 +169,12 @@ void tcp_nat_traversal_server::on_nat_traversal_b_reply_addr(
 }
 void tcp_nat_traversal_server::on_update_client_list__(SOCKET sock)
 {
-    const std::unordered_set<unsigned long long> tmp_data { clients__.begin(),
-                                                            clients__.end() };
-    const auto                                   data = to_byte_array(skyfire::to_json(tmp_data).to_string());
+    const std::unordered_set<unsigned long long> tmp_data {clients__.begin(),
+                                                           clients__.end()};
+    const auto data = to_byte_array(skyfire::to_json(tmp_data).to_string());
     if (sock == -1)
     {
-        for (auto& p : clients__)
+        for (auto &p : clients__)
         {
 
             server__->send(p, type_nat_traversal_list, data);

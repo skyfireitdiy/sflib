@@ -50,12 +50,12 @@ enum error_code
 class exception : public std::exception
 {
 private:
-    int                 ec__;
-    std::string         msg__;
+    int ec__;
+    std::string msg__;
     mutable std::string buf__;
 
 public:
-    const char* what() const noexcept override
+    const char *what() const noexcept override
     {
         buf__ = "ec:" + std::to_string(ec__) + " msg:" + msg__;
         return buf__.c_str();
@@ -74,21 +74,30 @@ class sf_error
 {
 private:
     exception exp__;
-    std::any  err_info__;
+    std::any err_info__;
 
 public:
-    sf_error(exception e = exception(err_ok, ""), std::any&& err_info = nullptr)
+    sf_error(exception e = exception(err_ok, ""), std::any &&err_info = nullptr)
         : exp__(e)
         , err_info__(err_info)
     {
     }
-    sf_error(int code, std::string msg, std::any&& err_info = nullptr)
+    sf_error(int code, std::string msg, std::any &&err_info = nullptr)
         : sf_error(exception(code, msg))
     {
         err_info__ = std::move(err_info);
     }
-              operator bool() const { return exp__.code() == err_ok; }
-    exception exp() const { return exp__; }
-    std::any  err_info() const { return err_info__; }
+    operator bool() const
+    {
+        return exp__.code() == err_ok;
+    }
+    exception exp() const
+    {
+        return exp__;
+    }
+    std::any err_info() const
+    {
+        return err_info__;
+    }
 };
 }
