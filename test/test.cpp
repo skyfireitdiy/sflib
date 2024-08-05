@@ -80,23 +80,23 @@ sf_test(tcp, test_server)
     bool connected = false;
     byte_array data;
     sf_bind(
-            server, new_connection, [&connected](SOCKET sock) {
+        server, new_connection, [&connected](SOCKET sock) {
             connected = true;
-            },
-            false);
+        },
+        false);
     sf_bind(
-            server, raw_data_coming, [&server, &lp, &data](SOCKET sock, skyfire::byte_array d) {
+        server, raw_data_coming, [&server, &lp, &data](SOCKET sock, skyfire::byte_array d) {
             data = d;
             server->close(sock);
             server->close();
             lp.quit();
-            },
-            false);
+        },
+        false);
     auto listened = server->listen("127.0.0.1", 9300);
     cv.notify_one();
     lp.exec();
     test_assert(connected && listened);
-    test_p_eq(skyfire::to_string(data), "hello world" );
+    test_p_eq(skyfire::to_string(data), "hello world" s);
 }
 
 sf_test(tcp, test_client)
@@ -106,10 +106,10 @@ sf_test(tcp, test_client)
     auto client = skyfire::tcp_client::make_instance();
     skyfire::eventloop lp;
     sf_bind(
-            client, closed, [&lp]() {
+        client, closed, [&lp]() {
             lp.quit();
-            },
-            false);
+        },
+        false);
     std::unique_lock lck(mu);
 
     cv.wait(lck);
@@ -121,7 +121,7 @@ sf_test(tcp, test_client)
         return;
     }
 
-    client->send(skyfire::to_byte_array("hello world" ));
+    client->send(skyfire::to_byte_array("hello world" s));
     lp.exec();
 }
 
@@ -130,12 +130,12 @@ sf_test(finally, test_finally_order)
     int a = 10;
     {
         sf_finally([&]() {
-                a *= 10;
-                });
+            a *= 10;
+        });
         {
             sf_finally([&]() {
-                    a += 10;
-                    });
+                a += 10;
+            });
         }
     }
     test_p_eq(a, 200);
@@ -146,11 +146,11 @@ sf_test(finally, test_finally_order2)
     int a = 10;
     {
         sf_finally([&]() {
-                a *= 10;
-                });
+            a *= 10;
+        });
         sf_finally([&]() {
-                a += 10;
-                });
+            a += 10;
+        });
     }
     test_p_eq(a, 200);
 }
@@ -193,7 +193,7 @@ sf_test(buffer, test_pipe)
     writer->write(skyfire::to_byte_array("hello world"));
     auto t = reader->read(1024);
     using namespace std::string_literals;
-    test_str_eq(std::get<1>(t).data(), "hello world" );
+    test_str_eq(std::get<1>(t).data(), "hello world" s);
 }
 struct test_argv_param
 {
@@ -241,15 +241,15 @@ sf_test(argv, gen_json_name)
 }
 
 sf_test_p(argv, test_parser_none_postion, test_argv_param, {
-        {
-        {"-t", "hello"},
-        R"({" --test ":" hello "})"_json,
-        },
-        {
-        {"--test", "hello"},
-        R"({" --test ":" hello "})"_json,
-        },
-        })
+                                                               {
+                                                                   {"-t", "hello"},
+                                                                   R "({" --test ":" hello "})" _json,
+                                                               },
+                                                               {
+                                                                   {"--test", "hello"},
+                                                                   R "({" --test ":" hello "})" _json,
+                                                               },
+                                                           })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("--test", {argv::short_name("-t")});
@@ -258,15 +258,15 @@ sf_test_p(argv, test_parser_none_postion, test_argv_param, {
 }
 
 sf_test_p(argv, test_other_name, test_argv_param, {
-        {
-        {"-t", "hello"},
-        R"({" other ":" hello "})"_json,
-        },
-        {
-        {"--test", "hello"},
-        R"({" other ":" hello "})"_json,
-        },
-        })
+                                                      {
+                                                          {"-t", "hello"},
+                                                          R "({" other ":" hello "})" _json,
+                                                      },
+                                                      {
+                                                          {"--test", "hello"},
+                                                          R "({" other ":" hello "})" _json,
+                                                      },
+                                                  })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("--test", {argv::short_name("-t"), argv::required(), argv::json_name("other")});
@@ -275,11 +275,11 @@ sf_test_p(argv, test_other_name, test_argv_param, {
 }
 
 sf_test_p(argv, test_param_type, test_argv_param, {
-        {
-        {"-s", "string value", "-a", "elem1", "-a", "elem2", "-a", "elem3", "-b", "true", "-n", "26.4"},
-        R"({" --string ":" string value ", " --array ":[" elem1 "," elem2 "," elem3 "], " --boolean ":true, " --number ":26.4})"_json,
-        },
-        })
+                                                      {
+                                                          {"-s", "string value", "-a", "elem1", "-a", "elem2", "-a", "elem3", "-b", "true", "-n", "26.4"},
+                                                          R "({" --string ":" string value ", " --array ":[" elem1 "," elem2 "," elem3 "], " --boolean ":true, " --number ":26.4})" _json,
+                                                      },
+                                                  })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("--string", {argv::short_name("-s"), argv::type(json_type::string)});
@@ -291,27 +291,27 @@ sf_test_p(argv, test_param_type, test_argv_param, {
 }
 
 sf_test_p(argv, test_bool_value, test_argv_param, {
-        {
-        {"-b", "hello"},
-        R"({" --boolean ":true})"_json,
-        },
-        {
-        {"-b", "0"},
-        R"({" --boolean ":false})"_json,
-        },
-        {
-        {"-b", "false"},
-        R"({" --boolean ":false})"_json,
-        },
-        {
-        {"-b", "true"},
-        R"({" --boolean ":true})"_json,
-        },
-        {
-        {"-b", "1"},
-        R"({" --boolean ":true})"_json,
-        },
-})
+                                                      {
+                                                          {"-b", "hello"},
+                                                          R "({" --boolean ":true})" _json,
+                                                      },
+                                                      {
+                                                          {"-b", "0"},
+                                                          R "({" --boolean ":false})" _json,
+                                                      },
+                                                      {
+                                                          {"-b", "false"},
+                                                          R "({" --boolean ":false})" _json,
+                                                      },
+                                                      {
+                                                          {"-b", "true"},
+                                                          R "({" --boolean ":true})" _json,
+                                                      },
+                                                      {
+                                                          {"-b", "1"},
+                                                          R "({" --boolean ":true})" _json,
+                                                      },
+                                                  })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("-b", "--boolean", json_type::boolean);
@@ -320,19 +320,19 @@ sf_test_p(argv, test_bool_value, test_argv_param, {
 }
 
 sf_test_p(argv, test_array, test_argv_param, {
-        {
-        {},
-        R"({" --array ":[]})"_json,
-        },
-        {
-        {"-a", "data1"},
-        R"({" --array ":[" data1 "]})"_json,
-        },
-        {
-        {"-a", "data1", "-a", "data2", "-a", "data3"},
-        R"({" --array ":[" data1 ", " data2 ", " data3 "]})"_json,
-        },
-        })
+                                                 {
+                                                     {},
+                                                     R "({" --array ":[]})" _json,
+                                                 },
+                                                 {
+                                                     {"-a", "data1"},
+                                                     R "({" --array ":[" data1 "]})" _json,
+                                                 },
+                                                 {
+                                                     {"-a", "data1", "-a", "data2", "-a", "data3"},
+                                                     R "({" --array ":[" data1 ", " data2 ", " data3 "]})" _json,
+                                                 },
+                                             })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("-a", "--array", json_type::array);
@@ -341,15 +341,15 @@ sf_test_p(argv, test_array, test_argv_param, {
 }
 
 sf_test_p(argv, test_not_required, test_argv_param, {
-        {
-        {},
-        "{}"_json,
-        },
-        {
-        {"-s", "string value"},
-        R"({" --string ": " string value "})"_json,
-        },
-        })
+                                                        {
+                                                            {},
+                                                            "{}" _json,
+                                                        },
+                                                        {
+                                                            {"-s", "string value"},
+                                                            R "({" --string ": " string value "})" _json,
+                                                        },
+                                                    })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("-s", "--string", json_type::string, false);
@@ -358,23 +358,23 @@ sf_test_p(argv, test_not_required, test_argv_param, {
 }
 
 sf_test_p(argv, test_save_bool, test_argv_param, {
-        {
-        {},
-        R"({" --true ":false, " --false ":true})"_json,
-        },
-        {
-        {"-t"},
-        R"({" --true ":true, " --false ":true})"_json,
-        },
-        {
-        {"-f"},
-        R"({" --true ":false, " --false ":false})"_json,
-        },
-        {
-        {"-t", "-f"},
-        R"({" --true ":true, " --false ":false})"_json,
-        },
-        })
+                                                     {
+                                                         {},
+                                                         R "({" --true ":false, " --false ":true})" _json,
+                                                     },
+                                                     {
+                                                         {"-t"},
+                                                         R "({" --true ":true, " --false ":true})" _json,
+                                                     },
+                                                     {
+                                                         {"-f"},
+                                                         R "({" --true ":false, " --false ":false})" _json,
+                                                     },
+                                                     {
+                                                         {"-t", "-f"},
+                                                         R "({" --true ":true, " --false ":false})" _json,
+                                                     },
+                                                 })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("-t", "--true", json_type::string, true, {}, "", argv_action::store_true);
@@ -384,15 +384,15 @@ sf_test_p(argv, test_save_bool, test_argv_param, {
 }
 
 sf_test_p(argv, test_default_value, test_argv_param, {
-        {
-        {},
-        R"({" --string ":" default value "})"_json,
-        },
-        {
-        {"-s", "my value"},
-        R"({" --string ":" my value "})"_json,
-        },
-        })
+                                                         {
+                                                             {},
+                                                             R "({" --string ":" default value "})" _json,
+                                                         },
+                                                         {
+                                                             {"-s", "my value"},
+                                                             R "({" --string ":" my value "})" _json,
+                                                         },
+                                                     })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("-s", "--string", json_type::string, true, json("default value"));
@@ -401,15 +401,15 @@ sf_test_p(argv, test_default_value, test_argv_param, {
 }
 
 sf_test_p(argv, test_subparser, test_argv_param, {
-        {
-        {"sub1", "-s", "string", "-o", "one"},
-        R"({" sub1 ":{" --string ":" string ", " --one ": " one "}})"_json,
-        },
-        {
-        {"sub2", "-t", "two", "-s", "string"},
-        R"({" sub2 ":{" --string ":" string ", " --two ": " two "}})"_json,
-        },
-        })
+                                                     {
+                                                         {"sub1", "-s", "string", "-o", "one"},
+                                                         R "({" sub1 ":{" --string ":" string ", " --one ": " one "}})" _json,
+                                                     },
+                                                     {
+                                                         {"sub2", "-t", "two", "-s", "string"},
+                                                         R "({" sub2 ":{" --string ":" string ", " --two ": " two "}})" _json,
+                                                     },
+                                                 })
 {
     auto parser = argparser::make_parser();
     parser->add_argument("-s", "--string", json_type::string, true, json("default value"));
@@ -447,10 +447,10 @@ sf_test(waiter, none_param_event_waiter_test)
 {
     test_object t;
     std::thread thread([&t]() {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
-            t.s1();
-            });
+        t.s1();
+    });
 
     sf_wait(&t, s1);
     thread.join();
@@ -460,9 +460,9 @@ sf_test(waiter, many_param_event_waiter_test)
 {
     test_object t;
     std::thread thread([&t]() {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            t.s2(5, 6.5, 504.2);
-            });
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        t.s2(5, 6.5, 504.2);
+    });
     sf_wait(&t, s2);
     thread.join();
 }
@@ -486,7 +486,7 @@ sf_test(json, test_construct)
     test_num_eq(static_cast<int>(js), 5);
     js = 6.5;
     test_num_eq(static_cast<double>(js), 6.5);
-    js = "hello world"s;
+    js = "hello world" s;
     test_str_eq(static_cast<std::string>(js), "hello world");
     js = true;
     test_assert(js);
@@ -565,7 +565,7 @@ sf_test(cache, normal_test)
 {
     cache cache;
     using namespace std;
-    cache.set_data("name", "zhangsan"s);
+    cache.set_data("name", "zhangsan" s);
     cache.set_data("age", 25);
     cache.set_data("body", body_data {175, 60});
     auto body = cache.data<body_data>("body");
