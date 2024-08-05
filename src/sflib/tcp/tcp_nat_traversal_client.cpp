@@ -5,7 +5,7 @@
 namespace skyfire
 {
 void tcp_nat_traversal_client::on_new_connect_required__(
-    tcp_nat_traversal_context_t__ &context)
+    tcp_nat_traversal_context_t__& context)
 {
     // 创建连接上下文
     connect_context_map__[context.connect_id] = p2p_connect_context_t__ {};
@@ -57,7 +57,7 @@ void tcp_nat_traversal_client::on_new_connect_required__(
     // 连接失败，B建立服务器2
     // 第3步：接受端建立socket，发送信息，便于server获取到接受端地址信息，同时监听端口，context有效字段：connect_id、dest_id、src_id、src_addr
     connect_context_map__[context.connect_id].tcp_nat_traversal_context.step = 3;
-    connect_context_map__[context.connect_id].point_b_client_2 = tcp_client::make_instance();
+    connect_context_map__[context.connect_id].point_b_client_2               = tcp_client::make_instance();
     // 将客户端2绑定至于客户端1相同的ip端口
     if (!connect_context_map__[context.connect_id].point_b_client_2->bind(
             server_addr.ip, auto_port))
@@ -87,7 +87,7 @@ void tcp_nat_traversal_client::on_new_connect_required__(
     }
     // lambda 里面需要此绑定id，所以需要传递指针
     std::shared_ptr<int> tmp_bind_id = std::make_shared<int>();
-    *tmp_bind_id = sf_bind(
+    *tmp_bind_id                     = sf_bind(
         connect_context_map__[context.connect_id].point_b_server,
         new_connection, ([this, context, tmp_bind_id](SOCKET sock) {
             std::shared_ptr<tcp_nat_traversal_connection> connection(
@@ -203,9 +203,9 @@ tcp_nat_traversal_client::clients() const
     return client_list__;
 }
 bool tcp_nat_traversal_client::connect_to_server(
-    const std::string &ip, unsigned short port)
+    const std::string& ip, unsigned short port)
 {
-    server_addr__.ip = ip;
+    server_addr__.ip   = ip;
     server_addr__.port = port;
     if (client__->connect_to_server(ip, port))
     {
@@ -219,22 +219,19 @@ tcp_nat_traversal_client::tcp_nat_traversal_client()
 {
     sf_bind(
         client__, data_coming,
-        [this](const pkg_header_t &header, const byte_array &data) {
+        [this](const pkg_header_t& header, const byte_array& data) {
             on_client_data_coming__(header, data);
         },
         true);
     sf_bind(
-        client__, closed, [this] {
-            close();
-        },
-        true);
+        client__, closed, [this] { close(); }, true);
 }
 unsigned long long int tcp_nat_traversal_client::id() const
 {
     return self_id__;
 }
 void tcp_nat_traversal_client::on_client_data_coming__(
-    const pkg_header_t &header, const byte_array &data)
+    const pkg_header_t& header, const byte_array& data)
 {
 
     switch (header.type)
@@ -247,15 +244,13 @@ void tcp_nat_traversal_client::on_client_data_coming__(
 
         from_json(json::from_string(to_string(data)), self_id__);
         break;
-    case type_nat_traversal_new_connect_required:
-    {
+    case type_nat_traversal_new_connect_required: {
         tcp_nat_traversal_context_t__ context;
         from_json(json::from_string(to_string(data)), context);
         on_new_connect_required__(context);
     }
     break;
-    case type_nat_traversal_server_reply_b_addr:
-    {
+    case type_nat_traversal_server_reply_b_addr: {
         tcp_nat_traversal_context_t__ context;
         from_json(json::from_string(to_string(data)), context);
         on_server_reply_b_addr(context);
@@ -267,7 +262,7 @@ void tcp_nat_traversal_client::on_client_data_coming__(
 }
 
 void tcp_nat_traversal_client::on_server_reply_b_addr(
-    tcp_nat_traversal_context_t__ &context)
+    tcp_nat_traversal_context_t__& context)
 {
     // 第5步，a连接b的监听端口,context有效字段：connect_id、dest_id、src_id、src_addr、dest_addr
     context.step = 5;
@@ -279,7 +274,7 @@ void tcp_nat_traversal_client::on_server_reply_b_addr(
         return;
     }
     connect_context_map__[context.connect_id].tcp_nat_traversal_context = context;
-    connect_context_map__[context.connect_id].point_a_client_2 = tcp_client::make_instance(context.raw);
+    connect_context_map__[context.connect_id].point_a_client_2          = tcp_client::make_instance(context.raw);
 
     if (connect_context_map__[context.connect_id]
             .point_a_client_2->connect_to_server(context.dest_addr.ip,

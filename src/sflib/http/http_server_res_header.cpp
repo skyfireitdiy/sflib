@@ -5,14 +5,14 @@
 
 namespace skyfire
 {
-void http_server_res_header::add_cookies(const http_cookie_item_t &cookies)
+void http_server_res_header::add_cookies(const http_cookie_item_t& cookies)
 {
     res_cookies__[cookies.key] = cookies;
 }
-void http_server_res_header::add_cookies(const std::string &key, const std::string &value)
+void http_server_res_header::add_cookies(const std::string& key, const std::string& value)
 {
     http_cookie_item_t cookie;
-    cookie.key = key;
+    cookie.key   = key;
     cookie.value = value;
     add_cookies(cookie);
 }
@@ -30,7 +30,7 @@ void http_server_res_header::clear_cookies(bool clear_session)
     }
     res_cookies__.clear();
 }
-void http_server_res_header::remove_cookies(const std::string &key)
+void http_server_res_header::remove_cookies(const std::string& key)
 {
     res_cookies__.erase(key);
 }
@@ -41,17 +41,17 @@ std::unordered_map<std::string, http_cookie_item_t> http_server_res_header::cook
 std::string http_server_res_header::to_string() const
 {
     std::string ret = http_version__ + " " + std::to_string(status__) + " " + status_desc__ + "\r\n";
-    for (auto &p : header_data__)
+    for (auto& p : header_data__)
     {
         ret += p.first + ":" + p.second + "\r\n";
     }
-    for (auto &p : res_cookies__)
+    for (auto& p : res_cookies__)
     {
         using namespace std::literals;
-        std::string value_str = p.second.key + "=" s + p.second.value + ";" s;
+        std::string value_str = p.second.key + "="s + p.second.value + ";"s;
         if (p.second.life_type == cookie_life_type::time_point)
         {
-            value_str += "Expires=" + make_http_time_str(p.second.time_point) + ";" s;
+            value_str += "Expires=" + make_http_time_str(p.second.time_point) + ";"s;
         }
         std::string cookie_path = "/";
         if (!p.second.path.empty())
@@ -77,11 +77,11 @@ void http_server_res_header::set_status(int status)
     status__ = status;
 }
 void http_server_res_header::set_http_version(
-    const std::string &http_version)
+    const std::string& http_version)
 {
     http_version__ = http_version;
 }
-void http_server_res_header::set_status_desc(const std::string &desc)
+void http_server_res_header::set_status_desc(const std::string& desc)
 {
     status_desc__ = desc;
 }

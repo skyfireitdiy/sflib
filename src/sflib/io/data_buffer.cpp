@@ -3,7 +3,7 @@
 #include "sflib/core/type.h"
 namespace skyfire
 {
-void data_buffer::set_data(const byte_array &data)
+void data_buffer::set_data(const byte_array& data)
 {
     std::lock_guard lock(mutex__);
     data__ = data;
@@ -18,7 +18,7 @@ byte_array_result data_buffer::read(size_t max_size)
     std::lock_guard lock(mutex__);
     if (data__.empty() && (reader__ == nullptr || !reader__->can_read()))
     {
-        return {sf_error {{err_finished, "read finished"}}, byte_array {}};
+        return { sf_error { { err_finished, "read finished" } }, byte_array {} };
     }
     byte_array data(max_size);
     if (max_size <= data__.size())
@@ -26,24 +26,24 @@ byte_array_result data_buffer::read(size_t max_size)
         memcpy(data.data(), data__.data(), max_size);
         memcpy(data__.data(), data__.data() + max_size, data__.size() - max_size);
         data__.resize(data__.size() - max_size);
-        return {sf_error {}, data};
+        return { sf_error {}, data };
     }
     data = data__;
     data__.clear();
     if (reader__ == nullptr || !reader__->can_read())
     {
-        return {sf_error {}, data};
+        return { sf_error {}, data };
     }
     byte_array tmp_data;
-    auto e = reader__->read(max_size - data.size());
+    auto       e = reader__->read(max_size - data.size());
     if (!std::get<0>(e))
     {
         return e;
     }
     data += e;
-    return {sf_error {}, data};
+    return { sf_error {}, data };
 }
-sf_error data_buffer::write(const byte_array &data)
+sf_error data_buffer::write(const byte_array& data)
 {
     std::lock_guard lock(mutex__);
     data__ += data;

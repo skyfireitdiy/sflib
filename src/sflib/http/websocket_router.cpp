@@ -8,23 +8,23 @@
 namespace skyfire
 {
 websocket_router::websocket_router(
-    const std::string &url,
-    std::function<void(const websocket_param_t &)> callback, int priority)
+    const std::string&                            url,
+    std::function<void(const websocket_param_t&)> callback, int priority)
     : url__(url)
     , callback__(std::move(callback))
     , priority__(priority)
 {
 }
 websocket_router::websocket_router(
-    const std::string &url, void (*callback)(const websocket_param_t &),
-    int priority)
+    const std::string& url, void (*callback)(const websocket_param_t&),
+    int                priority)
     : url__(url)
     , callback__(std::function(callback))
     , priority__(priority)
 {
 }
 bool websocket_router::run_route(
-    const websocket_param_t &context) const
+    const websocket_param_t& context) const
 {
 
     if (context.url == url__)
@@ -34,8 +34,5 @@ bool websocket_router::run_route(
     }
     return false;
 }
-int websocket_router::priority() const
-{
-    return priority__;
-}
+int websocket_router::priority() const { return priority__; }
 } // namespace skyfire

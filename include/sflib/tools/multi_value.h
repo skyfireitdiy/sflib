@@ -12,7 +12,7 @@ public:
     template <typename T>
     operator T() const
     {
-        return std::get<std::decay_t<T> >(*this);
+        return std::get<std::decay_t<T>>(*this);
     }
 };
 template <typename... Type>

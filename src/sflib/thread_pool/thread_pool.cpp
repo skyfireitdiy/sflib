@@ -11,7 +11,7 @@ thread_pool::thread_pool(size_t thread_count)
     }
     add_thread__(thread_count);
 }
-void thread_pool::thread_run__(thread_pool *this__)
+void thread_pool::thread_run__(thread_pool* this__)
 {
     while (true)
     {
@@ -27,14 +27,14 @@ void thread_pool::thread_run__(thread_pool *this__)
             break;
         }
         {
-            auto flag_empty = true;
+            auto                  flag_empty = true;
             std::function<void()> task;
             {
                 std::lock_guard lock(this__->mu_task_deque__);
                 if (!this__->task_deque__.empty())
                 {
                     flag_empty = false;
-                    task = this__->task_deque__.front();
+                    task       = this__->task_deque__.front();
                     this__->task_deque__.pop_front();
                 }
             }
@@ -75,9 +75,9 @@ void thread_pool::clear_task()
 void thread_pool::clear_thread()
 {
     is_pause__ = false;
-    is_exit__ = true;
+    is_exit__  = true;
     thread_cv__.notify_all();
-    for (auto &p : thread_vec__)
+    for (auto& p : thread_vec__)
     {
         p->join();
     }
@@ -87,11 +87,8 @@ size_t thread_pool::busy_thread_count() const
 {
     return static_cast<size_t>(busy_thread_num__);
 }
-size_t thread_pool::thread_count() const
-{
-    return thread_count__;
-}
-void thread_pool::add_thread(const size_t thread_num)
+size_t thread_pool::thread_count() const { return thread_count__; }
+void   thread_pool::add_thread(const size_t thread_num)
 {
     add_thread__(thread_num);
 }
@@ -100,12 +97,6 @@ void thread_pool::resume()
     is_pause__ = false;
     thread_cv__.notify_all();
 }
-thread_pool::~thread_pool()
-{
-    clear_thread();
-}
-void thread_pool::pause()
-{
-    is_pause__ = true;
-}
+thread_pool::~thread_pool() { clear_thread(); }
+void thread_pool::pause() { is_pause__ = true; }
 } // namespace skyfire

@@ -9,8 +9,8 @@ void timer::start(int ms, bool once)
     {
         return;
     }
-    running__ = true;
-    loop_thread__ = std::make_unique<std::thread>([this, ms](bool is_once) {
+    running__              = true;
+    loop_thread__          = std::make_unique<std::thread>([this, ms](bool is_once) {
         while (true)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(ms));
@@ -36,12 +36,6 @@ void timer::start(int ms, bool once)
                                                   once);
     current_timer_thread__ = loop_thread__->get_id();
 }
-bool timer::is_active() const
-{
-    return running__;
-}
-void timer::stop()
-{
-    running__ = false;
-}
+bool timer::is_active() const { return running__; }
+void timer::stop() { running__ = false; }
 } // namespace skyfire

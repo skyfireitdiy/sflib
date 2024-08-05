@@ -12,8 +12,8 @@
 namespace skyfire
 {
 http_part_router::http_part_router(
-    std::string prefix,
-    std::function<bool(const http_server_request &, http_server_response &)> callback,
+    std::string                                                            prefix,
+    std::function<bool(const http_server_request&, http_server_response&)> callback,
     std::vector<std::string> methods, int priority)
     : priority__(priority)
     , methods__(std::move(methods))
@@ -25,15 +25,15 @@ http_part_router::http_part_router(
     }
     prefix__.push_back(prefix);
 }
-bool http_part_router::run_route(const http_server_request &req,
-                                 http_server_response &res,
-                                 const std::string &url,
-                                 const std::string &method)
+bool http_part_router::run_route(const http_server_request& req,
+                                 http_server_response&      res,
+                                 const std::string&         url,
+                                 const std::string&         method)
 {
 
     std::unique_lock lck(methods_mu__);
     using namespace std::literals;
-    if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*" s))
+    if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"s))
     {
         if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method))
         {
@@ -41,14 +41,14 @@ bool http_part_router::run_route(const http_server_request &req,
             return false;
         }
     }
-    bool match_flag = false;
+    bool        match_flag = false;
     std::string matched_prefix;
-    for (auto &p : prefix__)
+    for (auto& p : prefix__)
     {
         if (string_start_with(url, p))
         {
             matched_prefix = p;
-            match_flag = true;
+            match_flag     = true;
             break;
         }
     }
@@ -67,8 +67,8 @@ bool http_part_router::run_route(const http_server_request &req,
     if (callback__(req, res))
     {
         auto new_url = "/" + std::string(url.begin() + matched_prefix.size(), url.end());
-        bool match = false;
-        for (auto &p : endpoint_router__)
+        bool match   = false;
+        for (auto& p : endpoint_router__)
         {
             if (p->run_route(req, res, new_url, method))
             {
@@ -79,7 +79,7 @@ bool http_part_router::run_route(const http_server_request &req,
         if (!match)
         {
             match = false;
-            for (auto &p : middle_router__)
+            for (auto& p : middle_router__)
             {
                 if (p->run_route(req, res, new_url, method))
                 {
@@ -95,12 +95,9 @@ bool http_part_router::run_route(const http_server_request &req,
     }
     return true;
 }
-int http_part_router::priority() const
-{
-    return priority__;
-}
+int  http_part_router::priority() const { return priority__; }
 bool http_part_router::operator<(
-    const http_part_router &router) const
+    const http_part_router& router) const
 {
     return priority__ < router.priority__;
 }
