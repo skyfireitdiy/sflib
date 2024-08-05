@@ -26,7 +26,7 @@ public:
                    const std::string &url, const std::string &method) override;
     [[nodiscard]] int priority() const override;
     explicit static_router(std::string path,
-                           std::vector<std::string> methods = {{"GET" s}},
+                           std::vector<std::string> methods = {{"GET"}},
                            std::string charset = "utf-8",
                            bool deflate = true,
                            int priority = default_http_static_priority);

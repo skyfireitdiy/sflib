@@ -48,10 +48,10 @@ std::string http_server_res_header::to_string() const
     for (auto &p : res_cookies__)
     {
         using namespace std::literals;
-        std::string value_str = p.second.key + "=" s + p.second.value + ";" s;
+        std::string value_str = p.second.key + "=" + p.second.value + ";";
         if (p.second.life_type == cookie_life_type::time_point)
         {
-            value_str += "Expires=" + make_http_time_str(p.second.time_point) + ";" s;
+            value_str += "Expires=" + make_http_time_str(p.second.time_point) + ";";
         }
         std::string cookie_path = "/";
         if (!p.second.path.empty())

@@ -319,7 +319,7 @@ void http_server_base::multipart_response__(SOCKET sock,
             }
             send_response_file_part__(sock, multipart[i].file_info, fi);
             fi.close();
-            if (!server__->send(sock, to_byte_array("\r\n" s)))
+            if (!server__->send(sock, to_byte_array("\r\n")))
             {
 
                 return;
@@ -337,7 +337,7 @@ void http_server_base::multipart_response__(SOCKET sock,
 
                 return;
             }
-            if (!server__->send(sock, to_byte_array("\r\n" s)))
+            if (!server__->send(sock, to_byte_array("\r\n")))
             {
 
                 return;
@@ -425,7 +425,7 @@ void http_server_base::file_response__(SOCKET sock,
         if (file_size != 0 && (file.begin > static_cast<long long>(file_size) || file.end > static_cast<long long>(file_size)))
         {
             res.set_status(416);
-            res.set_body(to_byte_array("Requested Range Not Satisfiable" s));
+            res.set_body(to_byte_array("Requested Range Not Satisfiable"));
             normal_response__(sock, res);
             return;
         }

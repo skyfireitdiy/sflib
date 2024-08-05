@@ -33,7 +33,7 @@ bool http_part_router::run_route(const http_server_request &req,
 
     std::unique_lock lck(methods_mu__);
     using namespace std::literals;
-    if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*" s))
+    if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), "*"))
     {
         if (methods__.cend() == std::find(methods__.cbegin(), methods__.cend(), method))
         {

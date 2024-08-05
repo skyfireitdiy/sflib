@@ -128,7 +128,7 @@ SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 SpaceBeforeSquareBrackets: false
-Standard: Cpp03
+Standard: Cpp17
 StatementMacros:
   - Q_UNUSED
   - QT_REQUIRE_VERSION

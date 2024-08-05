@@ -38,7 +38,7 @@ void http_server_response::set_status(int status)
     {
         using namespace std::literals;
         set_status_desc("Unknown");
-        set_body(to_byte_array("Unknown" s));
+        set_body(to_byte_array("Unknown"));
     }
 }
 void http_server_response::set_http_version(
