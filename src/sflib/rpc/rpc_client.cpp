@@ -17,21 +17,27 @@ rpc_client::rpc_client()
 {
     sf_bind(
         tcp_client__, data_coming,
-        [this](const pkg_header_t& header_t, const byte_array& data_t) {
+        [this](const pkg_header_t &header_t, const byte_array &data_t) {
             back_callback__(header_t, data_t);
         },
         true);
     sf_bind(
-        tcp_client__, closed, [this]() { close(); }, true);
+        tcp_client__, closed, [this]() {
+            close();
+        },
+        true);
 }
-void rpc_client::close() const { tcp_client__->close(); }
+void rpc_client::close() const
+{
+    tcp_client__->close();
+}
 bool rpc_client::connect_to_server(const std::string ip,
-                                   unsigned short    port) const
+                                   unsigned short port) const
 {
     return tcp_client__->connect_to_server(ip, port);
 }
-void rpc_client::back_callback__(const pkg_header_t& header_t,
-                                 const byte_array&   data_t)
+void rpc_client::back_callback__(const pkg_header_t &header_t,
+                                 const byte_array &data_t)
 {
     if (header_t.type != rpc_res_type)
     {
@@ -52,15 +58,15 @@ void rpc_client::back_callback__(const pkg_header_t& header_t,
     }
     else
     {
-        rpc_data__[call_id]->header        = header_t;
-        rpc_data__[call_id]->data          = data_t;
+        rpc_data__[call_id]->header = header_t;
+        rpc_data__[call_id]->data = data_t;
         rpc_data__[call_id]->back_finished = true;
         rpc_data__[call_id]->back_cond.notify_one();
     }
 }
 void rpc_client::on_closed__()
 {
-    for (auto& p : rpc_data__)
+    for (auto &p : rpc_data__)
     {
         if (!p.second->is_async)
         {

@@ -8,9 +8,9 @@ class nocopy : public _BaseClass
 {
 public:
     nocopy() {};
-    nocopy(const nocopy&) = delete;
-    nocopy(nocopy&&)      = delete;
-    nocopy& operator=(const nocopy&) = delete;
-    nocopy& operator=(nocopy&&) = delete;
+    nocopy(const nocopy &) = delete;
+    nocopy(nocopy &&) = delete;
+    nocopy &operator=(const nocopy &) = delete;
+    nocopy &operator=(nocopy &&) = delete;
 };
 } // namespace skyfire

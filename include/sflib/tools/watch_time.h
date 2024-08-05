@@ -13,7 +13,7 @@ public:
 
 protected:
     std::string to_string();
-    std::unordered_map<T, std::unordered_map<long long, long long>>
+    std::unordered_map<T, std::unordered_map<long long, long long> >
         data__;
     friend class check_point<T>;
 };
@@ -21,12 +21,12 @@ template <typename T = std::string>
 class check_point
 {
 private:
-    T                                              point_name__;
+    T point_name__;
     std::chrono::high_resolution_clock::time_point clock__;
-    watch_time<T>&                                 parent__;
+    watch_time<T> &parent__;
 
 public:
-    check_point(const T& name, watch_time<T>& parent);
+    check_point(const T &name, watch_time<T> &parent);
     ~check_point();
 };
 
@@ -39,7 +39,7 @@ check_point<T>::~check_point()
 }
 
 template <typename T>
-check_point<T>::check_point(const T& name, watch_time<T>& parent)
+check_point<T>::check_point(const T &name, watch_time<T> &parent)
     : point_name__(name)
     , clock__(std::chrono::high_resolution_clock::now())
     , parent__(parent)
@@ -54,7 +54,7 @@ template <typename T>
 std::string watch_time<T>::to_string()
 {
     std::ostringstream so;
-    auto               old = so.flags();
+    auto old = so.flags();
     so << std::right;
     so << std::setw(55) << "SkyFire Time Watch" << std::endl;
     ;
@@ -68,9 +68,9 @@ std::string watch_time<T>::to_string()
     so << "===================================================================="
           "====================="
        << std::endl;
-    for (auto& p : data__)
+    for (auto &p : data__)
     {
-        for (auto& q : p.second)
+        for (auto &q : p.second)
         {
             so << std::setw(30) << p.first << std::setw(6) << "|"
                << std::setw(12) << q.first << std::setw(6) << "|"

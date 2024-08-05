@@ -7,8 +7,14 @@ void eventloop::quit()
     running__ = false;
     wake();
 }
-void eventloop::wake() const { __p_msg_queue__->add_empty_msg(); }
-void eventloop::clear() const { __p_msg_queue__->clear(); }
+void eventloop::wake() const
+{
+    __p_msg_queue__->add_empty_msg();
+}
+void eventloop::clear() const
+{
+    __p_msg_queue__->clear();
+}
 void eventloop::exec()
 {
     running__ = true;

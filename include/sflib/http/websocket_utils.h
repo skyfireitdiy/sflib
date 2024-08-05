@@ -97,52 +97,52 @@ enum class websocket_data_type
 };
 struct websocket_param_t
 {
-    SOCKET                                       sock;     // socket
-    std::string                                  url;      // url
-    std::unordered_map<std::string, std::string> param;    // param
-    std::string                                  frame;    // frame
-    websocket_data_type                          type;     // 数据类型
-    std::string                                  text_msg; // 文本（当type为websocket_data_type::Text时有效）
+    SOCKET sock;                                        // socket
+    std::string url;                                    // url
+    std::unordered_map<std::string, std::string> param; // param
+    std::string frame;                                  // frame
+    websocket_data_type type;                           // 数据类型
+    std::string text_msg;                               // 文本（当type为websocket_data_type::Text时有效）
     byte_array
-                                 binary_data; // 二进制（当type为websocket_data_type::BinaryData时有效）
-    std::shared_ptr<http_server> p_server;    // server指针
+        binary_data;                       // 二进制（当type为websocket_data_type::BinaryData时有效）
+    std::shared_ptr<http_server> p_server; // server指针
 };
 enum websocket_pkg_type : uint8_t
 {
-    WEBSOCKET_OP_MIDDLE_PKG     = 0x0,
-    WEBSOCKET_OP_TEXT_PKG       = 0x1,
-    WEBSOCKET_OP_BINARY_PKG     = 0x2,
+    WEBSOCKET_OP_MIDDLE_PKG = 0x0,
+    WEBSOCKET_OP_TEXT_PKG = 0x1,
+    WEBSOCKET_OP_BINARY_PKG = 0x2,
     WEBSOCKET_OP_DISCONNECT_PKG = 0x08,
-    WEBSOCKET_OP_PING_PKG       = 0x09,
-    WEBSOCKET_OP_PONG_PKG       = 0x0A
+    WEBSOCKET_OP_PING_PKG = 0x09,
+    WEBSOCKET_OP_PONG_PKG = 0x0A
 };
 template <typename T>
-byte_array make_server_websocket_data_pkg(const T& data);
+byte_array make_server_websocket_data_pkg(const T &data);
 template <typename T>
-bool is_fin(const T& header);
+bool is_fin(const T &header);
 template <typename T>
-bool               with_mask(const T& header);
+bool with_mask(const T &header);
 unsigned long long get_size(
-    const websocket_client_data_1_header_t& header);
-void               decode_websocket_pkg(byte_array& data, const unsigned char* mask_key);
+    const websocket_client_data_1_header_t &header);
+void decode_websocket_pkg(byte_array &data, const unsigned char *mask_key);
 unsigned long long get_size(
-    const websocket_client_data_2_header_t& header);
+    const websocket_client_data_2_header_t &header);
 template <typename T>
-int                get_op_code(const T& header);
+int get_op_code(const T &header);
 unsigned long long get_size(
-    const websocket_client_data_3_header_t& header);
+    const websocket_client_data_3_header_t &header);
 
 template <typename T>
-int get_op_code(const T& header)
+int get_op_code(const T &header)
 {
     return header.fin_rsv_oc & 0b00001111;
 }
 
 template <typename T>
-byte_array make_server_websocket_data_pkg(const T& data)
+byte_array make_server_websocket_data_pkg(const T &data)
 {
     byte_array ret;
-    int        type;
+    int type;
     if constexpr (std::is_same_v<T, std::string>)
     {
         type = WEBSOCKET_OP_TEXT_PKG;
@@ -166,20 +166,20 @@ byte_array make_server_websocket_data_pkg(const T& data)
     {
         websocket_server_data_2_header_t header {};
         memset(&header, 0, sizeof(header));
-        header.mask_len   = 126;
+        header.mask_len = 126;
         header.fin_rsv_oc = 0b10000000;
         header.fin_rsv_oc |= type;
-        *reinterpret_cast<unsigned short*>(header.extend_len) = htons(static_cast<unsigned short>(data.size()));
+        *reinterpret_cast<unsigned short *>(header.extend_len) = htons(static_cast<unsigned short>(data.size()));
         ret += to_byte_array(header);
     }
     else
     {
         websocket_server_data_2_header_t header {};
         memset(&header, 0, sizeof(header));
-        header.mask_len   = 127;
+        header.mask_len = 127;
         header.fin_rsv_oc = 0b10000000;
         header.fin_rsv_oc |= type;
-        *reinterpret_cast<unsigned short*>(header.extend_len) = static_cast<unsigned short>(
+        *reinterpret_cast<unsigned short *>(header.extend_len) = static_cast<unsigned short>(
             hton64(static_cast<unsigned short>(data.size())));
         ret += to_byte_array(header);
     }
@@ -194,12 +194,12 @@ byte_array make_server_websocket_data_pkg(const T& data)
     return ret;
 }
 template <typename T>
-bool is_fin(const T& header)
+bool is_fin(const T &header)
 {
     return static_cast<bool>(header.fin_rsv_oc & 0b10000000);
 }
 template <typename T>
-bool with_mask(const T& header)
+bool with_mask(const T &header)
 {
     return static_cast<bool>(header.mask_len & 0b10000000);
 }
